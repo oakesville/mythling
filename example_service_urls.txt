@@ -1,0 +1,1 @@
+http://192.168.0.69:6544/Content/AddVideoLiveStream?Id=56776&Height=600&Width=0&Bitrate=600000&AudioBitrate=40000&SampleRate=22050
