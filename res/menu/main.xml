@@ -1,0 +1,107 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:id="@+id/menu_media"
+    android:title="@string/menu_videos"
+    android:orderInCategory="100"
+    android:showAsAction="ifRoom|withText">
+    <menu>
+      <group android:checkableBehavior="single">
+        <item
+          android:id="@+id/media_videos"
+          android:title="@string/menu_videos" />
+        <item
+          android:id="@+id/media_songs"
+          android:title="@string/menu_music" />
+        <item
+          android:id="@+id/media_recordings"
+          android:title="@string/menu_recordings" />
+        <item
+          android:id="@+id/media_tv"
+          android:title="@string/menu_tv" />
+        <item
+          android:id="@+id/media_movies"
+          android:title="@string/menu_movies" />
+      </group>
+    </menu>    
+  </item>
+
+  <item
+    android:id="@+id/menu_sort"
+    android:title="@string/menu_byTitle"
+    android:orderInCategory="150"
+    android:showAsAction="ifRoom|withText">
+    <menu>
+      <group android:checkableBehavior="single">
+        <item
+          android:id="@+id/sort_byTitle"
+          android:title="@string/menu_byTitle" />
+        <item
+          android:id="@+id/sort_byYear"
+          android:title="@string/menu_byYear" />
+        <item
+          android:id="@+id/sort_byRating"
+          android:title="@string/menu_byRating" />
+      </group>
+    </menu>    
+  </item>
+  
+  <item
+    android:id="@+id/menu_view"
+    android:title="@string/menu_list"
+    android:orderInCategory="175"
+    android:icon="@drawable/ic_menu_list"
+    android:showAsAction="ifRoom|withText">
+    <menu>
+      <group android:checkableBehavior="single">
+        <item
+          android:id="@+id/view_list"
+          android:title="@string/menu_list"
+          android:icon="@drawable/ic_menu_list" />
+        <item
+          android:id="@+id/view_pager"
+          android:title="@string/menu_pager"
+          android:icon="@drawable/ic_menu_detail" />
+      </group>
+    </menu>    
+  </item>
+  
+  <item
+    android:id="@+id/menu_refresh"
+    android:title="@string/menu_refresh"
+    android:orderInCategory="200" 
+    android:icon="@drawable/ic_menu_refresh"
+    android:showAsAction="ifRoom" />
+  
+  <item
+    android:id="@+id/menu_settings"
+    android:title="@string/menu_settings"
+    android:orderInCategory="300"
+    android:icon="@drawable/ic_menu_settings"
+    android:showAsAction="ifRoom" />
+
+  <item
+    android:id="@+id/menu_search"
+    android:title="@string/menu_search"
+    android:orderInCategory="400"
+    android:icon="@drawable/ic_menu_search"
+    android:showAsAction="ifRoom" />
+  
+</menu>

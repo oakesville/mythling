@@ -1,0 +1,65 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <com.oakesville.mythling.prefs.MySwitchPreference
+    android:key="network_location"
+    android:title="@string/title_network_location"
+    android:switchTextOn="External"
+    android:switchTextOff="Internal"
+    android:defaultValue="Internal"
+    android:layout="@layout/sw_pref"    
+    android:widgetLayout="@layout/prefs_switch" />
+  
+  <com.oakesville.mythling.prefs.MyPreferenceCategory
+    android:key="internal_backend_cat" 
+    android:title="@string/title_internal_backend"
+    android:shouldDisableView="true">
+    <EditTextPreference 
+      android:key="mythbe_internal_ip"
+      android:title="@string/title_internal_backend_ip"
+      android:defaultValue="192.168.0.70"
+      android:layout="@layout/pref" />
+  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+
+  <com.oakesville.mythling.prefs.MyPreferenceCategory
+    android:key="external_backend_cat" 
+    android:title="@string/title_external_backend"
+    android:shouldDisableView="true">
+    <EditTextPreference 
+      android:key="mythbe_external_ip"
+      android:title="@string/title_external_backend_ip"
+      android:defaultValue="123.45.678.90"
+      android:layout="@layout/pref" />
+    <com.oakesville.mythling.prefs.MySwitchPreference
+      android:key="retrieve_ip"
+      android:title="@string/title_retrieve_ip"
+      android:switchTextOn="Dynamic"
+      android:switchTextOff="Static"
+      android:defaultValue="Static"
+      android:layout="@layout/sw_pref_inner"
+      android:widgetLayout="@layout/prefs_switch" />
+    <EditTextPreference 
+      android:key="ip_retrieval_url"
+      android:title="@string/title_ip_retrieval_url"
+      android:defaultValue=""
+      android:layout="@layout/pref" />    
+  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+
+</PreferenceScreen>

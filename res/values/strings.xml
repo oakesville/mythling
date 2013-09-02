@@ -1,0 +1,147 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<resources>
+
+  <string name="app_name">Mythling</string>
+  <string name="menu_videos">Videos</string>
+  <string name="menu_music">Music</string>
+  <string name="menu_recordings">Recordings</string>
+  <string name="menu_tv">TV</string>
+  <string name="menu_movies">Movies</string>
+  <string name="menu_list">List</string>
+  <string name="menu_pager">Details</string>
+  <string name="menu_refresh">Refresh</string>
+  <string name="menu_settings">Settings</string>
+  <string name="menu_search">Search</string>
+  <string name="menu_byTitle">By Title</string>
+  <string name="menu_byYear">By Year</string>
+  <string name="menu_byRating">By Rating</string>
+  <string name="title_activity_categories">Mythling</string>
+  <string name="title_activity_sub_cats">Mythling</string>
+  <string name="title_activity_prefs">Mythling</string>
+  <string name="title_activity_search">Mythling</string>
+  <string name="title_activity_pager">Mythling</string>
+  <string name="title_playback_settings">Playback Settings</string>
+  <string name="title_network_settings">Network Settings</string>
+  <string name="title_connect_settings">Connections</string>
+  <string name="title_credentials_settings">Credentials</string>
+  <string name="title_quality_settings">Video Quality</string>
+  <string name="title_cache_settings">Data Settings</string>
+  <string name="title_frontend_ip">IP Address</string>
+  <string name="title_frontend_port">Control Port</string>
+  <string name="title_network_location">Network</string>
+  <string name="title_playback_mode">Playback</string>
+  <string name="title_device_player">Device Player</string>
+  <string name="title_frontend_player">Frontend Player</string>
+  <string name="title_internal_backend">Internal Backend</string>
+  <string name="title_external_backend">External Backend</string>
+  <string name="title_built_in_player_buffer_size">Built-In Player Buffer Size</string>
+  <string name="title_backend_ports">Backend Ports</string>
+  <string name="title_timeouts">Timeouts</string>
+  <string name="title_tuner_timeout">Tuner Timeout</string>
+  <string name="title_transcode_timeout">Transcode Timeout</string>
+  <string name="title_internal_backend_ip">IP Address</string>
+  <string name="title_external_backend_ip">IP Address</string>
+  <string name="title_web_port">Web Port</string>
+  <string name="title_service_port">Service Port</string>
+  <string name="title_app_cache">Media List Cache</string>
+  <string name="title_cache_expiry">Expiry Interval</string>
+  <string name="title_cache_refresh">Refresh App Data</string>
+  <string name="title_retrieve_ip">External Retrieve IP</string>
+  <string name="title_ip_retrieval_url">IP Retrieval URL</string>
+  <string name="title_internal_network">Internal Network</string>
+  <string name="title_external_network">External Network</string>
+  <string name="title_video_res">Video Resolution</string>
+  <string-array name="video_res_entries">
+    <item>720p</item>
+    <item>600p</item>
+    <item>480p</item>
+    <item>240p</item>
+  </string-array>
+  <string-array name="video_res_values">
+    <item>720</item>
+    <item>600</item>
+    <item>480</item>
+    <item>240</item>
+  </string-array>
+  <string name="title_video_bitrate">Video BitRate</string>
+  <string-array name="video_bitrate_entries">
+    <item>2400k</item>
+    <item>1600k</item>
+    <item>1200k</item>
+    <item>800k</item>
+    <item>600k</item>
+    <item>400k</item>
+    <item>240k</item>
+    </string-array>
+  <string-array name="video_bitrate_values">
+    <item>2400000</item>
+    <item>1600000</item>
+    <item>1200000</item>
+    <item>800000</item>
+    <item>600000</item>
+    <item>400000</item>
+    <item>240000</item>
+    </string-array>
+  <string name="title_audio_bitrate">Audio BitRate</string>
+  <string-array name="audio_bitrate_entries">
+    <item>64k</item>
+    <item>32k</item>
+  </string-array>
+  <string-array name="audio_bitrate_values">
+    <item>64000</item>
+    <item>32000</item>
+  </string-array>
+  <string-array name="buffer_size_entries">
+    <item>4000 kb</item>
+    <item>8000 kb</item>
+    <item>12000 kb</item>
+    <item>16000 kb</item>
+    <item>20000 kb</item>
+    <item>24000 kb</item>
+  </string-array>
+  <string-array name="buffer_size_values">
+    <item>4000</item>
+    <item>8000</item>
+    <item>12000</item>
+    <item>16000</item>
+    <item>20000</item>
+    <item>24000</item>
+  </string-array>
+  <string name="title_services_access">Services Access</string>
+  <string name="title_web_access">Web Access</string>
+  <string name="title_auth_type">Auth Type</string>
+  <string-array name="auth_type_entries">
+    <item>None</item>
+    <item>Basic</item>
+    <item>Digest</item>
+  </string-array>
+  <string name="title_access_user">User</string>
+  <string name="title_access_password">Password</string>
+  <string name="app_label">Mythling</string>
+  <string name="search_hint">Search Mythling</string>
+  <string name="icon">icon</string>
+  <string name="poster">poster</string>
+  <string name="first">First</string>
+  <string name="last">Last</string>
+  <string name="blank"></string>
+  <string name="one">1</string>
+  <string name="rating">Rating</string>
+  <string name="play"> Play </string>
+</resources>

@@ -1,0 +1,141 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:drawable/gallery_thumb">
+
+    <ImageView
+      android:id="@+id/posterImage"
+      android:layout_width="match_parent"
+      android:layout_height="0px"
+      android:layout_weight="3"
+      android:layout_gravity="center_horizontal|top"
+      android:adjustViewBounds="true"
+      android:scaleType="fitCenter"
+      android:contentDescription="@string/poster" />
+
+    <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="0px"
+      android:layout_weight="2"
+      android:gravity="center_vertical|left">
+      
+      <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|left"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/blank"/>
+      
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+          android:id="@+id/star_1"
+          android:src="@drawable/rating_empty"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|left"
+          android:contentDescription="@string/rating" />
+        <ImageView
+          android:id="@+id/star_2"
+          android:src="@drawable/rating_empty"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|left"
+          android:contentDescription="@string/rating" />
+        <ImageView
+          android:id="@+id/star_3"
+          android:src="@drawable/rating_empty"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|left"
+          android:contentDescription="@string/rating" />
+        <ImageView
+          android:id="@+id/star_4"
+          android:src="@drawable/rating_empty"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|left"
+          android:contentDescription="@string/rating" />
+        <ImageView
+          android:id="@+id/star_5"
+          android:src="@drawable/rating_empty"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical|left"
+          android:contentDescription="@string/rating" />
+      </LinearLayout>
+
+      <TextView
+        android:id="@+id/directorText"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical|left"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/blank"/>
+      
+      <TextView
+        android:id="@+id/actorsText"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical|left"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/blank"/>
+      
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+          android:id="@+id/oakesvilleLink"
+          android:layout_width="wrap_content" 
+          android:layout_height="wrap_content"
+          android:gravity="center_vertical|left"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:text="@string/blank" />
+        <TextView
+          android:id="@+id/imdbLink"
+          android:layout_width="wrap_content" 
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="15dp"
+          android:gravity="center_vertical|left"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:text="@string/blank" />
+      </LinearLayout>
+      
+      <Button
+        android:id="@+id/pagerPlay"
+        android:text="@string/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+      
+    </LinearLayout>
+    
+</LinearLayout>

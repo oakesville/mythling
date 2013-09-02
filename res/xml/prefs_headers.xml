@@ -1,0 +1,51 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android" android:title="Settings">
+
+  <header
+    android:fragment="com.oakesville.mythling.prefs.PlaybackPrefs"
+    android:title="Playback"
+    android:summary="Media player selection and settings" />
+  
+  <header
+    android:fragment="com.oakesville.mythling.prefs.NetworkPrefs"
+    android:title="Network"
+    android:summary="MythTV backend connectivity" />
+
+  <header
+    android:fragment="com.oakesville.mythling.prefs.ConnectionsPrefs"
+    android:title="Connections"
+    android:summary="MythTV backend ports and timeouts" />
+  
+  <header
+    android:fragment="com.oakesville.mythling.prefs.CredentialsPrefs"
+    android:title="Credentials"
+    android:summary="Authentication settings" />
+  
+  <header
+    android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
+    android:title="Video Quality"
+    android:summary="Stream settings for device playback" />
+  
+  <header 
+    android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
+    android:title="Data Caching"
+    android:summary="Application data cache" />
+
+</preference-headers>

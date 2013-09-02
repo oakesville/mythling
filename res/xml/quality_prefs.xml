@@ -1,0 +1,73 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory android:title="@string/title_internal_network">
+    <ListPreference 
+      android:key="internal_video_res"
+      android:title="@string/title_video_res"
+      android:entries="@array/video_res_entries"
+      android:entryValues="@array/video_res_values"
+      android:defaultValue="720"
+      android:layout="@layout/pref" />
+    
+    <ListPreference 
+      android:key="internal_video_bitrate"
+      android:title="@string/title_video_bitrate"
+      android:entries="@array/video_bitrate_entries"
+      android:entryValues="@array/video_bitrate_values"
+      android:defaultValue="1600000"
+      android:layout="@layout/pref" />
+    
+    <ListPreference 
+      android:key="internal_audio_bitrate"
+      android:title="@string/title_audio_bitrate"
+      android:entries="@array/audio_bitrate_entries"
+      android:entryValues="@array/audio_bitrate_values"
+      android:defaultValue="64000"
+      android:layout="@layout/pref" />
+
+  </PreferenceCategory>
+  
+  <PreferenceCategory android:title="@string/title_external_network">
+    <ListPreference 
+      android:key="external_video_res"
+      android:title="@string/title_video_res"
+      android:entries="@array/video_res_entries"
+      android:entryValues="@array/video_res_values"
+      android:defaultValue="240"
+      android:layout="@layout/pref" />
+    
+    <ListPreference 
+      android:key="external_video_bitrate"
+      android:title="@string/title_video_bitrate"
+      android:entries="@array/video_bitrate_entries"
+      android:entryValues="@array/video_bitrate_values"
+      android:defaultValue="400000"
+      android:layout="@layout/pref" />
+  
+    <ListPreference 
+      android:key="external_audio_bitrate"
+      android:title="@string/title_audio_bitrate"
+      android:entries="@array/audio_bitrate_entries"
+      android:entryValues="@array/audio_bitrate_values"
+      android:defaultValue="32000"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
+</PreferenceScreen>

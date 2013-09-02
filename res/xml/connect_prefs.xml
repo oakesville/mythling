@@ -1,0 +1,51 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory android:title="@string/title_backend_ports">
+    <EditTextPreference 
+      android:key="mythbe_service_port"
+      android:title="@string/title_service_port"
+      android:inputType="number"
+      android:defaultValue="6544"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="mythbe_web_port"
+      android:title="@string/title_web_port"
+      android:inputType="number"
+      android:defaultValue="80"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
+  
+  <PreferenceCategory android:title="@string/title_timeouts">
+    <EditTextPreference 
+      android:key="tuner_timeout"
+      android:title="@string/title_tuner_timeout"
+      android:inputType="number"
+      android:defaultValue="30"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="transcode_timeout"
+      android:title="@string/title_transcode_timeout"
+      android:inputType="number"
+      android:defaultValue="30"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
+
+</PreferenceScreen>

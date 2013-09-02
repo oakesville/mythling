@@ -1,0 +1,68 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <com.oakesville.mythling.prefs.MySwitchPreference
+    android:key="playback_mode"
+    android:title="@string/title_playback_mode"
+    android:switchTextOn="Frontend"
+    android:switchTextOff="Device"
+    android:defaultValue="Device"
+    android:layout="@layout/sw_pref"    
+    android:widgetLayout="@layout/prefs_switch" />
+  
+  <com.oakesville.mythling.prefs.MyPreferenceCategory
+    android:key="device_playback_cat"
+    android:title="@string/title_device_player"
+    android:shouldDisableView="true">
+    <com.oakesville.mythling.prefs.MySwitchPreference 
+      android:key="video_player"
+      android:switchTextOn="Built-In"
+      android:switchTextOff="External App"
+      android:defaultValue="External App"
+      android:layout="@layout/sw_pref_inner"    
+      android:widgetLayout="@layout/prefs_switch" />
+    <!-- XXX vitamio
+    <ListPreference 
+      android:key="built_in_player_buffer_size"
+      android:title="@string/title_built_in_player_buffer_size"
+      android:entries="@array/buffer_size_entries"
+      android:entryValues="@array/buffer_size_values"
+      android:defaultValue="8000" />
+    -->
+  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+  
+  <com.oakesville.mythling.prefs.MyPreferenceCategory
+    android:key="frontend_playback_cat" 
+    android:title="@string/title_frontend_player"
+    android:shouldDisableView="true">
+    <EditTextPreference 
+      android:key="mythfe_ip"
+      android:title="@string/title_frontend_ip"
+      android:defaultValue="192.168.0.68"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="mythfe_port"
+      android:title="@string/title_frontend_port"
+      android:inputType="number"
+      android:defaultValue="6546"
+      android:layout="@layout/pref" />
+  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+    
+</PreferenceScreen>

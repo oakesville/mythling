@@ -1,0 +1,113 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.oakesville.mythling"
+  android:versionCode="1"
+  android:versionName="1.0">
+
+  <uses-permission
+    android:name="android.permission.INTERNET"/>
+
+  <uses-sdk
+    android:minSdkVersion="14"
+    android:targetSdkVersion="15"/>
+
+  <application
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme"
+    android:largeHeap="true">
+    <activity
+      android:name="com.oakesville.mythling.CategoriesActivity"
+      android:label="@string/title_activity_categories">
+      <meta-data
+        android:name="android.app.default_searchable"
+        android:value=".SearchActivity" />
+      <intent-filter>
+        <action
+          android:name="android.intent.action.MAIN"/>
+        <category
+          android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity
+      android:name="com.oakesville.mythling.SubCatsActivity"
+      android:label="@string/title_activity_sub_cats">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.oakesville.mythling.CategoriesActivity"/>
+      <meta-data
+        android:name="android.app.default_searchable"
+        android:value=".SearchActivity" />
+    </activity>
+    <activity
+      android:name="com.oakesville.mythling.VideoActivity"
+      android:configChanges="orientation|keyboardHidden|navigation"
+      android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+    </activity>
+    <activity
+      android:name="com.oakesville.mythling.prefs.PrefsActivity"
+      android:label="@string/title_activity_prefs">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.oakesville.mythling.CategoriesActivity"/>
+    </activity>
+    <activity 
+      android:name="com.oakesville.mythling.SearchActivity"
+      android:label="@string/title_activity_search"
+      android:exported="false">
+      <meta-data
+        android:name="android.app.searchable"
+        android:resource="@xml/searchable" />
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.oakesville.mythling.CategoriesActivity"/>
+      <intent-filter>
+        <action android:name="android.intent.action.SEARCH" />
+      </intent-filter>
+    </activity>
+    <activity
+      android:name="com.oakesville.mythling.PagerActivity"
+      android:label="@string/title_activity_pager" >
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.oakesville.mythling.CategoriesActivity"/>
+      <meta-data
+        android:name="android.app.default_searchable"
+        android:value=".SearchActivity" />
+    </activity>
+    <!-- XXX vitamio
+    <activity
+      android:name="io.vov.vitamio.activity.InitActivity"
+      android:configChanges="orientation|keyboardHidden|navigation"
+      android:launchMode="singleTop"
+      android:theme="@android:style/Theme.NoTitleBar"
+      android:windowSoftInputMode="stateAlwaysHidden" />
+    <activity
+      android:name="io.vov.vitamio.activity.VideoActivity"
+      android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+      android:launchMode="singleTop"
+      android:process=":vitamio"
+      android:theme="@android:style/Theme.NoTitleBar"
+      android:windowSoftInputMode="stateAlwaysHidden" />
+     -->
+  
+  </application>
+
+</manifest>
