@@ -172,7 +172,7 @@ public class AppSettings
   
   public String getExternalBackendIp()
   {
-    return prefs.getString(MYTH_BACKEND_EXTERNAL_IP, "123.45.678.90").trim();
+    return prefs.getString(MYTH_BACKEND_EXTERNAL_IP, "192.168.0.69").trim();
   }
   
   public String getServiceIp()
