@@ -39,6 +39,11 @@ import android.app.Activity;
 //import android.util.Log;
 //import com.oakesville.mythling.app.AppSettings;
 
+/**
+ * This is the embedded video viewer which uses the proprietary Vitamio library (http://www.vitamio.org/en).
+ * Search for and uncomment the code sections flagged with 'XXX vitamio' to enable this playback,
+ * which is disabled by default due to Vitamio licensing restrictions.
+ */
 public class VideoActivity extends Activity
 {
   public static final String TAG = VideoActivity.class.getSimpleName();
