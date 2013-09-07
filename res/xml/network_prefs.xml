@@ -45,7 +45,7 @@
     <EditTextPreference 
       android:key="mythbe_external_ip"
       android:title="@string/title_external_backend_ip"
-      android:defaultValue="123.45.678.90"
+      android:defaultValue="192.168.0.69"
       android:layout="@layout/pref" />
     <com.oakesville.mythling.prefs.MySwitchPreference
       android:key="retrieve_ip"
