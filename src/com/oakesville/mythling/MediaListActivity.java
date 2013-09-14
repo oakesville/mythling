@@ -42,24 +42,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.Work;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 
-public class SubCatsActivity extends WorksActivity
+/**
+ * Displays a list of listables (either categories or items).
+ */
+public class MediaListActivity extends MediaActivity
 {
-  public static final String TAG = SubCatsActivity.class.getSimpleName();
+  public static final String TAG = MediaListActivity.class.getSimpleName();
   
   private String path; 
   private FragmentBreadCrumbs breadCrumbs;
   private ListView listView;
   public ListView getListView() { return listView; }
 
-  private ArrayAdapter<Item> adapter;
-  List<Item> items;
+  private ArrayAdapter<Listable> adapter;
+  List<Listable> listables;
   
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -114,27 +117,27 @@ public class SubCatsActivity extends WorksActivity
     {
       startProgress();
       AppData appData = new AppData(getApplicationContext());
-      appData.readWorksList();
+      appData.readMediaList();
       setAppData(appData);
       stopProgress();
     }
-    else if (getMediaType() != null && getMediaType() != getAppData().getWorksList().getMediaType())
+    else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType())
     {
       // media type was changed, then back button was pressed
       getAppSettings().setMediaType(getMediaType());
       refresh();
       return;
     }
-    worksList = getAppData().getWorksList();
-    setMediaType(worksList.getMediaType());
-    showViewMenu(worksList.getMediaType() == MediaType.movies);
-    showSortMenu(worksList.getMediaType() == MediaType.movies);
-    items = worksList.getItems(path);
+    mediaList = getAppData().getMediaList();
+    setMediaType(mediaList.getMediaType());
+    showViewMenu(mediaList.getMediaType() == MediaType.movies);
+    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    listables = mediaList.getListables(path);
     if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
     {
-      for (Item item : items)
+      for (Listable listable : listables)
       {
-        if (item instanceof Work)
+        if (listable instanceof Item)
         {
           goPagerView();
           return;
@@ -144,30 +147,30 @@ public class SubCatsActivity extends WorksActivity
     
     if ("TV".equals(path))
     {
-      String title = "TV  (at " + worksList.getRetrieveTimeDisplay() + " on " + worksList.getRetrieveDateDisplay() + ")";
+      String title = "TV  (at " + mediaList.getRetrieveTimeDisplay() + " on " + mediaList.getRetrieveDateDisplay() + ")";
       breadCrumbs.setTitle(title, title);
     }
    
-    adapter = new ArrayAdapter<Item>(SubCatsActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Item[0]));
+    adapter = new ArrayAdapter<Listable>(MediaListActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, listables.toArray(new Listable[0]));
     listView.setAdapter(adapter);
-    if (items.size() > 0)
+    if (listables.size() > 0)
     {
       listView.setOnItemClickListener(new OnItemClickListener()
       {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
           final String text = ((TextView)view).getText().toString();
-          boolean isWork = items.get(position) instanceof Work;
-          if (isWork)
+          boolean isItem = listables.get(position) instanceof Item;
+          if (isItem)
           {
-            Work work = new Work((Work)items.get(position));
-            if (work.isMovie() && path.equals("Horror"))
+            Item item = new Item((Item)listables.get(position));
+            if (item.isMovie() && path.equals("Horror"))
               return;            
-            if (work.isRecording() || work.isTv())
-              work.setPath(worksList.getBasePath());
+            if (item.isRecording() || item.isTv())
+              item.setPath(mediaList.getBasePath());
             else
-              work.setPath(worksList.getBasePath() + "/" + path);
-            playWork(work);
+              item.setPath(mediaList.getBasePath() + "/" + path);
+            playItem(item);
           }
           else
           {
@@ -175,7 +178,7 @@ public class SubCatsActivity extends WorksActivity
             Uri.Builder builder = new Uri.Builder();
             builder.path(path + "/" + text);
             Uri uri = builder.build();
-            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  SubCatsActivity.class));
+            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
           }
         }
       });
@@ -184,19 +187,19 @@ public class SubCatsActivity extends WorksActivity
       {
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
         {
-          boolean isWork = items.get(position) instanceof Work;
-          if (isWork)
+          boolean isItem = listables.get(position) instanceof Item;
+          if (isItem)
           {
-            final Work work = new Work((Work)items.get(position));
-            if (work.isMovie() && path.equals("Horror"))
+            final Item item = new Item((Item)listables.get(position));
+            if (item.isMovie() && path.equals("Horror"))
               return true;
-            if (work.isRecording() || work.isTv())
+            if (item.isRecording() || item.isTv())
             {
-              work.setPath(worksList.getBasePath());
+              item.setPath(mediaList.getBasePath());
               new AlertDialog.Builder(view.getContext())
               .setIcon(android.R.drawable.ic_dialog_info)
               .setTitle("Transcode")
-              .setMessage("Begin transcoding " + work.getTitle() + "?")
+              .setMessage("Begin transcoding " + item.getTitle() + "?")
               .setPositiveButton("OK", new DialogInterface.OnClickListener()
               {
                 public void onClick(DialogInterface dialog, int which)
@@ -204,8 +207,8 @@ public class SubCatsActivity extends WorksActivity
                   try
                   {
                     // TODO: if TV, schedule recording and start transcode
-                    if (work.isRecording())
-                      new TranscodeVideoTask(work).execute(getAppSettings().getServicesBaseUrl());
+                    if (item.isRecording())
+                      new TranscodeVideoTask(item).execute(getAppSettings().getServicesBaseUrl());
                   }
                   catch (MalformedURLException ex)
                   {
@@ -249,14 +252,14 @@ public class SubCatsActivity extends WorksActivity
   public void sort()
   {
     startProgress();
-    refreshWorksList();
+    refreshMediaList();
     getAppSettings().setMovieCurrentPosition(path, 0);
   }
 
   public void refresh()
   {
     getAppSettings().setLastLoad(0);
-    startActivity(new Intent(this, CategoriesActivity.class));
+    startActivity(new Intent(this, MainActivity.class));
   }
 
   protected void goPagerView()
@@ -264,7 +267,7 @@ public class SubCatsActivity extends WorksActivity
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);
     Uri uri = builder.build();
-    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  PagerActivity.class));
+    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
   }
 
 }

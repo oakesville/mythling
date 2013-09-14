@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
 
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
-public class WorksList
+public class MediaList
 {
   private DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
   private DateFormat dateDisplay = new SimpleDateFormat("EEE, MMM d");  
@@ -79,7 +79,7 @@ public class WorksList
     categories.add(cat);
   }
   
-  public List<Item> getItems(String path)
+  public List<Listable> getListables(String path)
   {
     Category curCat = null;
     for (Category cat : getCategories())
@@ -99,6 +99,6 @@ public class WorksList
         }
       }
     }
-    return curCat.getItems();
+    return curCat.getList();
   }  
 }

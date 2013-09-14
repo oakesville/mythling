@@ -34,8 +34,8 @@ import android.util.Log;
 import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.LiveStreamInfo;
 import com.oakesville.mythling.app.SearchResults;
-import com.oakesville.mythling.app.Work;
-import com.oakesville.mythling.app.WorksList;
+import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.BuildConfig;
 
@@ -49,37 +49,37 @@ public class JsonParser
     this.json = json;
   }
   
-  public WorksList parseWorksList()
+  public MediaList parseMediaList()
   {
     dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-    WorksList worksList = new WorksList();
+    MediaList mediaList = new MediaList();
     try
     {
       long startTime = System.currentTimeMillis();
       JSONObject list = new JSONObject(json);
       JSONObject summary = list.getJSONObject("summary");
-      worksList.setMediaType(MediaType.valueOf(summary.getString("type")));
-      worksList.setRetrieveDate(summary.getString("date"));
-      worksList.setTimeZone(summary.getString("timeZone"));
-      worksList.setCount(summary.getString("count"));
-      worksList.setBasePath(summary.getString("base"));
+      mediaList.setMediaType(MediaType.valueOf(summary.getString("type")));
+      mediaList.setRetrieveDate(summary.getString("date"));
+      mediaList.setTimeZone(summary.getString("timeZone"));
+      mediaList.setCount(summary.getString("count"));
+      mediaList.setBasePath(summary.getString("base"));
       
       JSONArray cats = list.getJSONArray("categories");
       for (int i = 0; i < cats.length(); i++)
       {
         JSONObject cat = (JSONObject) cats.get(i);
-        worksList.addCategory(buildCategory(cat, null, worksList.getMediaType()));
+        mediaList.addCategory(buildCategory(cat, null, mediaList.getMediaType()));
       }
       if (BuildConfig.DEBUG)
-        Log.d(TAG, "WorksList parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+        Log.d(TAG, "MediaList parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     }
     catch (Exception ex)
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
     }
-    return worksList;    
+    return mediaList;    
   }
   
   private Category buildCategory(JSONObject cat, Category parent, MediaType type) throws JSONException, ParseException
@@ -95,13 +95,13 @@ public class JsonParser
         category.addChild(buildCategory(childCat, category, type));
       }
     }
-    if (cat.has("works"))
+    if (cat.has("items"))
     {
-      JSONArray works = cat.getJSONArray("works");
-      for (int i = 0; i < works.length(); i++)
+      JSONArray items = cat.getJSONArray("items");
+      for (int i = 0; i < items.length(); i++)
       {
-        JSONObject work = (JSONObject) works.get(i);
-        category.addWork(buildWork(work, type));
+        JSONObject item = (JSONObject) items.get(i);
+        category.addItem(buildItem(item, type));
       }
     }
     return category;
@@ -128,7 +128,7 @@ public class JsonParser
       for (int i = 0; i < vids.length(); i++)
       {
         JSONObject vid = (JSONObject) vids.get(i);
-        searchResults.addVideo(buildWork(vid, MediaType.videos));
+        searchResults.addVideo(buildItem(vid, MediaType.videos));
       }
       
       JSONArray recordings = list.getJSONArray("recordings");
@@ -136,7 +136,7 @@ public class JsonParser
       {
         JSONObject recording = (JSONObject) recordings.get(i);
         recording.put("path", "");
-        searchResults.addRecording(buildWork(recording, MediaType.recordings));
+        searchResults.addRecording(buildItem(recording, MediaType.recordings));
       }
 
       JSONArray tvShows = list.getJSONArray("tv");
@@ -144,21 +144,21 @@ public class JsonParser
       {
         JSONObject tvShow = (JSONObject) tvShows.get(i);
         tvShow.put("path", "");
-        searchResults.addTvShow(buildWork(tvShow, MediaType.tv));
+        searchResults.addTvShow(buildItem(tvShow, MediaType.tv));
       }
 
       JSONArray movies = list.getJSONArray("movies");
       for (int i = 0; i < movies.length(); i++)
       {
         JSONObject movie = (JSONObject) movies.get(i);
-        searchResults.addMovie(buildWork(movie, MediaType.movies));
+        searchResults.addMovie(buildItem(movie, MediaType.movies));
       }
       
       JSONArray songs = list.getJSONArray("songs");
       for (int i = 0; i < songs.length(); i++)
       {
         JSONObject song = (JSONObject) songs.get(i);
-        searchResults.addSong(buildWork(song, MediaType.songs));
+        searchResults.addSong(buildItem(song, MediaType.songs));
       }
       
       if (BuildConfig.DEBUG)
@@ -172,9 +172,9 @@ public class JsonParser
     return searchResults; 
   }
 
-  public List<Work> parseQueue(MediaType type)
+  public List<Item> parseQueue(MediaType type)
   {
-    List<Work> queue = new ArrayList<Work>();
+    List<Item> queue = new ArrayList<Item>();
     try
     {
       long startTime = System.currentTimeMillis();
@@ -183,7 +183,7 @@ public class JsonParser
       for (int i = 0; i < vids.length(); i++)
       {
         JSONObject vid = (JSONObject) vids.get(i);
-        queue.add(buildWork(vid, type));
+        queue.add(buildItem(vid, type));
       }
       if (BuildConfig.DEBUG)
         Log.d(TAG, type + " queue parse time: " + (System.currentTimeMillis() - startTime) + " ms");
@@ -199,50 +199,50 @@ public class JsonParser
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   private static DateFormat dateTimeRawFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  private Work buildWork(JSONObject w, MediaType t) throws JSONException, ParseException
+  private Item buildItem(JSONObject w, MediaType t) throws JSONException, ParseException
   {
-    Work work = new Work(w.getString("id"), t, w.getString("title"));
-    int squigIdx = work.getId().indexOf('~');
+    Item item = new Item(w.getString("id"), t, w.getString("title"));
+    int squigIdx = item.getId().indexOf('~');
     if (squigIdx > 0)
-      work.setStartTime(dateTimeRawFormat.parse(work.getId().substring(squigIdx + 1)));
+      item.setStartTime(dateTimeRawFormat.parse(item.getId().substring(squigIdx + 1)));
 
     if (w.has("format"))
-      work.setFormat(w.getString("format"));
+      item.setFormat(w.getString("format"));
     if (w.has("path"))
-      work.setPath(w.getString("path"));
+      item.setPath(w.getString("path"));
     if (w.has("file"))
-      work.setFile(w.getString("file"));
+      item.setFile(w.getString("file"));
     if (w.has("artist"))
-      work.setArtist(w.getString("artist"));
+      item.setArtist(w.getString("artist"));
     if (w.has("extra"))
-      work.setExtra(w.getString("extra"));
+      item.setExtra(w.getString("extra"));
     if (w.has("callsign"))
-      work.setCallsign(w.getString("callsign"));
+      item.setCallsign(w.getString("callsign"));
     if (w.has("subtitle"))
-      work.setSubTitle(w.getString("subtitle"));
+      item.setSubTitle(w.getString("subtitle"));
     if (w.has("description"))
-      work.setDescription(w.getString("description"));
+      item.setDescription(w.getString("description"));
     if (w.has("airdate"))
-      work.setOriginallyAired(dateFormat.parse(w.getString("airdate")));
+      item.setOriginallyAired(dateFormat.parse(w.getString("airdate")));
     if (w.has("endtime"))
-      work.setEndTime(dateTimeRawFormat.parse(w.getString("endtime")));
+      item.setEndTime(dateTimeRawFormat.parse(w.getString("endtime")));
     if (w.has("recordid"))
-      work.setRecordingRuleId(w.getInt("recordid"));
+      item.setRecordingRuleId(w.getInt("recordid"));
     if (w.has("programStart"))
-      work.setProgramStart(w.getString("programStart"));
+      item.setProgramStart(w.getString("programStart"));
     if (w.has("year"))
-      work.setYear(Integer.parseInt(w.getString("year")));
+      item.setYear(Integer.parseInt(w.getString("year")));
     if (w.has("rating"))
-      work.setRating((float)Integer.parseInt(w.getString("rating"))/2);
+      item.setRating((float)Integer.parseInt(w.getString("rating"))/2);
     if (w.has("director"))
-      work.setDirector(w.getString("director"));
+      item.setDirector(w.getString("director"));
     if (w.has("actors"))
-      work.setActors(w.getString("actors"));
+      item.setActors(w.getString("actors"));
     if (w.has("poster"))
-      work.setPoster(w.getString("poster"));
+      item.setPoster(w.getString("poster"));
     if (w.has("imdbId"))
-      work.setImdbId(w.getString("imdbId"));
-    return work;
+      item.setImdbId(w.getString("imdbId"));
+    return item;
   }
 
   public List<LiveStreamInfo> parseStreamInfoList()

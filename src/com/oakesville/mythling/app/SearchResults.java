@@ -57,56 +57,56 @@ public class SearchResults
   public String getMoviesBase() { return moviesBase; }
   public void setMoviesBase(String mb) { this.moviesBase = mb; }
   
-  private List<Work> videos = new ArrayList<Work>();
-  public List<Work> getVideos() { return videos; }
-  public void setVideos(List<Work> videos) { this.videos = videos; }
+  private List<Item> videos = new ArrayList<Item>();
+  public List<Item> getVideos() { return videos; }
+  public void setVideos(List<Item> videos) { this.videos = videos; }
   
-  private List<Work> recordings = new ArrayList<Work>();
-  public List<Work> getRecordings() { return recordings; }
-  public void setRecordings(List<Work> recordings) { this.recordings = recordings; }
+  private List<Item> recordings = new ArrayList<Item>();
+  public List<Item> getRecordings() { return recordings; }
+  public void setRecordings(List<Item> recordings) { this.recordings = recordings; }
   
-  private List<Work> tvShows = new ArrayList<Work>();
-  public List<Work> getTvShows() { return tvShows; }
-  public void setTvShows(List<Work> tvShows) { this.tvShows = tvShows; }
+  private List<Item> tvShows = new ArrayList<Item>();
+  public List<Item> getTvShows() { return tvShows; }
+  public void setTvShows(List<Item> tvShows) { this.tvShows = tvShows; }
   
-  private List<Work> movies = new ArrayList<Work>();
-  public List<Work> getMovies() { return movies; }
-  public void setMovies(List<Work> movies) { this.movies = movies; }
+  private List<Item> movies = new ArrayList<Item>();
+  public List<Item> getMovies() { return movies; }
+  public void setMovies(List<Item> movies) { this.movies = movies; }
 
-  private List<Work> songs = new ArrayList<Work>();
-  public List<Work> getSongs() { return songs; }
-  public void setSongs(List<Work> songs) { this.songs = songs; }
+  private List<Item> songs = new ArrayList<Item>();
+  public List<Item> getSongs() { return songs; }
+  public void setSongs(List<Item> songs) { this.songs = songs; }
   
 
-  public void addVideo(Work video)
+  public void addVideo(Item video)
   {
     videos.add(video);
   }
   
-  public void addRecording(Work recording)
+  public void addRecording(Item recording)
   {
     recordings.add(recording);
   }
   
-  public void addTvShow(Work tvShow)
+  public void addTvShow(Item tvShow)
   {
     tvShows.add(tvShow);
   }
 
-  public void addMovie(Work movie)
+  public void addMovie(Item movie)
   {
     movies.add(movie);
   }
   
-  public void addSong(Work song)
+  public void addSong(Item song)
   {
     songs.add(song);
   }
   
 
-  public List<Work> getAll()
+  public List<Item> getAll()
   {
-    List<Work> all = new ArrayList<Work>();
+    List<Item> all = new ArrayList<Item>();
     all.addAll(videos);
     all.addAll(recordings);
     all.addAll(tvShows);

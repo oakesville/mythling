@@ -37,13 +37,13 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.SearchResults;
-import com.oakesville.mythling.app.Work;
+import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.JsonParser;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 
-public class SearchActivity extends WorksActivity
+public class SearchActivity extends MediaActivity
 {
   public static final String TAG = SearchActivity.class.getSimpleName();
   
@@ -53,7 +53,7 @@ public class SearchActivity extends WorksActivity
   private ListView listView;
   public ListView getListView() { return listView; }
 
-  private ArrayAdapter<Work> adapter;
+  private ArrayAdapter<Item> adapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -87,7 +87,7 @@ public class SearchActivity extends WorksActivity
   {
     if (item.getItemId() == android.R.id.home)
     {
-      startActivity(new Intent(this, CategoriesActivity.class));
+      startActivity(new Intent(this, MainActivity.class));
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -97,7 +97,7 @@ public class SearchActivity extends WorksActivity
   {
     searchResults = new SearchResults();
 
-    adapter = new ArrayAdapter<Work>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, searchResults.getAll().toArray(new Work[0]));
+    adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, searchResults.getAll().toArray(new Item[0]));
     listView.setAdapter(adapter);
     
     startProgress();
@@ -149,22 +149,22 @@ public class SearchActivity extends WorksActivity
       {
         try
         {
-          final List<Work> items = searchResults.getAll();
-          adapter = new ArrayAdapter<Work>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Work[0]));
+          final List<Item> items = searchResults.getAll();
+          adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Item[0]));
           listView.setAdapter(adapter);
           listView.setOnItemClickListener(new OnItemClickListener()
           {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-              Work oldWork = (Work)items.get(position);
-              Work work = new Work(oldWork);
-              if (work.isMusic())
-                work.setPath(searchResults.getMusicBase());
-              else if (work.isRecording() || work.isTv())
-                work.setPath(searchResults.getRecordingsBase());
+              Item oldItem = (Item)items.get(position);
+              Item item = new Item(oldItem);
+              if (item.isMusic())
+                item.setPath(searchResults.getMusicBase());
+              else if (item.isRecording() || item.isTv())
+                item.setPath(searchResults.getRecordingsBase());
               else
-                work.setPath(searchResults.getVideoBase());
-              playWork(work);
+                item.setPath(searchResults.getVideoBase());
+              playItem(item);
             }
           });
         }
@@ -180,13 +180,13 @@ public class SearchActivity extends WorksActivity
   
   public void refresh() throws BadSettingsException
   {
-    startActivity(new Intent(this, CategoriesActivity.class));
+    startActivity(new Intent(this, MainActivity.class));
   } 
   
   @Override
   public void onBackPressed()
   {
-    Intent intent = new Intent(this, CategoriesActivity.class);
+    Intent intent = new Intent(this, MainActivity.class);
     startActivity(intent);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     finish();

@@ -33,7 +33,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Work;
+import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.BuildConfig;
 
 public class FrontendPlayer
@@ -41,16 +41,16 @@ public class FrontendPlayer
   public static final String TAG = FrontendPlayer.class.getSimpleName();
   
   private AppSettings appSettings;
-  private Work work;
+  private Item item;
   private Socket socket;
   private PrintWriter out;
   private BufferedReader in;
   private String status;
   
-  public FrontendPlayer(AppSettings settings, Work work)
+  public FrontendPlayer(AppSettings settings, Item item)
   {
     this.appSettings = settings;
-    this.work = work;
+    this.item = item;
   }
   
   public boolean checkIsPlaying() throws IOException
@@ -80,7 +80,7 @@ public class FrontendPlayer
   
   public void play()
   {
-    new PlayWorkTask().execute();
+    new PlayItemTask().execute();
   }
   
   public void stop()
@@ -88,7 +88,7 @@ public class FrontendPlayer
     new StopTask().execute();
   }
   
-  private class PlayWorkTask extends AsyncTask<URL,Integer,Long>
+  private class PlayItemTask extends AsyncTask<URL,Integer,Long>
   {
     private Exception ex;
     
@@ -99,11 +99,11 @@ public class FrontendPlayer
         open();
         run("play stop");
         run("play music stop");
-        String filepath = work.getFilePath();
-        if (work.isMusic())
+        String filepath = item.getFilePath();
+        if (item.isMusic())
           run("play music file " + filepath);
-        else if (work.isRecording())
-          run("play program " + work.getChannelId() + " " + work.getStartTimeParam());
+        else if (item.isRecording())
+          run("play program " + item.getChannelId() + " " + item.getStartTimeParam());
         else
           run("play file " + filepath);
         return 0L;
@@ -134,7 +134,7 @@ public class FrontendPlayer
       if (result != 0L)
       {
         if (ex != null)
-          Toast.makeText(appSettings.getAppContext(), "Error playing file '" + work.getFileName() + "': " + ex.toString(), Toast.LENGTH_LONG).show();
+          Toast.makeText(appSettings.getAppContext(), "Error playing file '" + item.getFileName() + "': " + ex.toString(), Toast.LENGTH_LONG).show();
       }
       else
       {
@@ -151,7 +151,7 @@ public class FrontendPlayer
       try
       {
         open();
-        if (work.isMusic())
+        if (item.isMusic())
           run("play music stop");
         else
           run("play stop\n");

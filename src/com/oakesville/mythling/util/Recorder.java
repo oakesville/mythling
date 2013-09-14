@@ -31,8 +31,8 @@ import android.util.Log;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.TunerInUseException;
-import com.oakesville.mythling.app.Work;
-import com.oakesville.mythling.app.WorksList;
+import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.BuildConfig;
 
 public class Recorder
@@ -46,21 +46,21 @@ public class Recorder
     this.appSettings = appSettings;
   }
   
-  private Work tvShow;
+  private Item tvShow;
   private int recRuleId;
-  private Work recording;
-  public Work getRecording() { return recording; }
+  private Item recording;
+  public Item getRecording() { return recording; }
   
   /**
    * Returns true if a matching recording was already scheduled.  Must be called from a background thread.
    */
-  public boolean scheduleRecording(Work work) throws IOException, JSONException
+  public boolean scheduleRecording(Item item) throws IOException, JSONException
   {
     boolean preExist = false;
     
     // check whether there's a recording for chanid and starttime
-    tvShow = work;
-    recording = getRecording(work);
+    tvShow = item;
+    recording = getRecording(item);
     if (recording != null)
     {
       preExist = true;
@@ -68,12 +68,13 @@ public class Recorder
     else
     {
       // schedule the recording
-      URL addRecUrl = new URL(appSettings.getServicesBaseUrl() + "/Dvr/AddRecordSchedule?ChanId=" + work.getChannelId() + "&StartTime=" + work.getStartTimeParam());
+      URL addRecUrl = new URL(appSettings.getServicesBaseUrl() 
+          + "/Dvr/AddRecordSchedule?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam());
         
       String addRecJson = new String(getServiceHelper(addRecUrl).post());
       recRuleId = new JsonParser(addRecJson).parseInt();
       if (recRuleId <= 0)
-        throw new IOException("Problem scheduling recording for: " + work.getTitle());
+        throw new IOException("Problem scheduling recording for: " + item.getTitle());
     }
 
     return preExist;
@@ -111,7 +112,7 @@ public class Recorder
     Thread.sleep(lagSeconds * 1000);
   }
   
-  public void deleteRecording(Work recording) throws IOException, JSONException, InterruptedException
+  public void deleteRecording(Item recording) throws IOException, JSONException, InterruptedException
   {
     // delete the recording
     URL delRecUrl = new URL(appSettings.getServicesBaseUrl() + "/Dvr/RemoveRecorded?ChanId=" + recording.getChannelId() + "&StartTime=" + recording.getStartTimeParam());
@@ -128,15 +129,15 @@ public class Recorder
     Thread.sleep(lagSeconds * 1000);
   }
   
-  private Work getRecording(Work tvShow) throws IOException
+  private Item getRecording(Item tvShow) throws IOException
   {
-    HttpHelper recordingsHelper = getWebHelper(new URL(appSettings.getWebBaseUrl() + "/works.php?type=recordings"));
+    HttpHelper recordingsHelper = getWebHelper(new URL(appSettings.getWebBaseUrl() + "/media.php?type=recordings"));
     String recordingsListJson = new String(recordingsHelper.get());
-    WorksList recordingsList = new JsonParser(recordingsListJson).parseWorksList();
+    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList();
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {
-      for (Work rec : cat.getWorks())
+      for (Item rec : cat.getItems())
       {
         if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw()))
         {

@@ -28,7 +28,7 @@ import android.util.Log;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.LiveStreamInfo;
-import com.oakesville.mythling.app.Work;
+import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.BuildConfig;
 
 public class Transcoder
@@ -48,7 +48,7 @@ public class Transcoder
   /**
    * Returns true if a matching live stream already existed.  Must be called from a background thread.
    */
-  public boolean beginTranscode(Work work) throws IOException
+  public boolean beginTranscode(Item item) throws IOException
   {
     URL baseUrl = appSettings.getServicesBaseUrl();
 
@@ -59,7 +59,8 @@ public class Transcoder
     // check if stream is already available
     URL streamListUrl;
     if (filtered)
-      streamListUrl = new URL(baseUrl + "/Content/GetFilteredLiveStreamList?FileName=" + work.getFilePath().replaceAll(" ", "%20"));
+      streamListUrl = new URL(baseUrl + "/Content/GetFilteredLiveStreamList?FileName=" 
+                              + item.getFilePath().replaceAll(" ", "%20"));
     else
       streamListUrl = new URL(baseUrl + "/Content/GetLiveStreamList");
     
@@ -68,7 +69,7 @@ public class Transcoder
     int inProgress = 0;
     for (LiveStreamInfo liveStream : liveStreams)
     {
-      if (isLiveStreamForWork(liveStream, work))
+      if (isLiveStreamForItem(liveStream, item))
       {
         streamInfo = liveStream;
         preExist = true;
@@ -77,7 +78,7 @@ public class Transcoder
       {
         if ("Transcoding".equals(liveStream.getMessage()))
         {
-          if (work.getFilePath().equals(liveStream.getFile()))
+          if (item.getFilePath().equals(liveStream.getFile()))
           {
             // stop and delete in-progress transcoding jobs for same file
             try
@@ -108,10 +109,10 @@ public class Transcoder
       }
       // add the stream
       URL addStreamUrl;
-      if (work.isRecording())
-        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + work.getChannelId() + "&StartTime=" + work.getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
+      if (item.isRecording())
+        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
       else
-        addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + work.getId() + "&" + appSettings.getVideoQualityParams());
+        addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
       String addStreamJson = new String(getServiceDownloader(addStreamUrl).get());
       streamInfo = new JsonParser(addStreamJson).parseStreamInfo();
       
@@ -181,9 +182,9 @@ public class Transcoder
     return downloader;
   }
   
-  private boolean isLiveStreamForWork(LiveStreamInfo liveStream, Work work)
+  private boolean isLiveStreamForItem(LiveStreamInfo liveStream, Item item)
   {
-    if (!work.getFilePath().equals(liveStream.getFile()))
+    if (!item.getFilePath().equals(liveStream.getFile()))
       return false;
     
     int desiredRes = appSettings.getVideoRes();

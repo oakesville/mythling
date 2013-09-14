@@ -96,7 +96,7 @@ public class AppSettings
   public URL getCategoriesUrl() throws MalformedURLException
   {
     MediaSettings mediaSettings = getMediaSettings();
-    String url = getWebBaseUrl() + "/works.php?type=" + mediaSettings.getType().toString();
+    String url = getWebBaseUrl() + "/media.php?type=" + mediaSettings.getType().toString();
     if (mediaSettings.getSortType() == SortType.byYear)
       url += "&orderBy=year";
     else if (mediaSettings.getSortType() == SortType.byRating)
@@ -107,7 +107,7 @@ public class AppSettings
   
   public URL getSearchUrl(String query) throws MalformedURLException, UnsupportedEncodingException
   {
-    return new URL(getWebBaseUrl() + "/works.php?type=search&query=" + URLEncoder.encode(query, "UTF-8"));    
+    return new URL(getWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8"));    
   }
 
   public URL getServicesBaseUrl() throws MalformedURLException

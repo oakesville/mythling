@@ -59,8 +59,8 @@ import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
 import com.oakesville.mythling.app.TunerInUseException;
-import com.oakesville.mythling.app.Work;
-import com.oakesville.mythling.app.WorksList;
+import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
@@ -68,11 +68,14 @@ import com.oakesville.mythling.util.JsonParser;
 import com.oakesville.mythling.util.Recorder;
 import com.oakesville.mythling.util.Transcoder;
 
-public abstract class WorksActivity extends Activity
+/**
+ * Base class for the two different ways to view collections of MythTV media.
+ */
+public abstract class MediaActivity extends Activity
 {
-  public static final String TAG = WorksActivity.class.getSimpleName();
+  public static final String TAG = MediaActivity.class.getSimpleName();
   
-  protected WorksList worksList;
+  protected MediaList mediaList;
 
   private static AppData appData;
   public static AppData getAppData() { return appData; }
@@ -327,7 +330,7 @@ public abstract class WorksActivity extends Activity
     return super.onOptionsItemSelected(item);
   }
   
-  protected void playWork(final Work work)
+  protected void playItem(final Item item)
   {
     try
     {
@@ -337,7 +340,7 @@ public abstract class WorksActivity extends Activity
       {
         if (getListView() != null)  // TODO what about pager activity?
         {
-          String msg = (work.isMusic() ? "Playing: '" : "Loading: '") + work.getTitle() + "'";
+          String msg = (item.isMusic() ? "Playing: '" : "Loading: '") + item.getTitle() + "'";
           ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{msg});
           getListView().setAdapter(adapter);
         }
@@ -346,7 +349,7 @@ public abstract class WorksActivity extends Activity
         
         stopMediaPlayer(); // music
         
-        if (work.isMusic())
+        if (item.isMusic())
         {
           if (mediaPlayer == null)
           {
@@ -359,7 +362,7 @@ public abstract class WorksActivity extends Activity
               onResume();
             }
           });
-          String musicUrl = appSettings.getServicesBaseUrl() + "/Content/GetMusic?Id=" + work.getId();
+          String musicUrl = appSettings.getServicesBaseUrl() + "/Content/GetMusic?Id=" + item.getId();
           Map<String,String> headers = new HashMap<String,String>();
           String credentials = Base64.encodeToString((appSettings.getServicesAccessUser() + ":" + appSettings.getServicesAccessPassword()).getBytes(), Base64.DEFAULT);
           headers.put("Authorization", "Basic " + credentials);
@@ -371,22 +374,22 @@ public abstract class WorksActivity extends Activity
         }
         else
         {
-          if (work.isRecording() || work.isTv())
+          if (item.isRecording() || item.isTv())
           {
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle(work.getTitle())
-            .setMessage(work.getShowInfo())
+            .setTitle(item.getTitle())
+            .setMessage(item.getShowInfo())
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {
               public void onClick(DialogInterface dialog, int which)
               {
                 try
                 {
-                  if (work.isTv())
-                    new StreamTvTask(work).execute(getAppSettings().getServicesBaseUrl());
+                  if (item.isTv())
+                    new StreamTvTask(item).execute(getAppSettings().getServicesBaseUrl());
                   else
-                    new StreamVideoTask(work).execute(getAppSettings().getServicesBaseUrl());
+                    new StreamVideoTask(item).execute(getAppSettings().getServicesBaseUrl());
                 }
                 catch (MalformedURLException ex)
                 {
@@ -409,13 +412,13 @@ public abstract class WorksActivity extends Activity
           }
           else
           {
-            new StreamVideoTask(work).execute(appSettings.getServicesBaseUrl());
+            new StreamVideoTask(item).execute(appSettings.getServicesBaseUrl());
           }
         }
       }
       else
       {
-        final FrontendPlayer player = new FrontendPlayer(appSettings, work);
+        final FrontendPlayer player = new FrontendPlayer(appSettings, item);
         if (player.checkIsPlaying())
         {
           new AlertDialog.Builder(this)
@@ -426,7 +429,7 @@ public abstract class WorksActivity extends Activity
           {
             public void onClick(DialogInterface dialog, int which)
             {
-              startPlayback(work, player);
+              startPlayback(item, player);
             }
           })
           .setNegativeButton("No", null)
@@ -434,7 +437,7 @@ public abstract class WorksActivity extends Activity
         }
         else
         {
-          startPlayback(work, player);
+          startPlayback(item, player);
         }
       }
     }
@@ -472,14 +475,14 @@ public abstract class WorksActivity extends Activity
     // default does nothing
   }
   
-  private void startPlayback(Work work, final FrontendPlayer player)
+  private void startPlayback(Item item, final FrontendPlayer player)
   {
-    if (work.isRecording())
+    if (item.isRecording())
     {
       new AlertDialog.Builder(this)
       .setIcon(android.R.drawable.ic_dialog_alert)
-      .setTitle(work.getTitle())
-      .setMessage(work.getShowInfo())
+      .setTitle(item.getTitle())
+      .setMessage(item.getShowInfo())
       .setPositiveButton("Play", new DialogInterface.OnClickListener()
       {
         public void onClick(DialogInterface dialog, int which)
@@ -501,7 +504,7 @@ public abstract class WorksActivity extends Activity
         // prepare for a progress bar dialog
         countdownDialog = new ProgressDialog(this);
         countdownDialog.setCancelable(true);
-        countdownDialog.setMessage("Playing " + getAppSettings().getMediaSettings().getLabel() + ": " + work);
+        countdownDialog.setMessage("Playing " + getAppSettings().getMediaSettings().getLabel() + ": " + item);
         countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         countdownDialog.setProgressPercentFormat(null);
         countdownDialog.setProgressNumberFormat(null);
@@ -580,7 +583,7 @@ public abstract class WorksActivity extends Activity
     }, 1000);
   }
   
-  protected void refreshWorksList()
+  protected void refreshMediaList()
   {
     try
     {
@@ -599,7 +602,7 @@ public abstract class WorksActivity extends Activity
   
   private class RefreshTask extends AsyncTask<URL,Integer,Long>
   {
-    private String worksListJson;
+    private String mediaListJson;
 
     private Exception ex;
     
@@ -609,8 +612,8 @@ public abstract class WorksActivity extends Activity
       {
         HttpHelper downloader = new HttpHelper(urls, getAppSettings().getWebAuthType(), getAppSettings().getPrefs());
         downloader.setCredentials(getAppSettings().getWebAccessUser(), getAppSettings().getWebAccessPassword());
-        worksListJson = new String(downloader.get());
-        worksList = new JsonParser(worksListJson).parseWorksList();
+        mediaListJson = new String(downloader.get());
+        mediaList = new JsonParser(mediaListJson).parseMediaList();
         return 0L;
       }
       catch (Exception ex)
@@ -633,14 +636,14 @@ public abstract class WorksActivity extends Activity
       else
       {
         AppData appData = new AppData(getApplicationContext());
-        appData.setWorksList(worksList);
+        appData.setMediaList(mediaList);
         setAppData(appData);
-        setMediaType(appData.getWorksList().getMediaType());
+        setMediaType(appData.getMediaList().getMediaType());
         getAppSettings().setLastLoad(System.currentTimeMillis());
         
         try
         {
-          appData.writeWorksList(worksListJson);
+          appData.writeMediaList(mediaListJson);
           populate();
         }
         catch (Exception ex)
@@ -654,13 +657,13 @@ public abstract class WorksActivity extends Activity
   
   private class StreamVideoTask extends AsyncTask<URL,Integer,Long>
   {
-    private Work work;
+    private Item item;
     private LiveStreamInfo streamInfo;
     private Exception ex;
     
-    public StreamVideoTask(Work work)
+    public StreamVideoTask(Item item)
     {
-      this.work = work;
+      this.item = item;
     }
     
     protected Long doInBackground(URL... urls)
@@ -675,7 +678,7 @@ public abstract class WorksActivity extends Activity
         // empty relative url i think means myth has not started transcoding
         while ((streamInfo == null || streamInfo.getRelativeUrl().isEmpty()) && ct < maxTries )
         {
-          transcoder.beginTranscode(work);
+          transcoder.beginTranscode(item);
           streamInfo = transcoder.getStreamInfo();
           ct++;
           Thread.sleep(1000);
@@ -724,12 +727,12 @@ public abstract class WorksActivity extends Activity
   
   protected class TranscodeVideoTask extends AsyncTask<URL,Integer,Long>
   {
-    private Work work;
+    private Item item;
     private Exception ex;
     
-    public TranscodeVideoTask(Work work)
+    public TranscodeVideoTask(Item item)
     {
-      this.work = work;
+      this.item = item;
     }
     
     protected Long doInBackground(URL... urls)
@@ -737,7 +740,7 @@ public abstract class WorksActivity extends Activity
       try
       {
         Transcoder transcoder = new Transcoder(getAppSettings());
-        transcoder.beginTranscode(work);
+        transcoder.beginTranscode(item);
         return 0L;
       }
       catch (Exception ex)
@@ -763,19 +766,19 @@ public abstract class WorksActivity extends Activity
   
   protected class StreamTvTask extends AsyncTask<URL,Integer,Long>
   {
-    private Work work;
-    private Work recordingToDelete;
+    private Item item;
+    private Item recordingToDelete;
     private LiveStreamInfo streamInfo;
     private Exception ex;
     
-    public StreamTvTask(Work work)
+    public StreamTvTask(Item item)
     {
-      this.work = work;
+      this.item = item;
     }
     
-    public StreamTvTask(Work work, Work recordingToDelete)
+    public StreamTvTask(Item item, Item recordingToDelete)
     {
-      this.work = work;
+      this.item = item;
       this.recordingToDelete = recordingToDelete;
     }
     
@@ -786,7 +789,7 @@ public abstract class WorksActivity extends Activity
         Recorder recorder = new Recorder(getAppSettings());
         if (recordingToDelete != null)
           recorder.deleteRecording(recordingToDelete);
-        boolean recordAvail = recorder.scheduleRecording(work);
+        boolean recordAvail = recorder.scheduleRecording(item);
         
         if (!recordAvail)
           recorder.waitAvailable();
@@ -817,8 +820,8 @@ public abstract class WorksActivity extends Activity
       {
         if (ex instanceof TunerInUseException)
         {
-          final Work inProgressRecording = ((TunerInUseException)ex).getRecording();
-          new AlertDialog.Builder(WorksActivity.this)
+          final Item inProgressRecording = ((TunerInUseException)ex).getRecording();
+          new AlertDialog.Builder(MediaActivity.this)
           .setIcon(android.R.drawable.ic_dialog_info)
           .setTitle("Recording Conflict")
           .setMessage("Tuner already in use recording:\n" + ex.getMessage() + "\nDelete this recording and proceed?")
@@ -829,7 +832,7 @@ public abstract class WorksActivity extends Activity
               try
               {
                 startProgress();
-                new StreamTvTask(work, inProgressRecording).execute(getAppSettings().getServicesBaseUrl());
+                new StreamTvTask(item, inProgressRecording).execute(getAppSettings().getServicesBaseUrl());
               }
               catch (MalformedURLException ex)
               {

@@ -34,7 +34,7 @@
     android:theme="@style/AppTheme"
     android:largeHeap="true">
     <activity
-      android:name="com.oakesville.mythling.CategoriesActivity"
+      android:name="com.oakesville.mythling.MainActivity"
       android:label="@string/title_activity_categories">
       <meta-data
         android:name="android.app.default_searchable"
@@ -47,7 +47,7 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="com.oakesville.mythling.SubCatsActivity"
+      android:name="com.oakesville.mythling.MediaListActivity"
       android:label="@string/title_activity_sub_cats">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -83,7 +83,7 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="com.oakesville.mythling.PagerActivity"
+      android:name="com.oakesville.mythling.MediaPagerActivity"
       android:label="@string/title_activity_pager" >
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"

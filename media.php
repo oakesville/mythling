@@ -318,7 +318,7 @@ else
   $depth = 0;
   $prevPath = "";
   $prevSize = 0;
-  $prevHadWorks = false;
+  $prevHadItems = false;
   $keys = array_keys($catPaths);
   $keyCt = count($keys);
   while ($i < $keyCt)
@@ -331,11 +331,11 @@ else
     $size = count($pieces);
   
     $piece = $pieces[$size - 1];
-    $hasWorks = $fileCt > 0;
+    $hasItems = $fileCt > 0;
   
     if ($size > $prevSize)
     {
-      printSubCatsBegin($depth, $prevHadWorks);
+      printSubCatsBegin($depth, $prevHadItems);
       $depth = $depth + ($size - $prevSize);
     }
     if ($size < $prevSize)
@@ -345,7 +345,7 @@ else
       {
         printCatEnd($depth, false);
         $depth--;
-        printSubCatsEnd($depth, $prevHadWorks);
+        printSubCatsEnd($depth, $prevHadItems);
         $j++;
       }
       printCatEnd($depth, true);
@@ -357,11 +357,11 @@ else
 
     printCatBegin($piece, $depth);
     if ($fileCt > 0)
-      printWorks($path, $files, $depth);
+      printItems($path, $files, $depth);
   
     $prevPath = $path;
     $prevSize = $size;
-    $prevHadWorks = $hasWorks;
+    $prevHadItems = $hasItems;
     $i++;
   }
 
@@ -369,8 +369,8 @@ else
   {
     printCatEnd($depth, false);
     $depth--;
-    printSubCatsEnd($depth, $prevHadWorks);
-    $prevHadWorks = false;
+    printSubCatsEnd($depth, $prevHadItems);
+    $prevHadItems = false;
   }
   echo "}\n";
 }
@@ -384,9 +384,9 @@ function printCatBegin($name, $depth)
   echo ",\n";
 }
 
-function printSubCatsBegin($depth, $hasWorks)
+function printSubCatsBegin($depth, $hasItems)
 {
-  if ($hasWorks)
+  if ($hasItems)
     echo ",\n";
   echo indent($depth * 4);
   echo '"categories":' . "\n";
@@ -394,11 +394,11 @@ function printSubCatsBegin($depth, $hasWorks)
   echo "[\n";
 }
 
-function printSubCatsEnd($depth, $hasWorks)
+function printSubCatsEnd($depth, $hasItems)
 {
   echo indent($depth * 4);
   echo "]";
-  if (!$hasWorks)
+  if (!$hasItems)
     echo "\n";
 }
 
@@ -412,29 +412,29 @@ function printCatEnd($depth, $more)
   echo "\n";
 }
 
-function printWorks($path, $files, $depth)
+function printItems($path, $files, $depth)
 {
   $fileCt = count($files);
-  printWorksBegin($depth);
+  printItemsBegin($depth);
   $j = 0;
   while ($j < $fileCt)
   {
-    printWork($path, $files[$j], $depth, $j < $fileCt - 1);
+    printItem($path, $files[$j], $depth, $j < $fileCt - 1);
     $j++;
   }
-  printWorksEnd($depth);
+  printItemsEnd($depth);
 }
 
-function printWorksBegin($depth)
+function printItemsBegin($depth)
 {
   echo indent($depth * 4);
-  echo '"works":';
+  echo '"items":';
   echo "\n";
   echo indent($depth * 4);
   echo "[\n";
 }
 
-function printWork($path, $file, $depth, $more)
+function printItem($path, $file, $depth, $more)
 {
   global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $years, $ratings, $directors, $actors, $posters, $imdbIds;
 
@@ -627,7 +627,7 @@ function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $a
   echo "\n";
 }
 
-function printWorksEnd($depth)
+function printItemsEnd($depth)
 {
   echo indent($depth * 4);
   echo "]";

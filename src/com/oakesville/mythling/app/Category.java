@@ -24,7 +24,7 @@ import java.util.List;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 
-public class Category implements Item
+public class Category implements Listable
 {
   public Category(String name, MediaType type)
   {
@@ -61,12 +61,12 @@ public class Category implements Item
     children.add(childCat);
   }
   
-  private List<Work> works = new ArrayList<Work>();
-  public List<Work> getWorks() { return works; }
-  public void setWorks(List<Work> works) { this.works = works; }
-  public void addWork(Work work)
+  private List<Item> items = new ArrayList<Item>();
+  public List<Item> getItems() { return items; }
+  public void setItems(List<Item> items) { this.items = items; }
+  public void addItem(Item item)
   {
-    works.add(work);
+    items.add(item);
   }
   
   @Override
@@ -76,14 +76,14 @@ public class Category implements Item
   }
   
   
-  public List<Item> getItems()
+  public List<Listable> getList()
   {
-    List<Item> items = new ArrayList<Item>();
+    List<Listable> listable = new ArrayList<Listable>();
     for (Category cat : getChildren())
-      items.add(cat);
-    for (Work work : getWorks())
-      items.add(work);
-    return items;
+      listable.add(cat);
+    for (Item item : getItems())
+      listable.add(item);
+    return listable;
   }
   
   public String getLabel()

@@ -57,24 +57,28 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.Work;
-import com.oakesville.mythling.app.WorksList;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 
-public class PagerActivity extends WorksActivity
+/**
+ * Activity for side-scrolling through paged detail views of MythTV media.
+ *
+ */
+public class MediaPagerActivity extends MediaActivity
 {
-  public static final String TAG = PagerActivity.class.getSimpleName();
+  public static final String TAG = MediaPagerActivity.class.getSimpleName();
 
   private String path;
-  private WorksList worksList;
+  private MediaList mediaList;
 
   private ViewPager pager;
   private MoviePagerAdapter pagerAdapter;
-  private List<Item> items;
+  private List<Listable> items;
   private int currentPosition;
   private SeekBar positionBar;
   private int[] ratingViewIds = new int[5];
@@ -130,22 +134,22 @@ public class PagerActivity extends WorksActivity
     {
       startProgress();
       AppData appData = new AppData(getApplicationContext());
-      appData.readWorksList();
+      appData.readMediaList();
       setAppData(appData);
       stopProgress();
     }
-    else if (getMediaType() != null && getMediaType() != getAppData().getWorksList().getMediaType())
+    else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType())
     {
       // media type was changed, then back button was pressed
       getAppSettings().setMediaType(getMediaType());
       refresh();
       return;
     }
-    worksList = getAppData().getWorksList();
-    setMediaType(worksList.getMediaType());
-    showViewMenu(worksList.getMediaType() == MediaType.movies);
-    showSortMenu(worksList.getMediaType() == MediaType.movies);    
-    items = worksList.getItems(path);
+    mediaList = getAppData().getMediaList();
+    setMediaType(mediaList.getMediaType());
+    showViewMenu(mediaList.getMediaType() == MediaType.movies);
+    showSortMenu(mediaList.getMediaType() == MediaType.movies);    
+    items = mediaList.getListables(path);
 
     pagerAdapter = new MoviePagerAdapter(getFragmentManager());
     pager.setAdapter(pagerAdapter);
@@ -246,7 +250,7 @@ public class PagerActivity extends WorksActivity
   public void refresh()
   {
     getAppSettings().setLastLoad(0);
-    Intent intent = new Intent(this, CategoriesActivity.class);
+    Intent intent = new Intent(this, MainActivity.class);
     startActivity(intent);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     finish();
@@ -257,7 +261,7 @@ public class PagerActivity extends WorksActivity
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);
     Uri uri = builder.build();
-    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  SubCatsActivity.class));
+    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
   }
   
   public ListView getListView()
@@ -290,11 +294,11 @@ public class PagerActivity extends WorksActivity
 
   public static class MovieListFragment extends Fragment
   {
-    private PagerActivity pagerActivity;
+    private MediaPagerActivity pagerActivity;
     private AppSettings appSettings;
     private View movieView;
     private ImageView posterView;
-    private Item item;
+    private Listable listable;
     private int idx;
     
     @Override
@@ -308,7 +312,7 @@ public class PagerActivity extends WorksActivity
     public void onAttach(Activity activity)
     {
       super.onAttach(activity);
-      pagerActivity = (PagerActivity) activity;
+      pagerActivity = (MediaPagerActivity) activity;
       appSettings = pagerActivity.getAppSettings();
     }
 
@@ -338,29 +342,29 @@ public class PagerActivity extends WorksActivity
     {
       super.onResume();
       
-      item = pagerActivity.items.get(idx);
+      listable = pagerActivity.items.get(idx);
       
       TextView titleView = (TextView) movieView.findViewById(R.id.titleText);
-      titleView.setText(item.getLabel());
+      titleView.setText(listable.getLabel());
       
-      if (item instanceof Work)
+      if (listable instanceof Item)
       {
-        Work work = (Work) item;
+        Item item = (Item) listable;
         // TODO other types
-        if (work.isMovie())
+        if (item.isMovie())
         {
-          if (work.getPoster() != null)
+          if (item.getPoster() != null)
           {
             posterView = (ImageView) movieView.findViewById(R.id.posterImage);
             // http://mythbe:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=acp.jpg
             String posterStorageGroup = "Coverart"; // TODO prefs
             try
             {
-              String filePath = pagerActivity.path + "/" + work.getPoster();
+              String filePath = pagerActivity.path + "/" + item.getPoster();
               Bitmap bitmap = getAppData().getImageBitMap(filePath);
               if (bitmap == null)
               {
-                URL url = new URL(appSettings.getServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + posterStorageGroup + "&FileName=" + work.getPoster());
+                URL url = new URL(appSettings.getServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + posterStorageGroup + "&FileName=" + item.getPoster());
                 new ImageRetrievalTask().execute(url);
               }
               else
@@ -376,37 +380,37 @@ public class PagerActivity extends WorksActivity
             }
           }
           // rating
-          for (int i = 0; i < work.getRating(); i++)
+          for (int i = 0; i < item.getRating(); i++)
           {
             ImageView star = (ImageView) movieView.findViewById(pagerActivity.ratingViewIds[i]);
-            if (i <= work.getRating() - 1)
+            if (i <= item.getRating() - 1)
               star.setImageResource(R.drawable.rating_full);
             else
               star.setImageResource(R.drawable.rating_half);
           }
           // director
-          if (work.getDirector() != null)
+          if (item.getDirector() != null)
           {
             TextView tv = (TextView) movieView.findViewById(R.id.directorText);
-            tv.setText("Directed by: " + work.getDirector());
+            tv.setText("Directed by: " + item.getDirector());
           }
           // actors
-          if (work.getActors() != null)
+          if (item.getActors() != null)
           {
             TextView tv = (TextView) movieView.findViewById(R.id.actorsText);
-            tv.setText("Starring: " + work.getActors());
+            tv.setText("Starring: " + item.getActors());
           }
           try
           {
             // oakesville link
             TextView tv = (TextView) movieView.findViewById(R.id.oakesvilleLink);
             String list = "all" + pagerActivity.path.replaceAll("-", "") + "Movies";
-            String url = "http://www.oakesville.com/Horror/allMovies.jsf?list=" + list + "&item=" + URLEncoder.encode(work.getTitle(), "UTF-8");
+            String url = "http://www.oakesville.com/Horror/allMovies.jsf?list=" + list + "&item=" + URLEncoder.encode(item.getTitle(), "UTF-8");
             tv.setText(Html.fromHtml("<a href='" + url + "'>Oakesville</a>"));
             tv.setMovementMethod(LinkMovementMethod.getInstance());
             // imdb link
             tv = (TextView) movieView.findViewById(R.id.imdbLink);
-            url = "http://www.imdb.com/title/" + work.getImdbId();
+            url = "http://www.imdb.com/title/" + item.getImdbId();
             tv.setText(Html.fromHtml("<a href='" + url + "'>IMDB</a>"));
             tv.setMovementMethod(LinkMovementMethod.getInstance());
           }
@@ -423,10 +427,10 @@ public class PagerActivity extends WorksActivity
             {
               public void onClick(View v)
               {
-                Work oldWork = (Work)item;
-                Work work = new Work(oldWork);
-                work.setPath(getAppData().getWorksList().getBasePath() + "/" + pagerActivity.path);
-                pagerActivity.playWork(work);
+                Item oldItem = (Item)listable;
+                Item item = new Item(oldItem);
+                item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+                pagerActivity.playItem(item);
               }
             });
           }
@@ -517,7 +521,7 @@ public class PagerActivity extends WorksActivity
   public void sort()
   {
     startProgress();
-    refreshWorksList();
+    refreshMediaList();
     pager.setCurrentItem(0);
     positionBar.setProgress(1);
   }
@@ -525,7 +529,7 @@ public class PagerActivity extends WorksActivity
   @Override
   public void onBackPressed()
   {
-    Intent intent = new Intent(this, CategoriesActivity.class);
+    Intent intent = new Intent(this, MainActivity.class);
     startActivity(intent);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     finish();

@@ -67,18 +67,6 @@
       android:layout_marginLeft="5dp"
       android:layout_marginRight="5dp"
       android:layout_weight="10" />
-    <!-- 
-    <ProgressBar 
-      android:id="@+id/pagerPosition"
-      style="@android:style/Widget.ProgressBar.Horizontal"
-      android:progressDrawable="@drawable/position_bar"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:layout_marginLeft="5dp"
-      android:layout_marginRight="5dp"
-      android:layout_weight="10" />
-     -->
     <TextView 
       android:id="@+id/lastItem"
       android:layout_width="wrap_content"

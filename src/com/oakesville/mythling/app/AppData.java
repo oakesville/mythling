@@ -64,61 +64,61 @@ public class AppData
     return (current - last) > expiry;
   }
 
-  private WorksList worksList;
-  public WorksList getWorksList() { return worksList; }
-  public void setWorksList(WorksList wl) { this.worksList = wl; }
+  private MediaList mediaList;
+  public MediaList getMediaList() { return mediaList; }
+  public void setMediaList(MediaList wl) { this.mediaList = wl; }
   
   private SearchResults searchResults;
   public SearchResults getSearchResults() { return searchResults; }
   public void setSearchResults(SearchResults results) { this.searchResults = results; }
   
-  private static final String WORKS_LIST_JSON_FILE = "worksList.json";
+  private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
   private static final String QUEUE_FILE_SUFFIX = "Queue.json";
-  public WorksList readWorksList() throws IOException, JSONException
+  public MediaList readMediaList() throws IOException, JSONException
   {
     File cacheDir = appContext.getCacheDir();
-    File appDataJsonFile = new File(cacheDir.getPath() + "/" + WORKS_LIST_JSON_FILE);
+    File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
     if (appDataJsonFile.exists())
     {
-      String worksListJson = new String(readFile(appDataJsonFile));
-      JsonParser parser = new JsonParser(worksListJson);
-      worksList = parser.parseWorksList();
+      String mediaListJson = new String(readFile(appDataJsonFile));
+      JsonParser parser = new JsonParser(mediaListJson);
+      mediaList = parser.parseMediaList();
     }
-    return worksList;
+    return mediaList;
   }
   
-  public void writeWorksList(String json) throws IOException, JSONException
+  public void writeMediaList(String json) throws IOException, JSONException
   {
     File cacheDir = appContext.getCacheDir();
-    File appDataJsonFile = new File(cacheDir.getPath() + "/" + WORKS_LIST_JSON_FILE);
+    File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
     writeFile(appDataJsonFile, json.getBytes());
   }
   
-  private Map<MediaType,List<Work>> queues = new HashMap<MediaType,List<Work>>();
-  public List<Work> getQueue(MediaType type) { return queues.get(type); }
-  public void setQueue(MediaType type, List<Work> queue) { queues.put(type, queue); }
+  private Map<MediaType,List<Item>> queues = new HashMap<MediaType,List<Item>>();
+  public List<Item> getQueue(MediaType type) { return queues.get(type); }
+  public void setQueue(MediaType type, List<Item> queue) { queues.put(type, queue); }
   
   public String getQueueJson(MediaType type) throws JSONException
   {
-    List<Work> worksList = getQueue(type);
-    if (worksList == null)
+    List<Item> itemsList = getQueue(type);
+    if (itemsList == null)
       return null;
     JSONObject jsonObj = new JSONObject();
-    JSONArray works = new JSONArray();
-    for (Work work : worksList)
+    JSONArray items = new JSONArray();
+    for (Item item : itemsList)
     {
       JSONObject w = new JSONObject();
-      w.put("path", work.getPath());
-      w.put("title", work.getTitle());
-      w.put("format", work.getFormat());
-      works.put(w);
+      w.put("path", item.getPath());
+      w.put("title", item.getTitle());
+      w.put("format", item.getFormat());
+      items.put(w);
     }
-    jsonObj.put(type.toString(), works);
+    jsonObj.put(type.toString(), items);
     
     return jsonObj.toString(2);
   }
   
-  public List<Work> readQueue(MediaType type) throws IOException, JSONException
+  public List<Item> readQueue(MediaType type) throws IOException, JSONException
   {
     File cacheDir = appContext.getCacheDir();
     File queueFile = new File(cacheDir.getPath() + "/" + type + QUEUE_FILE_SUFFIX);
@@ -126,7 +126,7 @@ public class AppData
     {
       String queueJson = new String(readFile(queueFile));
       JsonParser parser = new JsonParser(queueJson);
-      List<Work> queue = parser.parseQueue(type);
+      List<Item> queue = parser.parseQueue(type);
       queues.put(type, queue);
     }
     return queues.get(type);

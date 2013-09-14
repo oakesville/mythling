@@ -41,7 +41,7 @@ import android.app.Activity;
 
 /**
  * This is the embedded video viewer which uses the proprietary Vitamio library (http://www.vitamio.org/en).
- * Search for and uncomment the code sections flagged with 'XXX vitamio' to enable this playback,
+ * Search for and uncomment all code sections flagged with 'XXX vitamio' to enable this playback,
  * which is disabled by default due to Vitamio licensing restrictions.
  */
 public class VideoActivity extends Activity

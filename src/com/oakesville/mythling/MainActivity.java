@@ -38,17 +38,17 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Category;
-import com.oakesville.mythling.app.WorksList;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 
-public class CategoriesActivity extends WorksActivity
+public class MainActivity extends MediaActivity
 {
-  public static final String TAG = CategoriesActivity.class.getSimpleName();
+  public static final String TAG = MainActivity.class.getSimpleName();
   
-  private WorksList worksList;
-  public WorksList getWorksList() { return worksList; }
+  private MediaList mediaList;
+  public MediaList getMediaList() { return mediaList; }
   
   private ListView listView;
   public ListView getListView() { return listView; }
@@ -103,14 +103,14 @@ public class CategoriesActivity extends WorksActivity
 
   public void refresh() throws BadSettingsException
   {
-    worksList = new WorksList();
-    adapter = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_1, android.R.id.text1, worksList.getCategories().toArray(new Category[0]));
+    mediaList = new MediaList();
+    adapter = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getCategories().toArray(new Category[0]));
     listView.setAdapter(adapter);
     
     startProgress();
     getAppSettings().validate();
     
-    refreshWorksList();
+    refreshMediaList();
   }
   
   protected void populate() throws IOException, JSONException
@@ -119,10 +119,10 @@ public class CategoriesActivity extends WorksActivity
     if (getAppData() == null)
     {
       AppData appData = new AppData(getApplicationContext());
-      appData.readWorksList();
+      appData.readMediaList();
       setAppData(appData);
     }
-    else if (getMediaType() != null && getMediaType() != getAppData().getWorksList().getMediaType())
+    else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType())
     {
       // media type was changed, then back button was pressed
       getAppSettings().setMediaType(getMediaType());
@@ -130,18 +130,18 @@ public class CategoriesActivity extends WorksActivity
       onResume();
     }
     
-    worksList = getAppData().getWorksList();
-    if (worksList.getMediaType() == MediaType.tv)
+    mediaList = getAppData().getMediaList();
+    if (mediaList.getMediaType() == MediaType.tv)
     {
       stopProgress();
       Uri.Builder builder = new Uri.Builder();
       builder.path("TV");
       Uri uri = builder.build();
-      startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  SubCatsActivity.class));
+      startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
     }
     else
     {
-      adapter = new ArrayAdapter<Category>(CategoriesActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, worksList.getCategories().toArray(new Category[0]));
+      adapter = new ArrayAdapter<Category>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getCategories().toArray(new Category[0]));
       listView.setAdapter(adapter);
       listView.setOnItemClickListener(new OnItemClickListener()
       {
@@ -151,7 +151,7 @@ public class CategoriesActivity extends WorksActivity
           Uri.Builder builder = new Uri.Builder();
           builder.path(cat);
           Uri uri = builder.build();
-          startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  SubCatsActivity.class));
+          startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
         }
       });
       stopProgress();

@@ -14,7 +14,7 @@ public class TunerInUseException extends IOException
     super(msg, cause);
   }
   
-  private Work recording;
-  public Work getRecording() { return recording; }
-  public void setRecording(Work rec) { this.recording = rec; }
+  private Item recording;
+  public Item getRecording() { return recording; }
+  public void setRecording(Item rec) { this.recording = rec; }
 }
