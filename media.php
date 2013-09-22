@@ -79,7 +79,7 @@ if ($type->isSearch())
 	  
 	  // movies
 	  echo "  ],\n";
-	  $mQuery = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $videoBase), $VIDEO_MOVIE_DIRS) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
+	  $mQuery = "select intid as id, filename, year, userrating, director, '' as actors, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $videoBase), $VIDEO_MOVIE_DIRS) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
 	  $mRes = mysql_query($mQuery) or die("Query failed: " . mysql_error());
 	  $mNum = mysql_numrows($mRes);
 	  echo '  "movies": ' . "\n  [\n";
@@ -98,10 +98,11 @@ if ($type->isSearch())
 	    $rating = mysql_result($mRes, $i, "userrating");
 	    $director = mysql_result($mRes, $i, "director");
 	    $actors = mysql_result($mRes, $i, "actors");
+	    $summary = mysql_result($mRes, $i, "summary");
 	    $pst = mysql_result($mRes, $i, "coverfile");
 	    $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
 	    $hp = mysql_result($mRes, $i, "homepage");
-	    printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $hp, $i < $mNum - 1);
+	    printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $i < $mNum - 1);
 	    $i++;
 	  }
 	  echo "  ],\n";
@@ -210,7 +211,7 @@ else
     	$isVideoStorageGroup = true;
     if ($base == null)
     	die("Cannot determine base directory for movies");
-    $query = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $base), $VIDEO_MOVIE_DIRS) . ") order by " . $orderBy;
+    $query = "select intid as id, title, filename, year, userrating, director, '' as actors, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $base), $VIDEO_MOVIE_DIRS) . ") order by " . $orderBy;
   }
   else if ($type->isTv())
   {
@@ -243,10 +244,12 @@ else
   }
   else if ($type->isMovies())
   {
+  	$movieTitles = array();
     $years = array();
     $ratings = array();
     $directors = array();
     $actors = array();
+    $summaries = array();
     $posters = array();
     $hps = array();
   }
@@ -257,10 +260,12 @@ else
     $id = mysql_result($result, $i, "id");
     if ($type->isMovies())
     {
+    	$ttl = mysql_result($result, $i, "title");
       $yr = mysql_result($result, $i, "year");
       $rt = mysql_result($result, $i, "userrating");
       $dir = mysql_result($result, $i, "director");
       $act = mysql_result($result, $i, "actors");
+      $sum = mysql_result($result, $i, "summary");
       $pst = mysql_result($result, $i, "coverfile");
       $hp = mysql_result($result, $i, "homepage");
     }
@@ -346,11 +351,12 @@ else
     else if ($type->isMovies())
     {
     	$posterBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
-    	 
+    	$movieTitles[$id] = $ttl; 
       $years[$id] = $yr;
       $ratings[$id] = $rt;
       $directors[$id] = $dir;
       $actors[$id] = $act;
+      $summaries[$id] = $sum;
       $posters[$id] = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
       $hps[$id] = $hp;
     }
@@ -489,7 +495,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $years, $ratings, $directors, $actors, $posters, $hps;
+  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $movieTitles, $years, $ratings, $directors, $actors, $summaries, $posters, $hps;
 
   echo indent($depth * 4 + 2);
 
@@ -515,6 +521,10 @@ function printItem($path, $file, $depth, $more)
     $artist = null;
     $extra = null;
     $filetype = null;
+  }
+  else if ($type->isMovies())
+  {
+  	$title = $movieTitles[$id];
   }
   else
   {
@@ -594,6 +604,8 @@ function printItem($path, $file, $depth, $more)
       echo ', "director": "' . $directors[$id] . '"';
     if ($actors[$id] != null)
       echo ', "actors": "' . $actors[$id] . '"';
+    if ($summaries[$id] != null)
+      echo ', "summary": "' . str_replace('"', '\"', $summaries[$id]) . '"';
     if ($posters[$id] != null)
       echo ', "poster": "' . $posters[$id] . '"';
     if ($hps[$id] != null)
@@ -651,7 +663,7 @@ function printSearchResultRecordingOrTv($id, $progstart, $callsign, $title, $bas
   echo "\n";
 }
 
-function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $hp, $more)
+function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $more)
 {
   $lastdot = strrpos($file, ".");
   $title = substr($file, 0, $lastdot);
@@ -670,6 +682,8 @@ function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $a
     echo ', "director": "' . $director . '"';
   if ($actors)
     echo ', "actors": "' . $actors . '"';
+  if ($summary)
+    echo ', "summary": "' . str_replace('"','\"',$summary) . '"';
   if ($poster && $poster != null)
     echo ', "poster": "' . $poster . '"';
   if ($hp && $hp != null)
