@@ -20,10 +20,8 @@ package com.oakesville.mythling;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
 
 import org.json.JSONException;
@@ -57,13 +55,11 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
 
 /**
  * Activity for side-scrolling through paged detail views of MythTV media.
