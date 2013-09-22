@@ -43,7 +43,7 @@ import com.oakesville.mythling.util.JsonParser;
 public class AppData
 {
   public static final int BUILD_ID = 7;
-  public static final String TAG = AppData.class.getSimpleName();
+  private static final String TAG = AppData.class.getSimpleName();
   
   private Context appContext;
   public AppData(Context appContext)

@@ -54,7 +54,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class HttpHelper
 {
-  public static final String TAG = HttpHelper.class.getSimpleName();
+  private static final String TAG = HttpHelper.class.getSimpleName();
 
   public enum AuthType
   {

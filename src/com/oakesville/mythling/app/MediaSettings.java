@@ -25,7 +25,7 @@ public class MediaSettings
   public enum MediaType
   {
     videos,
-    songs,
+    music,
     recordings,
     tv,
     movies
@@ -76,7 +76,7 @@ public class MediaSettings
   
   public static String getMediaTitle(MediaType type)
   {
-    if (type == MediaType.songs)
+    if (type == MediaType.music)
       return "Music";
     else if (type == MediaType.videos)
       return "Videos";
@@ -115,7 +115,7 @@ public class MediaSettings
   
   public String getLabel()
   {
-    if (type == MediaType.songs)
+    if (type == MediaType.music)
       return "Song";
     else if (type == MediaType.videos)
       return "Video";
@@ -137,9 +137,9 @@ public class MediaSettings
       return R.drawable.ic_menu_list;
   }
 
-  public boolean isSongs()
+  public boolean isMusic()
   {
-    return type == MediaType.songs;
+    return type == MediaType.music;
   }
   
   public boolean isVideos()

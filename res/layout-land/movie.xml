@@ -108,6 +108,15 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/blank"/>
       
+      <TextView
+        android:id="@+id/summaryText"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical|left"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/blank"/>
+      
       <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -120,7 +129,7 @@
           android:textAppearance="?android:attr/textAppearanceMedium"
           android:text="@string/blank" />
         <TextView
-          android:id="@+id/imdbLink"
+          android:id="@+id/pageLink"
           android:layout_width="wrap_content" 
           android:layout_height="wrap_content"
           android:layout_marginLeft="15dp"

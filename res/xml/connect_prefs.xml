@@ -18,7 +18,7 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/title_backend_ports">
+  <PreferenceCategory android:title="@string/title_backend_conn">
     <EditTextPreference 
       android:key="mythbe_service_port"
       android:title="@string/title_service_port"
@@ -31,7 +31,12 @@
       android:inputType="number"
       android:defaultValue="80"
       android:layout="@layout/pref" />
-  </PreferenceCategory>
+    <EditTextPreference 
+      android:key="mythbe_web_root"
+      android:title="@string/title_web_root"
+      android:defaultValue="mythling"
+      android:layout="@layout/pref" />
+    </PreferenceCategory>
   
   <PreferenceCategory android:title="@string/title_timeouts">
     <EditTextPreference 

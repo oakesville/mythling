@@ -42,7 +42,11 @@ public class ConnectionsPrefs extends PreferenceFragment
     pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_WEB_PORT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary("" + appSettings.getBackendWebPort());
-    
+
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_WEB_ROOT);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+    pref.setSummary(appSettings.getBackendWebRoot());
+
     pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
     pref.setSummary("" + appSettings.getTunerTimeout() + " Seconds");

@@ -71,7 +71,7 @@ import com.oakesville.mythling.R;
  */
 public class MediaPagerActivity extends MediaActivity
 {
-  public static final String TAG = MediaPagerActivity.class.getSimpleName();
+  private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
   private String path;
   private MediaList mediaList;
@@ -400,24 +400,19 @@ public class MediaPagerActivity extends MediaActivity
             TextView tv = (TextView) movieView.findViewById(R.id.actorsText);
             tv.setText("Starring: " + item.getActors());
           }
-          try
+          // summary
+          if (item.getSummary() != null)
           {
-            // oakesville link
-            TextView tv = (TextView) movieView.findViewById(R.id.oakesvilleLink);
-            String list = "all" + pagerActivity.path.replaceAll("-", "") + "Movies";
-            String url = "http://www.oakesville.com/Horror/allMovies.jsf?list=" + list + "&item=" + URLEncoder.encode(item.getTitle(), "UTF-8");
-            tv.setText(Html.fromHtml("<a href='" + url + "'>Oakesville</a>"));
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
-            // imdb link
-            tv = (TextView) movieView.findViewById(R.id.imdbLink);
-            url = "http://www.imdb.com/title/" + item.getImdbId();
-            tv.setText(Html.fromHtml("<a href='" + url + "'>IMDB</a>"));
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
+            TextView tv = (TextView) movieView.findViewById(R.id.summaryText);
+            tv.setText(item.getSummary());
           }
-          catch (UnsupportedEncodingException ex)
+          if (item.getPageUrl() != null && getAppData().getMediaList().getPageLinkTitle() != null)
           {
-            if (BuildConfig.DEBUG)
-              Log.e(TAG, ex.getMessage(), ex);
+            // page link
+            TextView tv = (TextView) movieView.findViewById(R.id.oakesvilleLink);
+            tv = (TextView) movieView.findViewById(R.id.pageLink);
+            tv.setText(Html.fromHtml("<a href='" + item.getPageUrl() + "'>" + getAppData().getMediaList().getPageLinkTitle() + "</a>"));
+            tv.setMovementMethod(LinkMovementMethod.getInstance());
           }
           
           Button button = (Button) movieView.findViewById(R.id.pagerPlay);

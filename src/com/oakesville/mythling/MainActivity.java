@@ -45,7 +45,7 @@ import com.oakesville.mythling.R;
 
 public class MainActivity extends MediaActivity
 {
-  public static final String TAG = MainActivity.class.getSimpleName();
+  private static final String TAG = MainActivity.class.getSimpleName();
   
   private MediaList mediaList;
   public MediaList getMediaList() { return mediaList; }

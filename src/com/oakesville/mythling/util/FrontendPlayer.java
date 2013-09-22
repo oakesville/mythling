@@ -38,7 +38,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class FrontendPlayer
 {
-  public static final String TAG = FrontendPlayer.class.getSimpleName();
+  private static final String TAG = FrontendPlayer.class.getSimpleName();
   
   private AppSettings appSettings;
   private Item item;

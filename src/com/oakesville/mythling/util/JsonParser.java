@@ -41,7 +41,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class JsonParser
 {
-  public static final String TAG = JsonParser.class.getSimpleName();
+  private static final String TAG = JsonParser.class.getSimpleName();
 
   private String json;
   public JsonParser(String json)
@@ -51,7 +51,7 @@ public class JsonParser
   
   public MediaList parseMediaList()
   {
-    dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
     MediaList mediaList = new MediaList();
     try
@@ -61,9 +61,10 @@ public class JsonParser
       JSONObject summary = list.getJSONObject("summary");
       mediaList.setMediaType(MediaType.valueOf(summary.getString("type")));
       mediaList.setRetrieveDate(summary.getString("date"));
-      mediaList.setTimeZone(summary.getString("timeZone"));
       mediaList.setCount(summary.getString("count"));
       mediaList.setBasePath(summary.getString("base"));
+      if (summary.has("pageLinkTitle"))
+        mediaList.setPageLinkTitle(summary.getString("pageLinkTitle"));
       
       JSONArray cats = list.getJSONArray("categories");
       for (int i = 0; i < cats.length(); i++)
@@ -158,7 +159,7 @@ public class JsonParser
       for (int i = 0; i < songs.length(); i++)
       {
         JSONObject song = (JSONObject) songs.get(i);
-        searchResults.addSong(buildItem(song, MediaType.songs));
+        searchResults.addSong(buildItem(song, MediaType.music));
       }
       
       if (BuildConfig.DEBUG)
@@ -238,10 +239,12 @@ public class JsonParser
       item.setDirector(w.getString("director"));
     if (w.has("actors"))
       item.setActors(w.getString("actors"));
+    if (w.has("summary"))
+      item.setSummary(w.getString("summary"));
     if (w.has("poster"))
       item.setPoster(w.getString("poster"));
-    if (w.has("imdbId"))
-      item.setImdbId(w.getString("imdbId"));
+    if (w.has("pageUrl"))
+      item.setPageUrl(w.getString("pageUrl"));
     return item;
   }
 

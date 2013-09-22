@@ -41,11 +41,12 @@ public class AppSettings
   public static final String FRONTEND_PLAYBACK_CATEGORY = "frontend_playback_cat";
   public static final String INTERNAL_BACKEND_CATEGORY = "internal_backend_cat";
   public static final String EXTERNAL_BACKEND_CATEGORY = "external_backend_cat";
-  public static final String MYTH_BACKEND_INTERNAL_IP = "mythbe_internal_ip";
-  public static final String MYTH_BACKEND_EXTERNAL_IP = "mythbe_external_ip";
+  public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
+  public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
   public static final String MYTH_BACKEND_WEB_PORT = "mythbe_web_port";
+  public static final String MYTH_BACKEND_WEB_ROOT = "mythbe_web_root";
   public static final String MYTH_BACKEND_SERVICE_PORT = "mythbe_service_port";
-  public static final String MYTH_FRONTEND_IP = "mythfe_ip";
+  public static final String MYTH_FRONTEND_HOST = "mythfe_host";
   public static final String MYTH_FRONTEND_PORT = "mythfe_port";
   public static final String MEDIA_TYPE = "media_type";
   public static final String VIEW_TYPE = "view_type";
@@ -90,7 +91,8 @@ public class AppSettings
   {
     String ip = getBackendIp();
     int port = getBackendWebPort();
-    return new URL("http://" + ip + ":" + port);
+    String root = getBackendWebRoot();
+    return new URL("http://" + ip + ":" + port + (root == null || root.length() == 0 ? "" : "/" + root));
   }
   
   public URL getCategoriesUrl() throws MalformedURLException
@@ -135,9 +137,14 @@ public class AppSettings
     return Integer.parseInt(prefs.getString(MYTH_BACKEND_WEB_PORT, "80").trim());
   }
   
+  public String getBackendWebRoot()
+  {
+    return prefs.getString(MYTH_BACKEND_WEB_ROOT, "mythling");
+  }
+  
   public String getFrontendIp()
   {
-    return prefs.getString(MYTH_FRONTEND_IP, "192.168.0.68").trim();
+    return prefs.getString(MYTH_FRONTEND_HOST, "192.168.0.68").trim();
   }
   
   public int getFrontendControlPort()
@@ -167,12 +174,12 @@ public class AppSettings
   
   public String getInternalBackendIp()
   {
-    return prefs.getString(MYTH_BACKEND_INTERNAL_IP, "192.168.0.70").trim();
+    return prefs.getString(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.70").trim();
   }
   
   public String getExternalBackendIp()
   {
-    return prefs.getString(MYTH_BACKEND_EXTERNAL_IP, "192.168.0.69").trim();
+    return prefs.getString(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
   }
   
   public String getServiceIp()

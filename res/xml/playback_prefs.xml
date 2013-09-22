@@ -53,8 +53,8 @@
     android:title="@string/title_frontend_player"
     android:shouldDisableView="true">
     <EditTextPreference 
-      android:key="mythfe_ip"
-      android:title="@string/title_frontend_ip"
+      android:key="mythfe_host"
+      android:title="@string/title_frontend_host"
       android:defaultValue="192.168.0.68"
       android:layout="@layout/pref" />
     <EditTextPreference 

@@ -73,7 +73,7 @@ import com.oakesville.mythling.util.Transcoder;
  */
 public abstract class MediaActivity extends Activity
 {
-  public static final String TAG = MediaActivity.class.getSimpleName();
+  private static final String TAG = MediaActivity.class.getSimpleName();
   
   protected MediaList mediaList;
 
@@ -129,8 +129,8 @@ public abstract class MediaActivity extends Activity
     if (mediaMenuItem != null)
     {
       mediaMenuItem.setTitle(mediaSettings.getTitle());
-      if (mediaSettings.isSongs())
-        mediaMenuItem.getSubMenu().findItem(R.id.media_songs).setChecked(true);
+      if (mediaSettings.isMusic())
+        mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
       else if (mediaSettings.isRecordings())
         mediaMenuItem.getSubMenu().findItem(R.id.media_recordings).setChecked(true);
       else if (mediaSettings.isTv())
@@ -219,9 +219,9 @@ public abstract class MediaActivity extends Activity
       if (viewMenuItem != null)
         viewMenuItem.setIcon(appSettings.getMediaSettings().getViewIcon());
       
-      if (item.getItemId() == R.id.media_songs)
+      if (item.getItemId() == R.id.media_music)
       {
-        appSettings.setMediaType(MediaType.songs);
+        appSettings.setMediaType(MediaType.music);
         item.setChecked(true);
         mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
         refresh();
@@ -374,7 +374,7 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          if (item.isRecording() || item.isTv())
+          if (item.isTv() || item.isRecording() || item.isMovie())
           {
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)

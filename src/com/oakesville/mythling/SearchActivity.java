@@ -45,7 +45,7 @@ import com.oakesville.mythling.R;
 
 public class SearchActivity extends MediaActivity
 {
-  public static final String TAG = SearchActivity.class.getSimpleName();
+  private static final String TAG = SearchActivity.class.getSimpleName();
   
   private String searchQuery;
   private String resultsJson;

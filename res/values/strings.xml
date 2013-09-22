@@ -43,7 +43,7 @@
   <string name="title_credentials_settings">Credentials</string>
   <string name="title_quality_settings">Video Quality</string>
   <string name="title_cache_settings">Data Settings</string>
-  <string name="title_frontend_ip">IP Address</string>
+  <string name="title_frontend_host">Host</string>
   <string name="title_frontend_port">Control Port</string>
   <string name="title_network_location">Network</string>
   <string name="title_playback_mode">Playback</string>
@@ -52,13 +52,14 @@
   <string name="title_internal_backend">Internal Backend</string>
   <string name="title_external_backend">External Backend</string>
   <string name="title_built_in_player_buffer_size">Built-In Player Buffer Size</string>
-  <string name="title_backend_ports">Backend Ports</string>
+  <string name="title_backend_conn">Backend Connect</string>
   <string name="title_timeouts">Timeouts</string>
   <string name="title_tuner_timeout">Tuner Timeout</string>
   <string name="title_transcode_timeout">Transcode Timeout</string>
-  <string name="title_internal_backend_ip">IP Address</string>
-  <string name="title_external_backend_ip">IP Address</string>
+  <string name="title_internal_backend_host">Host</string>
+  <string name="title_external_backend_host">Host</string>
   <string name="title_web_port">Web Port</string>
+  <string name="title_web_root">Web Root</string>
   <string name="title_service_port">Service Port</string>
   <string name="title_app_cache">Media List Cache</string>
   <string name="title_cache_expiry">Expiry Interval</string>

@@ -33,7 +33,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class Transcoder
 {
-  public static final String TAG = Transcoder.class.getSimpleName();
+  private static final String TAG = Transcoder.class.getSimpleName();
 
   private AppSettings appSettings;
   

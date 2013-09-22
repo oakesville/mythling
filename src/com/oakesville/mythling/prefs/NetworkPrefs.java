@@ -48,11 +48,11 @@ public class NetworkPrefs extends PreferenceFragment
     });
     doCategoryEnablement(appSettings.isExternalNetwork());
 
-    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_IP);
+    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary(appSettings.getInternalBackendIp());
 
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_IP);
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary(appSettings.getExternalBackendIp());
     

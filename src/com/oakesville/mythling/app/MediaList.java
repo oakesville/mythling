@@ -30,7 +30,7 @@ import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 public class MediaList
 {
-  private DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+  private DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss Z");
   private DateFormat dateDisplay = new SimpleDateFormat("EEE, MMM d");  
   private DateFormat timeDisplay = new SimpleDateFormat("h:mm aa");
   
@@ -54,10 +54,6 @@ public class MediaList
     return timeDisplay.format(retrieveDate);
   }
   
-  private String timeZone;
-  public String getTimeZone() { return timeZone; }
-  public void setTimeZone(String tz) { this.timeZone = tz; }
-  
   private int count;
   public int getCount() { return count; }
   public void setCount(int ct) { this.count = ct; }
@@ -69,6 +65,10 @@ public class MediaList
   private String basePath;
   public String getBasePath() { return basePath; }
   public void setBasePath(String bp) { this.basePath = bp; }
+  
+  private String pageLinkTitle;
+  public String getPageLinkTitle() { return pageLinkTitle; }
+  public void setPageLinkTitle(String plt) { this.pageLinkTitle = plt; }
   
   private List<Category> categories = new ArrayList<Category>();
   public List<Category> getCategories() { return categories; }

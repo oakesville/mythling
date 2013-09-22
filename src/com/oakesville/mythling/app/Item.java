@@ -30,7 +30,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class Item implements Listable
 {
-  public static final String TAG = Item.class.getSimpleName();
+  private static final String TAG = Item.class.getSimpleName();
 
   private String id;
   public String getId() { return id; }
@@ -95,13 +95,17 @@ public class Item implements Listable
   public String getActors() { return actors; }
   public void setActors(String actors) { this.actors = actors; }
   
+  private String summary;
+  public String getSummary() { return summary; }
+  public void setSummary(String summary) { this.summary = summary; }
+  
   private String poster;
   public String getPoster() { return poster; }
   public void setPoster(String poster) { this.poster = poster; }
 
-  private String imdbId;
-  public String getImdbId() { return imdbId; }
-  public void setImdbId(String imdbId) { this.imdbId = imdbId; }
+  private String pageUrl;
+  public String getPageUrl() { return pageUrl; }
+  public void setPageUrl(String pageUrl) { this.pageUrl = pageUrl; }
   
   private Date endTime;
   public Date getEndTime() { return endTime; }
@@ -147,7 +151,7 @@ public class Item implements Listable
     this.director = other.director;
     this.actors = other.actors;
     this.poster = other.poster;
-    this.imdbId = other.imdbId;
+    this.pageUrl = other.pageUrl;
   }
   
   public String getFileName()
@@ -226,38 +230,49 @@ public class Item implements Listable
   
   public String getShowInfo()
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isTv() && !isMovie())
       return null;
     
     String str = "";
-    if (isTv())
-    {
-      str += getChannelNumber() + " (" + getCallsign() + ") ";
-      try
-      {
-        str += getStartTimeFormatted() + " - " + getEndTimeFormatted();
-      }
-      catch (ParseException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-      str += "\n";
-    }
     
-    if (subTitle != null)
-      str += "\"" + subTitle + "\"\n";
-    if (originallyAired != null)
-      str += "(Originally Aired " + dateFormat.format(originallyAired) + ")\n";
-    if (description != null)
-      str += description;
+    if (isMovie())
+    {
+      str += (getYear() == 0 ? "" : getYear() + "   ") + getRatingString() + "\n";
+      str += getDirector() == null ? "" : "Directed By: " + getDirector() + "\n";
+      str += getActors() == null ? "" : "Starring: " + getActors() + "\n\n";
+      str += getSummary() == null ? "" : getSummary();
+    }
+    else
+    {
+      if (isTv())
+      {
+        str += getChannelNumber() + " (" + getCallsign() + ") ";
+        try
+        {
+          str += getStartTimeFormatted() + " - " + getEndTimeFormatted();
+        }
+        catch (ParseException ex)
+        {
+          if (BuildConfig.DEBUG)
+            Log.e(TAG, ex.getMessage(), ex);
+        }
+        str += "\n";
+      }
+      
+      if (subTitle != null)
+        str += "\"" + subTitle + "\"\n";
+      if (originallyAired != null)
+        str += "(Originally Aired " + dateFormat.format(originallyAired) + ")\n";
+      if (description != null)
+        str += description;
+    }
     
     return str;
   }
   
   public boolean isMusic()
   {
-    return type == MediaType.songs;
+    return type == MediaType.music;
   }
   
   public boolean isRecording()
@@ -334,18 +349,24 @@ public class Item implements Listable
     }
     else if (isMovie())
     {
-      str += " (" + getYear() + ")  ";
-      for (int i = 0; i < getRating(); i++)
-      {
-        if (i <= getRating() - 1)
-          str += String.valueOf((char)starChar);
-        else
-          str += String.valueOf((char)halfChar);
-      }
+      str += " (" + getYear() + ")  " + getRatingString();
     }
     if (subTitle != null)
       str += " - \"" + subTitle + "\"";
     
+    return str;
+  }
+  
+  public String getRatingString()
+  {
+    String str = "";
+    for (int i = 0; i < getRating(); i++)
+    {
+      if (i <= getRating() - 1)
+        str += String.valueOf((char)starChar);
+      else
+        str += String.valueOf((char)halfChar);
+    }
     return str;
   }
 

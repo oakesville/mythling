@@ -46,7 +46,7 @@ import android.app.Activity;
  */
 public class VideoActivity extends Activity
 {
-  public static final String TAG = VideoActivity.class.getSimpleName();
+  private static final String TAG = VideoActivity.class.getSimpleName();
 
 //  private String path;
 //  private VideoView videoView;

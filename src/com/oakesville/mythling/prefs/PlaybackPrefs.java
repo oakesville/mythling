@@ -69,7 +69,7 @@ public class PlaybackPrefs extends PreferenceFragment
 //
 //    doBufferSizeEnablement(!appSettings.isExternalPlayer());
     
-    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_IP);
+    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
     pref.setSummary(appSettings.getFrontendIp());
 

@@ -37,7 +37,7 @@ import com.oakesville.mythling.BuildConfig;
 
 public class Recorder
 {
-  public static final String TAG = Recorder.class.getSimpleName();
+  private static final String TAG = Recorder.class.getSimpleName();
 
   private AppSettings appSettings;
   

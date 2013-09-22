@@ -54,7 +54,7 @@ import com.oakesville.mythling.R;
  */
 public class MediaListActivity extends MediaActivity
 {
-  public static final String TAG = MediaListActivity.class.getSimpleName();
+  private static final String TAG = MediaListActivity.class.getSimpleName();
   
   private String path; 
   private FragmentBreadCrumbs breadCrumbs;
@@ -164,8 +164,6 @@ public class MediaListActivity extends MediaActivity
           if (isItem)
           {
             Item item = new Item((Item)listables.get(position));
-            if (item.isMovie() && path.equals("Horror"))
-              return;            
             if (item.isRecording() || item.isTv())
               item.setPath(mediaList.getBasePath());
             else
@@ -191,8 +189,6 @@ public class MediaListActivity extends MediaActivity
           if (isItem)
           {
             final Item item = new Item((Item)listables.get(position));
-            if (item.isMovie() && path.equals("Horror"))
-              return true;
             if (item.isRecording() || item.isTv())
             {
               item.setPath(mediaList.getBasePath());
