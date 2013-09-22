@@ -1,15 +1,21 @@
 <?php
-$timeZone = "America/Denver";
-date_default_timezone_set($timeZone);
-$dt = date("m-d-Y H:i:s");
-$mediaBase = "/home/share/media";
-$videoBase = $mediaBase . "/mpg";
-$musicBase = $mediaBase . "/mp3";
-$posterBase = $mediaBase . "/jpg/Posters";
-$recordingsBase = "/home/share/mythstore";
-$videoMovieDirs = array("Horror", "Pre-Code");
-$videoExcludeDirs = array("To Watch");
-$imdbUrlBase = "http://www.imdb.com/title";
+// Assign values for these constants and drop this file 
+// somewhere under your Apache DocumentRoot directory.
+$MYTHDB_HOST = "localhost";
+$MYTHDB_DATABASE = "mythconverg";
+$MYTHDB_USER = "mythtv";
+$MYTHDB_PASSWORD = "mythtv";
+
+$VIDEO_STORAGE_GROUP = "Videos";
+$VIDEO_DIR_SETTING = "VideoStartupDir";
+$MUSIC_DIR_SETTING = "MusicLocation";
+$ARTWORK_STORAGE_GROUP = "Coverart";
+$ARTWORK_DIR_SETTING = "VideoArtworkDir";
+$RECORDINGS_STORAGE_GROUP = "Default";
+
+$VIDEO_MOVIE_DIRS = array("Horror", "Pre-Code");
+$VIDEO_EXCLUDE_DIRS = array("To Watch");
+$PAGE_LINK_TITLE = "IMDB";
 
 $type = new Type($_REQUEST['type']);
 if (!$type->isSpecified())
@@ -23,78 +29,105 @@ if ($type->isSearch())
     die("Missing search parameter: query");
 }
 
+$hostname = gethostname();
+date_default_timezone_set("UTC");
+$dt = date("m-d-Y H:i:s") . " UTC";
+
+mysql_connect($MYTHDB_HOST, $MYTHDB_USER, $MYTHDB_PASSWORD) or die("Could not connect: " . mysql_error());
+mysql_select_db($MYTHDB_DATABASE) or die("Unable to select database");
+
+$isVideoStorageGroup = false;
+$pageLinkTitle = null;
+
 if ($type->isSearch())
 {
+	$videoBase = getStorageGroupDir($VIDEO_STORAGE_GROUP);
+	if ($videoBase == null)
+		$videoBase = getSettingDir($VIDEO_DIR_SETTING);
+	else
+		$isVideoStorageGroup = true;
+	$musicBase = getSettingDir($MUSIC_DIR_SETTING);
+	$recordingsBase = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
+	$posterBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+	
   header("Content-type:text/plain");
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "date": "' . $dt . '", "timeZone": "' . $timeZone . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '" },' . "\n";
+  echo '  { "date": "' . $dt . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '" },' . "\n";
 
-  mysql_connect("localhost", "mythtv", "mythtv") or die("Could not connect: " . mysql_error()); 
-  mysql_select_db("mythconverg") or die("Unable to select database");
-
-  $vQuery = "select intid as id, filename from videometadata where (" . notLike($videoBase, array_merge($videoExcludeDirs, $videoMovieDirs)) . ") and filename like '%" . $searchQuery . "%' order by filename";
-  $vRes = mysql_query($vQuery) or die("Query failed: " . mysql_error());
-  $vNum = mysql_numrows($vRes);
-  echo '  "videos": ' . "\n  [\n";
-  $i = 0;
-  while ($i < $vNum)
+  if ($videoBase != null)
   {
-    $id = mysql_result($vRes, $i, "id");
-    $full = mysql_result($vRes, $i, "filename");
-    $part = substr($full, strlen($videoBase) + 1);
-    $lastSlash = strrpos($part, "/");
-    $path = substr($part, 0, $lastSlash);
-    $file = substr($part, $lastSlash + 1);
-    printSearchResult($id, $path, $file, $i < $vNum - 1);
-    $i++;
+  	// videos
+	  $vQuery = "select intid as id, filename from videometadata where (" . notLike(($isVideoStorageGroup ? null : $videoBase), array_merge($VIDEO_EXCLUDE_DIRS, $VIDEO_MOVIE_DIRS)) . ") and filename like '%" . $searchQuery . "%' order by filename";
+	  $vRes = mysql_query($vQuery) or die("Query failed: " . mysql_error());
+	  $vNum = mysql_numrows($vRes);
+	  echo '  "videos": ' . "\n  [\n";
+	  $i = 0;
+	  while ($i < $vNum)
+	  {
+	    $id = mysql_result($vRes, $i, "id");
+	    $full = mysql_result($vRes, $i, "filename");
+	    if ($isVideoStorageGroup)
+	    	$full = $videoBase . "/" . $full;
+	    $part = substr($full, strlen($videoBase) + 1);
+	    $lastSlash = strrpos($part, "/");
+	    $path = substr($part, 0, $lastSlash);
+	    $file = substr($part, $lastSlash + 1);
+	    printSearchResult($id, $path, $file, $i < $vNum - 1);
+	    $i++;
+	  }
+	  
+	  // movies
+	  echo "  ],\n";
+	  $mQuery = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $videoBase), $VIDEO_MOVIE_DIRS) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
+	  $mRes = mysql_query($mQuery) or die("Query failed: " . mysql_error());
+	  $mNum = mysql_numrows($mRes);
+	  echo '  "movies": ' . "\n  [\n";
+	  $i = 0;
+	  while ($i < $mNum)
+	  {
+	    $id = mysql_result($mRes, $i, "id");
+	    $full = mysql_result($mRes, $i, "filename");
+	    if ($isVideoStorageGroup)
+	    	$full = $videoBase . "/" . $full;
+	    $part = substr($full, strlen($videoBase) + 1);
+	    $lastSlash = strrpos($part, "/");
+	    $path = substr($part, 0, $lastSlash);
+	    $file = substr($part, $lastSlash + 1);
+	    $year = mysql_result($mRes, $i, "year");
+	    $rating = mysql_result($mRes, $i, "userrating");
+	    $director = mysql_result($mRes, $i, "director");
+	    $actors = mysql_result($mRes, $i, "actors");
+	    $pst = mysql_result($mRes, $i, "coverfile");
+	    $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
+	    $hp = mysql_result($mRes, $i, "homepage");
+	    printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $hp, $i < $mNum - 1);
+	    $i++;
+	  }
+	  echo "  ],\n";
   }
-  echo "  ],\n";
 
-  $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
-  $sRes = mysql_query($sQuery) or die("Query failed: " . mysql_error());
-  $sNum = mysql_numrows($sRes);
-  echo '  "songs": ' . "\n  [\n";
-  $i = 0;
-  while ($i < $sNum)
+  if ($musicBase != null)
   {
-    $id = mysql_result($sRes, $i, "id");
-    $full = mysql_result($sRes, $i, "filename");
-    $lastSlash = strrpos($full, "/");
-    $path = substr($full, 0, $lastSlash);
-    $file = substr($full, $lastSlash + 1);
-    printSearchResult($id, $path, $file, $i < $sNum - 1);
-    $i++;
+	  $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
+	  $sRes = mysql_query($sQuery) or die("Query failed: " . mysql_error());
+	  $sNum = mysql_numrows($sRes);
+	  echo '  "songs": ' . "\n  [\n";
+	  $i = 0;
+	  while ($i < $sNum)
+	  {
+	    $id = mysql_result($sRes, $i, "id");
+	    $full = mysql_result($sRes, $i, "filename");
+	    $lastSlash = strrpos($full, "/");
+	    $path = substr($full, 0, $lastSlash);
+	    $file = substr($full, $lastSlash + 1);
+	    printSearchResult($id, $path, $file, $i < $sNum - 1);
+	    $i++;
+	  }
+	  echo "  ],\n";
   }
-  echo "  ],\n";
 
-  $mQuery = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like($videoBase, $videoMovieDirs) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
-  $mRes = mysql_query($mQuery) or die("Query failed: " . mysql_error());
-  $mNum = mysql_numrows($mRes);
-  echo '  "movies": ' . "\n  [\n";
-  $i = 0;
-  while ($i < $mNum)
-  {
-    $id = mysql_result($mRes, $i, "id");
-    $full = mysql_result($mRes, $i, "filename");
-    $part = substr($full, strlen($videoBase) + 1);
-    $lastSlash = strrpos($part, "/");
-    $path = substr($part, 0, $lastSlash);
-    $file = substr($part, $lastSlash + 1);
-    $year = mysql_result($mRes, $i, "year");
-    $rating = mysql_result($mRes, $i, "userrating");
-    $director = mysql_result($mRes, $i, "director");
-    $actors = mysql_result($mRes, $i, "actors");
-    $pst = mysql_result($mRes, $i, "coverfile");
-    $poster = $pst == null ? null : substr($pst, strlen($posterBase) + 1);
-    $hp = mysql_result($mRes, $i, "homepage");
-    $imdbId = $hp == null || !imdbUrlBase ? null : substr($hp, strlen($imdbUrlBase) + 1);
-    printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $imdbId, $i < $mNum - 1);
-    $i++;
-  }
-  echo "  ],\n";
-
-  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and CONVERT_TZ(starttime,'GMT','" . $timeZone . "') <= now() and CONVERT_TZ(endtime,'GMT','" . $timeZone . "') >= now() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') order by p.chanid";
+  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') order by p.chanid";
   $tRes = mysql_query($tQuery) or die("Query failed: " . mysql_error());
   $tNum = mysql_numrows($tRes);
   echo '  "tv": ' . "\n  [\n";
@@ -151,34 +184,47 @@ else
     $orderBy = $orderBy . ", filename";
   if ($type->isVideos())
   {
-    $base = $videoBase;
-    $query = "select intid as id, filename from videometadata where (" . notLike($videoBase, array_merge($videoExcludeDirs, $videoMovieDirs)) . ") order by " . $orderBy;
+    $base = getStorageGroupDir($VIDEO_STORAGE_GROUP);
+    if ($base == null)
+    	$base = getSettingDir($VIDEO_DIR_SETTING);
+    else
+    	$isVideoStorageGroup = true;
+    if ($base == null)
+    	die("Cannot determine base directory for videos");
+    $query = "select intid as id, filename from videometadata where (" . notLike(($isVideoStorageGroup ? null : $base), array_merge($VIDEO_EXCLUDE_DIRS, $VIDEO_MOVIE_DIRS)) . ") order by " . $orderBy;
   }
   else if ($type->isMusic())
   {
-    $base = $musicBase;
+    $base = getSettingDir($MUSIC_DIR_SETTING);
+    if ($base == null)
+    	die("Cannot determine base directory for music");
     $query = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id order by " . $orderBy;
   }
   else if ($type->isMovies())
   {
-    $base = $videoBase;
-    $query = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like($videoBase, $videoMovieDirs) . ") order by " . $orderBy;
+  	$pageLinkTitle = $PAGE_LINK_TITLE;
+    $base = getStorageGroupDir($VIDEO_STORAGE_GROUP);
+    if ($base == null)
+    	$base = getSettingDir($VIDEO_DIR_SETTING);
+    else
+    	$isVideoStorageGroup = true;
+    if ($base == null)
+    	die("Cannot determine base directory for movies");
+    $query = "select intid as id, filename, year, userrating, director, plot as actors, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $base), $VIDEO_MOVIE_DIRS) . ") order by " . $orderBy;
   }
   else if ($type->isTv())
   {
-    $base = $recordingsBase;
-    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and CONVERT_TZ(starttime,'GMT','" . $timeZone . "') <= now() and CONVERT_TZ(endtime,'GMT','" . $timeZone . "') >= now() order by p.chanid";
+    $base = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
+    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() order by p.chanid";
   }
   else if ($type->isRecordings())
   {
-    $base = $recordingsBase;
+    $base = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
     $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))) as title, r.basename, r.subtitle, r.description, convert(r.originalairdate using utf8) as oad, rr.recordid from recorded r inner join channel c on (r.chanid = c.chanid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid) order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   }
 
   //echo $query . "\n\n";
 
-  mysql_connect("localhost", "mythtv", "mythtv") or die("Could not connect: " . mysql_error()); 
-  mysql_select_db("mythconverg") or die("Unable to select database");
   $result = mysql_query($query) or die("Query failed: " . mysql_error());
   $num = mysql_numrows($result);
   $catPaths = array();
@@ -202,7 +248,7 @@ else
     $directors = array();
     $actors = array();
     $posters = array();
-    $imdbIds = array();
+    $hps = array();
   }
   $prevPath = "";
   $i = 0;
@@ -246,11 +292,13 @@ else
     else
     {
       $full = mysql_result($result, $i, "filename");
+      if (!$type->isMusic() && $isVideoStorageGroup)
+      	$full = $base . "/" . $full;
     }
     if ($type->isMusic() || $type->isRecordings() || $type->isTv())
       $part = $full;
     else
-      $part = substr($full, strlen($videoBase) + 1);
+      $part = substr($full, strlen($base) + 1);
     // echo $part . "\n";
     $lastSlash = strrpos($part, "/");
     $path = substr($part, 0, $lastSlash);
@@ -297,23 +345,28 @@ else
     }
     else if ($type->isMovies())
     {
+    	$posterBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+    	 
       $years[$id] = $yr;
       $ratings[$id] = $rt;
       $directors[$id] = $dir;
       $actors[$id] = $act;
-      $posters[$id] = $pst == null ? null : substr($pst, strlen($posterBase) + 1);
-      $imdbIds[$id] = $hp == null || !imdbUrlBase ? null : substr($hp, strlen($imdbUrlBase) + 1);
+      $posters[$id] = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
+      $hps[$id] = $hp;
     }
   
     $i++;
   }
 
   mysql_close();
+  
 
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "timeZone": "' . $timeZone . '", "count": "' . $num . '", "base": "' . $base . '" },';
-  echo "\n";  
+  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '", "base": "' . $base . '"';
+  if ($pageLinkTitle != null)
+  	echo ', "pageLinkTitle": "' . $pageLinkTitle . '"';
+  echo " },\n";  
   $i = 0;
   $depth = 0;
   $prevPath = "";
@@ -436,7 +489,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $years, $ratings, $directors, $actors, $posters, $imdbIds;
+  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $years, $ratings, $directors, $actors, $posters, $hps;
 
   echo indent($depth * 4 + 2);
 
@@ -543,8 +596,8 @@ function printItem($path, $file, $depth, $more)
       echo ', "actors": "' . $actors[$id] . '"';
     if ($posters[$id] != null)
       echo ', "poster": "' . $posters[$id] . '"';
-    if ($imdbIds[$id] != null)
-      echo ', "imdbId": "' . $imdbIds[$id] . '"';
+    if ($hps[$id] != null)
+      echo ', "pageUrl": "' . $hps[$id] . '"';
   }
   echo " }";
   if ($more)
@@ -573,7 +626,7 @@ function printSearchResultRecordingOrTv($id, $progstart, $callsign, $title, $bas
   echo "    { ";
   echo '"id": "' . $id . '"';
   if ($progstart != null)
-    echo ', "programStart": ' . $progstart . '"';
+    echo ', "programStart": "' . $progstart . '"';
   echo ', "title": "' . $title . '"';
   if ($callsign)
     echo ', "callsign": "' . $callsign . '"'; 
@@ -598,7 +651,7 @@ function printSearchResultRecordingOrTv($id, $progstart, $callsign, $title, $bas
   echo "\n";
 }
 
-function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $imdbId, $more)
+function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $poster, $hp, $more)
 {
   $lastdot = strrpos($file, ".");
   $title = substr($file, 0, $lastdot);
@@ -619,8 +672,8 @@ function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $a
     echo ', "actors": "' . $actors . '"';
   if ($poster && $poster != null)
     echo ', "poster": "' . $poster . '"';
-  if ($imdbId && $imdbId != null)
-    echo ', "imdbId": "' . $imdbId . '"';
+  if ($hp && $hp != null)
+    echo ', "pageUrl": "' . $hp . '"';
   echo " }";
   if ($more)
     echo ",";
@@ -654,7 +707,10 @@ function notLike($base, $dirs)
   for ($i = 0; $i < $dirsSize; $i++)
   {
     $notLike = $notLike . "and ";
-    $notLike = $notLike . " filename not like '" . $base . "/" . $dirs[$i] . "%' ";
+    $notLike = $notLike . " filename not like '";
+    if ($base != null)
+    	$notLike = $notLike . $base . "/";
+    $notLike = $notLike . $dirs[$i] . "%' ";
   }
   return $notLike;
 }
@@ -666,16 +722,57 @@ function like($base, $dirs)
   for ($i = 0; $i < $dirsSize; $i++)
   {
     $like = $like . "or ";
-    $like = $like . " filename like '" . $base . "/" . $dirs[$i] . "%' ";
+    $like = $like . " filename like '";
+    if ($base != null)
+    	$like = $like . $base . "/";
+    $like = $like . $dirs[$i] . "%' ";
   }
   return $like;
+}
+
+function getBaseDir($storageGroup, $setting)
+{
+	$baseDir = getStorageGroupDir($storageGroup);
+	if ($baseDir == null)
+		return getSettingDir($setting);
+	else
+		return $baseDir;
+}
+
+function getStorageGroupDir($group)
+{
+	global $hostname;
+	$query = "select dirname from storagegroup where hostname = '" . $hostname . "' and groupname = '" . $group . "'";
+	$result = mysql_query($query) or die ("Query failed: " . mysql_error());
+	$dir = mysql_result($result, 0, "dirname");
+	if ($dir != null)
+		return trimTrailingSlash($dir);
+}
+
+function getSettingDir($setting)
+{
+	global $hostname;
+	$query = "select data from settings where hostname = '" . $hostname . "' and value = '" . $setting . "'";
+	$result = mysql_query($query) or die("Query failed: " . mysql_error());
+	$dir = mysql_result($result, 0, "data");
+	if ($dir != null)
+		return trimTrailingSlash($dir);
+}
+
+function trimTrailingSlash($str)
+{
+	$len = strlen($str);
+	if (strpos($str, '/', $len - 1))
+	  return substr($str, 0, $len - 1);
+	else
+		return $str;
 }
 
 class Type
 {
   const VIDEOS = "videos";
   const MOVIES = "movies";
-  const MUSIC = "songs";
+  const MUSIC = "music";
   const TV = "tv";
   const RECORDINGS = "recordings";
   const SEARCH = "search";
@@ -723,7 +820,5 @@ class Type
     return $this->type;
   }
 }
-
-  
 
 ?>
