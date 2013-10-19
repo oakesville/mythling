@@ -51,7 +51,7 @@
       android:label="@string/title_activity_sub_cats">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.CategoriesActivity"/>
+        android:value="com.oakesville.mythling.MainActivity"/>
       <meta-data
         android:name="android.app.default_searchable"
         android:value=".SearchActivity" />
@@ -66,7 +66,7 @@
       android:label="@string/title_activity_prefs">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.CategoriesActivity"/>
+        android:value="com.oakesville.mythling.MainActivity"/>
     </activity>
     <activity 
       android:name="com.oakesville.mythling.SearchActivity"
@@ -77,7 +77,7 @@
         android:resource="@xml/searchable" />
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.CategoriesActivity"/>
+        android:value="com.oakesville.mythling.MainActivity"/>
       <intent-filter>
         <action android:name="android.intent.action.SEARCH" />
       </intent-filter>
@@ -87,7 +87,7 @@
       android:label="@string/title_activity_pager" >
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.CategoriesActivity"/>
+        android:value="com.oakesville.mythling.MainActivity"/>
       <meta-data
         android:name="android.app.default_searchable"
         android:value=".SearchActivity" />
