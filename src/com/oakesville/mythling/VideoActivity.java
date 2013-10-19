@@ -46,6 +46,7 @@ import android.app.Activity;
  */
 public class VideoActivity extends Activity
 {
+  @SuppressWarnings("unused")
   private static final String TAG = VideoActivity.class.getSimpleName();
 
 //  private String path;
