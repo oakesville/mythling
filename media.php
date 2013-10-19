@@ -38,6 +38,7 @@ mysql_select_db($MYTHDB_DATABASE) or die("Unable to select database");
 
 $isVideoStorageGroup = false;
 $pageLinkTitle = null;
+$movieCastMap = null;
 
 if ($type->isSearch())
 {
@@ -78,8 +79,9 @@ if ($type->isSearch())
 	  }
 	  
 	  // movies
+	  $movieCastMap = getMovieCastMap();
 	  echo "  ],\n";
-	  $mQuery = "select intid as id, filename, year, userrating, director, '' as actors, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $videoBase), $VIDEO_MOVIE_DIRS) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
+	  $mQuery = "select intid as id, title, filename, year, userrating, director, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $videoBase), $VIDEO_MOVIE_DIRS) . ") and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or userrating like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%') order by filename";
 	  $mRes = mysql_query($mQuery) or die("Query failed: " . mysql_error());
 	  $mNum = mysql_numrows($mRes);
 	  echo '  "movies": ' . "\n  [\n";
@@ -87,6 +89,7 @@ if ($type->isSearch())
 	  while ($i < $mNum)
 	  {
 	    $id = mysql_result($mRes, $i, "id");
+	    $title = mysql_result($mRes, $i, "title");
 	    $full = mysql_result($mRes, $i, "filename");
 	    if ($isVideoStorageGroup)
 	    	$full = $videoBase . "/" . $full;
@@ -97,12 +100,12 @@ if ($type->isSearch())
 	    $year = mysql_result($mRes, $i, "year");
 	    $rating = mysql_result($mRes, $i, "userrating");
 	    $director = mysql_result($mRes, $i, "director");
-	    $actors = mysql_result($mRes, $i, "actors");
 	    $summary = mysql_result($mRes, $i, "summary");
 	    $pst = mysql_result($mRes, $i, "coverfile");
 	    $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
 	    $hp = mysql_result($mRes, $i, "homepage");
-	    printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $i < $mNum - 1);
+	    $actors = $movieCastMap[$id];
+	    printSearchResultMovie($id, $title, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $i < $mNum - 1);
 	    $i++;
 	  }
 	  echo "  ],\n";
@@ -178,10 +181,10 @@ if ($type->isSearch())
 else
 {
   header("Content-type:text/plain");
-  $orderBy = $_REQUEST['orderBy'];  // only for isVideos(), isMusic(), isMovies()
-  if ($orderBy == null)
-    $orderBy = "filename";
-  else if (strcmp($orderBy, "filename") != 0)
+  $orderBy = "filename";
+  if (array_key_exists('orderBy', $_REQUEST))  // only for isVideos(), isMusic(), isMovies()
+  	$orderBy = $_REQUEST['orderBy'];
+  if (strcmp($orderBy, "filename") != 0)
     $orderBy = $orderBy . ", filename";
   if ($type->isVideos())
   {
@@ -203,6 +206,7 @@ else
   }
   else if ($type->isMovies())
   {
+  	$movieCastMap = getMovieCastMap();
   	$pageLinkTitle = $PAGE_LINK_TITLE;
     $base = getStorageGroupDir($VIDEO_STORAGE_GROUP);
     if ($base == null)
@@ -211,7 +215,7 @@ else
     	$isVideoStorageGroup = true;
     if ($base == null)
     	die("Cannot determine base directory for movies");
-    $query = "select intid as id, title, filename, year, userrating, director, '' as actors, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $base), $VIDEO_MOVIE_DIRS) . ") order by " . $orderBy;
+    $query = "select intid as id, title, filename, year, userrating, director, plot as summary, coverfile, homepage from videometadata where (" . like(($isVideoStorageGroup ? null : $base), $VIDEO_MOVIE_DIRS) . ") order by " . $orderBy;
   }
   else if ($type->isTv())
   {
@@ -264,8 +268,10 @@ else
       $yr = mysql_result($result, $i, "year");
       $rt = mysql_result($result, $i, "userrating");
       $dir = mysql_result($result, $i, "director");
-      $act = mysql_result($result, $i, "actors");
+      $act = $movieCastMap[$id];
       $sum = mysql_result($result, $i, "summary");
+      if (strcmp('None', $sum) == 0)
+      	$sum = null;
       $pst = mysql_result($result, $i, "coverfile");
       $hp = mysql_result($result, $i, "homepage");
     }
@@ -522,10 +528,6 @@ function printItem($path, $file, $depth, $more)
     $extra = null;
     $filetype = null;
   }
-  else if ($type->isMovies())
-  {
-  	$title = $movieTitles[$id];
-  }
   else
   {
     $lastDash = strrpos($file, "- ");
@@ -558,6 +560,8 @@ function printItem($path, $file, $depth, $more)
       $artist = null;
       $extra = null;
     }
+    if ($type->isMovies())
+    	$title = $movieTitles[$id];
   }
 
   echo "{ ";
@@ -663,10 +667,9 @@ function printSearchResultRecordingOrTv($id, $progstart, $callsign, $title, $bas
   echo "\n";
 }
 
-function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $more)
+function printSearchResultMovie($id, $title, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $more)
 {
   $lastdot = strrpos($file, ".");
-  $title = substr($file, 0, $lastdot);
   $filetype = substr($file, $lastdot + 1);
 
   echo "    { ";
@@ -682,7 +685,7 @@ function printSearchResultMovie($id, $path, $file, $year, $rating, $director, $a
     echo ', "director": "' . $director . '"';
   if ($actors)
     echo ', "actors": "' . $actors . '"';
-  if ($summary)
+  if ($summary && strcmp('None', $summary) != 0)
     echo ', "summary": "' . str_replace('"','\"',$summary) . '"';
   if ($poster && $poster != null)
     echo ', "poster": "' . $poster . '"';
@@ -780,6 +783,23 @@ function trimTrailingSlash($str)
 	  return substr($str, 0, $len - 1);
 	else
 		return $str;
+}
+
+function getMovieCastMap()
+{
+  $movieCastMap = array();
+	$query = "select vmdc.idvideo, group_concat(t.cast SEPARATOR ', ') as actors from videometadatacast vmdc, (select * from videocast) t where t.intid = vmdc.idcast group by vmdc.idvideo";
+	$res = mysql_query($query) or die("Query failed: " . mysql_error());
+	$num = mysql_numrows($res);
+	$i = 0;
+	while ($i < $num)
+	{
+		$id = mysql_result($res, $i, "idvideo");
+		$cast = mysql_result($res, $i, "actors");
+		$movieCastMap[$id] = $cast;
+		$i++;
+	}
+	return $movieCastMap;
 }
 
 class Type
