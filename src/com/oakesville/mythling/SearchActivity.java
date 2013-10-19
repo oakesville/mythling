@@ -122,8 +122,8 @@ public class SearchActivity extends MediaActivity
     {
       try
       {
-        HttpHelper downloader = new HttpHelper(urls, getAppSettings().getWebAuthType(), getAppSettings().getPrefs());
-        downloader.setCredentials(getAppSettings().getWebAccessUser(), getAppSettings().getWebAccessPassword());
+        HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
+        downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
         resultsJson = new String(downloader.get());
         searchResults = new JsonParser(resultsJson).parseSearchResults();
         return 0L;

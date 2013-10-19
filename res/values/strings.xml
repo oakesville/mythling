@@ -52,15 +52,16 @@
   <string name="title_internal_backend">Internal Backend</string>
   <string name="title_external_backend">External Backend</string>
   <string name="title_built_in_player_buffer_size">Built-In Player Buffer Size</string>
-  <string name="title_backend_conn">Backend Connect</string>
+  <string name="title_content_services">Content Services</string>
   <string name="title_timeouts">Timeouts</string>
   <string name="title_tuner_timeout">Tuner Timeout</string>
   <string name="title_transcode_timeout">Transcode Timeout</string>
   <string name="title_internal_backend_host">Host</string>
   <string name="title_external_backend_host">Host</string>
-  <string name="title_web_port">Web Port</string>
-  <string name="title_web_root">Web Root</string>
-  <string name="title_service_port">Service Port</string>
+  <string name="title_media_services">Media Services</string>
+  <string name="title_mythling_web_port">Mythling Web Port</string>
+  <string name="title_mythling_web_root">Mythling Web Root</string>
+  <string name="title_mythtv_service_port">MythTV Service Port</string>
   <string name="title_app_cache">Media List Cache</string>
   <string name="title_cache_expiry">Expiry Interval</string>
   <string name="title_cache_refresh">Refresh App Data</string>
@@ -125,8 +126,8 @@
     <item>20000</item>
     <item>24000</item>
   </string-array>
-  <string name="title_services_access">Services Access</string>
-  <string name="title_web_access">Web Access</string>
+  <string name="title_mythtv_service_access">MythTV Services</string>
+  <string name="title_mythling_service_access">Mythling Services (see Connections)</string>
   <string name="title_auth_type">Auth Type</string>
   <string-array name="auth_type_entries">
     <item>None</item>

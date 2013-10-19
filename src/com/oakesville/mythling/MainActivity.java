@@ -19,6 +19,7 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.json.JSONException;
 
@@ -40,8 +41,6 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
 
 public class MainActivity extends MediaActivity
 {
@@ -113,7 +112,7 @@ public class MainActivity extends MediaActivity
     refreshMediaList();
   }
   
-  protected void populate() throws IOException, JSONException
+  protected void populate() throws IOException, JSONException, ParseException
   {
     startProgress();
     if (getAppData() == null)

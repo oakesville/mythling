@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class AppData
   
   private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
   private static final String QUEUE_FILE_SUFFIX = "Queue.json";
-  public MediaList readMediaList() throws IOException, JSONException
+  public MediaList readMediaList() throws IOException, JSONException, ParseException
   {
     File cacheDir = appContext.getCacheDir();
     File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
@@ -82,7 +83,7 @@ public class AppData
     {
       String mediaListJson = new String(readFile(appDataJsonFile));
       JsonParser parser = new JsonParser(mediaListJson);
-      mediaList = parser.parseMediaList();
+      mediaList = parser.parseMediaList(new AppSettings(appContext).isMythlingMediaServices());
     }
     return mediaList;
   }

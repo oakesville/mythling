@@ -21,6 +21,7 @@ package com.oakesville.mythling;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.util.List;
 
 import org.json.JSONException;
@@ -42,12 +43,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -111,7 +110,7 @@ public class MediaListActivity extends MediaActivity
     super.onResume();
   }
 
-  public void populate() throws IOException, JSONException
+  public void populate() throws IOException, JSONException, ParseException
   {
     if (getAppData() == null)
     {
@@ -204,7 +203,7 @@ public class MediaListActivity extends MediaActivity
                   {
                     // TODO: if TV, schedule recording and start transcode
                     if (item.isRecording())
-                      new TranscodeVideoTask(item).execute(getAppSettings().getServicesBaseUrl());
+                      new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                   }
                   catch (MalformedURLException ex)
                   {
@@ -241,7 +240,7 @@ public class MediaListActivity extends MediaActivity
   @Override
   protected boolean supportsSort()
   {
-    return true;
+    return getAppSettings().isMythlingMediaServices();
   }  
 
   @Override

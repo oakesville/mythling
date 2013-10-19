@@ -22,18 +22,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.Date;
 
 import org.json.JSONException;
 
 import android.util.Log;
 
+import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Category;
-import com.oakesville.mythling.app.TunerInUseException;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.TunerInUseException;
 
 public class Recorder
 {
@@ -54,7 +55,7 @@ public class Recorder
   /**
    * Returns true if a matching recording was already scheduled.  Must be called from a background thread.
    */
-  public boolean scheduleRecording(Item item) throws IOException, JSONException
+  public boolean scheduleRecording(Item item) throws IOException, JSONException, ParseException
   {
     boolean preExist = false;
     
@@ -68,7 +69,7 @@ public class Recorder
     else
     {
       // schedule the recording
-      URL addRecUrl = new URL(appSettings.getServicesBaseUrl() 
+      URL addRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() 
           + "/Dvr/AddRecordSchedule?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam());
         
       String addRecJson = new String(getServiceHelper(addRecUrl).post());
@@ -83,7 +84,7 @@ public class Recorder
   /**
    * Wait for recording to be available.
    */
-  public void waitAvailable() throws IOException, InterruptedException
+  public void waitAvailable() throws IOException, JSONException, ParseException, InterruptedException
   {
     // wait for content to be available
     int timeout = appSettings.getTunerTimeout() * 1000;
@@ -101,7 +102,7 @@ public class Recorder
       if (recRuleId > 0)
       {
         // remove the recording rule
-        URL remRecUrl = new URL(appSettings.getServicesBaseUrl() + "/Dvr/RemoveRecordSchedule?RecordId=" + recRuleId);
+        URL remRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecordSchedule?RecordId=" + recRuleId);
         getServiceHelper(remRecUrl).post();
       }
       throw new FileNotFoundException("No recording available.");
@@ -115,7 +116,7 @@ public class Recorder
   public void deleteRecording(Item recording) throws IOException, JSONException, InterruptedException
   {
     // delete the recording
-    URL delRecUrl = new URL(appSettings.getServicesBaseUrl() + "/Dvr/RemoveRecorded?ChanId=" + recording.getChannelId() + "&StartTime=" + recording.getStartTimeParam());
+    URL delRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecorded?ChanId=" + recording.getChannelId() + "&StartTime=" + recording.getStartTimeParam());
     String delRecRes = new String(getServiceHelper(delRecUrl).post());
     if (BuildConfig.DEBUG)
       Log.d(TAG, "Delete recording result: " + delRecRes);
@@ -129,11 +130,11 @@ public class Recorder
     Thread.sleep(lagSeconds * 1000);
   }
   
-  private Item getRecording(Item tvShow) throws IOException
+  private Item getRecording(Item tvShow) throws IOException, JSONException, ParseException
   {
-    HttpHelper recordingsHelper = getWebHelper(new URL(appSettings.getWebBaseUrl() + "/media.php?type=recordings"));
+    HttpHelper recordingsHelper = getWebHelper(new URL(appSettings.getMythlingWebBaseUrl() + "/media.php?type=recordings"));
     String recordingsListJson = new String(recordingsHelper.get());
-    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList();
+    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList(true);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {
@@ -161,15 +162,15 @@ public class Recorder
   
   private HttpHelper getWebHelper(URL url) throws MalformedURLException
   {
-    HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), appSettings.getWebAuthType(), appSettings.getPrefs());
-    downloader.setCredentials(appSettings.getWebAccessUser(), appSettings.getWebAccessPassword());
+    HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), appSettings.getMythlingServicesAuthType(), appSettings.getPrefs());
+    downloader.setCredentials(appSettings.getMythlingServicesUser(), appSettings.getMythlingServicesPassword());
     return downloader;
   }
   
   private HttpHelper getServiceHelper(URL url) throws MalformedURLException
   {
-    HttpHelper helper = new HttpHelper(appSettings.getUrls(url), appSettings.getServicesAuthType(), appSettings.getPrefs());
-    helper.setCredentials(appSettings.getServicesAccessUser(), appSettings.getServicesAccessPassword());
+    HttpHelper helper = new HttpHelper(appSettings.getUrls(url), appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
+    helper.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
     return helper;
   }
 }

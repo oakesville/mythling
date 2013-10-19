@@ -22,6 +22,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -31,13 +33,13 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.Category;
-import com.oakesville.mythling.app.LiveStreamInfo;
-import com.oakesville.mythling.app.SearchResults;
 import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.LiveStreamInfo;
 import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.SearchResults;
 
 public class JsonParser
 {
@@ -49,15 +51,15 @@ public class JsonParser
     this.json = json;
   }
   
-  public MediaList parseMediaList()
+  public MediaList parseMediaList(boolean mythlingFormat) throws JSONException, ParseException
   {
     dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
     MediaList mediaList = new MediaList();
-    try
+    long startTime = System.currentTimeMillis();
+    JSONObject list = new JSONObject(json);
+    if (mythlingFormat)
     {
-      long startTime = System.currentTimeMillis();
-      JSONObject list = new JSONObject(json);
       JSONObject summary = list.getJSONObject("summary");
       mediaList.setMediaType(MediaType.valueOf(summary.getString("type")));
       mediaList.setRetrieveDate(summary.getString("date"));
@@ -72,14 +74,24 @@ public class JsonParser
         JSONObject cat = (JSONObject) cats.get(i);
         mediaList.addCategory(buildCategory(cat, null, mediaList.getMediaType()));
       }
-      if (BuildConfig.DEBUG)
-        Log.d(TAG, "MediaList parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     }
-    catch (Exception ex)
+    else
     {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
+      JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
+      mediaList.setMediaType(MediaType.videos);
+      mediaList.setRetrieveDateMyth(infoList.getString("AsOf"));
+      mediaList.setCount(infoList.getString("Count"));
+      Category vidCat = new Category("Videos", MediaType.videos);
+      mediaList.addCategory(vidCat);
+      JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
+      for (int i = 0; i < vids.length(); i++)
+      {
+        JSONObject vid = (JSONObject) vids.get(i);
+        vidCat.addItem(buildMythVideoItem(vid));
+      }
     }
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, "MediaList parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     return mediaList;    
   }
   
@@ -199,6 +211,59 @@ public class JsonParser
 
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   private static DateFormat dateTimeRawFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  
+  Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+  private Item buildMythVideoItem(JSONObject vid) throws JSONException, ParseException
+  {
+    Item item = new Item(vid.getString("Id"), MediaType.videos, vid.getString("Title"));
+    item.setFile(vid.getString("FileName"));
+    if (vid.has("Director"))
+    {
+      String director = vid.getString("Director");
+      if (!director.equals("Unknown"))
+        item.setDirector(director);
+    }
+    if (vid.has("Description"))
+    {
+      String description = vid.getString("Description");
+      if (!description.equals("None"))
+        item.setDescription(description);
+    }
+    if (vid.has("HomePage"))
+    {
+      String pageUrl = vid.getString("HomePage");
+      if (!pageUrl.isEmpty())
+        item.setPageUrl(pageUrl);
+    }
+    if (vid.has("ReleaseDate"))
+    {
+      String releaseDate = vid.getString("ReleaseDate");
+      if (!releaseDate.isEmpty())
+      {
+        String dateStr = releaseDate.replace('T', ' ');
+        if (dateStr.endsWith("Z"))
+          dateStr = dateStr.substring(0, dateStr.length() - 1);
+        Date date = dateFormat.parse(dateStr + " UTC");
+        cal.setTime(date);
+        item.setYear(cal.get(Calendar.YEAR));
+      }
+    }
+    if (vid.has("UserRating"))
+    {
+      String rating = vid.getString("UserRating");
+      if (!rating.equals("0"))
+        item.setRating((float)Integer.parseInt(rating)/2);
+    }
+    if (vid.has("Coverart"))
+    {
+      String art = vid.getString("Coverart");
+      if (!art.isEmpty())
+        item.setPoster(art);
+    }
+    
+    return item;
+  }
   
   private Item buildItem(JSONObject w, MediaType t) throws JSONException, ParseException
   {
@@ -325,6 +390,24 @@ public class JsonParser
       streamInfo.setAudioBitrate(obj.getInt("AudioBitrate"));
     
     return streamInfo;
+  }
+  
+  public String parseStorageGroupDir(String name) throws JSONException
+  {
+    JSONObject dirList = new JSONObject(json).getJSONObject("StorageGroupDirList");
+    JSONArray dirs = dirList.getJSONArray("StorageGroupDirs");
+    for (int i = 0; i < dirs.length(); i++)
+    {
+      JSONObject dir = (JSONObject) dirs.get(i);
+      if (dir.getString("GroupName").equals(name))
+      {
+        String dirPath = dir.getString("DirName");
+        if (dirPath.endsWith("/"))
+          dirPath = dirPath.substring(0, dirPath.length() - 1);
+        return dirPath;
+      }
+    }
+    return null;
   }
   
   public int parseInt() throws JSONException

@@ -51,6 +51,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
 
 public class HttpHelper
 {
@@ -154,13 +155,6 @@ public class HttpHelper
       HttpConnectionParams.setSoTimeout(httpParams, getReadTimeout());
 
       HttpHost host = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
-      AuthScope scope = new AuthScope(url.getHost(), url.getPort());
-      UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
-
-      CredentialsProvider cp = new BasicCredentialsProvider();
-      cp.setCredentials(scope, creds);
-      HttpContext credContext = new BasicHttpContext();
-      credContext.setAttribute(ClientContext.CREDS_PROVIDER, cp);
 
       HttpRequestBase job;
       if (method == Method.Get)
@@ -177,7 +171,7 @@ public class HttpHelper
       HttpResponse response = null;
       try
       {
-        response = httpClient.execute(host, job, credContext);
+        response = httpClient.execute(host, job, getDigestAuthContext(url.getHost(), url.getPort(), user, password));
       }
       catch (IOException ex)
       {
@@ -188,7 +182,11 @@ public class HttpHelper
           // try and retrieve the backend IP
           String ip = retrieveBackendIp();
           host = new HttpHost(ip, url.getPort(), url.getProtocol());
-          response = httpClient.execute(host, job, credContext);
+          response = httpClient.execute(host, job, getDigestAuthContext(ip, url.getPort(), user, password));
+          // save the retrieved ip as the external static one
+          Editor ed = sharedPrefs.edit();
+          ed.putString(AppSettings.MYTH_BACKEND_EXTERNAL_HOST, ip);
+          ed.commit();
         }
         else
         {
@@ -225,7 +223,17 @@ public class HttpHelper
           Log.e(TAG, ex.getMessage(), ex);
       }
     }
-    
+  }
+  
+  private HttpContext getDigestAuthContext(String host, int port, String user, String password)
+  {
+    CredentialsProvider cp = new BasicCredentialsProvider();
+    AuthScope scope = new AuthScope(host, port);
+    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
+    cp.setCredentials(scope, creds);
+    HttpContext credContext = new BasicHttpContext();
+    credContext.setAttribute(ClientContext.CREDS_PROVIDER, cp);
+    return credContext;
   }
   
   private byte[] retrieve(Map<String,String> headers) throws IOException
@@ -304,6 +312,8 @@ public class HttpHelper
   {
     HttpHelper helper = new HttpHelper(new URL[]{ipRetrieval}, AuthType.None, sharedPrefs);
     String backendIp = new String(helper.get());
+    if (!AppSettings.validateIp(backendIp))
+      throw new IOException("Bad IP Address: " + backendIp);
     Editor ed = sharedPrefs.edit();
     ed.putString("mythbe_external_ip", backendIp);
     ed.commit();

@@ -21,6 +21,7 @@ package com.oakesville.mythling;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -53,14 +54,14 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
+import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.LiveStreamInfo;
+import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
 import com.oakesville.mythling.app.TunerInUseException;
-import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
@@ -89,6 +90,7 @@ public abstract class MediaActivity extends Activity
   protected void setMediaType(MediaType mt) { this.mediaType = mt; }
   
   private MenuItem mediaMenuItem;
+  private MenuItem searchMenuItem;
   private MenuItem viewMenuItem;
   private MenuItem sortMenuItem;
   
@@ -141,6 +143,9 @@ public abstract class MediaActivity extends Activity
         mediaMenuItem.getSubMenu().findItem(R.id.media_videos).setChecked(true);
     }
 
+    searchMenuItem = menu.findItem(R.id.menu_search);
+    showSearchMenu(supportsSearch());
+    
     sortMenuItem = menu.findItem(R.id.menu_sort);
     showSortMenu(supportsSort() && MediaType.movies.equals(getMediaType()));
 
@@ -150,6 +155,15 @@ public abstract class MediaActivity extends Activity
     return super.onPrepareOptionsMenu(menu);
   }
   
+  protected void showSearchMenu(boolean show)
+  {
+    if (searchMenuItem != null)
+    {
+      searchMenuItem.setEnabled(show);
+      searchMenuItem.setVisible(show);
+    }
+  }  
+
   protected void showViewMenu(boolean show)
   {
     if (viewMenuItem != null)
@@ -195,6 +209,11 @@ public abstract class MediaActivity extends Activity
   protected boolean supportsSort()
   {
     return false;
+  }
+  
+  protected boolean supportsSearch()
+  {
+    return getAppSettings().isMythlingMediaServices();
   }
   
   @Override
@@ -362,9 +381,9 @@ public abstract class MediaActivity extends Activity
               onResume();
             }
           });
-          String musicUrl = appSettings.getServicesBaseUrl() + "/Content/GetMusic?Id=" + item.getId();
+          String musicUrl = appSettings.getMythTvServicesBaseUrl() + "/Content/GetMusic?Id=" + item.getId();
           Map<String,String> headers = new HashMap<String,String>();
-          String credentials = Base64.encodeToString((appSettings.getServicesAccessUser() + ":" + appSettings.getServicesAccessPassword()).getBytes(), Base64.DEFAULT);
+          String credentials = Base64.encodeToString((appSettings.getMythTvServicesUser() + ":" + appSettings.getMythTvServicesPassword()).getBytes(), Base64.DEFAULT);
           headers.put("Authorization", "Basic " + credentials);
           mediaPlayer.setDataSource(appSettings.getAppContext(), Uri.parse(musicUrl), headers);
           // TODO async?
@@ -387,9 +406,9 @@ public abstract class MediaActivity extends Activity
                 try
                 {
                   if (item.isTv())
-                    new StreamTvTask(item).execute(getAppSettings().getServicesBaseUrl());
+                    new StreamTvTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                   else
-                    new StreamVideoTask(item).execute(getAppSettings().getServicesBaseUrl());
+                    new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                 }
                 catch (MalformedURLException ex)
                 {
@@ -412,7 +431,7 @@ public abstract class MediaActivity extends Activity
           }
           else
           {
-            new StreamVideoTask(item).execute(appSettings.getServicesBaseUrl());
+            new StreamVideoTask(item).execute(appSettings.getMythTvServicesBaseUrl());
           }
         }
       }
@@ -587,7 +606,7 @@ public abstract class MediaActivity extends Activity
   {
     try
     {
-      new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getCategoriesUrl()));
+      new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));
     }
     catch (Exception ex)
     {
@@ -595,7 +614,7 @@ public abstract class MediaActivity extends Activity
     }
   }
   
-  protected void populate() throws IOException, JSONException
+  protected void populate() throws IOException, JSONException, ParseException
   {
     // default does nothing
   }
@@ -610,10 +629,21 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        HttpHelper downloader = new HttpHelper(urls, getAppSettings().getWebAuthType(), getAppSettings().getPrefs());
-        downloader.setCredentials(getAppSettings().getWebAccessUser(), getAppSettings().getWebAccessPassword());
+        HttpHelper downloader = getMediaListDownloader(urls);
         mediaListJson = new String(downloader.get());
-        mediaList = new JsonParser(mediaListJson).parseMediaList();
+        if (mediaListJson.startsWith("<"))
+        {
+          // just display html
+          ex = new IOException(mediaListJson);
+          return -1L;
+        }
+        mediaList = new JsonParser(mediaListJson).parseMediaList(getAppSettings().isMythlingMediaServices());
+        if (!getAppSettings().isMythlingMediaServices())
+        {
+          downloader = getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));
+          String storageGroupsJson = new String(downloader.get());
+          mediaList.setBasePath(new JsonParser(storageGroupsJson).parseStorageGroupDir(getAppSettings().getMediaSettings().getStorageGroup()));
+        }
         return 0L;
       }
       catch (Exception ex)
@@ -832,7 +862,7 @@ public abstract class MediaActivity extends Activity
               try
               {
                 startProgress();
-                new StreamTvTask(item, inProgressRecording).execute(getAppSettings().getServicesBaseUrl());
+                new StreamTvTask(item, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
               }
               catch (MalformedURLException ex)
               {
@@ -879,7 +909,7 @@ public abstract class MediaActivity extends Activity
 
   protected void playLiveStream(LiveStreamInfo streamInfo) throws IOException
   {
-    String streamUrl = appSettings.getServicesBaseUrl() + streamInfo.getRelativeUrl();
+    String streamUrl = appSettings.getMythTvServicesBaseUrl() + streamInfo.getRelativeUrl();
 
     // avoid retrieving unnecessary audio-only streams
     int lastDot = streamUrl.lastIndexOf('.');
@@ -896,6 +926,22 @@ public abstract class MediaActivity extends Activity
     {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(streamUrl), getApplicationContext(),  VideoActivity.class));
     }
+  }
+  
+  protected HttpHelper getMediaListDownloader(URL[] urls)
+  {
+    HttpHelper downloader;
+    if (getAppSettings().isMythlingMediaServices())
+    {
+      downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
+      downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
+    }
+    else
+    {
+      downloader = new HttpHelper(urls, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
+      downloader.setCredentials(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
+    }
+    return downloader;
   }
   
   protected void startProgress()

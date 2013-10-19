@@ -71,7 +71,7 @@ public class PlaybackPrefs extends PreferenceFragment
     
     Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary(appSettings.getFrontendIp());
+    pref.setSummary(appSettings.getFrontendHost());
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_PORT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));

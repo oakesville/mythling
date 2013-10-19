@@ -21,6 +21,7 @@ package com.oakesville.mythling.prefs;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.R;
@@ -35,17 +36,33 @@ public class ConnectionsPrefs extends PreferenceFragment
     
     AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
     
-    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_SERVICE_PORT);
+    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICE_PORT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary("" + appSettings.getBackendServicePort());
+    pref.setSummary("" + appSettings.getMythTvServicePort());
 
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_WEB_PORT);
+    SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES);
+    swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true)
+    {
+      public boolean onPreferenceChange(Preference preference, Object newValue)
+      {
+        boolean useMythlingSvcs = Boolean.valueOf(newValue.toString());
+        getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT).setEnabled(useMythlingSvcs);
+        getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT).setEnabled(useMythlingSvcs);
+        return super.onPreferenceChange(preference, newValue);
+      }
+    });
+    getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT);
+    getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT).setEnabled(appSettings.isMythlingMediaServices());
+    
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary("" + appSettings.getBackendWebPort());
-
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_WEB_ROOT);
+    pref.setSummary("" + appSettings.getMythlingWebPort());
+    pref.setEnabled(appSettings.isMythlingMediaServices());
+    
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary(appSettings.getBackendWebRoot());
+    pref.setSummary(appSettings.getMythlingWebRoot());
+    pref.setEnabled(appSettings.isMythlingMediaServices());
 
     pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));

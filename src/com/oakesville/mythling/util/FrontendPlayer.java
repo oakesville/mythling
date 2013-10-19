@@ -73,7 +73,7 @@ public class FrontendPlayer
       }
     }
     if (status == null)
-      throw new IOException("Unable to connect to mythfrontend: " + appSettings.getFrontendIp() + ":" + appSettings.getFrontendControlPort());
+      throw new IOException("Unable to connect to mythfrontend: " + appSettings.getFrontendHost() + ":" + appSettings.getFrontendControlPort());
       
     return status.startsWith("Playback");
   }
@@ -252,7 +252,7 @@ public class FrontendPlayer
   
   private void open() throws IOException
   {
-    String frontendIp = appSettings.getFrontendIp();
+    String frontendIp = appSettings.getFrontendHost();
     InetAddress serverAddr = InetAddress.getByName(frontendIp);
     int frontendPort = appSettings.getFrontendControlPort();
     socket = new Socket(serverAddr, frontendPort);

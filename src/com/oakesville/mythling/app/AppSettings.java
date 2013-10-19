@@ -41,11 +41,13 @@ public class AppSettings
   public static final String FRONTEND_PLAYBACK_CATEGORY = "frontend_playback_cat";
   public static final String INTERNAL_BACKEND_CATEGORY = "internal_backend_cat";
   public static final String EXTERNAL_BACKEND_CATEGORY = "external_backend_cat";
+  public static final String MYTHLING_SERVICE_ACCESS_CATEGORY = "mythling_service_access_cat";
   public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
   public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
-  public static final String MYTH_BACKEND_WEB_PORT = "mythbe_web_port";
-  public static final String MYTH_BACKEND_WEB_ROOT = "mythbe_web_root";
-  public static final String MYTH_BACKEND_SERVICE_PORT = "mythbe_service_port";
+  public static final String MEDIA_SERVICES = "media_services";
+  public static final String MYTHLING_WEB_PORT = "mythling_web_port";
+  public static final String MYTHLING_WEB_ROOT = "mythling_web_root";
+  public static final String MYTHTV_SERVICE_PORT = "mythtv_service_port";
   public static final String MYTH_FRONTEND_HOST = "mythfe_host";
   public static final String MYTH_FRONTEND_PORT = "mythfe_port";
   public static final String MEDIA_TYPE = "media_type";
@@ -65,12 +67,12 @@ public class AppSettings
   public static final String LAST_LOAD = "last_load";
   public static final String RETRIEVE_IP = "retrieve_ip";
   public static final String IP_RETRIEVAL_URL = "ip_retrieval_url";
-  public static final String SERVICES_AUTH_TYPE = "services_auth_type";
-  public static final String SERVICES_ACCESS_USER = "services_access_user";
-  public static final String SERVICES_ACCESS_PASSWORD = "services_access_password";
-  public static final String WEB_AUTH_TYPE = "web_auth_type";
-  public static final String WEB_ACCESS_USER = "web_access_user";
-  public static final String WEB_ACCESS_PASSWORD = "web_access_password";
+  public static final String MYTHTV_SERVICES_AUTH_TYPE = "mythtv_services_auth_type";
+  public static final String MYTHTV_SERVICES_USER = "mythtv_services_user";
+  public static final String MYTHTV_SERVICES_PASSWORD = "mythtv_services_password";
+  public static final String MYTHLING_SERVICES_AUTH_TYPE = "mythling_services_auth_type";
+  public static final String MYTHLING_SERVICES_USER = "mythling_services_user";
+  public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
   public static final String TUNER_TIMEOUT = "tuner_timeout";
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
   public static final String MOVIE_CURRENT_POSITION = "movie_current_position";
@@ -87,62 +89,79 @@ public class AppSettings
     this.prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
   }
   
-  public URL getWebBaseUrl() throws MalformedURLException
+  public URL getMythlingWebBaseUrl() throws MalformedURLException
   {
-    String ip = getBackendIp();
-    int port = getBackendWebPort();
-    String root = getBackendWebRoot();
+    String ip = getBackendHost();
+    int port = getMythlingWebPort();
+    String root = getMythlingWebRoot();
     return new URL("http://" + ip + ":" + port + (root == null || root.length() == 0 ? "" : "/" + root));
   }
   
-  public URL getCategoriesUrl() throws MalformedURLException
+  public URL getMediaListUrl() throws MalformedURLException
   {
     MediaSettings mediaSettings = getMediaSettings();
-    String url = getWebBaseUrl() + "/media.php?type=" + mediaSettings.getType().toString();
-    if (mediaSettings.getSortType() == SortType.byYear)
-      url += "&orderBy=year";
-    else if (mediaSettings.getSortType() == SortType.byRating)
-      url += "&orderBy=userrating%20desc";
+    String url;
+    if (isMythlingMediaServices())
+    {
+      url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaSettings.getType().toString();
+      if (mediaSettings.getSortType() == SortType.byYear)
+        url += "&orderBy=year";
+      else if (mediaSettings.getSortType() == SortType.byRating)
+        url += "&orderBy=userrating%20desc";
+    }
+    else
+    {
+      url = getMythTvServicesBaseUrl() + "/";
+      if (mediaSettings.getType().equals(MediaType.videos))
+        url += "Video/GetVideoList";
+      else if (mediaSettings.getType().equals(MediaType.recordings))
+        url += "Dvr/GetRecordedList";
+      else if (mediaSettings.getType().equals(MediaType.tv))
+        url += "Guide/GetProgramGuide";
+    }
       
     return new URL(url);
   }
   
   public URL getSearchUrl(String query) throws MalformedURLException, UnsupportedEncodingException
   {
-    return new URL(getWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8"));    
+    if (isMythlingMediaServices())
+      return new URL(getMythlingWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8"));
+    else
+      return null;
   }
 
-  public URL getServicesBaseUrl() throws MalformedURLException
+  public URL getMythTvServicesBaseUrl() throws MalformedURLException
   {
-    String ip = getServiceIp();
-    int servicePort = getServicePort();
+    String ip = getMythTvServiceHost();
+    int servicePort = getMythServicePort();
     return new URL("http://" + ip + ":" + servicePort);    
   }
   
-  public int getServicePort()
+  public int getMythServicePort()
   {
     if (isServiceProxy())
       return getServiceProxyPort();
     else
-      return getBackendServicePort();
+      return getMythTvServicePort();
   }
   
-  public int getBackendServicePort()
+  public int getMythTvServicePort()
   {
-    return Integer.parseInt(prefs.getString(MYTH_BACKEND_SERVICE_PORT, "6544").trim()); 
+    return Integer.parseInt(prefs.getString(MYTHTV_SERVICE_PORT, "6544").trim()); 
   }
   
-  public int getBackendWebPort()
+  public int getMythlingWebPort()
   {
-    return Integer.parseInt(prefs.getString(MYTH_BACKEND_WEB_PORT, "80").trim());
+    return Integer.parseInt(prefs.getString(MYTHLING_WEB_PORT, "80").trim());
   }
   
-  public String getBackendWebRoot()
+  public String getMythlingWebRoot()
   {
-    return prefs.getString(MYTH_BACKEND_WEB_ROOT, "mythling");
+    return prefs.getString(MYTHLING_WEB_ROOT, "mythling");
   }
   
-  public String getFrontendIp()
+  public String getFrontendHost()
   {
     return prefs.getString(MYTH_FRONTEND_HOST, "192.168.0.68").trim();
   }
@@ -161,6 +180,11 @@ public class AppSettings
   {
     return !prefs.getBoolean(VIDEO_PLAYER, false);
   }
+  
+  public boolean isMythlingMediaServices()
+  {
+    return prefs.getBoolean(MEDIA_SERVICES, false);
+  }
 
   public int getBuiltInPlayerBufferSize()
   {
@@ -172,30 +196,30 @@ public class AppSettings
     return prefs.getBoolean(NETWORK_LOCATION, false);
   }
   
-  public String getInternalBackendIp()
+  public String getInternalBackendHost()
   {
     return prefs.getString(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.70").trim();
   }
   
-  public String getExternalBackendIp()
+  public String getExternalBackendHost()
   {
     return prefs.getString(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
   }
   
-  public String getServiceIp()
+  public String getMythTvServiceHost()
   {
     if (isServiceProxy())
       return getServiceProxyIp();
     else
-      return getBackendIp();
+      return getBackendHost();
   }
   
-  public String getBackendIp()
+  public String getBackendHost()
   {
     if (isExternalNetwork())
-      return getExternalBackendIp();
+      return getExternalBackendHost();
     else
-      return getInternalBackendIp();
+      return getInternalBackendHost();
   }
   
   public URL[] getUrls(URL url) throws MalformedURLException
@@ -365,38 +389,38 @@ public class AppSettings
     return prefs.getBoolean(RETRIEVE_IP, false);
   }
   
-  public String getServicesAuthType()
+  public String getMythTvServicesAuthType()
   {
-    return prefs.getString(SERVICES_AUTH_TYPE, "None");
+    return prefs.getString(MYTHTV_SERVICES_AUTH_TYPE, "None");
   }
-  public String getServicesAccessUser()
+  public String getMythTvServicesUser()
   {
-    return prefs.getString(SERVICES_ACCESS_USER, "").trim();
+    return prefs.getString(MYTHTV_SERVICES_USER, "").trim();
   }
-  public String getServicesAccessPassword()
+  public String getMythTvServicesPassword()
   {
-    return prefs.getString(SERVICES_ACCESS_PASSWORD, "").trim();
+    return prefs.getString(MYTHTV_SERVICES_PASSWORD, "").trim();
   }
-  public String getServicesAccessPasswordMasked()
+  public String getMythTvServicesPasswordMasked()
   {
-    return getMasked(getServicesAccessPassword());
+    return getMasked(getMythTvServicesPassword());
   }
   
-  public String getWebAuthType()
+  public String getMythlingServicesAuthType()
   {
-    return prefs.getString(WEB_AUTH_TYPE, "None");
+    return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, "None");
   }
-  public String getWebAccessUser()
+  public String getMythlingServicesUser()
   {
-    return prefs.getString(WEB_ACCESS_USER, "").trim();
+    return prefs.getString(MYTHLING_SERVICES_USER, "").trim();
   }
-  public String getWebAccessPassword()
+  public String getMythlingServicesPassword()
   {
-    return prefs.getString(WEB_ACCESS_PASSWORD, "").trim();
+    return prefs.getString(MYTHLING_SERVICES_PASSWORD, "").trim();
   }
-  public String getWebAccessPasswordMasked()
+  public String getMythlingServicesPasswordMasked()
   {
-    return getMasked(getWebAccessPassword());
+    return getMasked(getMythlingServicesPassword());
   }
   
   public static String getMasked(String in)
@@ -441,13 +465,23 @@ public class AppSettings
       "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
       "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
   
-  private Pattern ipAddressPattern;
-  public boolean validateIp(String ip)
+  private static Pattern ipAddressPattern;
+  public static boolean validateIp(String ip)
   {
     if (ipAddressPattern == null)
       ipAddressPattern = Pattern.compile(IPADDRESS_PATTERN);
     Matcher matcher = ipAddressPattern.matcher(ip);
     return matcher.matches();
+  }
+  
+  public boolean validateHost(String host)
+  {
+    if (host == null)
+      return false;
+    if (Character.isDigit(host.charAt(0)))
+      return validateIp(host);
+    
+    return true;
   }
   
   public void validate() throws BadSettingsException
@@ -482,49 +516,49 @@ public class AppSettings
         }
         else
         {
-          if (!validateIp(getExternalBackendIp()))
-            throw new BadSettingsException("Network > External Backend > IP Address");
+          if (!validateHost(getExternalBackendHost()))
+            throw new BadSettingsException("Network > External Backend > Host");
         }
       }
       else
       {
-        if (!validateIp(getInternalBackendIp()))
-          throw new BadSettingsException("Network > Internal Backend > IP Address");
+        if (!validateHost(getInternalBackendHost()))
+          throw new BadSettingsException("Network > Internal Backend > Host");
       }
       
       // backend ports regardless of internal/external network
       try
       {
-        if (getBackendServicePort() <= 0)
-          throw new BadSettingsException("Connections > Backend Ports > Service Port");
+        if (getMythTvServicePort() <= 0)
+          throw new BadSettingsException("Connections > Content Services > MythTV Service Port");
       }
       catch (NumberFormatException ex)
       {
-        throw new BadSettingsException("Connections > Backend Ports > Service Port", ex);
+        throw new BadSettingsException("Connections > Content Services > MythTV Service Port", ex);
       }
       try
       {
-        if (getBackendWebPort() <= 0)
-          throw new BadSettingsException("Connections > Backend Ports > Web Port");
+        if (isMythlingMediaServices() && getMythlingWebPort() <= 0)
+          throw new BadSettingsException("Connections > Media Services > Mythling Web Port");
       }
       catch (NumberFormatException ex)
       {
-        throw new BadSettingsException("Connections > Backend Ports > Web Port", ex);
+        throw new BadSettingsException("Connections > Media Services > Mythling Web Port", ex);
       }
       
       // services only used for device playback
-      if (!getServicesAuthType().equals("None"))
+      if (!getMythTvServicesAuthType().equals("None"))
       {
-        if (getServicesAccessUser().isEmpty())
-          throw new BadSettingsException("Settings > Credentials > Services Access > User");
-        if (getServicesAccessPassword().isEmpty())
-          throw new BadSettingsException("Settings > Credentials > Services Access > Password");
+        if (getMythTvServicesUser().isEmpty())
+          throw new BadSettingsException("Settings > Credentials > MythTV Services > User");
+        if (getMythTvServicesPassword().isEmpty())
+          throw new BadSettingsException("Settings > Credentials > MythTV Services > Password");
       }      
     }
     else
     {
-      if (!validateIp(getFrontendIp()))
-        throw new BadSettingsException("Settings > Playback > Frontend Player > IP Address");
+      if (!validateHost(getFrontendHost()))
+        throw new BadSettingsException("Settings > Playback > Frontend Player > Host");
       try
       {
         if (getFrontendControlPort() <=0 )
@@ -536,13 +570,12 @@ public class AppSettings
       }
     }
     
-    // web access needed for any type of playback
-    if (!getWebAuthType().equals("None"))
+    if (isMythlingMediaServices() && !getMythlingServicesAuthType().equals("None"))
     {
-      if (getWebAccessUser().isEmpty())
-        throw new BadSettingsException("Settings > Credentials > Web Access > User");
-      if (getWebAccessPassword().isEmpty())
-        throw new BadSettingsException("Settings > Credentials > Web Access > Password");
+      if (getMythlingServicesUser().isEmpty())
+        throw new BadSettingsException("Settings > Credentials > Mythling Services > User");
+      if (getMythlingServicesPassword().isEmpty())
+        throw new BadSettingsException("Settings > Credentials > Mythling Services > Password");
     }
     
     try
@@ -556,6 +589,5 @@ public class AppSettings
     }
     
   }
-
   
 }

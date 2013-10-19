@@ -50,7 +50,7 @@ public class Transcoder
    */
   public boolean beginTranscode(Item item) throws IOException
   {
-    URL baseUrl = appSettings.getServicesBaseUrl();
+    URL baseUrl = appSettings.getMythTvServicesBaseUrl();
 
     boolean preExist = false;
     int maxTranscodes = 3;  // TODO prefs
@@ -132,7 +132,7 @@ public class Transcoder
   public void waitAvailable() throws IOException, InterruptedException
   {
     // wait for content to be available
-    String streamUrl = appSettings.getServicesBaseUrl() + streamInfo.getRelativeUrl();
+    String streamUrl = appSettings.getMythTvServicesBaseUrl() + streamInfo.getRelativeUrl();
     // avoid retrieving unnecessary audio-only streams
     int lastDot = streamUrl.lastIndexOf('.');
     streamUrl = streamUrl.substring(0, lastDot) + ".av" + streamUrl.substring(lastDot);
@@ -177,8 +177,8 @@ public class Transcoder
   
   private HttpHelper getServiceDownloader(URL url) throws MalformedURLException
   {
-    HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), appSettings.getServicesAuthType(), appSettings.getPrefs());
-    downloader.setCredentials(appSettings.getServicesAccessUser(), appSettings.getServicesAccessPassword());
+    HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
+    downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
     return downloader;
   }
   

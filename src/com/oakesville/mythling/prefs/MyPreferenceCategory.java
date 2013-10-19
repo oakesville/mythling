@@ -23,7 +23,7 @@ import android.preference.PreferenceCategory;
 import android.util.AttributeSet;
 
 /**
- * Allow UI enablement.
+ * Allow UI enablement (of the title).
  */
 public class MyPreferenceCategory extends PreferenceCategory
 {

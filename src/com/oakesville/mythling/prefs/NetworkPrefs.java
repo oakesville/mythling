@@ -50,11 +50,11 @@ public class NetworkPrefs extends PreferenceFragment
 
     Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary(appSettings.getInternalBackendIp());
+    pref.setSummary(appSettings.getInternalBackendHost());
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_HOST);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary(appSettings.getExternalBackendIp());
+    pref.setSummary(appSettings.getExternalBackendHost());
     
     swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.RETRIEVE_IP);
     swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true)
@@ -65,11 +65,11 @@ public class NetworkPrefs extends PreferenceFragment
         return super.onPreferenceChange(preference, newValue);
       }
     });
-    getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL).setEnabled(appSettings.isIpRetrieval());
     
     pref = getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary(appSettings.getIpRetrievalUrlString());    
+    pref.setSummary(appSettings.getIpRetrievalUrlString());
+    pref.setEnabled(appSettings.isIpRetrieval());
   }
   
   private void doCategoryEnablement(boolean isExternalNet)

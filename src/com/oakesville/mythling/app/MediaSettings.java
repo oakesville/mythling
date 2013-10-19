@@ -28,7 +28,8 @@ public class MediaSettings
     music,
     recordings,
     tv,
-    movies
+    movies,
+    images  // only used for cover art
   }
   
   public enum ViewType
@@ -166,5 +167,23 @@ public class MediaSettings
   {
     return type.toString();
   }
-
+  
+  public String getStorageGroup()
+  {
+    return getStorageGroup(type);
+  }
+  
+  /**
+   * TODO: prefs
+   */
+  public static String getStorageGroup(MediaType mediaType)
+  {
+    if (mediaType == MediaType.movies || mediaType == MediaType.videos)
+      return "Videos";
+    else if (mediaType == MediaType.images)
+      return "Coverart";
+    else
+      return "Default";
+    
+  }
 }
