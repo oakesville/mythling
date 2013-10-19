@@ -20,8 +20,11 @@ package com.oakesville.mythling;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.List;
 
 import org.json.JSONException;
@@ -58,6 +61,7 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
+import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.util.HttpHelper;
 
@@ -124,7 +128,7 @@ public class MediaPagerActivity extends MediaActivity
     super.onResume();
   }
 
-  public void populate() throws IOException, JSONException
+  public void populate() throws IOException, JSONException, ParseException
   {
     if (getAppData() == null)
     {
@@ -240,7 +244,7 @@ public class MediaPagerActivity extends MediaActivity
   @Override
   protected boolean supportsSort()
   {
-    return true;
+    return getAppSettings().isMythlingMediaServices();
   }  
   
   public void refresh()
@@ -353,14 +357,14 @@ public class MediaPagerActivity extends MediaActivity
           {
             posterView = (ImageView) movieView.findViewById(R.id.posterImage);
             // http://mythbe:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=acp.jpg
-            String posterStorageGroup = "Coverart"; // TODO prefs
+            String posterStorageGroup = MediaSettings.getStorageGroup(MediaType.images);
             try
             {
               String filePath = pagerActivity.path + "/" + item.getPoster();
               Bitmap bitmap = getAppData().getImageBitMap(filePath);
               if (bitmap == null)
               {
-                URL url = new URL(appSettings.getServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + posterStorageGroup + "&FileName=" + item.getPoster());
+                URL url = new URL(appSettings.getMythTvServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + posterStorageGroup + "&FileName=" + item.getPoster());
                 new ImageRetrievalTask().execute(url);
               }
               else
@@ -405,10 +409,27 @@ public class MediaPagerActivity extends MediaActivity
           if (item.getPageUrl() != null && getAppData().getMediaList().getPageLinkTitle() != null)
           {
             // page link
-            TextView tv = (TextView) movieView.findViewById(R.id.oakesvilleLink);
-            tv = (TextView) movieView.findViewById(R.id.pageLink);
+            TextView tv = (TextView) movieView.findViewById(R.id.pageLink);
             tv.setText(Html.fromHtml("<a href='" + item.getPageUrl() + "'>" + getAppData().getMediaList().getPageLinkTitle() + "</a>"));
             tv.setMovementMethod(LinkMovementMethod.getInstance());
+            
+            if (BuildConfig.DEBUG)
+            {
+              try
+              {
+                // oakesville link
+                tv = (TextView) movieView.findViewById(R.id.pageLink2);
+                String list = "all" + pagerActivity.path.replaceAll("-", "") + "Movies";
+                String url = "http://www.oakesville.com/Horror/allMovies.jsf?list=" + list + "&item=" + URLEncoder.encode(item.getTitle(), "UTF-8");
+                tv.setText(Html.fromHtml("<a href='" + url + "'>Oakesville</a>"));
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+              }
+              catch (UnsupportedEncodingException ex)
+              {
+                if (BuildConfig.DEBUG)
+                  Log.e(TAG, ex.getMessage(), ex);
+              }
+            }
           }
           
           Button button = (Button) movieView.findViewById(R.id.pagerPlay);
@@ -454,8 +475,8 @@ public class MediaPagerActivity extends MediaActivity
           {
             if (BuildConfig.DEBUG)
               Log.d(TAG, "Loading image from url: " + urls[0]);
-            HttpHelper downloader = new HttpHelper(urls, appSettings.getServicesAuthType(), appSettings.getPrefs());
-            downloader.setCredentials(appSettings.getServicesAccessUser(), appSettings.getServicesAccessPassword());
+            HttpHelper downloader = new HttpHelper(urls, appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
+            downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
             try
             {
               byte[] imageBytes = downloader.get();
