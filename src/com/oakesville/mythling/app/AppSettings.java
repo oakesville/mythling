@@ -22,6 +22,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +34,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
-import com.oakesville.mythling.R;
 
 public class AppSettings
 {
@@ -76,6 +80,7 @@ public class AppSettings
   public static final String TUNER_TIMEOUT = "tuner_timeout";
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
   public static final String MOVIE_CURRENT_POSITION = "movie_current_position";
+  public static final String DEFAULT_MEDIA_TYPE = "recordings";
   
   private Context appContext;
   public Context getAppContext() { return appContext; }
@@ -83,10 +88,14 @@ public class AppSettings
   private SharedPreferences prefs;
   public SharedPreferences getPrefs() { return prefs; }
   
+  private static DateFormat dateTimeFormat; 
+  
   public AppSettings(Context appContext)
   {
     this.appContext = appContext;
     this.prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+    dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    dateTimeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
   
   public URL getMythlingWebBaseUrl() throws MalformedURLException
@@ -117,7 +126,11 @@ public class AppSettings
       else if (mediaSettings.getType().equals(MediaType.recordings))
         url += "Dvr/GetRecordedList";
       else if (mediaSettings.getType().equals(MediaType.tv))
-        url += "Guide/GetProgramGuide";
+      {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        String nowUtc = dateTimeFormat.format(cal.getTime()).replace(' ', 'T');
+        url += "Guide/GetProgramGuide?StartTime=" + nowUtc + "&EndTime=" + nowUtc;
+      }
     }
       
     return new URL(url);
@@ -314,7 +327,7 @@ public class AppSettings
 
   public MediaSettings getMediaSettings()
   {
-    String mediaType = prefs.getString(MEDIA_TYPE, "videos");
+    String mediaType = prefs.getString(MEDIA_TYPE, DEFAULT_MEDIA_TYPE);
     MediaSettings mediaSettings = new MediaSettings(mediaType);
     String viewType = prefs.getString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
     mediaSettings.setViewType(viewType);

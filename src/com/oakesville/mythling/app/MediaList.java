@@ -45,13 +45,6 @@ public class MediaList
   {
     retrieveDate = dateFormat.parse(d);    
   }
-  public void setRetrieveDateMyth(String d) throws ParseException
-  {
-    String str = d.replace('T',  ' ');
-    if (str.endsWith("Z"))
-      str = str.substring(0, str.length() - 1);
-    retrieveDate = dateFormat.parse(str + " UTC");
-  }
   public String getRetrieveDateDisplay() 
   {
     return dateDisplay.format(retrieveDate);

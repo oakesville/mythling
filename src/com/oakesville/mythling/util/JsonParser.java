@@ -77,17 +77,59 @@ public class JsonParser
     }
     else
     {
-      JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
-      mediaList.setMediaType(MediaType.videos);
-      mediaList.setRetrieveDateMyth(infoList.getString("AsOf"));
-      mediaList.setCount(infoList.getString("Count"));
-      Category vidCat = new Category("Videos", MediaType.videos);
-      mediaList.addCategory(vidCat);
-      JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
-      for (int i = 0; i < vids.length(); i++)
+      if (list.has("VideoMetadataInfoList"))
       {
-        JSONObject vid = (JSONObject) vids.get(i);
-        vidCat.addItem(buildMythVideoItem(vid));
+        // videos
+        mediaList.setMediaType(MediaType.videos);
+        JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
+        mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
+        mediaList.setCount(infoList.getString("Count"));
+        Category vidCat = new Category("Videos", MediaType.videos);
+        mediaList.addCategory(vidCat);
+        JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
+        for (int i = 0; i < vids.length(); i++)
+        {
+          JSONObject vid = (JSONObject) vids.get(i);
+          vidCat.addItem(buildMythVideoItem(vid));
+        }
+      }
+      else if (list.has("ProgramList"))
+      {
+        // recordings
+        mediaList.setMediaType(MediaType.recordings);
+        JSONObject infoList = list.getJSONObject("ProgramList");
+        mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
+        mediaList.setCount(infoList.getString("Count"));
+        Category recCat = new Category("Recordings", MediaType.recordings);
+        mediaList.addCategory(recCat);
+        JSONArray recs = infoList.getJSONArray("Programs");
+        for (int i = 0; i < recs.length(); i++)
+        {
+          JSONObject rec = (JSONObject) recs.get(i);
+          recCat.addItem(buildMythRecordingItem(rec));
+        }
+      }
+      else if (list.has("ProgramGuide"))
+      {
+        // tv
+        mediaList.setMediaType(MediaType.tv);
+        JSONObject infoList = list.getJSONObject("ProgramGuide");
+        mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
+        mediaList.setCount(infoList.getString("Count"));
+        Category tvCat = new Category("TV", MediaType.tv);
+        mediaList.addCategory(tvCat);
+        JSONArray chans = infoList.getJSONArray("Channels");
+        for (int i = 0; i < chans.length(); i++)
+        {
+          JSONObject chanInfo = (JSONObject) chans.get(i);
+          Item show = buildMythTvShowItem(chanInfo);
+          if (show != null)
+            tvCat.addItem(show);
+        }
+      }
+      else
+      {
+        throw new JSONException("Unsupported MediaList Content: " + list.keys().next());
       }
     }
     if (BuildConfig.DEBUG)
@@ -212,12 +254,13 @@ public class JsonParser
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   private static DateFormat dateTimeRawFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-
   private Item buildMythVideoItem(JSONObject vid) throws JSONException, ParseException
   {
     Item item = new Item(vid.getString("Id"), MediaType.videos, vid.getString("Title"));
-    item.setFile(vid.getString("FileName"));
+    String filename = vid.getString("FileName");
+    int lastdot = filename.lastIndexOf('.');
+    item.setFile(filename.substring(0, lastdot));
+    item.setFormat(filename.substring(lastdot + 1));
     if (vid.has("Director"))
     {
       String director = vid.getString("Director");
@@ -245,6 +288,7 @@ public class JsonParser
         if (dateStr.endsWith("Z"))
           dateStr = dateStr.substring(0, dateStr.length() - 1);
         Date date = dateFormat.parse(dateStr + " UTC");
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTime(date);
         item.setYear(cal.get(Calendar.YEAR));
       }
@@ -265,6 +309,73 @@ public class JsonParser
     return item;
   }
   
+  private Item buildMythRecordingItem(JSONObject rec) throws JSONException, ParseException
+  {
+    JSONObject channel = rec.getJSONObject("Channel");
+    String chanId = channel.getString("ChanId");
+    String startTime = rec.getString("StartTime").replace('T', ' ');
+    String id = chanId + "~" + startTime;
+    Item item = new Item(id, MediaType.recordings, rec.getString("Title"));
+    item.setStartTime(parseMythDateTime(startTime));
+    String filename = rec.getString("FileName");
+    int lastdot = filename.lastIndexOf('.');
+    item.setFile(filename.substring(0, lastdot));
+    item.setFormat(filename.substring(lastdot + 1));
+    item.setProgramStart(startTime);
+    if (channel.has("CallSign"))
+      item.setCallsign("CallSign");
+    addMythProgramInfo(item, rec);
+    return item;
+  }
+  
+  private Item buildMythTvShowItem(JSONObject chanInfo) throws JSONException, ParseException
+  {
+    String chanId = chanInfo.getString("ChanId");
+    if (!chanInfo.has("Programs"))
+      return null;
+    JSONArray progs = chanInfo.getJSONArray("Programs");
+    if (progs.length() == 0)
+      return null;
+    JSONObject prog = (JSONObject) progs.get(0);
+    String startTime = prog.getString("StartTime").replace('T', ' ');
+    String id = chanId + "~" + startTime;
+    Item item = new Item(id, MediaType.tv, prog.getString("Title"));
+    item.setStartTime(parseMythDateTime(startTime));
+    item.setProgramStart(startTime);
+    if (chanInfo.has("CallSign"))
+      item.setCallsign(chanInfo.getString("CallSign"));
+    addMythProgramInfo(item, prog);
+    return item;
+  }
+
+  private void addMythProgramInfo(Item item, JSONObject show) throws JSONException, ParseException
+  {
+    if (show.has("SubTitle"))
+    {
+      String subtit = show.getString("SubTitle");
+      if (!subtit.isEmpty())
+        item.setSubTitle(subtit);
+    }
+    if (show.has("Description"))
+    {
+      String description = show.getString("Description");
+      if (!description.isEmpty())
+        item.setDescription(description);
+    }
+    if (show.has("Airdate"))
+    {
+      String airdate = show.getString("Airdate");
+      if (!airdate.isEmpty())
+        item.setOriginallyAired(dateFormat.parse(airdate));
+    }
+    if (show.has("EndTime"))
+    {
+      String endtime = show.getString("EndTime");
+      if (!endtime.isEmpty())
+        item.setEndTime(parseMythDateTime(endtime));
+    }    
+  }
+
   private Item buildItem(JSONObject w, MediaType t) throws JSONException, ParseException
   {
     Item item = new Item(w.getString("id"), t, w.getString("title"));
@@ -342,6 +453,14 @@ public class JsonParser
     }
     
     return streamList;
+  }
+  
+  public Date parseMythDateTime(String dt) throws ParseException
+  {
+    String str = dt.replace('T',  ' ');
+    if (str.endsWith("Z"))
+      str = str.substring(0, str.length() - 1);
+    return dateTimeRawFormat.parse(str + " UTC");    
   }
   
   public LiveStreamInfo parseStreamInfo()

@@ -93,6 +93,7 @@ public abstract class MediaActivity extends Activity
   private MenuItem searchMenuItem;
   private MenuItem viewMenuItem;
   private MenuItem sortMenuItem;
+  private MenuItem musicMenuItem;
   
   private static MediaPlayer mediaPlayer;
   
@@ -133,14 +134,17 @@ public abstract class MediaActivity extends Activity
       mediaMenuItem.setTitle(mediaSettings.getTitle());
       if (mediaSettings.isMusic())
         mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
-      else if (mediaSettings.isRecordings())
-        mediaMenuItem.getSubMenu().findItem(R.id.media_recordings).setChecked(true);
       else if (mediaSettings.isTv())
         mediaMenuItem.getSubMenu().findItem(R.id.media_tv).setChecked(true);
       else if (mediaSettings.isMovies())
         mediaMenuItem.getSubMenu().findItem(R.id.media_movies).setChecked(true);
-      else
+      else if (mediaSettings.isVideos())
         mediaMenuItem.getSubMenu().findItem(R.id.media_videos).setChecked(true);
+      else
+        mediaMenuItem.getSubMenu().findItem(R.id.media_recordings).setChecked(true);
+      
+      musicMenuItem = mediaMenuItem.getSubMenu().findItem(R.id.media_music);
+      showMusicMenuItem(supportsMusic());
     }
 
     searchMenuItem = menu.findItem(R.id.menu_search);
@@ -150,7 +154,7 @@ public abstract class MediaActivity extends Activity
     showSortMenu(supportsSort() && MediaType.movies.equals(getMediaType()));
 
     viewMenuItem = menu.findItem(R.id.menu_view);
-    showViewMenu(supportsSort() && MediaType.movies.equals(getMediaType()));
+    showViewMenu(supportsViewSelection() && MediaType.movies.equals(getMediaType()));
 
     return super.onPrepareOptionsMenu(menu);
   }
@@ -164,6 +168,20 @@ public abstract class MediaActivity extends Activity
     }
   }  
 
+  protected void showMusicMenuItem(boolean show)
+  {
+    if (musicMenuItem != null)
+    {
+      musicMenuItem.setEnabled(show);
+      musicMenuItem.setVisible(show);
+      if (appSettings.getMediaSettings().isMusic())
+      {
+        appSettings.getMediaSettings().setType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
+        
+      }
+    }
+  }
+  
   protected void showViewMenu(boolean show)
   {
     if (viewMenuItem != null)
@@ -212,6 +230,11 @@ public abstract class MediaActivity extends Activity
   }
   
   protected boolean supportsSearch()
+  {
+    return getAppSettings().isMythlingMediaServices();
+  }
+  
+  protected boolean supportsMusic()
   {
     return getAppSettings().isMythlingMediaServices();
   }

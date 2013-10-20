@@ -116,7 +116,10 @@ public class MediaPagerActivity extends MediaActivity
   {
     try
     {
-      populate();
+      if (getAppData() == null || getAppData().isExpired())
+        refresh();
+      else
+        populate();
     }
     catch (Exception ex)
     {
@@ -148,7 +151,8 @@ public class MediaPagerActivity extends MediaActivity
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
     showViewMenu(mediaList.getMediaType() == MediaType.movies);
-    showSortMenu(mediaList.getMediaType() == MediaType.movies);    
+    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     items = mediaList.getListables(path);
 
     pagerAdapter = new MoviePagerAdapter(getFragmentManager());
@@ -235,7 +239,6 @@ public class MediaPagerActivity extends MediaActivity
     }
   }
   
-  @Override
   protected boolean supportsViewSelection()
   {
     return true;
@@ -251,8 +254,8 @@ public class MediaPagerActivity extends MediaActivity
   {
     getAppSettings().setLastLoad(0);
     Intent intent = new Intent(this, MainActivity.class);
-    startActivity(intent);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intent);
     finish();
   }
   

@@ -130,6 +130,9 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
+    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
+    
     if (mediaList.getMediaType() == MediaType.tv)
     {
       stopProgress();

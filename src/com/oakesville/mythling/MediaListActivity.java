@@ -98,7 +98,10 @@ public class MediaListActivity extends MediaActivity
   {
     try
     {
-      populate();
+      if (getAppData() == null || getAppData().isExpired())
+        refresh();
+      else
+        populate();
     }
     catch (Exception ex)
     {
@@ -131,6 +134,7 @@ public class MediaListActivity extends MediaActivity
     setMediaType(mediaList.getMediaType());
     showViewMenu(mediaList.getMediaType() == MediaType.movies);
     showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     listables = mediaList.getListables(path);
     if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
     {
@@ -230,7 +234,7 @@ public class MediaListActivity extends MediaActivity
       });
     }
   }
-
+  
   @Override
   protected boolean supportsViewSelection()
   {
@@ -254,7 +258,10 @@ public class MediaListActivity extends MediaActivity
   public void refresh()
   {
     getAppSettings().setLastLoad(0);
-    startActivity(new Intent(this, MainActivity.class));
+    Intent intent = new Intent(this, MainActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intent);
+    finish();
   }
 
   protected void goPagerView()
