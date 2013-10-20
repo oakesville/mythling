@@ -124,7 +124,7 @@ public class AppSettings
       if (mediaSettings.getType().equals(MediaType.videos))
         url += "Video/GetVideoList";
       else if (mediaSettings.getType().equals(MediaType.recordings))
-        url += "Dvr/GetRecordedList";
+        url += "Dvr/GetRecordedList?Descending=true";
       else if (mediaSettings.getType().equals(MediaType.tv))
       {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

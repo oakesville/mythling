@@ -24,7 +24,7 @@ import java.util.List;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 
-public class Category implements Listable
+public class Category implements Listable, Comparable<Category>
 {
   public Category(String name, MediaType type)
   {
@@ -89,6 +89,12 @@ public class Category implements Listable
   public String getLabel()
   {
     return name;
+  }
+
+  @Override
+  public int compareTo(Category another)
+  {
+    return this.name.compareTo(another.name);
   }
 
 }

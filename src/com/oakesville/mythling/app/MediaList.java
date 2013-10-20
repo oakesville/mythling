@@ -79,6 +79,16 @@ public class MediaList
     categories.add(cat);
   }
   
+  public Category getCategory(String name)
+  {
+    for (Category cat : categories)
+    {
+      if (cat.getName().equals(name))
+        return cat;
+    }
+    return null;
+  }
+  
   public List<Listable> getListables(String path)
   {
     Category curCat = null;

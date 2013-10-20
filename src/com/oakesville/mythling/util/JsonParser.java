@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -100,13 +101,19 @@ public class JsonParser
         JSONObject infoList = list.getJSONObject("ProgramList");
         mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
         mediaList.setCount(infoList.getString("Count"));
-        Category recCat = new Category("Recordings", MediaType.recordings);
-        mediaList.addCategory(recCat);
         JSONArray recs = infoList.getJSONArray("Programs");
         for (int i = 0; i < recs.length(); i++)
         {
           JSONObject rec = (JSONObject) recs.get(i);
-          recCat.addItem(buildMythRecordingItem(rec));
+          Item recItem = buildMythRecordingItem(rec);
+          Category cat = mediaList.getCategory(recItem.getTitle());
+          if (cat == null)
+          {
+            cat = new Category(recItem.getTitle(), MediaType.recordings);
+            mediaList.addCategory(cat);
+          }
+          cat.addItem(recItem);
+          Collections.sort(mediaList.getCategories());
         }
       }
       else if (list.has("ProgramGuide"))
