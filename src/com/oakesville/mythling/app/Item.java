@@ -306,7 +306,7 @@ public class Item implements Listable
       else if (isRecording())
         str += "(Recording)";
       else if (isTv())
-        str += "(TV)";
+        str += "(Live TV)";
       else if (isMovie())
         str += "(Movie)";
       else
@@ -315,28 +315,30 @@ public class Item implements Listable
       str += " " + (path.length() == 0 ? "" : path + "/");
     }
     
-    if (isTv())
-      str += getChannelNumber() + " (" + getCallsign() + ") ";
-    
-    str += title;
-    if (extra != null)
-      str += " (" + extra + ")";
-    if (artist != null)
-      str += " - " + artist;
     if (isRecording())
     {
+      if (path != null)
+        str += title + " - ";
       try
       {
-        str += " (" + getStartDateTimeFormatted() + ")";
+        str += getStartDateTimeFormatted() + " - ";
+        str += getChannelNumber() + " (" + getCallsign() + ") ";
       }
       catch (ParseException ex)
       {
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
       }
+      if (path == null)
+      {
+        str += "\n" + title;
+        str += "\n" + getShowInfo();
+      }
     }
     else if (isTv())
     {
+      str += getChannelNumber() + " (" + getCallsign() + ") ";
+      str += title;
       try
       {
         str += " (" + getStartTimeFormatted() + " - " + getEndTimeFormatted() + ")";
@@ -347,13 +349,20 @@ public class Item implements Listable
           Log.e(TAG, ex.getMessage(), ex);
       }
     }
-    else if (isMovie())
+    else
     {
-      str += " (" + getYear() + ")  " + getRatingString();
+      str += title;
+      if (extra != null)
+        str += " (" + extra + ")";
+      if (artist != null)
+        str += " - " + artist;
+      else if (isMovie())
+      {
+        str += " (" + getYear() + ")  " + getRatingString();
+      }
+      else if (subTitle != null)
+        str += " - \"" + subTitle + "\"";
     }
-    if (subTitle != null)
-      str += " - \"" + subTitle + "\"";
-    
     return str;
   }
   

@@ -330,7 +330,7 @@ public class JsonParser
     item.setFormat(filename.substring(lastdot + 1));
     item.setProgramStart(startTime);
     if (channel.has("CallSign"))
-      item.setCallsign("CallSign");
+      item.setCallsign(channel.getString("CallSign"));
     addMythProgramInfo(item, rec);
     return item;
   }
@@ -544,6 +544,5 @@ public class JsonParser
   public boolean parseBool() throws JSONException
   {
     return Boolean.parseBoolean(new JSONObject(json).getString("bool"));
-  }
-  
+  }  
 }

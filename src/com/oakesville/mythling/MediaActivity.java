@@ -416,12 +416,12 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          if (item.isTv() || item.isRecording() || item.isMovie())
+          if (item.isTv() || item.isMovie())
           {
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setTitle(item.getTitle())
-            .setMessage(item.getShowInfo())
+            .setMessage(item.getShowInfo() + (item.isTv() ? "\n\nRecording will be started if necessary." : ""))
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {
               public void onClick(DialogInterface dialog, int which)
@@ -947,7 +947,7 @@ public abstract class MediaActivity extends Activity
     }
     else
     {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(streamUrl), getApplicationContext(),  VideoActivity.class));
+      // XXX internal player
     }
   }
   

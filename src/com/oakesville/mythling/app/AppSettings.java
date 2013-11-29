@@ -121,7 +121,7 @@ public class AppSettings
     else
     {
       url = getMythTvServicesBaseUrl() + "/";
-      if (mediaSettings.getType().equals(MediaType.videos))
+      if (mediaSettings.getType().equals(MediaType.videos) || mediaSettings.getType().equals(MediaType.movies))
         url += "Video/GetVideoList";
       else if (mediaSettings.getType().equals(MediaType.recordings))
         url += "Dvr/GetRecordedList?Descending=true";
