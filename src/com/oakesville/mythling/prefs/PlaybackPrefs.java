@@ -51,7 +51,7 @@ public class PlaybackPrefs extends PreferenceFragment
     });
     doCategoryEnablement(appSettings.isDevicePlayback());
 
-// XXX vitamio
+// XXX internal player
     swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
     swPref.setEnabled(false);
 //    swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
@@ -82,7 +82,7 @@ public class PlaybackPrefs extends PreferenceFragment
   {
     Preference deviceCat = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY);
     deviceCat.setEnabled(isDevice);
-    // XXX vitamio
+    // XXX internal player
     SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
     swPref.setEnabled(false);
     
@@ -90,7 +90,7 @@ public class PlaybackPrefs extends PreferenceFragment
     frontendCat.setEnabled(!isDevice);
   }
 
-// XXX vitamio
+// XXX internal player
 //  private void doBufferSizeEnablement(boolean isInternal)
 //  {
 //    Preference pref = getPreferenceScreen().findPreference(AppSettings.BUILT_IN_PLAYER_BUFFER_SIZE);

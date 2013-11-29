@@ -38,7 +38,7 @@
       android:defaultValue="External App"
       android:layout="@layout/sw_pref_inner"    
       android:widgetLayout="@layout/prefs_switch" />
-    <!-- XXX vitamio
+    <!-- XXX built-in player
     <ListPreference 
       android:key="built_in_player_buffer_size"
       android:title="@string/title_built_in_player_buffer_size"
