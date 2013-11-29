@@ -1,10 +1,17 @@
 <?php
-// Assign values for these constants and drop this file 
-// somewhere under your Apache DocumentRoot directory.
+// Assign values for these constants and drop this file somewhere
+// under your Apache DocumentRoot directory.
 $MYTHDB_HOST = "localhost";
 $MYTHDB_DATABASE = "mythconverg";
 $MYTHDB_USER = "mythtv";
 $MYTHDB_PASSWORD = "mythtv";
+
+// Uncomment these if you categorize media types using directories.
+$VIDEO_MOVIE_DIRS = array("Horror", "Pre-Code");
+// $VIDEO_TV_DIRS = array("TODO");
+$VIDEO_EXCLUDE_DIRS = array("To Watch");
+// TODO use inetref for IMDB or MOVIEDB or TVDB
+$PAGE_LINK_TITLE = "IMDB";
 
 $VIDEO_STORAGE_GROUP = "Videos";
 $VIDEO_DIR_SETTING = "VideoStartupDir";
@@ -12,10 +19,6 @@ $MUSIC_DIR_SETTING = "MusicLocation";
 $ARTWORK_STORAGE_GROUP = "Coverart";
 $ARTWORK_DIR_SETTING = "VideoArtworkDir";
 $RECORDINGS_STORAGE_GROUP = "Default";
-
-$VIDEO_MOVIE_DIRS = array("Horror", "Pre-Code");
-$VIDEO_EXCLUDE_DIRS = array("To Watch");
-$PAGE_LINK_TITLE = "IMDB";
 
 $type = new Type($_REQUEST['type']);
 if (!$type->isSpecified())
@@ -28,6 +31,13 @@ if ($type->isSearch())
   if ($searchQuery == null)
     die("Missing search parameter: query");
 }
+
+if (!isset($VIDEO_MOVIE_DIRS))
+	$VIDEO_MOVIE_DIRS = array();
+if (!isset($VIDEO_EXCLUDE_DIRS))
+	$VIDEO_EXCLUDE_DIRS = array();
+if (!isset($VIDEO_TV_DIRS))
+	$VIDEO_TV_DIRS = array();
 
 $hostname = gethostname();
 date_default_timezone_set("UTC");
@@ -104,7 +114,7 @@ if ($type->isSearch())
 	    $pst = mysql_result($mRes, $i, "coverfile");
 	    $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
 	    $hp = mysql_result($mRes, $i, "homepage");
-	    $actors = $movieCastMap[$id];
+	    $actors = array_key_exists($id, $movieCastMap) ? $movieCastMap[$id] : null;
 	    printSearchResultMovie($id, $title, $path, $file, $year, $rating, $director, $actors, $summary, $poster, $hp, $i < $mNum - 1);
 	    $i++;
 	  }
@@ -268,7 +278,7 @@ else
       $yr = mysql_result($result, $i, "year");
       $rt = mysql_result($result, $i, "userrating");
       $dir = mysql_result($result, $i, "director");
-      $act = $movieCastMap[$id];
+      $act = array_key_exists($id, $movieCastMap) ? $movieCastMap[$id] : null;
       $sum = mysql_result($result, $i, "summary");
       if (strcmp('None', $sum) == 0)
       	$sum = null;
