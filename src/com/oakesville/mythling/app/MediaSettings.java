@@ -84,7 +84,7 @@ public class MediaSettings
     else if (type == MediaType.recordings)
       return "Recordings";
     else if (type == MediaType.tv)
-      return "TV";
+      return "Live TV";
     else if (type == MediaType.movies)
       return "Movies";
     else
