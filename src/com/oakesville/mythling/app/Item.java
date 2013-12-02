@@ -282,7 +282,7 @@ public class Item implements Listable
   
   public boolean isTv()
   {
-    return type == MediaType.tv;
+    return type == MediaType.liveTv;
   }
   
   public boolean isMovie()

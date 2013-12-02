@@ -60,6 +60,10 @@ public class AppSettings
   public static final String PLAYBACK_MODE = "playback_mode";
   public static final String VIDEO_PLAYER = "video_player";
   public static final String NETWORK_LOCATION = "network_location";
+  public static final String CATEGORIZE_VIDEOS = "categorize_videos";
+  public static final String MOVIE_DIRECTORIES = "movie_directories";
+  public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
+  public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
   public static final String INTERNAL_VIDEO_RES = "internal_video_res";
   public static final String EXTERNAL_VIDEO_RES = "external_video_res";
   public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
@@ -125,7 +129,7 @@ public class AppSettings
         url += "Video/GetVideoList";
       else if (mediaSettings.getType().equals(MediaType.recordings))
         url += "Dvr/GetRecordedList?Descending=true";
-      else if (mediaSettings.getType().equals(MediaType.tv))
+      else if (mediaSettings.getType().equals(MediaType.liveTv))
       {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         String nowUtc = dateTimeFormat.format(cal.getTime()).replace(' ', 'T');
@@ -219,6 +223,26 @@ public class AppSettings
     return prefs.getString(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
   }
   
+  public String getVideoCategorization()
+  {
+    return prefs.getString(CATEGORIZE_VIDEOS, "None");
+  }
+  
+  public String getMovieDirectories()
+  {
+    return prefs.getString(MOVIE_DIRECTORIES, "");
+  }
+  
+  public String getTvSeriesDirectories()
+  {
+    return prefs.getString(TV_SERIES_DIRECTORIES, "");
+  }
+
+  public String getVideoExcludeDirectories()
+  {
+    return prefs.getString(VIDEO_EXCLUDE_DIRECTORIES, "");
+  }
+
   public String getMythTvServiceHost()
   {
     if (isServiceProxy())

@@ -287,7 +287,7 @@ public abstract class MediaActivity extends Activity
       }
       else if (item.getItemId() == R.id.media_tv)
       {
-        appSettings.setMediaType(MediaType.tv);
+        appSettings.setMediaType(MediaType.liveTv);
         item.setChecked(true);
         mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
         refresh();

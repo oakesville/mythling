@@ -27,7 +27,7 @@ public class MediaSettings
     videos,
     music,
     recordings,
-    tv,
+    liveTv,
     movies,
     images  // only used for cover art
   }
@@ -83,7 +83,7 @@ public class MediaSettings
       return "Videos";
     else if (type == MediaType.recordings)
       return "Recordings";
-    else if (type == MediaType.tv)
+    else if (type == MediaType.liveTv)
       return "Live TV";
     else if (type == MediaType.movies)
       return "Movies";
@@ -122,7 +122,7 @@ public class MediaSettings
       return "Video";
     else if (type == MediaType.recordings)
       return "Recording";
-    else if (type == MediaType.tv)
+    else if (type == MediaType.liveTv)
       return "TV";
     else if (type == MediaType.movies)
       return "Movie";
@@ -155,7 +155,7 @@ public class MediaSettings
   
   public boolean isTv()
   {
-    return type == MediaType.tv;
+    return type == MediaType.liveTv;
   }
 
   public boolean isMovies()
