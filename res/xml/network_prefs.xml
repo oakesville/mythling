@@ -18,7 +18,7 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.oakesville.mythling.prefs.MySwitchPreference
+  <com.oakesville.mythling.prefs.SwitchPreference
     android:key="network_location"
     android:title="@string/title_network_location"
     android:switchTextOn="External"
@@ -27,27 +27,31 @@
     android:layout="@layout/sw_pref"    
     android:widgetLayout="@layout/prefs_switch" />
   
-  <com.oakesville.mythling.prefs.MyPreferenceCategory
+  <com.oakesville.mythling.prefs.DisableableCategory
     android:key="internal_backend_cat" 
     android:title="@string/title_internal_backend"
     android:shouldDisableView="true">
     <EditTextPreference 
       android:key="mythbe_internal_host"
       android:title="@string/title_internal_backend_host"
+      android:dialogTitle="@string/title_internal_backend_host_dialog"
+      android:dialogMessage="@string/message_internal_backend_host"
       android:defaultValue="192.168.0.70"
       android:layout="@layout/pref" />
-  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+  </com.oakesville.mythling.prefs.DisableableCategory>
 
-  <com.oakesville.mythling.prefs.MyPreferenceCategory
+  <com.oakesville.mythling.prefs.DisableableCategory
     android:key="external_backend_cat" 
     android:title="@string/title_external_backend"
     android:shouldDisableView="true">
     <EditTextPreference 
       android:key="mythbe_external_host"
       android:title="@string/title_external_backend_host"
+      android:dialogTitle="@string/title_external_backend_host_dialog"
+      android:dialogMessage="@string/message_external_backend_host"
       android:defaultValue="192.168.0.69"
       android:layout="@layout/pref" />
-    <com.oakesville.mythling.prefs.MySwitchPreference
+    <com.oakesville.mythling.prefs.SwitchPreference
       android:key="retrieve_ip"
       android:title="@string/title_retrieve_ip"
       android:switchTextOn="Dynamic"
@@ -58,8 +62,9 @@
     <EditTextPreference 
       android:key="ip_retrieval_url"
       android:title="@string/title_ip_retrieval_url"
+      android:dialogMessage="@string/message_ip_retrieval_url"
       android:defaultValue=""
       android:layout="@layout/pref" />    
-  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+  </com.oakesville.mythling.prefs.DisableableCategory>
 
 </PreferenceScreen>

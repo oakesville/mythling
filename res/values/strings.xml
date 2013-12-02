@@ -37,16 +37,38 @@
   <string name="title_activity_prefs">Mythling</string>
   <string name="title_activity_search">Mythling</string>
   <string name="title_activity_pager">Mythling</string>
+  <string name="title_prefs_playback">Playback</string>
+  <string name="summary_prefs_playback">Media player selection and settings</string>
+  <string name="title_prefs_network">Network</string>
+  <string name="summary_prefs_network">MythTV backend connectivity</string>
+  <string name="title_prefs_connections">Connections</string>
+  <string name="summary_prefs_connections">MythTV backend ports and timeouts</string>
+  <string name="title_prefs_credentials">Credentials</string>
+  <string name="summary_prefs_credentials">Authentication settings</string>
+  <string name="title_prefs_categories">Categories</string>
+  <string name="summary_prefs_categories">How media should be categorized</string>
+  <string name="title_prefs_video_quality">Video Quality</string>
+  <string name="summary_prefs_video_quality">Stream settings for device playback</string>
+  <string name="title_prefs_data_caching">Data Caching</string>
+  <string name="summary_prefs_data_caching">Media list data cache</string>
   <string name="title_playback_settings">Playback Settings</string>
   <string name="title_network_settings">Network Settings</string>
   <string name="title_connect_settings">Connections</string>
   <string name="title_credentials_settings">Credentials</string>
+  <string name="title_categories_settings">Categorization</string>
   <string name="title_quality_settings">Video Quality</string>
   <string name="title_cache_settings">Data Settings</string>
   <string name="title_frontend_host">Host</string>
+  <string name="title_frontend_host_dialog">Frontend Host</string>
+  <string name="message_frontend_host">Host name or IP address for frontend playback</string>
   <string name="title_frontend_port">Control Port</string>
+  <string name="title_frontend_port_dialog">Frontend Control Port</string>
+  <string name="message_frontend_port">TCP port for frontend control socket connection</string>
   <string name="title_network_location">Network</string>
   <string name="title_playback_mode">Playback</string>
+  <string name="title_video_categorization">Categorization</string>
+  <string name="title_video_categorization_dialog">Video Categorization</string>
+  <string name="title_categorize_videos">Videos</string>
   <string name="title_device_player">Device Player</string>
   <string name="title_frontend_player">Frontend Player</string>
   <string name="title_internal_backend">Internal Backend</string>
@@ -57,19 +79,32 @@
   <string name="title_tuner_timeout">Tuner Timeout</string>
   <string name="title_transcode_timeout">Transcode Timeout</string>
   <string name="title_internal_backend_host">Host</string>
+  <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
+  <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>
   <string name="title_external_backend_host">Host</string>
+  <string name="title_external_backend_host_dialog">External Backend Host</string>
+  <string name="message_external_backend_host">Backend host name or IP address for external network</string>
   <string name="title_media_services">Media Services</string>
   <string name="title_mythling_web_port">Mythling Web Port</string>
+  <string name="message_mythling_web_port">TCP port on backend web server where Mythling\'s media.php is hosted</string>
   <string name="title_mythling_web_root">Mythling Web Root</string>
+  <string name="message_mythling_web_root">Path under Apache DocumentRoot directory where Mythling\'s media.php resides</string>
   <string name="title_mythtv_service_port">MythTV Service Port</string>
   <string name="title_app_cache">Media List Cache</string>
   <string name="title_cache_expiry">Expiry Interval</string>
   <string name="title_cache_refresh">Refresh App Data</string>
   <string name="title_retrieve_ip">External Retrieve IP</string>
   <string name="title_ip_retrieval_url">IP Retrieval URL</string>
+  <string name="message_ip_retrieval_url">For backend servers using DHCP, specify a URL where an HTTP GET request returns \'text/plain\' content with the external dynamic IP address.</string>
   <string name="title_internal_network">Internal Network</string>
   <string name="title_external_network">External Network</string>
   <string name="title_video_res">Video Resolution</string>
+  <string name="title_directories_movies">Movie Directories</string>
+  <string name="title_directories_tv_series">TV Series Directories</string>
+  <string name="title_directories_exclude">Excluded Directories</string>
+  <string name="message_directories_movies">Comma-separated list of directory paths containing movies</string>
+  <string name="message_directories_tv_series">Comma-separated list of directory paths containing TV series\'</string>
+  <string name="message_directories_exclude">Comma-separated list of directory paths to exclude</string>
   <string-array name="video_res_entries">
     <item>720p</item>
     <item>600p</item>
@@ -127,9 +162,17 @@
     <item>24000</item>
   </string-array>
   <string name="title_mythtv_service_access">MythTV Services</string>
-  <string name="title_mythling_service_access">Mythling Services (see Connections)</string>
-  <string name="title_auth_type">Auth Type</string>
+  <string name="title_mythling_service_access">Mythling (see Connections)</string>
+  <string name="title_mythtv_services_auth_type">Auth Type</string>
+  <string name="title_mythtv_services_auth_type_dialog">MythTV Authentication</string>
+  <string name="title_mythling_services_auth_type">Auth Type</string>
+  <string name="title_mythling_services_auth_type_dialog">Mythling Authentication</string>
   <string-array name="auth_type_entries">
+    <item>None</item>
+    <item>Basic</item>
+    <item>Digest</item>
+  </string-array>
+  <string-array name="auth_type_values">
     <item>None</item>
     <item>Basic</item>
     <item>Digest</item>
@@ -146,4 +189,15 @@
   <string name="one">1</string>
   <string name="rating">Rating</string>
   <string name="play"> Play </string>
+  <string-array name="video_categorization_entries">
+    <item>None</item>
+    <item>Metadata</item>
+    <item>Directories</item>
+  </string-array>
+  <string-array name="video_categorization_values">
+    <item>None</item>
+    <item>Metadata</item>
+    <item>Directories</item>
+  </string-array>
+  
 </resources>

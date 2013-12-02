@@ -20,32 +20,37 @@
 
   <header
     android:fragment="com.oakesville.mythling.prefs.PlaybackPrefs"
-    android:title="Playback"
-    android:summary="Media player selection and settings" />
+    android:title="@string/title_prefs_playback"
+    android:summary="@string/summary_prefs_playback" />
   
   <header
     android:fragment="com.oakesville.mythling.prefs.NetworkPrefs"
-    android:title="Network"
-    android:summary="MythTV backend connectivity" />
+    android:title="@string/title_prefs_network"
+    android:summary="@string/summary_prefs_network" />
 
   <header
     android:fragment="com.oakesville.mythling.prefs.ConnectionsPrefs"
-    android:title="Connections"
-    android:summary="MythTV backend ports and timeouts" />
+    android:title="@string/title_prefs_connections"
+    android:summary="@string/summary_prefs_connections" />
   
   <header
     android:fragment="com.oakesville.mythling.prefs.CredentialsPrefs"
-    android:title="Credentials"
-    android:summary="Authentication settings" />
+    android:title="@string/title_prefs_credentials"
+    android:summary="@string/summary_prefs_credentials" />
   
   <header
+    android:fragment="com.oakesville.mythling.prefs.CategoriesPrefs"
+    android:title="@string/title_prefs_categories"
+    android:summary="@string/summary_prefs_categories" />
+    
+  <header
     android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
-    android:title="Video Quality"
-    android:summary="Stream settings for device playback" />
+    android:title="@string/title_prefs_video_quality"
+    android:summary="@string/summary_prefs_video_quality" />
   
   <header 
     android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
-    android:title="Data Caching"
-    android:summary="Application data cache" />
+    android:title="@string/title_prefs_data_caching"
+    android:summary="@string/summary_prefs_data_caching" />
 
 </preference-headers>

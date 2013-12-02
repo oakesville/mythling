@@ -25,19 +25,19 @@ import android.util.AttributeSet;
 /**
  * Allow UI enablement (of the title).
  */
-public class MyPreferenceCategory extends PreferenceCategory
+public class DisableableCategory extends PreferenceCategory
 {
-  public MyPreferenceCategory(Context context, AttributeSet attrs, int defStyle)
+  public DisableableCategory(Context context, AttributeSet attrs, int defStyle)
   {
     super(context, attrs, defStyle);
   }
 
-  public MyPreferenceCategory(Context context, AttributeSet attrs)
+  public DisableableCategory(Context context, AttributeSet attrs)
   {
     super(context, attrs);
   }
 
-  public MyPreferenceCategory(Context context)
+  public DisableableCategory(Context context)
   {
     this(context, null);
   }

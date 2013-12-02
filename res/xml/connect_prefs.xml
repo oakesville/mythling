@@ -30,7 +30,7 @@
   
   <PreferenceCategory
     android:title="@string/title_media_services">
-    <com.oakesville.mythling.prefs.MySwitchPreference
+    <com.oakesville.mythling.prefs.SwitchPreference
       android:key="media_services"
       android:switchTextOn="Mythling"
       android:switchTextOff="MythTV"
@@ -40,12 +40,14 @@
     <EditTextPreference 
       android:key="mythling_web_port"
       android:title="@string/title_mythling_web_port"
+      android:dialogMessage="@string/message_mythling_web_port"
       android:inputType="number"
       android:defaultValue="80"
       android:layout="@layout/pref" />
     <EditTextPreference 
       android:key="mythling_web_root"
       android:title="@string/title_mythling_web_root"
+      android:dialogMessage="@string/message_mythling_web_root"
       android:defaultValue="mythling"
       android:layout="@layout/pref" />
   </PreferenceCategory>

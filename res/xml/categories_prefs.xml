@@ -1,0 +1,47 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory android:title="@string/title_categorize_videos">
+    <ListPreference 
+      android:key="categorize_videos"
+      android:title="@string/title_video_categorization"
+      android:dialogTitle="@string/title_video_categorization_dialog"
+      android:entries="@array/video_categorization_entries"
+      android:entryValues="@array/video_categorization_values"
+      android:defaultValue="None"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="movie_directories"
+      android:title="@string/title_directories_movies"
+      android:dialogMessage="@string/message_directories_movies"
+      android:layout="@layout/pref" />
+    <EditTextPreference
+      android:key="tv_series_directories"
+      android:title="@string/title_directories_tv_series"
+      android:dialogMessage="@string/message_directories_tv_series"
+      android:layout="@layout/pref" />
+    <EditTextPreference
+      android:key="video_exclude_directories"
+      android:title="@string/title_directories_exclude"
+      android:dialogMessage="@string/message_directories_exclude"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
+      
+</PreferenceScreen>

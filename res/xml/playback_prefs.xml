@@ -18,7 +18,7 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.oakesville.mythling.prefs.MySwitchPreference
+  <com.oakesville.mythling.prefs.SwitchPreference
     android:key="playback_mode"
     android:title="@string/title_playback_mode"
     android:switchTextOn="Frontend"
@@ -27,11 +27,11 @@
     android:layout="@layout/sw_pref"    
     android:widgetLayout="@layout/prefs_switch" />
   
-  <com.oakesville.mythling.prefs.MyPreferenceCategory
+  <com.oakesville.mythling.prefs.DisableableCategory
     android:key="device_playback_cat"
     android:title="@string/title_device_player"
     android:shouldDisableView="true">
-    <com.oakesville.mythling.prefs.MySwitchPreference 
+    <com.oakesville.mythling.prefs.SwitchPreference 
       android:key="video_player"
       android:switchTextOn="Built-In"
       android:switchTextOff="External App"
@@ -46,23 +46,27 @@
       android:entryValues="@array/buffer_size_values"
       android:defaultValue="8000" />
     -->
-  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+  </com.oakesville.mythling.prefs.DisableableCategory>
   
-  <com.oakesville.mythling.prefs.MyPreferenceCategory
+  <com.oakesville.mythling.prefs.DisableableCategory
     android:key="frontend_playback_cat" 
     android:title="@string/title_frontend_player"
     android:shouldDisableView="true">
     <EditTextPreference 
       android:key="mythfe_host"
       android:title="@string/title_frontend_host"
+      android:dialogTitle="@string/title_frontend_host_dialog"
+      android:dialogMessage="@string/message_frontend_host"
       android:defaultValue="192.168.0.68"
       android:layout="@layout/pref" />
     <EditTextPreference 
       android:key="mythfe_port"
       android:title="@string/title_frontend_port"
+      android:dialogTitle="@string/title_frontend_port_dialog"
+      android:dialogMessage="@string/message_frontend_port"
       android:inputType="number"
       android:defaultValue="6546"
       android:layout="@layout/pref" />
-  </com.oakesville.mythling.prefs.MyPreferenceCategory>
+  </com.oakesville.mythling.prefs.DisableableCategory>
     
 </PreferenceScreen>

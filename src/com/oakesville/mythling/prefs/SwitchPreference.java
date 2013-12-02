@@ -19,7 +19,6 @@
 package com.oakesville.mythling.prefs;
 
 import android.content.Context;
-import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;
@@ -28,7 +27,7 @@ import android.widget.Switch;
 
 import com.oakesville.mythling.R;
 
-public class MySwitchPreference extends SwitchPreference
+public class SwitchPreference extends android.preference.SwitchPreference
 {
 
   private Listener listener = new Listener();
@@ -51,17 +50,17 @@ public class MySwitchPreference extends SwitchPreference
   }  
 
   
-  public MySwitchPreference(Context context)
+  public SwitchPreference(Context context)
   {
     super(context);
   }
   
-  public MySwitchPreference(Context context, AttributeSet attrs)
+  public SwitchPreference(Context context, AttributeSet attrs)
   {
     super(context, attrs);
   }
   
-  public MySwitchPreference(Context context, AttributeSet attrs, int defStyle)
+  public SwitchPreference(Context context, AttributeSet attrs, int defStyle)
   {
     super(context, attrs, defStyle);
   }
