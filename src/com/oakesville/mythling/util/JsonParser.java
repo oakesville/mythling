@@ -68,12 +68,23 @@ public class JsonParser
       mediaList.setBasePath(summary.getString("base"));
       if (summary.has("pageLinkTitle"))
         mediaList.setPageLinkTitle(summary.getString("pageLinkTitle"));
-      
-      JSONArray cats = list.getJSONArray("categories");
-      for (int i = 0; i < cats.length(); i++)
+      if (list.has("items"))
       {
-        JSONObject cat = (JSONObject) cats.get(i);
-        mediaList.addCategory(buildCategory(cat, null, mediaList.getMediaType()));
+        JSONArray items = list.getJSONArray("items");
+        for (int i = 0; i < items.length(); i++)
+        {
+          JSONObject item = (JSONObject) items.get(i);
+          mediaList.addItem(buildItem(item, mediaList.getMediaType()));
+        }
+      }
+      if (list.has("categories"))
+      {
+        JSONArray cats = list.getJSONArray("categories");
+        for (int i = 0; i < cats.length(); i++)
+        {
+          JSONObject cat = (JSONObject) cats.get(i);
+          mediaList.addCategory(buildCategory(cat, null, mediaList.getMediaType()));
+        }
       }
     }
     else
@@ -118,12 +129,12 @@ public class JsonParser
       }
       else if (list.has("ProgramGuide"))
       {
-        // tv
-        mediaList.setMediaType(MediaType.tv);
+        // live tv
+        mediaList.setMediaType(MediaType.liveTv);
         JSONObject infoList = list.getJSONObject("ProgramGuide");
         mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
         mediaList.setCount(infoList.getString("Count"));
-        Category tvCat = new Category("TV", MediaType.tv);
+        Category tvCat = new Category("TV", MediaType.liveTv);
         mediaList.addCategory(tvCat);
         JSONArray chans = infoList.getJSONArray("Channels");
         for (int i = 0; i < chans.length(); i++)
@@ -201,12 +212,12 @@ public class JsonParser
         searchResults.addRecording(buildItem(recording, MediaType.recordings));
       }
 
-      JSONArray tvShows = list.getJSONArray("tv");
+      JSONArray tvShows = list.getJSONArray("liveTv");
       for (int i = 0; i < tvShows.length(); i++)
       {
         JSONObject tvShow = (JSONObject) tvShows.get(i);
         tvShow.put("path", "");
-        searchResults.addTvShow(buildItem(tvShow, MediaType.tv));
+        searchResults.addTvShow(buildItem(tvShow, MediaType.liveTv));
       }
 
       JSONArray movies = list.getJSONArray("movies");
@@ -304,7 +315,7 @@ public class JsonParser
     {
       String rating = vid.getString("UserRating");
       if (!rating.equals("0"))
-        item.setRating((float)Integer.parseInt(rating)/2);
+        item.setRating(Float.parseFloat(rating)/2);
     }
     if (vid.has("Coverart"))
     {
@@ -346,7 +357,7 @@ public class JsonParser
     JSONObject prog = (JSONObject) progs.get(0);
     String startTime = prog.getString("StartTime").replace('T', ' ');
     String id = chanId + "~" + startTime;
-    Item item = new Item(id, MediaType.tv, prog.getString("Title"));
+    Item item = new Item(id, MediaType.liveTv, prog.getString("Title"));
     item.setStartTime(parseMythDateTime(startTime));
     item.setProgramStart(startTime);
     if (chanInfo.has("CallSign"))
@@ -417,7 +428,7 @@ public class JsonParser
     if (w.has("year"))
       item.setYear(Integer.parseInt(w.getString("year")));
     if (w.has("rating"))
-      item.setRating((float)Integer.parseInt(w.getString("rating"))/2);
+      item.setRating(Float.parseFloat(w.getString("rating"))/2);
     if (w.has("director"))
       item.setDirector(w.getString("director"));
     if (w.has("actors"))

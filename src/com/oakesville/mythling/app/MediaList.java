@@ -70,14 +70,31 @@ public class MediaList
   public String getPageLinkTitle() { return pageLinkTitle; }
   public void setPageLinkTitle(String plt) { this.pageLinkTitle = plt; }
   
+  private List<Item> items = new ArrayList<Item>();
+  public List<Item> getItems() { return items; }
+  public void setItems(List<Item> items) { this.items = items; }
+  public void addItem(Item item)
+  {
+    items.add(item);
+  }
+  
   private List<Category> categories = new ArrayList<Category>();
   public List<Category> getCategories() { return categories; }
   public void setCategories(List<Category> cats) { this.categories = cats; }
-  
   public void addCategory(Category cat)
   {
     categories.add(cat);
   }
+  
+  public List<Listable> getTopCategoriesAndItems()
+  {
+    List<Listable> all = new ArrayList<Listable>();
+    if (items != null)
+      all.addAll(items);
+    if (categories != null)
+      all.addAll(categories);
+    return all;
+  }  
   
   public Category getCategory(String name)
   {

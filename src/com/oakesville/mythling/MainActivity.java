@@ -20,6 +20,7 @@ package com.oakesville.mythling;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -38,7 +39,8 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Category;
+import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
@@ -52,7 +54,7 @@ public class MainActivity extends MediaActivity
   private ListView listView;
   public ListView getListView() { return listView; }
   
-  private ArrayAdapter<Category> adapter;
+  private ArrayAdapter<Listable> adapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -103,7 +105,7 @@ public class MainActivity extends MediaActivity
   public void refresh() throws BadSettingsException
   {
     mediaList = new MediaList();
-    adapter = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getCategories().toArray(new Category[0]));
+    adapter = new ArrayAdapter<Listable>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
     listView.setAdapter(adapter);
     
     startProgress();
@@ -133,7 +135,7 @@ public class MainActivity extends MediaActivity
     showSortMenu(mediaList.getMediaType() == MediaType.movies);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     
-    if (mediaList.getMediaType() == MediaType.tv)
+    if (mediaList.getMediaType() == MediaType.liveTv)
     {
       stopProgress();
       Uri.Builder builder = new Uri.Builder();
@@ -143,17 +145,32 @@ public class MainActivity extends MediaActivity
     }
     else
     {
-      adapter = new ArrayAdapter<Category>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getCategories().toArray(new Category[0]));
+      adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
       listView.setAdapter(adapter);
       listView.setOnItemClickListener(new OnItemClickListener()
       {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
-          String cat = ((TextView)view).getText().toString();
-          Uri.Builder builder = new Uri.Builder();
-          builder.path(cat);
-          Uri uri = builder.build();
-          startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+          List<Listable> listables = mediaList.getTopCategoriesAndItems();
+          boolean isItem = listables.get(position) instanceof Item;
+          if (isItem)
+          {
+            Item item = new Item((Item)listables.get(position));
+            if (item.isRecording() || item.isTv())
+              item.setPath(mediaList.getBasePath());
+            else
+              item.setPath(mediaList.getBasePath() + "/");
+            playItem(item);
+          }
+          else
+          {
+            // must be category
+            String cat = ((TextView)view).getText().toString();
+            Uri.Builder builder = new Uri.Builder();
+            builder.path(cat);
+            Uri uri = builder.build();
+            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+          }
         }
       });
       stopProgress();
