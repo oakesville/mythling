@@ -1,0 +1,22 @@
+# Mythling Categorize using Directories: 
+http://192.168.0.69:8888/mythling/media.php?type=movies&movieDirs=Horror%2CPre-Code&tvSeriesDirs=To+Watch&videoExcludeDirs=Home+Movies
+                                                 tvSeries
+                                                 videos
+                                                 recordings
+http://192.168.0.69:8888/mythling/media.php?type=search&query=board&movieDirs=Horror,Pre-Code&tvSeriesDirs=To Watch&videoExcludeDirs=Home Movies
+
+# Mythling Categorize using Metadata: 
+http://192.168.0.69:8888/mythling/media.php?type=tvSeries&categorizeUsingMetadata=true
+
+# Mythling No Categorization:
+http://192.168.0.69:8888/mythling/media.php?type=videos
+
+# MythTV Video List
+http://192.168.0.69:6544/Video/GetVideoList
+
+# MythTV Recordings List
+http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
+
+# MythTV Artwork
+http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Horror/a.jpg
+

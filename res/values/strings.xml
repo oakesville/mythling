@@ -24,6 +24,7 @@
   <string name="menu_recordings">Recordings</string>
   <string name="menu_tv">Live TV</string>
   <string name="menu_movies">Movies</string>
+  <string name="menu_tv_series">TV Series</string>
   <string name="menu_list">List</string>
   <string name="menu_pager">Details</string>
   <string name="menu_refresh">Refresh</string>
@@ -69,6 +70,11 @@
   <string name="title_video_categorization">Categorization</string>
   <string name="title_video_categorization_dialog">Video Categorization</string>
   <string name="title_categorize_videos">Videos</string>
+  <string name="title_categorize_internet">Internet</string>
+  <string name="title_movie_base_url">Movie Base URL</string>
+  <string name="message_movie_base_url">Base URL for Movie detail links</string>
+  <string name="title_tv_base_url">TV Base URL</string>
+  <string name="message_tv_base_url">Base URL for TV Series detail links</string>
   <string name="title_device_player">Device Player</string>
   <string name="title_frontend_player">Frontend Player</string>
   <string name="title_internal_backend">Internal Backend</string>
@@ -199,5 +205,4 @@
     <item>Metadata</item>
     <item>Directories</item>
   </string-array>
-  
 </resources>

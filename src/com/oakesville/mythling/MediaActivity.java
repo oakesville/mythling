@@ -134,7 +134,7 @@ public abstract class MediaActivity extends Activity
       mediaMenuItem.setTitle(mediaSettings.getTitle());
       if (mediaSettings.isMusic())
         mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
-      else if (mediaSettings.isTv())
+      else if (mediaSettings.isLiveTv())
         mediaMenuItem.getSubMenu().findItem(R.id.media_tv).setChecked(true);
       else if (mediaSettings.isMovies())
         mediaMenuItem.getSubMenu().findItem(R.id.media_movies).setChecked(true);
@@ -151,10 +151,10 @@ public abstract class MediaActivity extends Activity
     showSearchMenu(supportsSearch());
     
     sortMenuItem = menu.findItem(R.id.menu_sort);
-    showSortMenu(supportsSort() && MediaType.movies.equals(getMediaType()));
+    showSortMenu(supportsSort() && (getMediaType() == MediaType.movies || getMediaType() == MediaType.tvSeries));
 
     viewMenuItem = menu.findItem(R.id.menu_view);
-    showViewMenu(supportsViewSelection() && MediaType.movies.equals(getMediaType()));
+    showViewMenu(supportsViewSelection() && (getMediaType() == MediaType.movies || getMediaType() == MediaType.tvSeries));
 
     return super.onPrepareOptionsMenu(menu);
   }
@@ -301,6 +301,14 @@ public abstract class MediaActivity extends Activity
         refresh();
         return true;
       }
+      else if (item.getItemId() == R.id.media_tv_series)
+      {
+        appSettings.setMediaType(MediaType.tvSeries);
+        item.setChecked(true);
+        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        refresh();
+        return true;
+      }
       else if (item.getItemId() == R.id.sort_byTitle)
       {
         appSettings.setSortType(SortType.byTitle);
@@ -416,19 +424,19 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          if (item.isTv() || item.isMovie())
+          if (item.isLiveTv() || item.isMovie())
           {
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setTitle(item.getTitle())
-            .setMessage(item.getShowInfo() + (item.isTv() ? "\n\nRecording will be started if necessary." : ""))
+            .setMessage(item.getShowInfo() + (item.isLiveTv() ? "\n\nRecording will be started if necessary." : ""))
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {
               public void onClick(DialogInterface dialog, int which)
               {
                 try
                 {
-                  if (item.isTv())
+                  if (item.isLiveTv())
                     new StreamTvTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                   else
                     new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
@@ -652,18 +660,19 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        HttpHelper downloader = getMediaListDownloader(urls);
-        mediaListJson = new String(downloader.get());
+        HttpHelper downloader = getAppSettings().getMediaListDownloader(urls);
+        byte[] bytes = downloader.get();
+        mediaListJson = new String(bytes, downloader.getCharSet());
         if (mediaListJson.startsWith("<"))
         {
           // just display html
           ex = new IOException(mediaListJson);
           return -1L;
         }
-        mediaList = new JsonParser(mediaListJson).parseMediaList(getAppSettings().isMythlingMediaServices());
+        mediaList = new JsonParser(mediaListJson).parseMediaList(getAppSettings().isMythlingMediaServices(), getAppSettings().getMediaSettings().getType());
         if (!getAppSettings().isMythlingMediaServices())
         {
-          downloader = getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));
+          downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));
           String storageGroupsJson = new String(downloader.get());
           mediaList.setBasePath(new JsonParser(storageGroupsJson).parseStorageGroupDir(getAppSettings().getMediaSettings().getStorageGroup()));
         }
@@ -949,22 +958,6 @@ public abstract class MediaActivity extends Activity
     {
       // XXX internal player
     }
-  }
-  
-  protected HttpHelper getMediaListDownloader(URL[] urls)
-  {
-    HttpHelper downloader;
-    if (getAppSettings().isMythlingMediaServices())
-    {
-      downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
-      downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
-    }
-    else
-    {
-      downloader = new HttpHelper(urls, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
-      downloader.setCredentials(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
-    }
-    return downloader;
   }
   
   protected void startProgress()

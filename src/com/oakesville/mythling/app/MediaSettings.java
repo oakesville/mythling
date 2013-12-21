@@ -29,6 +29,7 @@ public class MediaSettings
     recordings,
     liveTv,
     movies,
+    tvSeries,
     images  // only used for cover art
   }
   
@@ -87,6 +88,8 @@ public class MediaSettings
       return "Live TV";
     else if (type == MediaType.movies)
       return "Movies";
+    else if (type == MediaType.tvSeries)
+      return "TV Series";
     else
       return "";
   }
@@ -123,9 +126,11 @@ public class MediaSettings
     else if (type == MediaType.recordings)
       return "Recording";
     else if (type == MediaType.liveTv)
-      return "TV";
+      return "Live TV";
     else if (type == MediaType.movies)
       return "Movie";
+    else if (type == MediaType.tvSeries)
+      return "TV Show";
     else
       return "";
   }
@@ -153,7 +158,7 @@ public class MediaSettings
     return type == MediaType.recordings;
   }
   
-  public boolean isTv()
+  public boolean isLiveTv()
   {
     return type == MediaType.liveTv;
   }
@@ -161,6 +166,11 @@ public class MediaSettings
   public boolean isMovies()
   {
     return type == MediaType.movies;
+  }
+  
+  public boolean isTvSeries()
+  {
+    return type == MediaType.tvSeries;
   }
   
   public String toString()
@@ -178,7 +188,7 @@ public class MediaSettings
    */
   public static String getStorageGroup(MediaType mediaType)
   {
-    if (mediaType == MediaType.movies || mediaType == MediaType.videos)
+    if (mediaType == MediaType.movies || mediaType == MediaType.videos || mediaType == MediaType.tvSeries)
       return "Videos";
     else if (mediaType == MediaType.images)
       return "Coverart";

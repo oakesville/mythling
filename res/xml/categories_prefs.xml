@@ -43,5 +43,19 @@
       android:dialogMessage="@string/message_directories_exclude"
       android:layout="@layout/pref" />
   </PreferenceCategory>
-      
+
+  <PreferenceCategory android:title="@string/title_categorize_internet">
+    <EditTextPreference 
+      android:key="movie_base_url"
+      android:title="@string/title_movie_base_url"
+      android:defaultValue="http://www.themoviedb.org/movie/"
+      android:dialogMessage="@string/message_movie_base_url"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="tv_base_url"
+      android:title="@string/title_tv_base_url"
+      android:defaultValue="http://www.thetvdb.com/"
+      android:dialogMessage="@string/message_tv_base_url"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
 </PreferenceScreen>

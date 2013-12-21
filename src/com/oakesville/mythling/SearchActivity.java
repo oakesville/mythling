@@ -35,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.SearchResults;
 import com.oakesville.mythling.app.Item;
@@ -124,7 +125,7 @@ public class SearchActivity extends MediaActivity
       {
         HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
         downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
-        resultsJson = new String(downloader.get());
+        resultsJson = new String(downloader.get(), downloader.getCharSet());
         searchResults = new JsonParser(resultsJson).parseSearchResults();
         return 0L;
       }
@@ -160,7 +161,7 @@ public class SearchActivity extends MediaActivity
               Item item = new Item(oldItem);
               if (item.isMusic())
                 item.setPath(searchResults.getMusicBase());
-              else if (item.isRecording() || item.isTv())
+              else if (item.isRecording() || item.isLiveTv())
                 item.setPath(searchResults.getRecordingsBase());
               else
                 item.setPath(searchResults.getVideoBase());

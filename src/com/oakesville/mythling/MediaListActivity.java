@@ -45,6 +45,7 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
 
@@ -78,7 +79,7 @@ public class MediaListActivity extends MediaActivity
       if (newPath != null && !newPath.isEmpty())
         path = newPath;
       
-      if (!"TV".equals(path))
+      if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
         getActionBar().setDisplayHomeAsUpEnabled(true);
       
       breadCrumbs = (FragmentBreadCrumbs) findViewById(R.id.breadcrumbs);
@@ -119,7 +120,7 @@ public class MediaListActivity extends MediaActivity
     {
       startProgress();
       AppData appData = new AppData(getApplicationContext());
-      appData.readMediaList();
+      appData.readMediaList(getMediaType());
       setAppData(appData);
       stopProgress();
     }
@@ -132,8 +133,8 @@ public class MediaListActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
-    showViewMenu(mediaList.getMediaType() == MediaType.movies);
-    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showViewMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
+    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     listables = mediaList.getListables(path);
     if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
@@ -148,7 +149,7 @@ public class MediaListActivity extends MediaActivity
       }
     }
     
-    if ("TV".equals(path))
+    if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
     {
       String title = "TV  (at " + mediaList.getRetrieveTimeDisplay() + " on " + mediaList.getRetrieveDateDisplay() + ")";
       breadCrumbs.setTitle(title, title);
@@ -167,7 +168,7 @@ public class MediaListActivity extends MediaActivity
           if (isItem)
           {
             Item item = new Item((Item)listables.get(position));
-            if (item.isRecording() || item.isTv())
+            if (item.isRecording() || item.isLiveTv())
               item.setPath(mediaList.getBasePath());
             else
               item.setPath(mediaList.getBasePath() + "/" + path);
@@ -192,7 +193,7 @@ public class MediaListActivity extends MediaActivity
           if (isItem)
           {
             final Item item = new Item((Item)listables.get(position));
-            if (item.isRecording() || item.isTv())
+            if (item.isRecording() || item.isLiveTv())
             {
               item.setPath(mediaList.getBasePath());
               new AlertDialog.Builder(view.getContext())

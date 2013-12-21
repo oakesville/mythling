@@ -20,10 +20,9 @@ package com.oakesville.mythling;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.List;
 
@@ -61,7 +60,6 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.util.HttpHelper;
 
@@ -77,7 +75,7 @@ public class MediaPagerActivity extends MediaActivity
   private MediaList mediaList;
 
   private ViewPager pager;
-  private MoviePagerAdapter pagerAdapter;
+  private MediaPagerAdapter pagerAdapter;
   private List<Listable> items;
   private int currentPosition;
   private SeekBar positionBar;
@@ -88,6 +86,7 @@ public class MediaPagerActivity extends MediaActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.pager);
+    getActionBar().setDisplayHomeAsUpEnabled(true);
     
     createProgressBar();
     
@@ -98,9 +97,6 @@ public class MediaPagerActivity extends MediaActivity
       String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
       if (newPath != null && !newPath.isEmpty())
         path = newPath;
-      
-      if (!"TV".equals(path))
-        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
     catch (Exception ex)
     {
@@ -137,7 +133,7 @@ public class MediaPagerActivity extends MediaActivity
     {
       startProgress();
       AppData appData = new AppData(getApplicationContext());
-      appData.readMediaList();
+      appData.readMediaList(getMediaType());
       setAppData(appData);
       stopProgress();
     }
@@ -150,12 +146,12 @@ public class MediaPagerActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
-    showViewMenu(mediaList.getMediaType() == MediaType.movies);
-    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showViewMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
+    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     items = mediaList.getListables(path);
 
-    pagerAdapter = new MoviePagerAdapter(getFragmentManager());
+    pagerAdapter = new MediaPagerAdapter(getFragmentManager());
     pager.setAdapter(pagerAdapter);
     pager.setOnPageChangeListener(new OnPageChangeListener()
     {
@@ -273,9 +269,9 @@ public class MediaPagerActivity extends MediaActivity
   }
       
   
-  private class MoviePagerAdapter extends FragmentPagerAdapter
+  private class MediaPagerAdapter extends FragmentPagerAdapter
   {
-    public MoviePagerAdapter(FragmentManager fm)
+    public MediaPagerAdapter(FragmentManager fm)
     {
       super(fm);
     }
@@ -287,7 +283,7 @@ public class MediaPagerActivity extends MediaActivity
     
     public Fragment getItem(int position)
     {
-      Fragment frag = new MovieListFragment();
+      Fragment frag = new MediaPagerFragment();
       Bundle args = new Bundle();
       args.putInt("idx", position);
       frag.setArguments(args);
@@ -295,12 +291,12 @@ public class MediaPagerActivity extends MediaActivity
     }
   }
 
-  public static class MovieListFragment extends Fragment
+  public static class MediaPagerFragment extends Fragment
   {
     private MediaPagerActivity pagerActivity;
     private AppSettings appSettings;
-    private View movieView;
-    private ImageView posterView;
+    private View detailView;
+    private ImageView artworkView;
     private Listable listable;
     private int idx;
     
@@ -330,8 +326,8 @@ public class MediaPagerActivity extends MediaActivity
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-      movieView = inflater.inflate(R.layout.movie, container, false);
-      return movieView;
+      detailView = inflater.inflate(R.layout.detail, container, false);
+      return detailView;
     }
     
     @Override
@@ -347,32 +343,32 @@ public class MediaPagerActivity extends MediaActivity
       
       listable = pagerActivity.items.get(idx);
       
-      TextView titleView = (TextView) movieView.findViewById(R.id.titleText);
+      TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
       titleView.setText(listable.getLabel());
       
       if (listable instanceof Item)
       {
         Item item = (Item) listable;
-        // TODO other types
-        if (item.isMovie())
+        if (item.isMovie() || item.isTvSeries())
         {
-          if (item.getPoster() != null)
+          if (item.getArtwork() != null)
           {
-            posterView = (ImageView) movieView.findViewById(R.id.posterImage);
-            // http://mythbe:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=acp.jpg
-            String posterStorageGroup = MediaSettings.getStorageGroup(MediaType.images);
+            artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+            String artworkStorageGroup = item.getArtworkStorageGroup();
+            if (artworkStorageGroup == null)
+              artworkStorageGroup = getAppData().getMediaList().getArtworkStorageGroup();
             try
             {
-              String filePath = pagerActivity.path + "/" + item.getPoster();
+              String filePath = pagerActivity.path + "/" + item.getArtwork();
               Bitmap bitmap = getAppData().getImageBitMap(filePath);
               if (bitmap == null)
               {
-                URL url = new URL(appSettings.getMythTvServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + posterStorageGroup + "&FileName=" + item.getPoster());
+                URL url = appSettings.getArtworkUrl(artworkStorageGroup, item.getArtwork());
                 new ImageRetrievalTask().execute(url);
               }
               else
               {
-                posterView.setImageBitmap(bitmap);
+                artworkView.setImageBitmap(bitmap);
               }
             }
             catch (Exception ex)
@@ -385,7 +381,7 @@ public class MediaPagerActivity extends MediaActivity
           // rating
           for (int i = 0; i < item.getRating(); i++)
           {
-            ImageView star = (ImageView) movieView.findViewById(pagerActivity.ratingViewIds[i]);
+            ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
             if (i <= item.getRating() - 1)
               star.setImageResource(R.drawable.rating_full);
             else
@@ -394,48 +390,50 @@ public class MediaPagerActivity extends MediaActivity
           // director
           if (item.getDirector() != null)
           {
-            TextView tv = (TextView) movieView.findViewById(R.id.directorText);
+            TextView tv = (TextView) detailView.findViewById(R.id.directorText);
             tv.setText("Directed by: " + item.getDirector());
           }
           // actors
           if (item.getActors() != null)
           {
-            TextView tv = (TextView) movieView.findViewById(R.id.actorsText);
+            TextView tv = (TextView) detailView.findViewById(R.id.actorsText);
             tv.setText("Starring: " + item.getActors());
           }
           // summary
           if (item.getSummary() != null)
           {
-            TextView tv = (TextView) movieView.findViewById(R.id.summaryText);
-            tv.setText(item.getSummary());
+            TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
+            String summary = item.getSummary();
+            if (item.getSeason() != 0)
+              summary = "Season " + item.getSeason() + ", Episode " + item.getEpisode() + ":\n" + summary; 
+            tv.setText(summary);
           }
-          if (item.getPageUrl() != null && getAppData().getMediaList().getPageLinkTitle() != null)
+          
+          // page link
+          if (item.getPageUrl() != null && item.getInternetRef() != null)
           {
-            // page link
-            TextView tv = (TextView) movieView.findViewById(R.id.pageLink);
-            tv.setText(Html.fromHtml("<a href='" + item.getPageUrl() + "'>" + getAppData().getMediaList().getPageLinkTitle() + "</a>"));
-            tv.setMovementMethod(LinkMovementMethod.getInstance());
-            
-            if (BuildConfig.DEBUG)
+            try
             {
-              try
+              String pageUrl = item.getPageUrl();
+              if (pageUrl == null || pageUrl.isEmpty())
               {
-                // oakesville link
-                tv = (TextView) movieView.findViewById(R.id.pageLink2);
-                String list = "all" + pagerActivity.path.replaceAll("-", "") + "Movies";
-                String url = "http://www.oakesville.com/Horror/allMovies.jsf?list=" + list + "&item=" + URLEncoder.encode(item.getTitle(), "UTF-8");
-                tv.setText(Html.fromHtml("<a href='" + url + "'>Oakesville</a>"));
-                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
+                pageUrl = baseUrl + item.getInternetRef();
               }
-              catch (UnsupportedEncodingException ex)
-              {
-                if (BuildConfig.DEBUG)
-                  Log.e(TAG, ex.getMessage(), ex);
-              }
+              URL url = new URL(pageUrl);
+              TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
+              tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + url.getHost() + "</a>"));
+              tv.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+            catch (MalformedURLException ex)
+            {
+              if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+              Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
             }
           }
           
-          Button button = (Button) movieView.findViewById(R.id.pagerPlay);
+          Button button = (Button) detailView.findViewById(R.id.pagerPlay);
           if (!pagerActivity.path.equals("Horror"))
           {
             button.setOnClickListener(new OnClickListener()
@@ -478,7 +476,7 @@ public class MediaPagerActivity extends MediaActivity
           {
             if (BuildConfig.DEBUG)
               Log.d(TAG, "Loading image from url: " + urls[0]);
-            HttpHelper downloader = new HttpHelper(urls, appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
+            HttpHelper downloader = new HttpHelper(urls, appSettings.getMythTvServicesAuthType(), appSettings.getPrefs(), true);
             downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
             try
             {
@@ -519,7 +517,7 @@ public class MediaPagerActivity extends MediaActivity
         {
           try
           {
-            posterView.setImageBitmap(getAppData().readImageBitmap(filePath));
+            artworkView.setImageBitmap(getAppData().readImageBitmap(filePath));
           }
           catch (Exception ex)
           {

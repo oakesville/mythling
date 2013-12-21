@@ -65,13 +65,17 @@ public class SearchResults
   public List<Item> getRecordings() { return recordings; }
   public void setRecordings(List<Item> recordings) { this.recordings = recordings; }
   
-  private List<Item> tvShows = new ArrayList<Item>();
-  public List<Item> getTvShows() { return tvShows; }
-  public void setTvShows(List<Item> tvShows) { this.tvShows = tvShows; }
+  private List<Item> liveTvItems = new ArrayList<Item>();
+  public List<Item> getLiveTvItems() { return liveTvItems; }
+  public void setLiveTvItems(List<Item> liveTvItems) { this.liveTvItems = liveTvItems; }
   
   private List<Item> movies = new ArrayList<Item>();
   public List<Item> getMovies() { return movies; }
   public void setMovies(List<Item> movies) { this.movies = movies; }
+  
+  private List<Item> tvSeriesItems = new ArrayList<Item>();
+  public List<Item> getTvSeriesItems() { return tvSeriesItems; }
+  public void setTvSeriesItems(List<Item> tvSeriesItems) { this.tvSeriesItems = tvSeriesItems; }
 
   private List<Item> songs = new ArrayList<Item>();
   public List<Item> getSongs() { return songs; }
@@ -88,14 +92,19 @@ public class SearchResults
     recordings.add(recording);
   }
   
-  public void addTvShow(Item tvShow)
+  public void addLiveTvItem(Item liveTvItem)
   {
-    tvShows.add(tvShow);
+    liveTvItems.add(liveTvItem);
   }
 
   public void addMovie(Item movie)
   {
     movies.add(movie);
+  }
+  
+  public void addTvSeriesItem(Item tvSeriesItem)
+  {
+    tvSeriesItems.add(tvSeriesItem);
   }
   
   public void addSong(Item song)
@@ -109,8 +118,9 @@ public class SearchResults
     List<Item> all = new ArrayList<Item>();
     all.addAll(videos);
     all.addAll(recordings);
-    all.addAll(tvShows);
+    all.addAll(liveTvItems);
     all.addAll(movies);
+    all.addAll(tvSeriesItems);
     all.addAll(songs);
     return all;
   }

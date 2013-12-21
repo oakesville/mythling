@@ -83,6 +83,14 @@ public class Item implements Listable
   public int getYear() { return year; }
   public void setYear(int year) { this.year = year; }
   
+  private int season;
+  public int getSeason() { return season; }
+  public void setSeason(int season) { this.season = season; }
+  
+  private int episode;
+  public int getEpisode() { return episode; }
+  public void setEpisode(int episode) { this.episode = episode; }
+  
   private float rating;
   public float getRating() { return rating; }
   public void setRating(float rating) { this.rating = rating; }
@@ -99,10 +107,18 @@ public class Item implements Listable
   public String getSummary() { return summary; }
   public void setSummary(String summary) { this.summary = summary; }
   
-  private String poster;
-  public String getPoster() { return poster; }
-  public void setPoster(String poster) { this.poster = poster; }
+  private String artworkStorageGroup;
+  public String getArtworkStorageGroup() { return artworkStorageGroup; }
+  public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
+  
+  private String artwork;
+  public String getArtwork() { return artwork; }
+  public void setArtwork(String artwork) { this.artwork = artwork; }
 
+  private String internetRef;
+  public String getInternetRef() { return internetRef; }
+  public void setInternetRef(String inetRef) { this.internetRef = inetRef; }
+  
   private String pageUrl;
   public String getPageUrl() { return pageUrl; }
   public void setPageUrl(String pageUrl) { this.pageUrl = pageUrl; }
@@ -129,7 +145,7 @@ public class Item implements Listable
     this.type = type;
     this.title = title;
   }
-  
+
   public Item(Item other)
   {
     this.id = other.id;
@@ -150,7 +166,7 @@ public class Item implements Listable
     this.rating = other.rating;
     this.director = other.director;
     this.actors = other.actors;
-    this.poster = other.poster;
+    this.artwork = other.artwork;
     this.pageUrl = other.pageUrl;
   }
   
@@ -171,7 +187,7 @@ public class Item implements Listable
   
   public int getChannelId()
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return -1;
     else
       return Integer.parseInt(getId().substring(0,  getId().indexOf('~')));
@@ -179,7 +195,7 @@ public class Item implements Listable
   
   public int getChannelNumber()
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return -1;
     else
       return Integer.parseInt(getId().substring(1,  getId().indexOf('~')));
@@ -187,14 +203,14 @@ public class Item implements Listable
   
   public String getStartTimeParam()
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     else
       return getStartTimeRaw().replace(' ', 'T');
   }
   public String getStartTimeRaw()
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     return getId().substring(getId().indexOf('~') + 1);
   }
@@ -204,33 +220,33 @@ public class Item implements Listable
   private static DateFormat dateTimeFormat = new SimpleDateFormat("MMM d  h:mm a");
   public String getStartDateTimeFormatted() throws ParseException
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     return dateTimeFormat.format(getStartTime());
   }
   public String getStartTimeFormatted() throws ParseException
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     return timeFormat.format(getStartTime());
   }
     
   public String getEndDateTimeFormatted() throws ParseException
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     return dateTimeFormat.format(getEndTime());    
   }
   public String getEndTimeFormatted() throws ParseException
   {
-    if (!isRecording() && !isTv())
+    if (!isRecording() && !isLiveTv())
       return null;
     return timeFormat.format(getEndTime());
   }
   
   public String getShowInfo()
   {
-    if (!isRecording() && !isTv() && !isMovie())
+    if (!isRecording() && !isLiveTv() && !isMovie())
       return null;
     
     String str = "";
@@ -244,7 +260,7 @@ public class Item implements Listable
     }
     else
     {
-      if (isTv())
+      if (isLiveTv())
       {
         str += getChannelNumber() + " (" + getCallsign() + ") ";
         try
@@ -280,7 +296,7 @@ public class Item implements Listable
     return type == MediaType.recordings;
   }
   
-  public boolean isTv()
+  public boolean isLiveTv()
   {
     return type == MediaType.liveTv;
   }
@@ -288,6 +304,11 @@ public class Item implements Listable
   public boolean isMovie()
   {
     return type == MediaType.movies;
+  }
+  
+  public boolean isTvSeries()
+  {
+    return type == MediaType.tvSeries;
   }
   
   private static final int arrowChar = 0x25BA;
@@ -305,7 +326,7 @@ public class Item implements Listable
         str += "(Song)";
       else if (isRecording())
         str += "(Recording)";
-      else if (isTv())
+      else if (isLiveTv())
         str += "(Live TV)";
       else if (isMovie())
         str += "(Movie)";
@@ -335,7 +356,7 @@ public class Item implements Listable
         str += "\n" + getShowInfo();
       }
     }
-    else if (isTv())
+    else if (isLiveTv())
     {
       str += getChannelNumber() + " (" + getCallsign() + ") ";
       str += title;
@@ -383,7 +404,9 @@ public class Item implements Listable
   {
     String label = title;
     if (isMovie() && year > 0)
-      return title + " (" + year + ")";
+      label += " (" + year + ")";
+    else if (subTitle != null)
+      label += " - \"" + subTitle + "\"";
     
     return label;
   }

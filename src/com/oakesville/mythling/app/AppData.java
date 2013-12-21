@@ -75,7 +75,7 @@ public class AppData
   
   private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
   private static final String QUEUE_FILE_SUFFIX = "Queue.json";
-  public MediaList readMediaList() throws IOException, JSONException, ParseException
+  public MediaList readMediaList(MediaType mediaType) throws IOException, JSONException, ParseException
   {
     File cacheDir = appContext.getCacheDir();
     File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
@@ -83,7 +83,7 @@ public class AppData
     {
       String mediaListJson = new String(readFile(appDataJsonFile));
       JsonParser parser = new JsonParser(mediaListJson);
-      mediaList = parser.parseMediaList(new AppSettings(appContext).isMythlingMediaServices());
+      mediaList = parser.parseMediaList(new AppSettings(appContext).isMythlingMediaServices(), mediaType);
     }
     return mediaList;
   }

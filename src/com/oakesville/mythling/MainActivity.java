@@ -42,6 +42,7 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
+import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 public class MainActivity extends MediaActivity
@@ -120,7 +121,7 @@ public class MainActivity extends MediaActivity
     if (getAppData() == null)
     {
       AppData appData = new AppData(getApplicationContext());
-      appData.readMediaList();
+      appData.readMediaList(getMediaType());
       setAppData(appData);
     }
     else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType())
@@ -132,14 +133,14 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
-    showSortMenu(mediaList.getMediaType() == MediaType.movies);
+    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     
     if (mediaList.getMediaType() == MediaType.liveTv)
     {
       stopProgress();
       Uri.Builder builder = new Uri.Builder();
-      builder.path("TV");
+      builder.path(MediaSettings.getMediaTitle(MediaType.liveTv));
       Uri uri = builder.build();
       startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
     }
@@ -156,7 +157,7 @@ public class MainActivity extends MediaActivity
           if (isItem)
           {
             Item item = new Item((Item)listables.get(position));
-            if (item.isRecording() || item.isTv())
+            if (item.isRecording() || item.isLiveTv())
               item.setPath(mediaList.getBasePath());
             else
               item.setPath(mediaList.getBasePath() + "/");

@@ -38,6 +38,7 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
+import com.oakesville.mythling.util.HttpHelper;
 
 public class AppSettings
 {
@@ -61,6 +62,9 @@ public class AppSettings
   public static final String VIDEO_PLAYER = "video_player";
   public static final String NETWORK_LOCATION = "network_location";
   public static final String CATEGORIZE_VIDEOS = "categorize_videos";
+  public static final String CATEGORIZATION_DIRECTORIES = "Directories";
+  public static final String CATEGORIZATION_METADATA = "Metadata";
+  public static final String CATEGORIZATION_NONE = "None";
   public static final String MOVIE_DIRECTORIES = "movie_directories";
   public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
   public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
@@ -85,6 +89,10 @@ public class AppSettings
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
   public static final String MOVIE_CURRENT_POSITION = "movie_current_position";
   public static final String DEFAULT_MEDIA_TYPE = "recordings";
+  public static final String MOVIE_BASE_URL = "movie_base_url";
+  public static final String TV_BASE_URL = "tv_base_url";
+  public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
+  public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
   
   private Context appContext;
   public Context getAppContext() { return appContext; }
@@ -104,19 +112,20 @@ public class AppSettings
   
   public URL getMythlingWebBaseUrl() throws MalformedURLException
   {
-    String ip = getBackendHost();
-    int port = getMythlingWebPort();
+    String ip = getMythlingServiceHost();
+    int port = getMythlingServicePort();
     String root = getMythlingWebRoot();
     return new URL("http://" + ip + ":" + port + (root == null || root.length() == 0 ? "" : "/" + root));
   }
   
-  public URL getMediaListUrl() throws MalformedURLException
+  public URL getMediaListUrl(MediaType mediaType) throws MalformedURLException, UnsupportedEncodingException
   {
     MediaSettings mediaSettings = getMediaSettings();
     String url;
     if (isMythlingMediaServices())
     {
-      url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaSettings.getType().toString();
+      url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaType.toString();
+      url += getVideoCategorizationParams();
       if (mediaSettings.getSortType() == SortType.byYear)
         url += "&orderBy=year";
       else if (mediaSettings.getSortType() == SortType.byRating)
@@ -125,11 +134,11 @@ public class AppSettings
     else
     {
       url = getMythTvServicesBaseUrl() + "/";
-      if (mediaSettings.getType().equals(MediaType.videos) || mediaSettings.getType().equals(MediaType.movies))
+      if (mediaType == MediaType.videos || mediaType == MediaType.movies || mediaType == MediaType.tvSeries)
         url += "Video/GetVideoList";
-      else if (mediaSettings.getType().equals(MediaType.recordings))
+      else if (mediaType == MediaType.recordings)
         url += "Dvr/GetRecordedList?Descending=true";
-      else if (mediaSettings.getType().equals(MediaType.liveTv))
+      else if (mediaType == MediaType.liveTv)
       {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         String nowUtc = dateTimeFormat.format(cal.getTime()).replace(' ', 'T');
@@ -140,12 +149,47 @@ public class AppSettings
     return new URL(url);
   }
   
+  public URL getMediaListUrl() throws MalformedURLException, UnsupportedEncodingException
+  {
+    return getMediaListUrl(getMediaSettings().getType());
+  }
+  
+  /**
+   * If not empty, always begins with '&'.
+   */
+  public String getVideoCategorizationParams() throws UnsupportedEncodingException
+  {
+    String params = "";
+    if (isVideoCategorizationDirectories())
+    {
+        String movieDirs = getMovieDirectories();
+        if (movieDirs != null && !movieDirs.trim().isEmpty())
+          params += "&movieDirs=" + URLEncoder.encode(movieDirs.trim(), "UTF-8");
+        String tvSeriesDirs = getTvSeriesDirectories();
+        if (tvSeriesDirs != null && !tvSeriesDirs.trim().isEmpty())
+          params += "&tvSeriesDirs=" + URLEncoder.encode(tvSeriesDirs.trim(), "UTF-8");
+        String videoExcludeDirs = getVideoExcludeDirectories();
+        if (videoExcludeDirs != null && !videoExcludeDirs.trim().isEmpty())
+          params += "&videoExcludeDirs=" + URLEncoder.encode(videoExcludeDirs.trim(), "UTF-8");
+    }
+    else if (isVideoCategorizationMetadata())
+    {
+      params += "&categorizeUsingMetadata=true";
+    }
+    return params;
+  }
+  
   public URL getSearchUrl(String query) throws MalformedURLException, UnsupportedEncodingException
   {
     if (isMythlingMediaServices())
-      return new URL(getMythlingWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8"));
+    {
+      return new URL(getMythlingWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8")
+          + getVideoCategorizationParams());
+    }
     else
+    {
       return null;
+    }
   }
 
   public URL getMythTvServicesBaseUrl() throws MalformedURLException
@@ -153,6 +197,11 @@ public class AppSettings
     String ip = getMythTvServiceHost();
     int servicePort = getMythServicePort();
     return new URL("http://" + ip + ":" + servicePort);    
+  }
+  
+  public URL getArtworkUrl(String storageGroup, String fileName) throws MalformedURLException
+  {
+    return new URL(getMythTvServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + storageGroup + "&FileName=" + fileName);    
   }
   
   public int getMythServicePort()
@@ -166,6 +215,14 @@ public class AppSettings
   public int getMythTvServicePort()
   {
     return Integer.parseInt(prefs.getString(MYTHTV_SERVICE_PORT, "6544").trim()); 
+  }
+  
+  public int getMythlingServicePort()
+  {
+    if (isServiceProxy())
+      return getServiceProxyPort();
+    else
+      return getMythlingWebPort();
   }
   
   public int getMythlingWebPort()
@@ -225,7 +282,17 @@ public class AppSettings
   
   public String getVideoCategorization()
   {
-    return prefs.getString(CATEGORIZE_VIDEOS, "None");
+    return prefs.getString(CATEGORIZE_VIDEOS, CATEGORIZATION_NONE);
+  }
+  
+  public boolean isVideoCategorizationDirectories()
+  {
+    return CATEGORIZATION_DIRECTORIES.equals(getVideoCategorization());
+  }
+  
+  public boolean isVideoCategorizationMetadata()
+  {
+    return CATEGORIZATION_METADATA.equals(getVideoCategorization());
   }
   
   public String getMovieDirectories()
@@ -242,8 +309,26 @@ public class AppSettings
   {
     return prefs.getString(VIDEO_EXCLUDE_DIRECTORIES, "");
   }
-
+  
+  public String getMovieBaseUrl()
+  {
+    return prefs.getString(MOVIE_BASE_URL, THEMOVIEDB_BASE_URL);
+  }
+  
+  public String getTvBaseUrl()
+  {
+    return prefs.getString(TV_BASE_URL, THETVDB_BASE_URL);
+  }
+  
   public String getMythTvServiceHost()
+  {
+    if (isServiceProxy())
+      return getServiceProxyIp();
+    else
+      return getBackendHost();
+  }
+  
+  public String getMythlingServiceHost()
   {
     if (isServiceProxy())
       return getServiceProxyIp();
@@ -481,7 +566,7 @@ public class AppSettings
 
   // change these values and recompile to route service calls through a reverse proxy
   private boolean serviceProxy = false;
-  private String serviceProxyIp = "192.168.0.9";
+  private String serviceProxyIp = "192.168.0.100";
   private int serviceProxyPort = 8888;
   public boolean isServiceProxy()
   {
@@ -626,5 +711,22 @@ public class AppSettings
     }
     
   }
+  
+  public HttpHelper getMediaListDownloader(URL[] urls)
+  {
+    HttpHelper downloader;
+    if (isMythlingMediaServices())
+    {
+      downloader = new HttpHelper(urls, getMythlingServicesAuthType(), getPrefs());
+      downloader.setCredentials(getMythlingServicesUser(), getMythlingServicesPassword());
+    }
+    else
+    {
+      downloader = new HttpHelper(urls, getMythTvServicesAuthType(), getPrefs());
+      downloader.setCredentials(getMythTvServicesUser(), getMythTvServicesPassword());
+    }
+    return downloader;
+  }
+  
   
 }

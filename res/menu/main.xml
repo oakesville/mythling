@@ -39,7 +39,10 @@
         <item
           android:id="@+id/media_movies"
           android:title="@string/menu_movies" />
-      </group>
+        <item
+          android:id="@+id/media_tv_series"
+          android:title="@string/menu_tv_series" />
+        </group>
     </menu>    
   </item>
 

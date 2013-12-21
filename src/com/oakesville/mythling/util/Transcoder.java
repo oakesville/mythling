@@ -64,7 +64,7 @@ public class Transcoder
     else
       streamListUrl = new URL(baseUrl + "/Content/GetLiveStreamList");
     
-    String liveStreamJson = new String(getServiceDownloader(streamListUrl).get());
+    String liveStreamJson = new String(getServiceDownloader(streamListUrl).get(), "UTF-8");
     List<LiveStreamInfo> liveStreams = new JsonParser(liveStreamJson).parseStreamInfoList();
     int inProgress = 0;
     for (LiveStreamInfo liveStream : liveStreams)
@@ -113,12 +113,12 @@ public class Transcoder
         addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
       else
         addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
-      String addStreamJson = new String(getServiceDownloader(addStreamUrl).get());
+      String addStreamJson = new String(getServiceDownloader(addStreamUrl).get(), "UTF-8");
       streamInfo = new JsonParser(addStreamJson).parseStreamInfo();
       
       // get the actual streamInfo versus requested
       URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
-      String getStreamJson = new String(getServiceDownloader(getStreamUrl).get());
+      String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
       streamInfo = new JsonParser(getStreamJson).parseStreamInfo();
     }
     

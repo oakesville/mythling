@@ -22,14 +22,13 @@ public class CategoriesPrefs extends PreferenceFragment
     {
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
-        doEnableDirectoryPrefs("Directories".equals(newValue));
+        doEnablement((String)newValue);
         return super.onPreferenceChange(preference, newValue);
       }
     });
     pref.setSummary(appSettings.getVideoCategorization());
-    doEnableDirectoryPrefs("Directories".equals(appSettings.getVideoCategorization()));
+    doEnablement(appSettings.getVideoCategorization());
     
-
     pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_DIRECTORIES);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary(appSettings.getMovieDirectories());
@@ -42,15 +41,30 @@ public class CategoriesPrefs extends PreferenceFragment
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary(appSettings.getVideoExcludeDirectories());
 
+    pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_BASE_URL);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+    pref.setSummary(appSettings.getMovieBaseUrl());
+
+    pref = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+    pref.setSummary(appSettings.getTvBaseUrl());
   }
   
-  private void doEnableDirectoryPrefs(boolean isDirectoriesCat)
+  private void doEnablement(String categorization)
   {
+    boolean isDirectoriesCat = AppSettings.CATEGORIZATION_DIRECTORIES.equals(categorization);
+    
     Preference movieDirs = getPreferenceScreen().findPreference(AppSettings.MOVIE_DIRECTORIES);
     movieDirs.setEnabled(isDirectoriesCat);
     Preference tvSeriesDirs = getPreferenceScreen().findPreference(AppSettings.TV_SERIES_DIRECTORIES);
     tvSeriesDirs.setEnabled(isDirectoriesCat);
     Preference excludeDirs = getPreferenceScreen().findPreference(AppSettings.VIDEO_EXCLUDE_DIRECTORIES);
     excludeDirs.setEnabled(isDirectoriesCat);
+    
+    boolean isNoneCat = AppSettings.CATEGORIZATION_NONE.equals(categorization);
+    Preference movieBaseUrl = getPreferenceScreen().findPreference(AppSettings.MOVIE_BASE_URL);
+    movieBaseUrl.setEnabled(!isNoneCat);
+    Preference tvBaseUrl = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);
+    tvBaseUrl.setEnabled(!isNoneCat);
   }
 }

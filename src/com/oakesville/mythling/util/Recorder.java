@@ -35,6 +35,7 @@ import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.TunerInUseException;
+import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 public class Recorder
 {
@@ -132,9 +133,9 @@ public class Recorder
   
   private Item getRecording(Item tvShow) throws IOException, JSONException, ParseException
   {
-    HttpHelper recordingsHelper = getWebHelper(new URL(appSettings.getMythlingWebBaseUrl() + "/media.php?type=recordings"));
+    HttpHelper recordingsHelper = appSettings.getMediaListDownloader(new URL[]{appSettings.getMediaListUrl(MediaType.recordings)});
     String recordingsListJson = new String(recordingsHelper.get());
-    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList(true);
+    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList(true, MediaType.recordings);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {
@@ -158,13 +159,6 @@ public class Recorder
       }
     }
     return null;
-  }
-  
-  private HttpHelper getWebHelper(URL url) throws MalformedURLException
-  {
-    HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), appSettings.getMythlingServicesAuthType(), appSettings.getPrefs());
-    downloader.setCredentials(appSettings.getMythlingServicesUser(), appSettings.getMythlingServicesPassword());
-    return downloader;
   }
   
   private HttpHelper getServiceHelper(URL url) throws MalformedURLException

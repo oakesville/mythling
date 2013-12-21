@@ -39,6 +39,7 @@ import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.LiveStreamInfo;
 import com.oakesville.mythling.app.MediaList;
+import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.SearchResults;
 
@@ -52,7 +53,7 @@ public class JsonParser
     this.json = json;
   }
   
-  public MediaList parseMediaList(boolean mythlingFormat) throws JSONException, ParseException
+  public MediaList parseMediaList(boolean mythlingFormat, MediaType mediaType) throws JSONException, ParseException
   {
     dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -66,8 +67,7 @@ public class JsonParser
       mediaList.setRetrieveDate(summary.getString("date"));
       mediaList.setCount(summary.getString("count"));
       mediaList.setBasePath(summary.getString("base"));
-      if (summary.has("pageLinkTitle"))
-        mediaList.setPageLinkTitle(summary.getString("pageLinkTitle"));
+      mediaList.setArtworkStorageGroup(summary.getString("artworkStorageGroup"));
       if (list.has("items"))
       {
         JSONArray items = list.getJSONArray("items");
@@ -91,8 +91,8 @@ public class JsonParser
     {
       if (list.has("VideoMetadataInfoList"))
       {
-        // videos
-        mediaList.setMediaType(MediaType.videos);
+        // videos, movies, or tvSeries
+        mediaList.setMediaType(mediaType);
         JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
         mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
         mediaList.setCount(infoList.getString("Count"));
@@ -102,7 +102,25 @@ public class JsonParser
         for (int i = 0; i < vids.length(); i++)
         {
           JSONObject vid = (JSONObject) vids.get(i);
-          vidCat.addItem(buildMythVideoItem(vid));
+          // determine type
+          MediaType type = MediaType.videos;
+          if (vid.has("Inetref"))
+          {
+            String inetref = vid.getString("Inetref");
+            if (!inetref.isEmpty() && !inetref.equals("00000000"))
+            {
+              type = MediaType.movies;
+              if (vid.has("Season"))
+              {
+                String season = vid.getString("Season");
+                if (!season.isEmpty() && !season.equals("0"))
+                  type = MediaType.tvSeries;
+              }
+            }
+          }
+          
+          if (type == mediaType)
+            vidCat.addItem(buildMythVideoItem(vid, type));
         }
       }
       else if (list.has("ProgramList"))
@@ -134,13 +152,13 @@ public class JsonParser
         JSONObject infoList = list.getJSONObject("ProgramGuide");
         mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
         mediaList.setCount(infoList.getString("Count"));
-        Category tvCat = new Category("TV", MediaType.liveTv);
+        Category tvCat = new Category(MediaSettings.getMediaTitle(MediaType.liveTv), MediaType.liveTv);
         mediaList.addCategory(tvCat);
         JSONArray chans = infoList.getJSONArray("Channels");
         for (int i = 0; i < chans.length(); i++)
         {
           JSONObject chanInfo = (JSONObject) chans.get(i);
-          Item show = buildMythTvShowItem(chanInfo);
+          Item show = buildMythLiveTvItem(chanInfo);
           if (show != null)
             tvCat.addItem(show);
         }
@@ -151,7 +169,7 @@ public class JsonParser
       }
     }
     if (BuildConfig.DEBUG)
-      Log.d(TAG, "MediaList parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+      Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     return mediaList;    
   }
   
@@ -217,7 +235,7 @@ public class JsonParser
       {
         JSONObject tvShow = (JSONObject) tvShows.get(i);
         tvShow.put("path", "");
-        searchResults.addTvShow(buildItem(tvShow, MediaType.liveTv));
+        searchResults.addLiveTvItem(buildItem(tvShow, MediaType.liveTv));
       }
 
       JSONArray movies = list.getJSONArray("movies");
@@ -226,7 +244,14 @@ public class JsonParser
         JSONObject movie = (JSONObject) movies.get(i);
         searchResults.addMovie(buildItem(movie, MediaType.movies));
       }
-      
+
+      JSONArray tvSeries = list.getJSONArray("tvSeries");
+      for (int i = 0; i < tvSeries.length(); i++)
+      {
+        JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
+        searchResults.addTvSeriesItem(buildItem(tvSeriesItem, MediaType.tvSeries));
+      }
+
       JSONArray songs = list.getJSONArray("songs");
       for (int i = 0; i < songs.length(); i++)
       {
@@ -235,7 +260,7 @@ public class JsonParser
       }
       
       if (BuildConfig.DEBUG)
-        Log.d(TAG, "SearchResults parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+        Log.d(TAG, " -> search results parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     }
     catch (Exception ex)
     {
@@ -259,7 +284,7 @@ public class JsonParser
         queue.add(buildItem(vid, type));
       }
       if (BuildConfig.DEBUG)
-        Log.d(TAG, type + " queue parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+        Log.d(TAG, " -> (" + type + ") queue parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     }
     catch (Exception ex)
     {
@@ -272,56 +297,118 @@ public class JsonParser
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   private static DateFormat dateTimeRawFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  private Item buildMythVideoItem(JSONObject vid) throws JSONException, ParseException
+  private Item buildMythVideoItem(JSONObject vid, MediaType type) throws JSONException, ParseException
   {
-    Item item = new Item(vid.getString("Id"), MediaType.videos, vid.getString("Title"));
+    Item item = new Item(vid.getString("Id"), type, vid.getString("Title"));
     String filename = vid.getString("FileName");
     int lastdot = filename.lastIndexOf('.');
     item.setFile(filename.substring(0, lastdot));
     item.setFormat(filename.substring(lastdot + 1));
+    if (vid.has("SubTitle"))
+    {
+      String subtitle = vid.getString("SubTitle");
+      if (!subtitle.isEmpty())
+        item.setSubTitle(subtitle);
+    }
     if (vid.has("Director"))
     {
       String director = vid.getString("Director");
-      if (!director.equals("Unknown"))
+      if (!director.isEmpty() && !director.equals("Unknown"))
         item.setDirector(director);
     }
     if (vid.has("Description"))
     {
       String description = vid.getString("Description");
       if (!description.equals("None"))
-        item.setDescription(description);
+        item.setSummary(description);
     }
-    if (vid.has("HomePage"))
+    if (type != MediaType.videos)
     {
-      String pageUrl = vid.getString("HomePage");
-      if (!pageUrl.isEmpty())
-        item.setPageUrl(pageUrl);
-    }
-    if (vid.has("ReleaseDate"))
-    {
-      String releaseDate = vid.getString("ReleaseDate");
-      if (!releaseDate.isEmpty())
+      // we don't make use of the following data for videos, so don't waste time parsing
+      if (vid.has("Inetref"))
       {
-        String dateStr = releaseDate.replace('T', ' ');
-        if (dateStr.endsWith("Z"))
-          dateStr = dateStr.substring(0, dateStr.length() - 1);
-        Date date = dateFormat.parse(dateStr + " UTC");
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.setTime(date);
-        item.setYear(cal.get(Calendar.YEAR));
+        String inetref = vid.getString("Inetref");
+        if (!inetref.isEmpty() && !inetref.equals("00000000"))
+        {
+          item.setInternetRef(inetref);
+          if (type == MediaType.tvSeries && vid.has("Season"))
+          {
+            String season = vid.getString("Season");
+            if (!season.isEmpty() && !season.equals("0"))
+            {
+              item.setSeason(Integer.parseInt(season));
+              if (vid.has("Episode"))
+              {
+                String episode = vid.getString("Episode");
+                if (!episode.isEmpty() && !episode.equals("0"))
+                  item.setEpisode(Integer.parseInt(episode));
+              }
+            }
+          }
+        }
       }
-    }
-    if (vid.has("UserRating"))
-    {
-      String rating = vid.getString("UserRating");
-      if (!rating.equals("0"))
-        item.setRating(Float.parseFloat(rating)/2);
-    }
-    if (vid.has("Coverart"))
-    {
-      String art = vid.getString("Coverart");
-      if (!art.isEmpty())
-        item.setPoster(art);
+      if (vid.has("HomePage"))
+      {
+        String pageUrl = vid.getString("HomePage");
+        if (!pageUrl.isEmpty())
+          item.setPageUrl(pageUrl);
+      }
+      if (vid.has("ReleaseDate"))
+      {
+        String releaseDate = vid.getString("ReleaseDate");
+        if (!releaseDate.isEmpty())
+        {
+          String dateStr = releaseDate.replace('T', ' ');
+          if (dateStr.endsWith("Z"))
+            dateStr = dateStr.substring(0, dateStr.length() - 1);
+          Date date = dateFormat.parse(dateStr + " UTC");
+          Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+          cal.setTime(date);
+          item.setYear(cal.get(Calendar.YEAR));
+        }
+      }
+      if (vid.has("UserRating"))
+      {
+        String rating = vid.getString("UserRating");
+        if (!rating.isEmpty() && !rating.equals("0"))
+          item.setRating(Float.parseFloat(rating)/2);
+      }
+      if (vid.has("Coverart"))
+      {
+        String art = vid.getString("Coverart");
+        if (!art.isEmpty())
+        {
+          item.setArtwork(art);
+          item.setArtworkStorageGroup("Coverart");
+        }
+      }
+      else if (vid.has("Fanart"))
+      {
+        String art = vid.getString("Fanart");
+        if (!art.isEmpty())
+        {
+          item.setArtwork(art);
+          item.setArtworkStorageGroup("Fanart");
+        }
+      }
+      else if (vid.has("Screenshot"))
+      {
+        String art = vid.getString("Screenshot");
+        if (!art.isEmpty())
+        {
+          item.setArtwork(art);
+          item.setArtworkStorageGroup("Screenshots");
+        }
+      }
+      else if (vid.has("Banner"))
+      {
+        String art = vid.getString("Banner");
+        if (!art.isEmpty())
+        {
+          item.setArtwork(art);
+          item.setArtworkStorageGroup("Banners");
+        }
+      }
     }
     
     return item;
@@ -346,7 +433,7 @@ public class JsonParser
     return item;
   }
   
-  private Item buildMythTvShowItem(JSONObject chanInfo) throws JSONException, ParseException
+  private Item buildMythLiveTvItem(JSONObject chanInfo) throws JSONException, ParseException
   {
     String chanId = chanInfo.getString("ChanId");
     if (!chanInfo.has("Programs"))
@@ -425,6 +512,10 @@ public class JsonParser
       item.setRecordingRuleId(w.getInt("recordid"));
     if (w.has("programStart"))
       item.setProgramStart(w.getString("programStart"));
+    if (w.has("season"))
+      item.setSeason(Integer.parseInt(w.getString("season")));
+    if (w.has("episode"))
+      item.setEpisode(Integer.parseInt(w.getString("episode")));
     if (w.has("year"))
       item.setYear(Integer.parseInt(w.getString("year")));
     if (w.has("rating"))
@@ -435,8 +526,10 @@ public class JsonParser
       item.setActors(w.getString("actors"));
     if (w.has("summary"))
       item.setSummary(w.getString("summary"));
-    if (w.has("poster"))
-      item.setPoster(w.getString("poster"));
+    if (w.has("artwork"))
+      item.setArtwork(w.getString("artwork"));
+    if (w.has("internetRef"))
+      item.setInternetRef(w.getString("internetRef"));
     if (w.has("pageUrl"))
       item.setPageUrl(w.getString("pageUrl"));
     return item;
@@ -462,7 +555,7 @@ public class JsonParser
         }
       }
       if (BuildConfig.DEBUG)
-        Log.d(TAG, "LiveStreamInfos parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+        Log.d(TAG, " -> live stream info parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     }
     catch (Exception ex)
     {
@@ -488,7 +581,7 @@ public class JsonParser
       long startTime = System.currentTimeMillis();
       LiveStreamInfo info = buildLiveStream(new JSONObject(json).getJSONObject("LiveStreamInfo"));
       if (BuildConfig.DEBUG)
-        Log.d(TAG, "LiveStreamInfo parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+        Log.d(TAG, " -> live stream info parse time: " + (System.currentTimeMillis() - startTime) + " ms");
       return info;
     }
     catch (Exception ex)

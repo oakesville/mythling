@@ -66,9 +66,9 @@ public class MediaList
   public String getBasePath() { return basePath; }
   public void setBasePath(String bp) { this.basePath = bp; }
   
-  private String pageLinkTitle;
-  public String getPageLinkTitle() { return pageLinkTitle; }
-  public void setPageLinkTitle(String plt) { this.pageLinkTitle = plt; }
+  private String artworkStorageGroup;
+  public String getArtworkStorageGroup() { return artworkStorageGroup; }
+  public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
   
   private List<Item> items = new ArrayList<Item>();
   public List<Item> getItems() { return items; }

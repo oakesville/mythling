@@ -19,11 +19,14 @@
 package com.oakesville.mythling.util;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,10 +46,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.ByteArrayBuffer;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.http.AndroidHttpClient;
+import android.os.Debug;
 import android.util.Base64;
 import android.util.Log;
 
@@ -77,19 +82,29 @@ public class HttpHelper
   private AuthType authType;
   private Method method;
   private SharedPreferences sharedPrefs;
+  private boolean binary;
+  private String charset = "UTF-8";
+  
+  public String getCharSet() { return charset; }
   
   public HttpHelper(URL[] urls, String authType, SharedPreferences prefs)
   {
-    this(urls, AuthType.valueOf(authType), prefs);
+    this(urls, AuthType.valueOf(authType), prefs, false);
   }
-  
-  public HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs)
+
+  public HttpHelper(URL[] urls, String authType, SharedPreferences prefs, boolean binary)
+  {
+    this(urls, AuthType.valueOf(authType), prefs, binary);
+  }
+
+  public HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs, boolean binary)
   {
     this.url = urls[0];
     if (urls.length > 1)
       this.ipRetrieval = urls[1];
     this.authType = authType;
     this.sharedPrefs = prefs;
+    this.binary = binary;
   }
   
   public void setCredentials(String user, String password)
@@ -141,9 +156,8 @@ public class HttpHelper
   
   private byte[] retrieveWithDigestAuth() throws IOException
   {
-    InputStream is = null;
-    BufferedInputStream bis = null;
     AndroidHttpClient httpClient = null;
+    InputStream is = null;
     
     try
     {
@@ -194,24 +208,13 @@ public class HttpHelper
         }
       }
       is = response.getEntity().getContent();
-      bis = new BufferedInputStream(is);
-      ByteArrayBuffer baf = new ByteArrayBuffer(50);
-      int ch = 0;
-      while ((ch = bis.read()) != -1)
-      {
-        baf.append((byte)ch);
-      }
       
-      if (BuildConfig.DEBUG)
-        Log.d(TAG, "http request time: " + (System.currentTimeMillis() - startTime) + " ms");
-      return baf.toByteArray();
+      return extractResponseBytes(is, startTime);
     }
     finally
     {
       try
       {
-        if (bis != null)
-          bis.close();
         if (is != null)
           is.close();
         if (httpClient != null)
@@ -238,9 +241,9 @@ public class HttpHelper
   
   private byte[] retrieve(Map<String,String> headers) throws IOException
   {  
-    InputStream is = null;
-    BufferedInputStream bis = null;
     URLConnection conn = null;
+    InputStream is = null;
+    
     try
     {
       long startTime = System.currentTimeMillis();
@@ -268,22 +271,13 @@ public class HttpHelper
           throw ex;
         }
       }
-      bis = new BufferedInputStream(is);
-      ByteArrayBuffer baf = new ByteArrayBuffer(50);
-      int ch = 0;
-      while ((ch = bis.read()) != -1)
-        baf.append((byte)ch);
       
-      if (BuildConfig.DEBUG)
-        Log.d(TAG, url + "http request time: " + (System.currentTimeMillis() - startTime) + " ms");
-      return baf.toByteArray();
+      return extractResponseBytes(is, startTime);
     }
     finally
     {
       try
       {
-        if (bis != null)
-          bis.close();
         if (is != null)
           is.close();
       }
@@ -294,7 +288,7 @@ public class HttpHelper
       }
     }
   }
-  
+
   private void prepareConnection(URLConnection conn, Map<String,String> headers) throws IOException
   {
     conn.setConnectTimeout(getConnectTimeout());
@@ -307,10 +301,75 @@ public class HttpHelper
       ((HttpURLConnection)conn).setRequestMethod("POST");
     }
   }
-  
+
+  private byte[] extractResponseBytes(InputStream is, long requestStartTime) throws IOException
+  {
+    BufferedInputStream bis = null;
+    BufferedReader br = null;
+
+    try
+    {
+      ByteArrayBuffer baf = new ByteArrayBuffer(1024);
+      bis = new BufferedInputStream(is);
+      int b = 0;
+      while ((b = bis.read()) != -1)
+        baf.append((byte)b);
+      long requestEndTime = System.currentTimeMillis();
+      byte[] bytes = baf.toByteArray();
+      if (BuildConfig.DEBUG)
+      {
+        Log.d(TAG, " -> (" + url + ") http request time: " + (System.currentTimeMillis() - requestStartTime) + " ms");
+        // how much memory are we using
+        Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
+        Debug.getMemoryInfo(memoryInfo);
+        Log.d(TAG, " -> response byte array size: " + bytes.length / 1024 + " kb (Pss = " + memoryInfo.getTotalPss() + " kb)");
+      }
+      if (!binary)
+      {
+        // detect character set
+        UniversalDetector detector = new UniversalDetector(null);
+        detector.handleData(bytes, 0, bytes.length);
+        detector.dataEnd();
+        String detected = detector.getDetectedCharset();
+        if (BuildConfig.DEBUG)
+          Log.d(TAG, " -> charset detect time: " + (System.currentTimeMillis() - requestEndTime) + " ms");
+        if (detected != null  && !detected.equals(charset))
+        {
+          try
+          {
+            Charset.forName(detected);
+            charset = detected;
+          }
+          catch (UnsupportedCharsetException ex)
+          {
+            // not supported -- stick with UTF-8
+          }
+        }
+      }
+      
+      return bytes;
+
+    }
+    finally
+    {
+      try
+      {
+        if (bis != null)
+          bis.close();
+        if (br != null)
+          br.close();
+      }
+      catch (IOException ex)
+      {
+        if (BuildConfig.DEBUG)
+          Log.e(TAG, ex.getMessage(), ex);
+      }
+    }
+  }
+    
   private String retrieveBackendIp() throws IOException
   {
-    HttpHelper helper = new HttpHelper(new URL[]{ipRetrieval}, AuthType.None, sharedPrefs);
+    HttpHelper helper = new HttpHelper(new URL[]{ipRetrieval}, AuthType.None, sharedPrefs, false);
     String backendIp = new String(helper.get());
     if (!AppSettings.validateIp(backendIp))
       throw new IOException("Bad IP Address: " + backendIp);
