@@ -35,14 +35,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.SearchResults;
 import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.app.SearchResults;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.JsonParser;
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
 
 public class SearchActivity extends MediaActivity
 {
