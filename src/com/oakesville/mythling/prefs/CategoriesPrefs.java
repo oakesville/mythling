@@ -48,6 +48,10 @@ public class CategoriesPrefs extends PreferenceFragment
     pref = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
     pref.setSummary(appSettings.getTvBaseUrl());
+
+    pref = getPreferenceScreen().findPreference(AppSettings.CUSTOM_BASE_URL);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+    pref.setSummary(appSettings.getCustomBaseUrl());
   }
   
   private void doEnablement(String categorization)
@@ -66,5 +70,7 @@ public class CategoriesPrefs extends PreferenceFragment
     movieBaseUrl.setEnabled(!isNoneCat);
     Preference tvBaseUrl = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);
     tvBaseUrl.setEnabled(!isNoneCat);
+    Preference customBaseUrl = getPreferenceScreen().findPreference(AppSettings.CUSTOM_BASE_URL);
+    customBaseUrl.setEnabled(!isNoneCat);
   }
 }

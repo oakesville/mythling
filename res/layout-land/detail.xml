@@ -98,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="25dp" />
         </LinearLayout>
       </LinearLayout>
 
@@ -129,6 +129,14 @@
         android:gravity="center_vertical|left"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/blank"/>
+
+      <TextView
+        android:id="@+id/customLink"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|left"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/blank" />
       
       <TextView
         android:id="@+id/pageLink"

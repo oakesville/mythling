@@ -57,5 +57,10 @@
       android:defaultValue="http://www.thetvdb.com/"
       android:dialogMessage="@string/message_tv_base_url"
       android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="custom_base_url"
+      android:title="@string/title_custom_base_url"
+      android:dialogMessage="@string/message_custom_base_url"
+      android:layout="@layout/pref" />
   </PreferenceCategory>
 </PreferenceScreen>

@@ -91,6 +91,7 @@ public class AppSettings
   public static final String DEFAULT_MEDIA_TYPE = "recordings";
   public static final String MOVIE_BASE_URL = "movie_base_url";
   public static final String TV_BASE_URL = "tv_base_url";
+  public static final String CUSTOM_BASE_URL = "custom_base_url";
   public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
   public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
   
@@ -318,6 +319,11 @@ public class AppSettings
   public String getTvBaseUrl()
   {
     return prefs.getString(TV_BASE_URL, THETVDB_BASE_URL);
+  }
+  
+  public String getCustomBaseUrl()
+  {
+    return prefs.getString(CUSTOM_BASE_URL, "");
   }
   
   public String getMythTvServiceHost()

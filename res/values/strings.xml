@@ -75,6 +75,8 @@
   <string name="message_movie_base_url">Base URL for Movie detail links</string>
   <string name="title_tv_base_url">TV Base URL</string>
   <string name="message_tv_base_url">Base URL for TV Series detail links</string>
+  <string name="title_custom_base_url">Custom Base URL</string>
+  <string name="message_custom_base_url">URL-encoded title is appended to this base</string>
   <string name="title_device_player">Device Player</string>
   <string name="title_frontend_player">Frontend Player</string>
   <string name="title_internal_backend">Internal Backend</string>
