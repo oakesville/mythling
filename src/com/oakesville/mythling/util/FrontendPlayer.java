@@ -32,25 +32,27 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.BuildConfig;
 
 public class FrontendPlayer
 {
   private static final String TAG = FrontendPlayer.class.getSimpleName();
   
   private AppSettings appSettings;
+  private String charSet;
   private Item item;
   private Socket socket;
   private PrintWriter out;
   private BufferedReader in;
   private String status;
   
-  public FrontendPlayer(AppSettings settings, Item item)
+  public FrontendPlayer(AppSettings settings, Item item, String charSet)
   {
     this.appSettings = settings;
     this.item = item;
+    this.charSet = charSet;
   }
   
   public boolean checkIsPlaying() throws IOException
@@ -96,16 +98,24 @@ public class FrontendPlayer
     {
       try
       {
-        open();
-        run("play stop");
-        run("play music stop");
         String filepath = item.getFilePath();
+        open(charSet);
+        run("play stop");
+        run("play program stop");
+        run("play music stop");
         if (item.isMusic())
+        {
           run("play music file " + filepath);
+        }
         else if (item.isRecording())
+        {
+          run("jump playbackrecordings");
           run("play program " + item.getChannelId() + " " + item.getStartTimeParam());
+        }
         else
+        {
           run("play file " + filepath);
+        }
         return 0L;
       }
       catch (Exception ex)
@@ -252,11 +262,16 @@ public class FrontendPlayer
   
   private void open() throws IOException
   {
+    open("UTF-8");
+  }
+  
+  private void open(String charset) throws IOException
+  {
     String frontendIp = appSettings.getFrontendHost();
     InetAddress serverAddr = InetAddress.getByName(frontendIp);
     int frontendPort = appSettings.getFrontendControlPort();
     socket = new Socket(serverAddr, frontendPort);
-    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), charset)), true);
     in =  new BufferedReader(new InputStreamReader(socket.getInputStream()));    
   }
   

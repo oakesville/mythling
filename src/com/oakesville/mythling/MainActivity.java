@@ -57,6 +57,11 @@ public class MainActivity extends MediaActivity
   
   private ArrayAdapter<Listable> adapter;
 
+  public String getCharSet()
+  {
+    return mediaList.getCharSet();
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
@@ -157,10 +162,7 @@ public class MainActivity extends MediaActivity
           if (isItem)
           {
             Item item = new Item((Item)listables.get(position));
-            if (item.isRecording() || item.isLiveTv())
-              item.setPath(mediaList.getBasePath());
-            else
-              item.setPath(mediaList.getBasePath() + "/");
+            item.setPath(mediaList.getBasePath());
             playItem(item);
           }
           else

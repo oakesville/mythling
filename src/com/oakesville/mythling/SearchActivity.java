@@ -52,6 +52,11 @@ public class SearchActivity extends MediaActivity
   public ListView getListView() { return listView; }
 
   private ArrayAdapter<Item> adapter;
+  
+  public String getCharSet()
+  {
+    return searchResults.getCharSet();
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -124,6 +129,7 @@ public class SearchActivity extends MediaActivity
         downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
         resultsJson = new String(downloader.get(), downloader.getCharSet());
         searchResults = new JsonParser(resultsJson).parseSearchResults();
+        searchResults.setCharSet(downloader.getCharSet());
         return 0L;
       }
       catch (Exception ex)
@@ -157,11 +163,11 @@ public class SearchActivity extends MediaActivity
               Item oldItem = (Item)items.get(position);
               Item item = new Item(oldItem);
               if (item.isMusic())
-                item.setPath(searchResults.getMusicBase());
+                item.setPath(searchResults.getMusicBase() + "/" + oldItem.getPath());
               else if (item.isRecording() || item.isLiveTv())
                 item.setPath(searchResults.getRecordingsBase());
               else
-                item.setPath(searchResults.getVideoBase());
+                item.setPath(searchResults.getVideoBase() + "/" + oldItem.getPath());
               playItem(item);
             }
           });

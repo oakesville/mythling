@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.List;
 
@@ -80,6 +81,11 @@ public class MediaPagerActivity extends MediaActivity
   private int currentPosition;
   private SeekBar positionBar;
   private int[] ratingViewIds = new int[5];
+  
+  public String getCharSet()
+  {
+    return mediaList.getCharSet();
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -342,6 +348,7 @@ public class MediaPagerActivity extends MediaActivity
       super.onResume();
       
       listable = pagerActivity.items.get(idx);
+      appSettings = pagerActivity.getAppSettings();  // somehow this was set to null
       
       TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
       titleView.setText(listable.getLabel());
@@ -409,8 +416,27 @@ public class MediaPagerActivity extends MediaActivity
             tv.setText(summary);
           }
           
+          // custom link
+          if (appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty())
+          {
+            try
+            {
+              String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
+              URL url = new URL(appSettings.getCustomBaseUrl() + pagerActivity.path + "/" + encodedTitle);
+              TextView tv = (TextView) detailView.findViewById(R.id.customLink);
+              String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+              tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
+              tv.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+            catch (IOException ex)
+            {
+              if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            }
+          }
+          
           // page link
-          if (item.getPageUrl() != null && item.getInternetRef() != null)
+          if (item.getPageUrl() != null || item.getInternetRef() != null)
           {
             try
             {
@@ -422,7 +448,8 @@ public class MediaPagerActivity extends MediaActivity
               }
               URL url = new URL(pageUrl);
               TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
-              tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + url.getHost() + "</a>"));
+              String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+              tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
               tv.setMovementMethod(LinkMovementMethod.getInstance());
             }
             catch (MalformedURLException ex)
@@ -434,24 +461,16 @@ public class MediaPagerActivity extends MediaActivity
           }
           
           Button button = (Button) detailView.findViewById(R.id.pagerPlay);
-          if (!pagerActivity.path.equals("Horror"))
+          button.setOnClickListener(new OnClickListener()
           {
-            button.setOnClickListener(new OnClickListener()
+            public void onClick(View v)
             {
-              public void onClick(View v)
-              {
-                Item oldItem = (Item)listable;
-                Item item = new Item(oldItem);
-                item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
-                pagerActivity.playItem(item);
-              }
-            });
-          }
-          else
-          {
-            button.setEnabled(false);
-            button.setVisibility(View.INVISIBLE);
-          }
+              Item oldItem = (Item)listable;
+              Item item = new Item(oldItem);
+              item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+              pagerActivity.playItem(item);
+            }
+          });
         }
       }
     }

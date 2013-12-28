@@ -54,6 +54,10 @@ public class MediaList
     return timeDisplay.format(retrieveDate);
   }
   
+  private String charSet;
+  public String getCharSet() { return charSet; }
+  public void setCharSet(String charSet) { this.charSet = charSet; }
+  
   private int count;
   public int getCount() { return count; }
   public void setCount(int ct) { this.count = ct; }

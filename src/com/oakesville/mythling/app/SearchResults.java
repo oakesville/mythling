@@ -37,6 +37,10 @@ public class SearchResults
     retrieveDate = dateFormat.parse(d);    
   }
   
+  private String charSet;
+  public String getCharSet() { return charSet; }
+  public void setCharSet(String charSet) { this.charSet = charSet; }
+  
   private String query;
   public String getQuery() { return query; }
   public void setQuery(String q) { this.query = q; }

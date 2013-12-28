@@ -332,7 +332,7 @@ public class HttpHelper
         detector.dataEnd();
         String detected = detector.getDetectedCharset();
         if (BuildConfig.DEBUG)
-          Log.d(TAG, " -> charset detect time: " + (System.currentTimeMillis() - requestEndTime) + " ms");
+          Log.d(TAG, " -> charset: " + detected + " - detect time: " + (System.currentTimeMillis() - requestEndTime) + " ms");
         if (detected != null  && !detected.equals(charset))
         {
           try

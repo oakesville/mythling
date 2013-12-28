@@ -63,7 +63,12 @@ public class MediaListActivity extends MediaActivity
 
   private ArrayAdapter<Listable> adapter;
   List<Listable> listables;
-  
+
+  public String getCharSet()
+  {
+    return mediaList.getCharSet();
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState)
   {

@@ -89,6 +89,8 @@ public abstract class MediaActivity extends Activity
   protected MediaType getMediaType() { return mediaType; }
   protected void setMediaType(MediaType mt) { this.mediaType = mt; }
   
+  public String getCharSet() { return "UTF-8"; }
+  
   private MenuItem mediaMenuItem;
   private MenuItem searchMenuItem;
   private MenuItem viewMenuItem;
@@ -468,7 +470,7 @@ public abstract class MediaActivity extends Activity
       }
       else
       {
-        final FrontendPlayer player = new FrontendPlayer(appSettings, item);
+        final FrontendPlayer player = new FrontendPlayer(appSettings, item, getCharSet());
         if (player.checkIsPlaying())
         {
           new AlertDialog.Builder(this)
@@ -527,7 +529,16 @@ public abstract class MediaActivity extends Activity
   
   private void startPlayback(Item item, final FrontendPlayer player)
   {
-    if (item.isRecording())
+    if (item.isLiveTv())
+    {
+      new AlertDialog.Builder(this)
+      .setIcon(android.R.drawable.ic_dialog_alert)
+      .setTitle(item.getTitle())
+      .setMessage("TODO: Frontend Live TV playback not yet supported.")
+      .setPositiveButton("OK", null)
+      .show();
+    }
+    else if (item.isRecording())
     {
       new AlertDialog.Builder(this)
       .setIcon(android.R.drawable.ic_dialog_alert)
@@ -554,7 +565,7 @@ public abstract class MediaActivity extends Activity
         // prepare for a progress bar dialog
         countdownDialog = new ProgressDialog(this);
         countdownDialog.setCancelable(true);
-        countdownDialog.setMessage("Playing " + getAppSettings().getMediaSettings().getLabel() + ": " + item);
+        countdownDialog.setMessage("Playing " + MediaSettings.getMediaLabel(item.getType()) + ": " + item.getLabel());
         countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         countdownDialog.setProgressPercentFormat(null);
         countdownDialog.setProgressNumberFormat(null);
@@ -670,6 +681,7 @@ public abstract class MediaActivity extends Activity
           return -1L;
         }
         mediaList = new JsonParser(mediaListJson).parseMediaList(getAppSettings().isMythlingMediaServices(), getAppSettings().getMediaSettings().getType());
+        mediaList.setCharSet(downloader.getCharSet());
         if (!getAppSettings().isMythlingMediaServices())
         {
           downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));

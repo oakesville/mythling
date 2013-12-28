@@ -119,6 +119,11 @@ public class MediaSettings
   
   public String getLabel()
   {
+    return getMediaLabel(type);
+  }
+  
+  public static String getMediaLabel(MediaType type)
+  {
     if (type == MediaType.music)
       return "Song";
     else if (type == MediaType.videos)

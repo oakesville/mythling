@@ -35,7 +35,7 @@ public class Item implements Listable
   private String id;
   public String getId() { return id; }
 
-  // path is populated for search results
+  // path is pre-populated for search results
   private String path;
   public String getPath() { return path; }
   public void setPath(String path) { this.path = path; }
@@ -47,6 +47,9 @@ public class Item implements Listable
   public String getTitle() { return title; }
   public void setTitle(String title) { this.title = title; }
   
+  /**
+   * Just the base part of the filename.
+   */
   private String file;
   public String getFile() { return file; }
   public void setFile(String file) { this.file = file; }
@@ -172,12 +175,20 @@ public class Item implements Listable
   
   public String getFileName()
   {
-    String str = file == null ? title : file;
-    if (extra != null)
-      str += " (" + extra + ")";
-    if (artist != null)
-      str += " - " + artist;
-    return str + "." + format;
+    if (file != null)
+    {
+      return file + "." + format;
+    }
+    else
+    {
+      // reconstruct
+      String str = title;
+      if (extra != null)
+        str += " (" + extra + ")";
+      if (artist != null)
+        str += " - " + artist;
+      return str + "." + format;
+    }
   }
   
   public String getFilePath()
@@ -330,6 +341,8 @@ public class Item implements Listable
         str += "(Live TV)";
       else if (isMovie())
         str += "(Movie)";
+      else if (isTvSeries())
+        str += "(TV Series)";
       else
         str += "(Video)";
       
