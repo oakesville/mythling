@@ -60,6 +60,15 @@ public class Category implements Listable, Comparable<Category>
   {
     children.add(childCat);
   }
+  public Category getChild(String name)
+  {
+    for (Category child : children)
+    {
+      if (child.getName().equals(name))
+        return child;
+    }
+    return null;
+  }
   
   private List<Item> items = new ArrayList<Item>();
   public List<Item> getItems() { return items; }

@@ -90,6 +90,41 @@ public class MediaList
     categories.add(cat);
   }
   
+  public void addItemUnderPathCategory(Item item)
+  {
+    String filepath = item.getFile();
+    String[] segments = filepath.split("/");
+    if (segments.length > 1)
+    {
+      Category cat = null;
+      for (int i = 0; i < segments.length; i++)
+      {
+        String seg = segments[i];
+        if (i < segments.length - 1)
+        {
+          Category subcat = cat == null ? getCategory(seg) : cat.getChild(seg);
+          if (subcat == null)
+          {
+            if (cat == null)
+              addCategory(subcat = new Category(seg, item.getType()));
+            else
+              cat.addChild(subcat = new Category(seg, cat));
+          }
+          cat = subcat;
+        }
+        else
+        {
+          item.setFile(seg);
+        }
+      }
+      cat.addItem(item);
+    }
+    else
+    {
+      addItem(item);
+    }
+  }
+  
   public List<Listable> getTopCategoriesAndItems()
   {
     List<Listable> all = new ArrayList<Listable>();

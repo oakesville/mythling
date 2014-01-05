@@ -96,31 +96,27 @@ public class JsonParser
         JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
         mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
         mediaList.setCount(infoList.getString("Count"));
-        Category vidCat = new Category("Videos", MediaType.videos);
-        mediaList.addCategory(vidCat);
         JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
         for (int i = 0; i < vids.length(); i++)
         {
           JSONObject vid = (JSONObject) vids.get(i);
           // determine type
           MediaType type = MediaType.videos;
-          if (vid.has("Inetref"))
+          if (vid.has("Season"))
+          {
+            String season = vid.getString("Season");
+            if (!season.isEmpty() && !season.equals("0"))
+              type = MediaType.tvSeries;
+          }
+          if (type != MediaType.tvSeries && vid.has("Inetref"))
           {
             String inetref = vid.getString("Inetref");
             if (!inetref.isEmpty() && !inetref.equals("00000000"))
-            {
               type = MediaType.movies;
-              if (vid.has("Season"))
-              {
-                String season = vid.getString("Season");
-                if (!season.isEmpty() && !season.equals("0"))
-                  type = MediaType.tvSeries;
-              }
-            }
           }
           
           if (type == mediaType)
-            vidCat.addItem(buildMythVideoItem(vid, type));
+            mediaList.addItemUnderPathCategory(buildMythVideoItem(vid, type));
         }
       }
       else if (list.has("ProgramList"))
@@ -329,23 +325,19 @@ public class JsonParser
       {
         String inetref = vid.getString("Inetref");
         if (!inetref.isEmpty() && !inetref.equals("00000000"))
-        {
           item.setInternetRef(inetref);
-          if (type == MediaType.tvSeries && vid.has("Season"))
-          {
-            String season = vid.getString("Season");
-            if (!season.isEmpty() && !season.equals("0"))
-            {
-              item.setSeason(Integer.parseInt(season));
-              if (vid.has("Episode"))
-              {
-                String episode = vid.getString("Episode");
-                if (!episode.isEmpty() && !episode.equals("0"))
-                  item.setEpisode(Integer.parseInt(episode));
-              }
-            }
-          }
-        }
+      }
+      if (vid.has("Season"))
+      {
+        String season = vid.getString("Season");
+        if (!season.isEmpty() && !season.equals("0"))
+          item.setSeason(Integer.parseInt(season));
+      }
+      if (vid.has("Episode"))
+      {
+        String episode = vid.getString("Episode");
+        if (!episode.isEmpty() && !episode.equals("0"))
+          item.setEpisode(Integer.parseInt(episode));
       }
       if (vid.has("HomePage"))
       {
