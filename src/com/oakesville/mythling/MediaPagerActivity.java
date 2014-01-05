@@ -504,7 +504,7 @@ public class MediaPagerActivity extends MediaActivity
             }
             catch (EOFException ex)
             {
-              /// try again
+              // try again
               byte[] imageBytes = downloader.get();
               getAppData().writeImage(filePath, imageBytes);
             }

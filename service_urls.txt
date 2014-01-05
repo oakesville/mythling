@@ -20,3 +20,7 @@ http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
 # MythTV Artwork
 http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Horror/a.jpg
 
+# MythTV Misc Services
+http://192.168.0.69:6544/Myth/GetHostName
+http://192.168.0.69:6544/Status/GetStatus
+

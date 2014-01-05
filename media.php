@@ -6,13 +6,11 @@ $MYTHDB_DATABASE = "mythconverg";
 $MYTHDB_USER = "mythtv";
 $MYTHDB_PASSWORD = "mythtv";
 
-// TODO use inetref for IMDB or MOVIEDB or TVDB
-$PAGE_LINK_TITLE = "IMDB";
-
+// MythTV settings
 $VIDEO_STORAGE_GROUP = "Videos";
 $VIDEO_DIR_SETTING = "VideoStartupDir";
 $MUSIC_DIR_SETTING = "MusicLocation";
-$ARTWORK_STORAGE_GROUP = "Coverart";
+$ARTWORK_STORAGE_GROUP = "Coverart";  // or Fanart or Screenshots or Banners
 $ARTWORK_DIR_SETTING = "VideoArtworkDir";
 $RECORDINGS_STORAGE_GROUP = "Default";
 
@@ -60,9 +58,9 @@ else
   $videoExcludeDirs = array();
 }
 
-if (!categorizeUsingDirs && isset($_REQUEST['categorizeUsingMetadata']))
+if (isset($_REQUEST['categorizeUsingMetadata']))
 {
-  if (strtoupper($_REQUEST['categorizeUsingMetadata'] == 'TRUE'))
+  if (strtoupper($_REQUEST['categorizeUsingMetadata']) == 'TRUE')
     $categorizeUsingMetadata = true;
 }
 
@@ -74,7 +72,6 @@ mysql_connect($MYTHDB_HOST, $MYTHDB_USER, $MYTHDB_PASSWORD) or die("Could not co
 mysql_select_db($MYTHDB_DATABASE) or die("Unable to select database");
 
 $isVideoStorageGroup = false;
-$pageLinkTitle = null;
 $castMap = null;
 
 if ($type->isSearch())
@@ -86,23 +83,25 @@ if ($type->isSearch())
     $isVideoStorageGroup = true;
   $musicBase = getSettingDir($MUSIC_DIR_SETTING);
   $recordingsBase = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
-  $posterBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+  $artworkBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
   
-  header("Content-type:text/plain");
+  header("Content-type:application/json");
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "date": "' . $dt . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '", "tvSeriesBase": "' . $videoBase . '" },' . "\n";
+  echo '  { "date": "' . $dt . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '", "tvSeriesBase": "' . $videoBase . '", "artworkStorageGroup": "' . $ARTWORK_STORAGE_GROUP . '"';  
+  echo ' },'	. "\n";
 
   if ($videoBase != null)
   {
     // videos
-    $vWhere = "where";
-    if ($isCategorizeUsingDirs)
-      $vWhere = $vWhere . " (" . notLike(($isVideoStorageGroup ? null : $videoBase), array_merge(array_merge($videoExcludeDirs,$movieDirs),$tvSeriesDirs)) . ")";
-    else if ($isCategorizeUsingMetadata)
-      $vWhere = $vWhere . " and (inetref is null or inetref = '00000000') or ((season is null or season = '0') and (episode is null or episode = '0'))";
+    $vWhere = "where 1=1";
+    if ($categorizeUsingDirs)
+      $vWhere = $vWhere . " and (" . notLike(($isVideoStorageGroup ? null : $videoBase), array_merge(array_merge($videoExcludeDirs,$movieDirs),$tvSeriesDirs)) . ")";
+    else if ($categorizeUsingMetadata)
+      $vWhere = $vWhere . " and (inetref is null or inetref = '00000000') and (season is null or season = '0') and (episode is null or episode = '0')";
     $vWhere = $vWhere . " and filename like '%" . $searchQuery . "%'"; 
     $vQuery = "select intid as id, filename from videometadata " . $vWhere . " order by filename";
+    // echo "\n vQuery:\n" . $vQuery . "\n";
     $vRes = mysql_query($vQuery) or die("Query failed: " . mysql_error());
     $vNum = mysql_numrows($vRes);
     echo '  "videos": ' . "\n  [\n";
@@ -116,7 +115,7 @@ if ($type->isSearch())
       $part = substr($full, strlen($videoBase) + 1);
       $lastSlash = strrpos($part, "/");
       $path = substr($part, 0, $lastSlash);
-      $file = substr($part, $lastSlash + 1);
+      $file = empty($path) ? $part : substr($part, $lastSlash + 1);
       printSearchResult($id, $path, $file, $i < $vNum - 1);
       $i++;
     }
@@ -126,13 +125,14 @@ if ($type->isSearch())
       // movies
       $castMap = getCastMap();
       echo "  ],\n";
-      $mWhere = "where";
+      $mWhere = "where 1=1";
       if ($categorizeUsingDirs)
-        $mWhere = $mWhere . " (" . like(($isVideoStorageGroup ? null : $videoBase), $movieDirs) . ")";
+        $mWhere = $mWhere . " and (" . like(($isVideoStorageGroup ? null : $videoBase), $movieDirs) . ")";
       else
-        $mWhere = $mWhere . " and (inetref is not null and inetref != '00000000') and (episode is null or episode = '0') and (season is null or season = '0')"; 
+        $mWhere = $mWhere . " and ((inetref is not null and inetref != '00000000') and (episode is null or episode = '0') and (season is null or season = '0'))"; 
       $mWhere = $mWhere . " and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%')";
-      $mQuery = "select intid as id, title, filename, inetref, year, userrating, director, plot as summary, coverfile, homepage from videometadata " . $mWhere . " order by filename";
+      $mQuery = "select intid as id, title, filename, inetref, homepage, year, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $mWhere . " order by filename";
+      // echo "\n mQuery:\n" . $mQuery . "\n";
       $mRes = mysql_query($mQuery) or die("Query failed: " . mysql_error());
       $mNum = mysql_numrows($mRes);
       echo '  "movies": ' . "\n  [\n";
@@ -149,27 +149,34 @@ if ($type->isSearch())
         $path = substr($part, 0, $lastSlash);
         $file = substr($part, $lastSlash + 1);
         $inetref = mysql_result($mRes, $i, "inetref");
+        $homepage = mysql_result($mRes, $i, "homepage");
         $year = mysql_result($mRes, $i, "year");
         $rating = mysql_result($mRes, $i, "userrating");
         $director = mysql_result($mRes, $i, "director");
         $summary = mysql_result($mRes, $i, "summary");
-        $pst = mysql_result($mRes, $i, "coverfile");
-        $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
-        $hp = mysql_result($mRes, $i, "homepage");
+        $art = mysql_result($mRes, $i, "coverfile");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+          $art = mysql_result($mRes, $i, "fanart");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+          $art = mysql_result($mRes, $i, "screenshot");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+          $art = mysql_result($mRes, $i, "banner");
+        $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
-        printSearchResultMovieOrTvSeries($id, $title, null, null, null, $path, $file, $inetref, $year, null, $rating, $director, $actors, $summary, $poster, $hp, $i < $mNum - 1);
+        printSearchResultMovieOrTvSeries($id, $title, null, null, null, $path, $file, $inetref, $homepage, $year, null, $rating, $director, $actors, $summary, $artwork, $i < $mNum - 1);
         $i++;
       }
       
       // tv series'
       echo "  ],\n";
-      $tsWhere = "where";
+      $tsWhere = "where 1=1";
       if ($categorizeUsingDirs)
-        $tsWhere = $tsWhere . " (" . like(($isVideoStorageGroup ? null : $videoBase), $tvSeriesDirs) . ")";
+        $tsWhere = $tsWhere . " and (" . like(($isVideoStorageGroup ? null : $videoBase), $tvSeriesDirs) . ")";
       else
         $tsWhere = $tsWhere . " and ((season is not null and season != '0') or (episode is not null and episode != '0'))";
       $tsWhere = $tsWhere . " and (filename like '%" . $searchQuery . "%' or subtitle like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%')";
-      $tsQuery = "select intid as id, title, subtitle, season, episode, filename, releasedate, userrating, director, plot as summary, coverfile, homepage from videometadata " . $tsWhere . " order by filename";
+      $tsQuery = "select intid as id, title, subtitle, season, episode, filename, inetref, homepage, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $tsWhere . " order by filename";
+      // echo "\n tsQuery:\n" . $tsQuery . "\n";
       $tsRes = mysql_query($tsQuery) or die("Query failed: " . mysql_error());
       $tsNum = mysql_numrows($tsRes);
       echo '  "tvSeries": ' . "\n  [\n";
@@ -189,15 +196,21 @@ if ($type->isSearch())
         $path = substr($part, 0, $lastSlash);
         $file = substr($part, $lastSlash + 1);
         $inetref = mysql_result($tsRes, $i, "inetref");
+        $homepage = mysql_result($tsRes, $i, "homepage");
         $aired = mysql_result($tsRes, $i, "releasedate");
         $rating = mysql_result($tsRes, $i, "userrating");
         $director = mysql_result($tsRes, $i, "director");
         $summary = mysql_result($tsRes, $i, "summary");
-        $pst = mysql_result($tsRes, $i, "coverfile");
-        $poster = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
-        $hp = mysql_result($tsRes, $i, "homepage");
+        $art = mysql_result($tsRes, $i, "coverfile");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+          $art = mysql_result($tsRes, $i, "fanart");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+          $art = mysql_result($tsRes, $i, "screenshot");
+        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+          $art = mysql_result($tsRes, $i, "banner");
+        $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
-        printSearchResultMovieOrTvSeries($id, $title, $subTitle, $season, $episode, $path, $file, $inetref, null, $aired, $rating, $director, $actors, $summary, $poster, $hp, $i < $tsNum - 1);
+        printSearchResultMovieOrTvSeries($id, $title, $subTitle, $season, $episode, $path, $file, $inetref, $homepage, null, $aired, $rating, $director, $actors, $summary, $artwork, $i < $tsNum - 1);
         $i++;
       }
     }
@@ -219,6 +232,8 @@ if ($type->isSearch())
       $lastSlash = strrpos($full, "/");
       $path = substr($full, 0, $lastSlash);
       $file = substr($full, $lastSlash + 1);
+      if (strcmp($path, $musicBase) == 0)
+      	$path = "";
       printSearchResult($id, $path, $file, $i < $sNum - 1);
       $i++;
     }
@@ -274,7 +289,7 @@ if ($type->isSearch())
 }
 else
 {
-  header("Content-type:text/plain");
+  header("Content-type:application/json");
   $orderBy = "filename";
   if (array_key_exists('orderBy', $_REQUEST))  // only for isVideos(), isMusic(), isMovies(), isTvSeries()
     $orderBy = $_REQUEST['orderBy'];
@@ -309,7 +324,6 @@ else
   else if ($type->isMovies() || $type->isTvSeries())
   {
     $castMap = getCastMap();
-    $pageLinkTitle = $PAGE_LINK_TITLE;
     $base = getStorageGroupDir($VIDEO_STORAGE_GROUP);
     if ($base == null)
       $base = getSettingDir($VIDEO_DIR_SETTING);
@@ -319,7 +333,10 @@ else
       die("Cannot determine base directory for categorized videos");
     if ($categorizeUsingDirs)
     {
-      $where = "where (" . like(($isVideoStorageGroup ? null : $base), $movieDirs) . ")";
+    	if ($type->isMovies())
+        $where = "where (" . like(($isVideoStorageGroup ? null : $base), $movieDirs) . ")";
+    	else if ($type->isTvSeries())
+    		$where = "where (" . like(($isVideoStorageGroup ? null : $base), $tvSeriesDirs) . ")";
     }
     else
     {
@@ -329,7 +346,7 @@ else
         $where = "where (season is not null and season != '0') or (episode is not null and episode != '0')";
     }
     $orderBy = "order by " . $orderBy;
-    $query = "select intid as id, title, subtitle, filename, inetref, season, episode, year, releasedate, userrating, director, plot as summary, coverfile, homepage from videometadata " . $where . " " . $orderBy;
+    $query = "select intid as id, title, subtitle, filename, inetref, homepage, season, episode, year, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $where . " " . $orderBy;
   }
   else if ($type->isLiveTv())
   {
@@ -346,7 +363,7 @@ else
     $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))) as title, r.basename, r.subtitle, r.description, convert(r.originalairdate using utf8) as oad, rr.recordid from recorded r " . $where . " " . $orderBy;
   }
 
-  // echo $query . "\n\n";
+  //echo $query . "\n\n";
 
   $result = mysql_query($query) or die("Query failed: " . mysql_error());
   $num = mysql_numrows($result);
@@ -369,6 +386,7 @@ else
     $titles = array();
     $subtitles = array();
     $inetrefs = array();
+    $homepages = array();
     $seasons = array();
     $episodes = array();
     $airedDates = array();
@@ -377,7 +395,7 @@ else
     $directors = array();
     $actors = array();
     $summaries = array();
-    $posters = array();
+    $artworks = array();
     $hps = array();
   }
   $prevPath = "";
@@ -390,6 +408,7 @@ else
       $ttl = mysql_result($result, $i, "title");
       $stl = mysql_result($result, $i, "subtitle");
       $inr = mysql_result($result, $i, "inetref");
+      $hp = mysql_result($result, $i, "homepage");
       $seas = mysql_result($result, $i, "season");
       $ep = mysql_result($result, $i, "episode");
       $yr = mysql_result($result, $i, "year");
@@ -400,8 +419,13 @@ else
       $sum = mysql_result($result, $i, "summary");
       if (strcmp('None', $sum) == 0)
         $sum = null;
-      $pst = mysql_result($result, $i, "coverfile");
-      $hp = mysql_result($result, $i, "homepage");
+      $art = mysql_result($result, $i, "coverfile");
+      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+        $art = mysql_result($result, $i, "fanart");
+      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+        $art = mysql_result($result, $i, "screenshot");
+      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+        $art = mysql_result($result, $i, "banner");
     }
     if ($type->isRecordings() || $type->isLiveTv())
     {
@@ -442,6 +466,9 @@ else
     $lastSlash = strrpos($part, "/");
     $path = substr($part, 0, $lastSlash);
     $file = $lastSlash ? substr($part, $lastSlash + 1) : $part;
+    if ($type->isMusic() && strcmp($path, $base) == 0)
+    	$path = "";
+    
     if (strcmp($prevPath, $path) != 0)
     {
       // make sure shorter segments are added first
@@ -483,19 +510,20 @@ else
     }
     else if ($type->isMovies() || $type->isTvSeries())
     {
-      $posterBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+      $artworkBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
       $titles[$id] = $ttl; 
       $subtitles[$id] = $stl;
       $years[$id] = $yr;
       $airedDates[$id] = $aired;
       $inetrefs[$id] = $inr;
+      $homepages[$id] = $hp;
       $seasons[$id] = $seas;
       $episodes[$id] = $ep;
       $ratings[$id] = $rt;
       $directors[$id] = $dir;
       $actors[$id] = $act;
       $summaries[$id] = $sum;
-      $posters[$id] = $pst == null || $posterBase == null ? null : substr($pst, strlen($posterBase) + 1);
+      $artworks[$id] = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
       $hps[$id] = $hp;
     }
   
@@ -507,10 +535,11 @@ else
 
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '", "base": "' . $base . '"';
-  if ($pageLinkTitle != null)
-    echo ', "pageLinkTitle": "' . $pageLinkTitle . '"';
-  echo " },\n";  
+  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '", "base": "' . $base . '", "artworkStorageGroup": "' . $ARTWORK_STORAGE_GROUP . '" ';
+  if ($num > 0)
+    echo " },\n";
+  else
+  	echo " }\n";  
   $i = 0;
   $depth = 0;
   $prevPath = "";
@@ -521,8 +550,8 @@ else
   // top-level items
   if (array_key_exists("", $catPaths))
   {
-  	printItems("", $catPaths[""], 0);
-  	echo ",\n";
+    printItems("", $catPaths[""], 0);
+    echo ",\n";
   }
   while ($i < $keyCt)
   {
@@ -642,7 +671,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $titles, $subtitles, $inetrefs, $airdates, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $posters, $hps;
+  global $type, $fileIds, $progstarts, $callsigns, $recordings, $basenames, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $titles, $subtitles, $inetrefs, $homepages, $airdates, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
 
   echo indent($depth * 4 + 2);
 
@@ -741,30 +770,31 @@ function printItem($path, $file, $depth, $more)
   }
   else if ($type->isMovies() || $type->isTvSeries())
   {
+  	echo ', "file": "' . substr($file, 0, strpos($file, ".")) . '"';
     if ($subtitles[$id] != null)
       echo ', "subtitle": "' . $subtitles[$id] . '"';
-    if ($inetrefs[$id] != null)
-      echo ', "inetref": "' . $inetrefs[$id] . '"';
-    if ($seasons[$id] != null)
+    if ($inetrefs[$id] != null && $inetrefs[$id] != '00000000')
+      echo ', "internetRef": "' . $inetrefs[$id] . '"';
+    if ($homepages[$id] != null)
+      echo ', "pageUrl": "' . $homepages[$id] . '"';
+    if ($seasons[$id] != null && $seasons[$id] != '0')
       echo ', "season": "' . $seasons[$id] . '"';
-    if ($episodes[$id] != null)
+    if ($episodes[$id] != null && $episodes[$id] != '0')
       echo ', "episode": "' . $episodes[$id] . '"';
-    if ($years[$id] != null)
+    if ($years[$id] != null && $years[$id] != '1895')
       echo ', "year": "' . $years[$id] . '"';
-    if ($airdates[$id] != null)
+    if ($airdates[$id] != null && $airdates[$id] != '0000-00-00')
       echo ', "aired": "' . $airdates[$id] . '"';
-    if ($ratings[$id] != null)
+    if ($ratings[$id] != null && $ratings[$id] != '0')
       echo ', "rating": "' . $ratings[$id] . '"';
-    if ($directors[$id] != null)
+    if ($directors[$id] != null && $directors[$id] != 'Unknown')
       echo ', "director": "' . $directors[$id] . '"';
     if ($actors[$id] != null)
       echo ', "actors": "' . $actors[$id] . '"';
     if ($summaries[$id] != null)
       echo ', "summary": "' . str_replace('"', '\"', $summaries[$id]) . '"';
-    if ($posters[$id] != null)
-      echo ', "poster": "' . $posters[$id] . '"';
-    if ($hps[$id] != null)
-      echo ', "pageUrl": "' . $hps[$id] . '"';
+    if ($artworks[$id] != null)
+      echo ', "artwork": "' . $artworks[$id] . '"';
   }
   echo " }";
   if ($more)
@@ -818,40 +848,43 @@ function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, 
   echo "\n";
 }
 
-function printSearchResultMovieOrTvSeries($id, $title, $subtitle, $season, $episode, $path, $file, $inetref, $year, $aired, $rating, $director, $actors, $summary, $poster, $hp, $more)
+function printSearchResultMovieOrTvSeries($id, $title, $subtitle, $season, $episode, $path, $file, $inetref, $pageUrl, $year, $aired, $rating, $director, $actors, $summary, $artwork, $more)
 {
   $lastdot = strrpos($file, ".");
   $filetype = substr($file, $lastdot + 1);
+  $filename = substr($file, 0, $lastdot);
 
   echo "    { ";
   echo '"id": "' . $id . '", ';
   echo '"path": "' . $path . '", ';
   echo '"title": "' . $title . '", ';
+  echo '"file": "' . $filename . '", ';
   echo '"format": "' . $filetype . '"';
+  
   if ($subtitle)
-    echo '"subtitle": "' . $subtitle . '", ';
-  if ($inetref)
-    echo ', "inetref": "' .$inetref . '"';
-  if ($season)
-    echo '"season": "' . $season . '", ';
-  if ($episode)
-    echo '"episode": "' . $episode . '", ';
-  if ($year)
+    echo ', "subtitle": "' . $subtitle . '"';
+  if ($inetref && $inetref != '00000000')
+    echo ', "internetRef": "' . $inetref . '"';
+  if ($pageUrl)
+    echo ', "pageUrl": "' . $pageUrl . '"';
+  if ($season && $season != '0')
+    echo ', "season": "' . $season . '"';
+  if ($episode && $episode != '0')
+    echo ', "episode": "' . $episode . '"';
+  if ($year && $year != '1895')
     echo ', "year": "' . $year . '"';
-  if ($aired)
+  if ($aired && $aired != '0000-00-00')
     echo ', "aired": "' . $aired . '"';
-  if ($rating)
+  if ($rating && $rating != '0')
     echo ', "rating": "' . $rating . '"';
-  if ($director)
+  if ($director && $director != 'Unknown')
     echo ', "director": "' . $director . '"';
   if ($actors)
     echo ', "actors": "' . $actors . '"';
   if ($summary && strcmp('None', $summary) != 0)
     echo ', "summary": "' . str_replace('"','\"',$summary) . '"';
-  if ($poster && $poster != null)
-    echo ', "poster": "' . $poster . '"';
-  if ($hp && $hp != null)
-    echo ', "pageUrl": "' . $hp . '"';
+  if ($artwork && $artwork != null)
+    echo ', "artwork": "' . $artwork . '"';
   echo " }";
   if ($more)
     echo ",";
@@ -922,7 +955,7 @@ function getStorageGroupDir($group)
   global $hostname;
   $query = "select dirname from storagegroup where hostname = '" . $hostname . "' and groupname = '" . $group . "'";
   $result = mysql_query($query) or die ("Query failed: " . mysql_error());
-  $dir = mysql_result($result, 0, "dirname");
+  $dir = mysql_numrows($result) > 0 ? mysql_result($result, 0, "dirname") : null;
   if ($dir != null)
     return trimTrailingSlash($dir);
 }
@@ -932,7 +965,7 @@ function getSettingDir($setting)
   global $hostname;
   $query = "select data from settings where hostname = '" . $hostname . "' and value = '" . $setting . "'";
   $result = mysql_query($query) or die("Query failed: " . mysql_error());
-  $dir = mysql_result($result, 0, "data");
+  $dir = mysql_numrows($result) > 0 ? mysql_result($result, 0, "data") : null;
   if ($dir != null)
     return trimTrailingSlash($dir);
 }
