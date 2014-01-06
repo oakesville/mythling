@@ -25,7 +25,7 @@
       android:dialogTitle="@string/title_video_categorization_dialog"
       android:entries="@array/video_categorization_entries"
       android:entryValues="@array/video_categorization_values"
-      android:defaultValue="None"
+      android:defaultValue="metadata"
       android:layout="@layout/pref" />
     <EditTextPreference 
       android:key="movie_directories"

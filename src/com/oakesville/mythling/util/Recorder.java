@@ -34,8 +34,8 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Category;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.TunerInUseException;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
+import com.oakesville.mythling.app.TunerInUseException;
 
 public class Recorder
 {
@@ -135,7 +135,12 @@ public class Recorder
   {
     HttpHelper recordingsHelper = appSettings.getMediaListDownloader(new URL[]{appSettings.getMediaListUrl(MediaType.recordings)});
     String recordingsListJson = new String(recordingsHelper.get());
-    MediaList recordingsList = new JsonParser(recordingsListJson).parseMediaList(true, MediaType.recordings);
+    JsonParser jsonParser = new JsonParser(recordingsListJson);
+    MediaList recordingsList = null;
+    if (appSettings.isMythlingMediaServices())
+      recordingsList = jsonParser.parseMythlingMediaList(MediaType.recordings);
+    else
+      recordingsList = jsonParser.parseMythTvMediaList(MediaType.recordings, appSettings);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {

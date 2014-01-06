@@ -42,7 +42,6 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 public class MainActivity extends MediaActivity
@@ -141,43 +140,32 @@ public class MainActivity extends MediaActivity
     showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     
-    if (mediaList.getMediaType() == MediaType.liveTv)
+    adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
+    listView.setAdapter(adapter);
+    listView.setOnItemClickListener(new OnItemClickListener()
     {
-      stopProgress();
-      Uri.Builder builder = new Uri.Builder();
-      builder.path(MediaSettings.getMediaTitle(MediaType.liveTv));
-      Uri uri = builder.build();
-      startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
-    }
-    else
-    {
-      adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
-      listView.setAdapter(adapter);
-      listView.setOnItemClickListener(new OnItemClickListener()
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id)
       {
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        List<Listable> listables = mediaList.getTopCategoriesAndItems();
+        boolean isItem = listables.get(position) instanceof Item;
+        if (isItem)
         {
-          List<Listable> listables = mediaList.getTopCategoriesAndItems();
-          boolean isItem = listables.get(position) instanceof Item;
-          if (isItem)
-          {
-            Item item = new Item((Item)listables.get(position));
-            item.setPath(mediaList.getBasePath());
-            playItem(item);
-          }
-          else
-          {
-            // must be category
-            String cat = ((TextView)view).getText().toString();
-            Uri.Builder builder = new Uri.Builder();
-            builder.path(cat);
-            Uri uri = builder.build();
-            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
-          }
+          Item item = new Item((Item)listables.get(position));
+          item.setPath(mediaList.getBasePath());
+          playItem(item);
         }
-      });
-      stopProgress();
-    }
+        else
+        {
+          // must be category
+          String cat = ((TextView)view).getText().toString();
+          Uri.Builder builder = new Uri.Builder();
+          builder.path(cat);
+          Uri uri = builder.build();
+          startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+        }
+      }
+    });
+    stopProgress();
   }  
   
 }

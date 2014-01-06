@@ -178,8 +178,7 @@ public abstract class MediaActivity extends Activity
       musicMenuItem.setVisible(show);
       if (appSettings.getMediaSettings().isMusic())
       {
-        appSettings.getMediaSettings().setType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
-        
+        appSettings.setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
       }
     }
   }
@@ -191,8 +190,9 @@ public abstract class MediaActivity extends Activity
       if (show)
       {
         viewMenuItem.setTitle("");
-        viewMenuItem.setIcon(appSettings.getMediaSettings().getViewIcon());
-        if (appSettings.getMediaSettings().getViewType() == ViewType.pager)
+        MediaSettings mediaSettings = appSettings.getMediaSettings();
+        viewMenuItem.setIcon(mediaSettings.getViewIcon());
+        if (mediaSettings.getViewType() == ViewType.pager)
           viewMenuItem.getSubMenu().findItem(R.id.view_pager).setChecked(true);
         else
           viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
@@ -208,10 +208,11 @@ public abstract class MediaActivity extends Activity
     {
       if (show)
       {
-        sortMenuItem.setTitle(appSettings.getMediaSettings().getSortTypeTitle());
-        if (appSettings.getMediaSettings().getSortType() == SortType.byYear)
+        MediaSettings mediaSettings = appSettings.getMediaSettings();
+        sortMenuItem.setTitle(mediaSettings.getSortTypeTitle());
+        if (mediaSettings.getSortType() == SortType.byYear)
           sortMenuItem.getSubMenu().findItem(R.id.sort_byYear).setChecked(true);
-        else if (appSettings.getMediaSettings().getSortType() == SortType.byRating)
+        else if (mediaSettings.getSortType() == SortType.byRating)
           sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setChecked(true);
         else
           sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setChecked(true);
@@ -267,7 +268,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.music);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.music));
         refresh();
         return true;
       }
@@ -275,7 +276,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.videos);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.videos));
         refresh();
         return true;
       }
@@ -283,7 +284,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.recordings);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.recordings));
         refresh();
         return true;
       }
@@ -291,7 +292,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.liveTv);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.liveTv));
         refresh();
         return true;
       }
@@ -299,7 +300,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.movies);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.movies));
         refresh();
         return true;
       }
@@ -307,7 +308,7 @@ public abstract class MediaActivity extends Activity
       {
         appSettings.setMediaType(MediaType.tvSeries);
         item.setChecked(true);
-        mediaMenuItem.setTitle(appSettings.getMediaSettings().getTitle());
+        mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.tvSeries));
         refresh();
         return true;
       }
@@ -680,13 +681,18 @@ public abstract class MediaActivity extends Activity
           ex = new IOException(mediaListJson);
           return -1L;
         }
-        mediaList = new JsonParser(mediaListJson).parseMediaList(getAppSettings().isMythlingMediaServices(), getAppSettings().getMediaSettings().getType());
+        JsonParser jsonParser = new JsonParser(mediaListJson);
+        MediaSettings mediaSettings = getAppSettings().getMediaSettings();
+        if (getAppSettings().isMythlingMediaServices())
+          mediaList = jsonParser.parseMythlingMediaList(mediaSettings.getType());
+        else
+          mediaList = jsonParser.parseMythTvMediaList(mediaSettings.getType(), appSettings);
         mediaList.setCharSet(downloader.getCharSet());
         if (!getAppSettings().isMythlingMediaServices())
         {
           downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));
           String storageGroupsJson = new String(downloader.get());
-          mediaList.setBasePath(new JsonParser(storageGroupsJson).parseStorageGroupDir(getAppSettings().getMediaSettings().getStorageGroup()));
+          mediaList.setBasePath(new JsonParser(storageGroupsJson).parseStorageGroupDir(mediaSettings.getStorageGroup()));
         }
         return 0L;
       }

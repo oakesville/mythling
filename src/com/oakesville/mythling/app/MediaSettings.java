@@ -33,6 +33,13 @@ public class MediaSettings
     images  // only used for cover art
   }
   
+  public enum MediaTypeDeterminer
+  {
+    none,
+    metadata,
+    directories
+  }
+  
   public enum ViewType
   {
     list,
@@ -48,7 +55,25 @@ public class MediaSettings
   
   private MediaType type = MediaType.videos;
   public MediaType getType() { return type; }
-  public void setType(MediaType t) { this.type = t; }
+  
+  private MediaTypeDeterminer typeDeterminer = MediaTypeDeterminer.metadata;
+  public MediaTypeDeterminer getTypeDeterminer() { return typeDeterminer; }
+  public void setTypeDeterminer(MediaTypeDeterminer determiner) { this.typeDeterminer = determiner; }
+  public void setTypeDeterminer(String determiner)
+  {
+    this.typeDeterminer = MediaTypeDeterminer.valueOf(determiner);
+  }
+  public String getTypeDeterminerLabel()
+  {
+    if (MediaTypeDeterminer.metadata == typeDeterminer)
+      return "MetaData";
+    else if (MediaTypeDeterminer.directories == typeDeterminer)
+      return "Directories";
+    else if (MediaTypeDeterminer.none == typeDeterminer)
+      return "None";
+    else
+      return null;
+  }
   
   private ViewType viewType = ViewType.list;
   public ViewType getViewType() { return viewType; }

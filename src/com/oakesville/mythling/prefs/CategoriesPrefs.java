@@ -6,6 +6,8 @@ import android.preference.PreferenceFragment;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.MediaSettings;
+import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
 
 public class CategoriesPrefs extends PreferenceFragment
 {
@@ -16,18 +18,19 @@ public class CategoriesPrefs extends PreferenceFragment
     addPreferencesFromResource(R.xml.categories_prefs);
     
     AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
+    MediaSettings mediaSettings = appSettings.getMediaSettings();
     
     Preference pref = getPreferenceScreen().findPreference(AppSettings.CATEGORIZE_VIDEOS);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true)
     {
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
-        doEnablement((String)newValue);
+        doEnablement(MediaTypeDeterminer.valueOf((String)newValue));
         return super.onPreferenceChange(preference, newValue);
       }
     });
-    pref.setSummary(appSettings.getVideoCategorization());
-    doEnablement(appSettings.getVideoCategorization());
+    pref.setSummary(mediaSettings.getTypeDeterminerLabel());
+    doEnablement(mediaSettings.getTypeDeterminer());
     
     pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_DIRECTORIES);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
@@ -54,9 +57,9 @@ public class CategoriesPrefs extends PreferenceFragment
     pref.setSummary(appSettings.getCustomBaseUrl());
   }
   
-  private void doEnablement(String categorization)
+  private void doEnablement(MediaTypeDeterminer determiner)
   {
-    boolean isDirectoriesCat = AppSettings.CATEGORIZATION_DIRECTORIES.equals(categorization);
+    boolean isDirectoriesCat = MediaTypeDeterminer.directories == determiner;
     
     Preference movieDirs = getPreferenceScreen().findPreference(AppSettings.MOVIE_DIRECTORIES);
     movieDirs.setEnabled(isDirectoriesCat);
@@ -65,7 +68,7 @@ public class CategoriesPrefs extends PreferenceFragment
     Preference excludeDirs = getPreferenceScreen().findPreference(AppSettings.VIDEO_EXCLUDE_DIRECTORIES);
     excludeDirs.setEnabled(isDirectoriesCat);
     
-    boolean isNoneCat = AppSettings.CATEGORIZATION_NONE.equals(categorization);
+    boolean isNoneCat = MediaTypeDeterminer.none == determiner;
     Preference movieBaseUrl = getPreferenceScreen().findPreference(AppSettings.MOVIE_BASE_URL);
     movieBaseUrl.setEnabled(!isNoneCat);
     Preference tvBaseUrl = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);

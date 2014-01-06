@@ -36,6 +36,7 @@ import android.preference.PreferenceManager;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
+import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
 import com.oakesville.mythling.util.HttpHelper;
@@ -62,9 +63,6 @@ public class AppSettings
   public static final String VIDEO_PLAYER = "video_player";
   public static final String NETWORK_LOCATION = "network_location";
   public static final String CATEGORIZE_VIDEOS = "categorize_videos";
-  public static final String CATEGORIZATION_DIRECTORIES = "Directories";
-  public static final String CATEGORIZATION_METADATA = "Metadata";
-  public static final String CATEGORIZATION_NONE = "None";
   public static final String MOVIE_DIRECTORIES = "movie_directories";
   public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
   public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
@@ -126,7 +124,7 @@ public class AppSettings
     if (isMythlingMediaServices())
     {
       url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaType.toString();
-      url += getVideoCategorizationParams();
+      url += getVideoTypeParams();
       if (mediaSettings.getSortType() == SortType.byYear)
         url += "&orderBy=year";
       else if (mediaSettings.getSortType() == SortType.byRating)
@@ -158,10 +156,10 @@ public class AppSettings
   /**
    * If not empty, always begins with '&'.
    */
-  public String getVideoCategorizationParams() throws UnsupportedEncodingException
+  public String getVideoTypeParams() throws UnsupportedEncodingException
   {
     String params = "";
-    if (isVideoCategorizationDirectories())
+    if (getMediaSettings().getTypeDeterminer() == MediaTypeDeterminer.directories)
     {
         String movieDirs = getMovieDirectories();
         if (movieDirs != null && !movieDirs.trim().isEmpty())
@@ -173,7 +171,7 @@ public class AppSettings
         if (videoExcludeDirs != null && !videoExcludeDirs.trim().isEmpty())
           params += "&videoExcludeDirs=" + URLEncoder.encode(videoExcludeDirs.trim(), "UTF-8");
     }
-    else if (isVideoCategorizationMetadata())
+    else if (getMediaSettings().getTypeDeterminer() == MediaTypeDeterminer.metadata)
     {
       params += "&categorizeUsingMetadata=true";
     }
@@ -185,7 +183,7 @@ public class AppSettings
     if (isMythlingMediaServices())
     {
       return new URL(getMythlingWebBaseUrl() + "/media.php?type=search&query=" + URLEncoder.encode(query, "UTF-8")
-          + getVideoCategorizationParams());
+          + getVideoTypeParams());
     }
     else
     {
@@ -279,21 +277,6 @@ public class AppSettings
   public String getExternalBackendHost()
   {
     return prefs.getString(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
-  }
-  
-  public String getVideoCategorization()
-  {
-    return prefs.getString(CATEGORIZE_VIDEOS, CATEGORIZATION_NONE);
-  }
-  
-  public boolean isVideoCategorizationDirectories()
-  {
-    return CATEGORIZATION_DIRECTORIES.equals(getVideoCategorization());
-  }
-  
-  public boolean isVideoCategorizationMetadata()
-  {
-    return CATEGORIZATION_METADATA.equals(getVideoCategorization());
   }
   
   public String getMovieDirectories()
@@ -440,19 +423,26 @@ public class AppSettings
     return values;
   }
 
+  private MediaSettings mediaSettings;
   public MediaSettings getMediaSettings()
   {
-    String mediaType = prefs.getString(MEDIA_TYPE, DEFAULT_MEDIA_TYPE);
-    MediaSettings mediaSettings = new MediaSettings(mediaType);
-    String viewType = prefs.getString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
-    mediaSettings.setViewType(viewType);
-    String sortType = prefs.getString(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
-    mediaSettings.setSortType(sortType);
+    if (mediaSettings == null)
+    {
+      String mediaType = prefs.getString(MEDIA_TYPE, DEFAULT_MEDIA_TYPE);
+      mediaSettings = new MediaSettings(mediaType);
+      String typeDeterminer = prefs.getString(CATEGORIZE_VIDEOS, MediaTypeDeterminer.metadata.toString());
+      mediaSettings.setTypeDeterminer(typeDeterminer);
+      String viewType = prefs.getString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
+      mediaSettings.setViewType(viewType);
+      String sortType = prefs.getString(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
+      mediaSettings.setSortType(sortType);
+    }
     return mediaSettings;
   }
   
   public boolean setMediaType(MediaType mediaType)
   {
+    mediaSettings = null;
     Editor ed = prefs.edit();
     ed.putString(MEDIA_TYPE, mediaType.toString());
     return ed.commit();
@@ -460,7 +450,7 @@ public class AppSettings
   
   public boolean setViewType(ViewType type)
   {
-    MediaSettings mediaSettings = getMediaSettings();
+    mediaSettings = null;
     Editor ed = prefs.edit();
     ed.putString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), type.toString());
     return ed.commit();
@@ -468,7 +458,7 @@ public class AppSettings
   
   public boolean setSortType(SortType type)
   {
-    MediaSettings mediaSettings = getMediaSettings();
+    mediaSettings = null;
     Editor ed = prefs.edit();
     ed.putString(SORT_TYPE + ":" + mediaSettings.getType().toString(), type.toString());
     return ed.commit();

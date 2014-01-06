@@ -203,8 +203,8 @@
     <item>Directories</item>
   </string-array>
   <string-array name="video_categorization_values">
-    <item>None</item>
-    <item>Metadata</item>
-    <item>Directories</item>
+    <item>none</item>
+    <item>metadata</item>
+    <item>directories</item>
   </string-array>
 </resources>

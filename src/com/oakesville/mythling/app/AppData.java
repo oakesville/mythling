@@ -83,7 +83,11 @@ public class AppData
     {
       String mediaListJson = new String(readFile(appDataJsonFile));
       JsonParser parser = new JsonParser(mediaListJson);
-      mediaList = parser.parseMediaList(new AppSettings(appContext).isMythlingMediaServices(), mediaType);
+      AppSettings appSettings = new AppSettings(appContext);
+      if (appSettings.isMythlingMediaServices())
+        mediaList = parser.parseMythlingMediaList(mediaType);
+      else
+        mediaList = parser.parseMythTvMediaList(mediaType, appSettings);
     }
     return mediaList;
   }
