@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
