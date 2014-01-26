@@ -148,7 +148,7 @@ public class Transcoder
         Log.d(TAG, "streamInfo.getRelativeUrl(): " + streamInfo.getRelativeUrl());
         Log.d(TAG, "streamUrl: " + streamUrl);
       }
-      Thread.sleep(1000);
+      long before = System.currentTimeMillis();
       try
       {
         streamBytes = getServiceDownloader(new URL(streamUrl)).get();
@@ -163,8 +163,16 @@ public class Transcoder
       {
         // keep trying
       }
-      
-      timeout -= 1000;
+      long elapsed = System.currentTimeMillis() - before;
+      if (elapsed < 1000)
+      {
+        Thread.sleep(1000 - elapsed);
+        timeout -= 1000;
+      }
+      else
+      {
+        timeout -= elapsed;
+      }
     }
     
     if (!hasTs)

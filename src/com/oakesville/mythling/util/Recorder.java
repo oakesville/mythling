@@ -93,9 +93,18 @@ public class Recorder
     {
       if (BuildConfig.DEBUG)
         Log.d(TAG, "Awaiting recording ...");
-      Thread.sleep(1000);
+      long before = System.currentTimeMillis();
       recording = getRecording(tvShow);
-      timeout -= 1000;
+      long elapsed = System.currentTimeMillis() - before;
+      if (elapsed < 1000)
+      {
+        Thread.sleep(1000 - elapsed);
+        timeout -= 1000;
+      }
+      else
+      {
+        timeout -= elapsed;
+      }
     }
     
     if (recording == null)
