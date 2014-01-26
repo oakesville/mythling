@@ -439,7 +439,7 @@ else
       if ($type->isRecordings())
         $full = $tit . "/" . $tit;
       else
-        $full = "Live TV/" . $tit;
+        $full = $tit;
       if ($type->isRecordings())
         $bn = mysql_result($result, $i, "basename");
       else
