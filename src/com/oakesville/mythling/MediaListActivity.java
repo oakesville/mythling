@@ -60,7 +60,8 @@ public class MediaListActivity extends MediaActivity
   private FragmentBreadCrumbs breadCrumbs;
   private ListView listView;
   public ListView getListView() { return listView; }
-
+  private int currentTop = 0;  // top item in the list
+  private int topOffset = 0;
   private ArrayAdapter<Listable> adapter;
   List<Listable> listables;
 
@@ -168,6 +169,9 @@ public class MediaListActivity extends MediaActivity
       {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
+          currentTop = listView.getFirstVisiblePosition();
+          View topV = listView.getChildAt(0);
+          topOffset = (topV == null) ? 0 : topV.getTop();
           final String text = ((TextView)view).getText().toString();
           boolean isItem = listables.get(position) instanceof Item;
           if (isItem)
@@ -238,6 +242,7 @@ public class MediaListActivity extends MediaActivity
           return true;
         }
       });
+      listView.setSelectionFromTop(currentTop, topOffset);
     }
   }
   
@@ -263,6 +268,8 @@ public class MediaListActivity extends MediaActivity
 
   public void refresh()
   {
+    currentTop = 0;
+    topOffset = 0;
     getAppSettings().setLastLoad(0);
     Intent intent = new Intent(this, MainActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

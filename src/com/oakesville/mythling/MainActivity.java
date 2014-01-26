@@ -53,7 +53,8 @@ public class MainActivity extends MediaActivity
   
   private ListView listView;
   public ListView getListView() { return listView; }
-  
+  private int currentTop = 0;  // top item in the list
+  private int topOffset = 0;
   private ArrayAdapter<Listable> adapter;
 
   public String getCharSet()
@@ -109,6 +110,8 @@ public class MainActivity extends MediaActivity
 
   public void refresh() throws BadSettingsException
   {
+    currentTop = 0;
+    topOffset = 0;
     mediaList = new MediaList();
     adapter = new ArrayAdapter<Listable>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
     listView.setAdapter(adapter);
@@ -146,6 +149,9 @@ public class MainActivity extends MediaActivity
     {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id)
       {
+        currentTop = listView.getFirstVisiblePosition();
+        View topV = listView.getChildAt(0);
+        topOffset = (topV == null) ? 0 : topV.getTop();        
         List<Listable> listables = mediaList.getTopCategoriesAndItems();
         boolean isItem = listables.get(position) instanceof Item;
         if (isItem)
@@ -166,6 +172,7 @@ public class MainActivity extends MediaActivity
       }
     });
     stopProgress();
+    listView.setSelectionFromTop(currentTop, topOffset);
   }  
   
 }
