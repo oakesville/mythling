@@ -224,6 +224,5 @@ public class MediaSettings
       return "Coverart";
     else
       return "Default";
-    
   }
 }

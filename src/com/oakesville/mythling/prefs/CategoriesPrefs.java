@@ -25,6 +25,7 @@ public class CategoriesPrefs extends PreferenceFragment
     {
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
+        new AppSettings(getPreferenceScreen().getContext()).getMediaSettings().setTypeDeterminer((String)newValue);
         doEnablement(MediaTypeDeterminer.valueOf((String)newValue));
         return super.onPreferenceChange(preference, newValue);
       }

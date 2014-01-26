@@ -284,14 +284,47 @@ public class AppSettings
     return prefs.getString(MOVIE_DIRECTORIES, "");
   }
   
+  public String[] getMovieDirs()
+  {
+    String[] movieDirs = getMovieDirectories().split(",");
+    for (int i = 0; i < movieDirs.length; i++)
+    {
+      if (!movieDirs[i].endsWith("/"))
+        movieDirs[i] += "/";
+    }
+    return movieDirs;
+  }
+  
   public String getTvSeriesDirectories()
   {
     return prefs.getString(TV_SERIES_DIRECTORIES, "");
   }
 
+  public String[] getTvSeriesDirs()
+  {
+    String[] tvDirs = getTvSeriesDirectories().split(",");
+    for (int i = 0; i < tvDirs.length; i++)
+    {
+      if (!tvDirs[i].endsWith("/"))
+        tvDirs[i] += "/";
+    }
+    return tvDirs;
+  }
+
   public String getVideoExcludeDirectories()
   {
     return prefs.getString(VIDEO_EXCLUDE_DIRECTORIES, "");
+  }
+  
+  public String[] getVidExcludeDirs()
+  {
+    String[] vidExcludeDirs = getVideoExcludeDirectories().split(",");
+    for (int i = 0; i < vidExcludeDirs.length; i++)
+    {
+      if (!vidExcludeDirs[i].endsWith("/"))
+        vidExcludeDirs[i] += "/";
+    }
+    return vidExcludeDirs;
   }
   
   public String getMovieBaseUrl()

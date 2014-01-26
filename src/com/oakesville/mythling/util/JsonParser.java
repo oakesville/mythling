@@ -44,6 +44,7 @@ import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.app.SearchResults;
+import com.oakesville.mythling.app.StorageGroup;
 
 public class JsonParser
 {
@@ -91,13 +92,20 @@ public class JsonParser
       Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
     return mediaList;    
   }
-  
+
   public MediaList parseMythTvMediaList(MediaType mediaType, AppSettings appSettings) throws JSONException, ParseException
+  {
+    return parseMythTvMediaList(mediaType, appSettings, null, null);
+  }
+
+  public MediaList parseMythTvMediaList(MediaType mediaType, AppSettings appSettings, StorageGroup storageGroup, String basePath) throws JSONException, ParseException
   {
     dateTimeRawFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
     MediaList mediaList = new MediaList();
     mediaList.setMediaType(mediaType);
+    mediaList.setStorageGroup(storageGroup);
+    mediaList.setBasePath(basePath);
     long startTime = System.currentTimeMillis();
     JSONObject list = new JSONObject(json);
     if (list.has("VideoMetadataInfoList"))
@@ -108,66 +116,69 @@ public class JsonParser
       mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
       mediaList.setCount(infoList.getString("Count"));
       JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
+      
+      String[] movieDirs = appSettings.getMovieDirs();
+      String[] tvSeriesDirs = appSettings.getTvSeriesDirs();
+      String[] vidExcludeDirs = appSettings.getVidExcludeDirs();
+      
       for (int i = 0; i < vids.length(); i++)
       {
         JSONObject vid = (JSONObject) vids.get(i);
         MediaType type = MediaType.videos;
-        if (mediaType == MediaType.movies || mediaType == MediaType.tvSeries)
+        
+        // determine type
+        if (mediaSettings.getTypeDeterminer() == MediaTypeDeterminer.directories)
         {
-          // determine type
-          if (mediaSettings.getTypeDeterminer() == MediaTypeDeterminer.directories)
+          if (vid.has("FileName"))
           {
-            if (vid.has("FileName"))
+            String filePath = vid.getString("FileName");
+            if (mediaList.getStorageGroup() == null && filePath.startsWith(basePath + "/"))
+              filePath = filePath.substring(basePath.length() + 1);
+            
+            for (String movieDir : movieDirs)
             {
-              String filePath = vid.getString("FileName");
-              if (mediaType == MediaType.movies)
+              if (filePath.startsWith(movieDir))
               {
-                for (String movieDir : appSettings.getMovieDirectories().split(","))
-                {
-                  if (!movieDir.endsWith("/"))
-                    movieDir += "/";
-                  if (filePath.startsWith(movieDir))
-                  {
-                    type = MediaType.movies;
-                    break;
-                  }
-                }
+                type = MediaType.movies;
+                break;
               }
-              else if (mediaType == MediaType.tvSeries)
-              { 
-                for (String tvDir : appSettings.getTvSeriesDirectories().split(","))
-                {
-                  if (!tvDir.endsWith("/"))
-                    tvDir += "/";
-                  if (filePath.startsWith(tvDir))
-                  {
-                    type = MediaType.tvSeries;
-                    break;
-                  }
-                }
+            }
+            for (String tvDir : tvSeriesDirs)
+            {
+              if (filePath.startsWith(tvDir))
+              {
+                type = MediaType.tvSeries;
+                break;
+              }
+            }
+            for (String vidExcludeDir : vidExcludeDirs)
+            {
+              if (filePath.startsWith(vidExcludeDir))
+              {
+                type = null;
+                break;
               }
             }
           }
-          else if (mediaSettings.getTypeDeterminer() == MediaTypeDeterminer.metadata)
+        }
+        else if (mediaSettings.getTypeDeterminer() == MediaTypeDeterminer.metadata)
+        {
+          if (vid.has("Season"))
           {
-            if (vid.has("Season"))
-            {
-              String season = vid.getString("Season");
-              if (!season.isEmpty() && !season.equals("0"))
-                type = MediaType.tvSeries;
-            }
-            if (type != MediaType.tvSeries && vid.has("Inetref"))
-            {
-              String inetref = vid.getString("Inetref");
-              if (!inetref.isEmpty() && !inetref.equals("00000000"))
-                type = MediaType.movies;
-            }
-            
+            String season = vid.getString("Season");
+            if (!season.isEmpty() && !season.equals("0"))
+              type = MediaType.tvSeries;
+          }
+          if (type != MediaType.tvSeries && vid.has("Inetref"))
+          {
+            String inetref = vid.getString("Inetref");
+            if (!inetref.isEmpty() && !inetref.equals("00000000"))
+              type = MediaType.movies;
           }
         }
         
         if (type == mediaType)
-          mediaList.addItemUnderPathCategory(buildMythVideoItem(vid, type));
+          mediaList.addItemUnderPathCategory(buildMythTvVideoItem(vid, type));
       }
     }
     else if (list.has("ProgramList"))
@@ -180,7 +191,7 @@ public class JsonParser
       for (int i = 0; i < recs.length(); i++)
       {
         JSONObject rec = (JSONObject) recs.get(i);
-        Item recItem = buildMythRecordingItem(rec);
+        Item recItem = buildMythTvRecordingItem(rec);
         Category cat = mediaList.getCategory(recItem.getTitle());
         if (cat == null)
         {
@@ -201,7 +212,7 @@ public class JsonParser
       for (int i = 0; i < chans.length(); i++)
       {
         JSONObject chanInfo = (JSONObject) chans.get(i);
-        Item show = buildMythLiveTvItem(chanInfo);
+        Item show = buildMythTvLiveTvItem(chanInfo);
         if (show != null)
           mediaList.addItem(show);
       }
@@ -335,7 +346,7 @@ public class JsonParser
   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   private static DateFormat dateTimeRawFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  private Item buildMythVideoItem(JSONObject vid, MediaType type) throws JSONException, ParseException
+  private Item buildMythTvVideoItem(JSONObject vid, MediaType type) throws JSONException, ParseException
   {
     Item item = new Item(vid.getString("Id"), type, vid.getString("Title"));
     String filename = vid.getString("FileName");
@@ -448,7 +459,7 @@ public class JsonParser
     return item;
   }
   
-  private Item buildMythRecordingItem(JSONObject rec) throws JSONException, ParseException
+  private Item buildMythTvRecordingItem(JSONObject rec) throws JSONException, ParseException
   {
     JSONObject channel = rec.getJSONObject("Channel");
     String chanId = channel.getString("ChanId");
@@ -467,7 +478,7 @@ public class JsonParser
     return item;
   }
   
-  private Item buildMythLiveTvItem(JSONObject chanInfo) throws JSONException, ParseException
+  private Item buildMythTvLiveTvItem(JSONObject chanInfo) throws JSONException, ParseException
   {
     String chanId = chanInfo.getString("ChanId");
     if (!chanInfo.has("Programs"))
@@ -656,7 +667,7 @@ public class JsonParser
     return streamInfo;
   }
   
-  public String parseStorageGroupDir(String name) throws JSONException
+  public StorageGroup parseStorageGroup(String name) throws JSONException
   {
     JSONObject dirList = new JSONObject(json).getJSONObject("StorageGroupDirList");
     JSONArray dirs = dirList.getJSONArray("StorageGroupDirs");
@@ -665,15 +676,34 @@ public class JsonParser
       JSONObject dir = (JSONObject) dirs.get(i);
       if (dir.getString("GroupName").equals(name))
       {
+        StorageGroup storageGroup = new StorageGroup();
+        storageGroup.setName(name);
         String dirPath = dir.getString("DirName");
         if (dirPath.endsWith("/"))
           dirPath = dirPath.substring(0, dirPath.length() - 1);
-        return dirPath;
+        storageGroup.setDirectory(dirPath);
+        if (dir.has("HostName"))
+          storageGroup.setHost(dir.getString("HostName"));
       }
     }
     return null;
   }
   
+  public String parseMythTvSetting(String key) throws JSONException
+  {
+    JSONObject settingsList = new JSONObject(json).getJSONObject("SettingList");
+    JSONObject settings = settingsList.getJSONObject("Settings");
+    if (settings.has(key))
+      return settings.getString(key);
+    else
+      return null;
+  }
+ 
+  public String parseString() throws JSONException
+  {
+    return new JSONObject(json).getString("String");
+  }
+
   public int parseInt() throws JSONException
   {
     return Integer.parseInt(new JSONObject(json).getString("int"));

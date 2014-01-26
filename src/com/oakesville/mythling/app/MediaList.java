@@ -70,6 +70,10 @@ public class MediaList
   public String getBasePath() { return basePath; }
   public void setBasePath(String bp) { this.basePath = bp; }
   
+  private StorageGroup storageGroup;
+  public StorageGroup getStorageGroup() { return storageGroup; }
+  public void setStorageGroup(StorageGroup sg) { this.storageGroup = sg; }
+  
   private String artworkStorageGroup;
   public String getArtworkStorageGroup() { return artworkStorageGroup; }
   public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
@@ -93,8 +97,13 @@ public class MediaList
   public void addItemUnderPathCategory(Item item)
   {
     String filepath = item.getFile();
+    if (getStorageGroup() == null && filepath.startsWith(basePath + "/"))
+    {
+      filepath = filepath.substring(basePath.length() + 1);
+      item.setFile(filepath);
+    }
     String[] segments = filepath.split("/");
-    if (segments.length > 1)
+    if (segments.length > 1 && !filepath.startsWith("/"))
     {
       Category cat = null;
       for (int i = 0; i < segments.length; i++)

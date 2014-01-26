@@ -61,6 +61,7 @@ import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.MediaSettings.ViewType;
+import com.oakesville.mythling.app.StorageGroup;
 import com.oakesville.mythling.app.TunerInUseException;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
@@ -672,6 +673,7 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
+        MediaSettings mediaSettings = getAppSettings().getMediaSettings();
         HttpHelper downloader = getAppSettings().getMediaListDownloader(urls);
         byte[] bytes = downloader.get();
         mediaListJson = new String(bytes, downloader.getCharSet());
@@ -681,19 +683,45 @@ public abstract class MediaActivity extends Activity
           ex = new IOException(mediaListJson);
           return -1L;
         }
-        JsonParser jsonParser = new JsonParser(mediaListJson);
-        MediaSettings mediaSettings = getAppSettings().getMediaSettings();
+        JsonParser mediaListParser = new JsonParser(mediaListJson);
         if (getAppSettings().isMythlingMediaServices())
-          mediaList = jsonParser.parseMythlingMediaList(mediaSettings.getType());
-        else
-          mediaList = jsonParser.parseMythTvMediaList(mediaSettings.getType(), appSettings);
-        mediaList.setCharSet(downloader.getCharSet());
-        if (!getAppSettings().isMythlingMediaServices())
         {
-          downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs")));
-          String storageGroupsJson = new String(downloader.get());
-          mediaList.setBasePath(new JsonParser(storageGroupsJson).parseStorageGroupDir(mediaSettings.getStorageGroup()));
+          mediaList = mediaListParser.parseMythlingMediaList(mediaSettings.getType());
         }
+        else
+        {
+          // need to know about storage group
+          URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
+          downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
+          StorageGroup storageGroup = new JsonParser(new String(downloader.get())).parseStorageGroup(mediaSettings.getStorageGroup());
+          if (storageGroup != null)
+          {
+            mediaList = mediaListParser.parseMythTvMediaList(mediaSettings.getType(), appSettings, storageGroup, storageGroup.getDirectory());
+          }
+          else
+          {
+            // no storage group for media type
+            String basePath = null;
+            if (mediaSettings.getType() == MediaType.videos || mediaSettings.getType() == MediaType.movies || mediaSettings.getType() == MediaType.tvSeries)
+            {
+              // handle videos by getting the base path setting
+              downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetHostName")));
+              String hostName = new JsonParser(new String(downloader.get())).parseString();
+              String key = "VideoStartupDir";
+              downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetSetting?Key=" + key + "&HostName=" + hostName)));
+              basePath = new JsonParser(new String(downloader.get())).parseMythTvSetting(key);
+              if (basePath == null)
+              {
+                // try without host name
+                downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetSetting?Key=" + key)));
+                basePath = new JsonParser(new String(downloader.get())).parseMythTvSetting(key);
+              }
+            }
+            mediaList = mediaListParser.parseMythTvMediaList(mediaSettings.getType(), appSettings, null, basePath);
+          }
+        }
+        mediaList.setCharSet(downloader.getCharSet());
+        
         return 0L;
       }
       catch (Exception ex)
