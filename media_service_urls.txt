@@ -26,4 +26,9 @@ http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Hor
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
 http://192.168.0.69:6544/Status/GetStatus
+http://192.168.0.69:6544/Myth/GetSetting?Key=DefaultTranscoder
+http://192.168.0.69:6544/Myth/GetSetting?Key=VideoStartupDir&HostName=mythbe
+http://192.168.0.69:6544/Myth/GetStorageGroupDirs
 
+# MythTV Service Contract
+/mythtv/mythtv/libs/libmythservicecontracts/moc_mythServices.cpp
