@@ -475,26 +475,29 @@ public class AppSettings
   
   public boolean setMediaType(MediaType mediaType)
   {
-    mediaSettings = null;
     Editor ed = prefs.edit();
     ed.putString(MEDIA_TYPE, mediaType.toString());
-    return ed.commit();
+    boolean res = ed.commit();
+    mediaSettings = null;
+    return res;
   }
   
   public boolean setViewType(ViewType type)
   {
-    mediaSettings = null;
     Editor ed = prefs.edit();
-    ed.putString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), type.toString());
-    return ed.commit();
+    ed.putString(VIEW_TYPE + ":" + getMediaSettings().getType().toString(), type.toString());
+    boolean res = ed.commit();
+    mediaSettings = null;
+    return res;
   }
   
   public boolean setSortType(SortType type)
   {
-    mediaSettings = null;
     Editor ed = prefs.edit();
-    ed.putString(SORT_TYPE + ":" + mediaSettings.getType().toString(), type.toString());
-    return ed.commit();
+    ed.putString(SORT_TYPE + ":" + getMediaSettings().getType().toString(), type.toString());
+    boolean res = ed.commit();
+    mediaSettings = null;
+    return res;
   }
 
   public int getMovieCurrentPosition(String category)
