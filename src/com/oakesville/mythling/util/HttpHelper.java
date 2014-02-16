@@ -241,13 +241,13 @@ public class HttpHelper
   
   private byte[] retrieve(Map<String,String> headers) throws IOException
   {  
-    URLConnection conn = null;
+    HttpURLConnection conn = null;
     InputStream is = null;
     
     try
     {
       long startTime = System.currentTimeMillis();
-      conn = url.openConnection();
+      conn = (HttpURLConnection) url.openConnection();
       prepareConnection(conn, headers);
       try
       {
@@ -262,13 +262,20 @@ public class HttpHelper
           // try and retrieve the backend IP
           String ip = retrieveBackendIp();
           url = new URL(url.getProtocol(), ip, url.getPort(), url.getFile());
-          conn = url.openConnection();
+          conn = (HttpURLConnection) url.openConnection();
           prepareConnection(conn, headers);
-          is = conn.getInputStream();
+          try
+          {
+            is = conn.getInputStream();
+          }
+          catch (IOException ex2)
+          {
+            rethrow(ex2, conn.getResponseMessage());
+          }
         }
         else
         {
-          throw ex;
+          rethrow(ex, conn.getResponseMessage());
         }
       }
       
@@ -390,4 +397,17 @@ public class HttpHelper
     return 10000;
   }
   
+  private void rethrow(IOException ex, String msgPrefix) throws IOException
+  {
+    if (msgPrefix == null)
+    {
+      throw ex;
+    }
+    else
+    {
+      IOException re = new IOException(msgPrefix + ": " + ex.getMessage());
+      re.setStackTrace(ex.getStackTrace());
+      throw re;
+    }
+  }
 }
