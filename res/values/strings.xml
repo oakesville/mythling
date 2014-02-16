@@ -31,7 +31,7 @@
   <string name="menu_settings">Settings</string>
   <string name="menu_search">Search</string>
   <string name="menu_byTitle">By Title</string>
-  <string name="menu_byYear">By Year</string>
+  <string name="menu_byDate">By Date</string>
   <string name="menu_byRating">By Rating</string>
   <string name="title_activity_categories">Mythling</string>
   <string name="title_activity_sub_cats">Mythling</string>

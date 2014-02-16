@@ -19,6 +19,8 @@
 package com.oakesville.mythling.app;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.oakesville.mythling.app.MediaSettings.MediaType;
@@ -52,7 +54,7 @@ public class Category implements Listable, Comparable<Category>
   {
     return parent == null;
   }
-
+  
   private List<Category> children = new ArrayList<Category>();
   public List<Category> getChildren() { return children; }
   public void setChildren(List<Category> children) { this.children = children; }
@@ -78,12 +80,16 @@ public class Category implements Listable, Comparable<Category>
     items.add(item);
   }
   
+  public boolean hasItems()
+  {
+    return items != null && items.size() > 0;
+  }
+  
   @Override
   public String toString()
   {
     return name;
   }
-  
   
   public List<Listable> getList()
   {
@@ -93,6 +99,11 @@ public class Category implements Listable, Comparable<Category>
     for (Item item : getItems())
       listable.add(item);
     return listable;
+  }
+  
+  public void sortItems(Comparator<Item> comparator)
+  {
+    Collections.sort(items, comparator);
   }
   
   public String getLabel()
@@ -105,5 +116,4 @@ public class Category implements Listable, Comparable<Category>
   {
     return this.name.compareTo(another.name);
   }
-
 }

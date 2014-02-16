@@ -25,8 +25,8 @@ import java.util.Date;
 
 import android.util.Log;
 
-import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.MediaSettings.MediaType;
 
 public class Item implements Listable
 {

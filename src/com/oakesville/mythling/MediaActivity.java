@@ -154,7 +154,7 @@ public abstract class MediaActivity extends Activity
     showSearchMenu(supportsSearch());
     
     sortMenuItem = menu.findItem(R.id.menu_sort);
-    showSortMenu(supportsSort() && (getMediaType() == MediaType.movies || getMediaType() == MediaType.tvSeries));
+    showSortMenu(supportsSort());
 
     viewMenuItem = menu.findItem(R.id.menu_view);
     showViewMenu(supportsViewSelection() && (getMediaType() == MediaType.movies || getMediaType() == MediaType.tvSeries));
@@ -211,8 +211,8 @@ public abstract class MediaActivity extends Activity
       {
         MediaSettings mediaSettings = appSettings.getMediaSettings();
         sortMenuItem.setTitle(mediaSettings.getSortTypeTitle());
-        if (mediaSettings.getSortType() == SortType.byYear)
-          sortMenuItem.getSubMenu().findItem(R.id.sort_byYear).setChecked(true);
+        if (mediaSettings.getSortType() == SortType.byDate)
+          sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setChecked(true);
         else if (mediaSettings.getSortType() == SortType.byRating)
           sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setChecked(true);
         else
@@ -227,17 +227,17 @@ public abstract class MediaActivity extends Activity
   {
     return false;
   }
-  
-  protected boolean supportsSort()
-  {
-    return false;
-  }
-  
+    
   protected boolean supportsSearch()
   {
     return getAppSettings().isMythlingMediaServices();
   }
-  
+
+  protected boolean supportsSort()
+  {
+    return mediaList != null && mediaList.supportsSort();
+  }
+
   protected boolean supportsMusic()
   {
     return getAppSettings().isMythlingMediaServices();
@@ -321,11 +321,11 @@ public abstract class MediaActivity extends Activity
         sort();
         return true;
       }
-      else if (item.getItemId() == R.id.sort_byYear)
+      else if (item.getItemId() == R.id.sort_byDate)
       {
-        appSettings.setSortType(SortType.byYear);
+        appSettings.setSortType(SortType.byDate);
         item.setChecked(true);
-        sortMenuItem.setTitle(R.string.menu_byYear);
+        sortMenuItem.setTitle(R.string.menu_byDate);
         sort();
         return true;
       }
@@ -524,9 +524,10 @@ public abstract class MediaActivity extends Activity
     // default does nothing
   }
   
-  protected void sort()
+  public void sort() throws IOException, JSONException, ParseException
   {
-    // default does nothing
+    startProgress();
+    refreshMediaList();
   }
   
   private void startPlayback(Item item, final FrontendPlayer player)
@@ -662,7 +663,7 @@ public abstract class MediaActivity extends Activity
   {
     // default does nothing
   }
-  
+
   private class RefreshTask extends AsyncTask<URL,Integer,Long>
   {
     private String mediaListJson;
@@ -721,6 +722,7 @@ public abstract class MediaActivity extends Activity
           }
         }
         mediaList.setCharSet(downloader.getCharSet());
+        getAppSettings().clearPagerCurrentPosition(mediaList.getMediaType(), "");
         
         return 0L;
       }

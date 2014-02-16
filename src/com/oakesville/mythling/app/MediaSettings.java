@@ -49,7 +49,7 @@ public class MediaSettings
   public enum SortType
   {
     byTitle,
-    byYear,
+    byDate,
     byRating
   }
   
@@ -134,8 +134,8 @@ public class MediaSettings
   
   public String getSortTypeTitle()
   {
-    if (sortType == SortType.byYear)
-      return "By Year";
+    if (sortType == SortType.byDate)
+      return "By Date";
     else if (sortType == SortType.byRating)
       return "By Rating";
     else

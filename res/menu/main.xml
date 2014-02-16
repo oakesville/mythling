@@ -57,8 +57,8 @@
           android:id="@+id/sort_byTitle"
           android:title="@string/menu_byTitle" />
         <item
-          android:id="@+id/sort_byYear"
-          android:title="@string/menu_byYear" />
+          android:id="@+id/sort_byDate"
+          android:title="@string/menu_byDate" />
         <item
           android:id="@+id/sort_byRating"
           android:title="@string/menu_byRating" />

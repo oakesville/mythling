@@ -140,7 +140,7 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
-    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
+    showSortMenu(supportsSort());
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     
     adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
@@ -173,6 +173,11 @@ public class MainActivity extends MediaActivity
     });
     stopProgress();
     listView.setSelectionFromTop(currentTop, topOffset);
-  }  
+  }
   
+  @Override
+  protected boolean supportsSort()
+  {
+    return mediaList.supportsSort() && (mediaList.hasTopLevelItems() || mediaList.getMediaType() == MediaType.recordings);
+  }
 }

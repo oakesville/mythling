@@ -182,6 +182,11 @@ public class SearchActivity extends MediaActivity
     }    
   }
   
+  protected boolean supportsSort()
+  {
+    return false;
+  }
+
   public void refresh() throws BadSettingsException
   {
     startActivity(new Intent(this, MainActivity.class));

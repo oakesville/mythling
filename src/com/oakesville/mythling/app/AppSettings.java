@@ -85,7 +85,7 @@ public class AppSettings
   public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
   public static final String TUNER_TIMEOUT = "tuner_timeout";
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
-  public static final String MOVIE_CURRENT_POSITION = "movie_current_position";
+  public static final String PAGER_CURRENT_POSITION = "movie_current_position";
   public static final String DEFAULT_MEDIA_TYPE = "recordings";
   public static final String MOVIE_BASE_URL = "movie_base_url";
   public static final String TV_BASE_URL = "tv_base_url";
@@ -125,7 +125,7 @@ public class AppSettings
     {
       url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaType.toString();
       url += getVideoTypeParams();
-      if (mediaSettings.getSortType() == SortType.byYear)
+      if (mediaSettings.getSortType() == SortType.byDate)
         url += "&orderBy=year";
       else if (mediaSettings.getSortType() == SortType.byRating)
         url += "&orderBy=userrating%20desc";
@@ -500,15 +500,22 @@ public class AppSettings
     return res;
   }
 
-  public int getMovieCurrentPosition(String category)
+  public int getPagerCurrentPosition(MediaType mediaType, String category)
   {
-    return prefs.getInt(MOVIE_CURRENT_POSITION + ":" + category, 0);
+    return prefs.getInt(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, 0);
   }
   
-  public void setMovieCurrentPosition(String category, int curPos)
+  public void setPagerCurrentPosition(MediaType mediaType, String category, int curPos)
   {
     Editor ed = prefs.edit();
-    ed.putInt(MOVIE_CURRENT_POSITION + ":" + category, curPos);
+    ed.putInt(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, curPos);
+    ed.apply();
+  }
+  
+  public void clearPagerCurrentPosition(MediaType mediaType, String category)
+  {
+    Editor ed = prefs.edit();
+    ed.remove(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category);
     ed.apply();
   }
   

@@ -43,6 +43,7 @@ import com.oakesville.mythling.app.MediaList;
 import com.oakesville.mythling.app.MediaSettings;
 import com.oakesville.mythling.app.MediaSettings.MediaType;
 import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
+import com.oakesville.mythling.app.MediaSettings.SortType;
 import com.oakesville.mythling.app.SearchResults;
 import com.oakesville.mythling.app.StorageGroup;
 
@@ -108,6 +109,7 @@ public class JsonParser
     mediaList.setBasePath(basePath);
     long startTime = System.currentTimeMillis();
     JSONObject list = new JSONObject(json);
+    SortType sortType = appSettings.getMediaSettings().getSortType(); 
     if (list.has("VideoMetadataInfoList"))
     {
       // videos, movies, or tvSeries
@@ -120,12 +122,11 @@ public class JsonParser
       String[] movieDirs = appSettings.getMovieDirs();
       String[] tvSeriesDirs = appSettings.getTvSeriesDirs();
       String[] vidExcludeDirs = appSettings.getVidExcludeDirs();
-      
+
       for (int i = 0; i < vids.length(); i++)
       {
         JSONObject vid = (JSONObject) vids.get(i);
         MediaType type = MediaType.videos;
-        
         // determine type
         if (mediaSettings.getTypeDeterminer() == MediaTypeDeterminer.directories)
         {
@@ -192,13 +193,21 @@ public class JsonParser
       {
         JSONObject rec = (JSONObject) recs.get(i);
         Item recItem = buildMythTvRecordingItem(rec);
-        Category cat = mediaList.getCategory(recItem.getTitle());
-        if (cat == null)
+        if (sortType == null || sortType == SortType.byTitle)
         {
-          cat = new Category(recItem.getTitle(), MediaType.recordings);
-          mediaList.addCategory(cat);
+          // categorize by title
+          Category cat = mediaList.getCategory(recItem.getTitle());
+          if (cat == null)
+          {
+            cat = new Category(recItem.getTitle(), MediaType.recordings);
+            mediaList.addCategory(cat);
+          }
+          cat.addItem(recItem);
         }
-        cat.addItem(recItem);
+        else
+        {
+          mediaList.addItem(recItem);
+        }
         Collections.sort(mediaList.getCategories());
       }
     }
@@ -219,6 +228,13 @@ public class JsonParser
     }
     if (BuildConfig.DEBUG)
       Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+    if (sortType != null && sortType != SortType.byTitle)
+    {
+      startTime = System.currentTimeMillis();
+      mediaList.sort(sortType);
+      if (BuildConfig.DEBUG)
+        Log.d(TAG, " -> media list sort time: " + (System.currentTimeMillis() - startTime) + " ms");
+    }
     return mediaList;    
   }
   
@@ -523,7 +539,13 @@ public class JsonParser
       String endtime = show.getString("EndTime");
       if (!endtime.isEmpty())
         item.setEndTime(parseMythDateTime(endtime));
-    }    
+    }
+    if (show.has("Stars"))
+    {
+      String stars = show.getString("Stars");
+      if (!stars.isEmpty())
+        item.setRating(Float.parseFloat(stars));
+    }
   }
 
   private Item buildItem(JSONObject w, MediaType t) throws JSONException, ParseException

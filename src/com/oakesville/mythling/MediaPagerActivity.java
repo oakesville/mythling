@@ -164,7 +164,7 @@ public class MediaPagerActivity extends MediaActivity
       public void onPageSelected(int position)
       {
         currentPosition = position;
-        getAppSettings().setMovieCurrentPosition(path, currentPosition);
+        getAppSettings().setPagerCurrentPosition(mediaList.getMediaType(), path, currentPosition);
         positionBar.setProgress(currentPosition + 1);
         TextView curItemView = (TextView) findViewById(R.id.currentItem);
         curItemView.setText(String.valueOf(currentPosition + 1));
@@ -226,7 +226,7 @@ public class MediaPagerActivity extends MediaActivity
     ratingViewIds[3] = R.id.star_4;
     ratingViewIds[4] = R.id.star_5;
 
-    currentPosition = getAppSettings().getMovieCurrentPosition(path);
+    currentPosition = getAppSettings().getPagerCurrentPosition(mediaList.getMediaType(), path);
     if (items.size() > currentPosition)
     {
       pager.setCurrentItem(currentPosition);
@@ -237,7 +237,7 @@ public class MediaPagerActivity extends MediaActivity
     }
     else
     {
-      getAppSettings().setMovieCurrentPosition(path, 0);
+      getAppSettings().setPagerCurrentPosition(mediaList.getMediaType(), path, 0);
     }
   }
   
@@ -245,12 +245,6 @@ public class MediaPagerActivity extends MediaActivity
   {
     return true;
   }
-  
-  @Override
-  protected boolean supportsSort()
-  {
-    return getAppSettings().isMythlingMediaServices();
-  }  
   
   public void refresh()
   {
@@ -550,10 +544,9 @@ public class MediaPagerActivity extends MediaActivity
   }
 
   @Override
-  public void sort()
+  public void sort() throws IOException, JSONException, ParseException
   {
-    startProgress();
-    refreshMediaList();
+    super.sort();
     pager.setCurrentItem(0);
     positionBar.setProgress(1);
   }

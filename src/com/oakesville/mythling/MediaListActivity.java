@@ -139,8 +139,8 @@ public class MediaListActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
+    showSortMenu(supportsSort());
     showViewMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
-    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     listables = mediaList.getListables(path);
     if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
@@ -252,20 +252,6 @@ public class MediaListActivity extends MediaActivity
     return true;
   }
   
-  @Override
-  protected boolean supportsSort()
-  {
-    return getAppSettings().isMythlingMediaServices();
-  }  
-
-  @Override
-  public void sort()
-  {
-    startProgress();
-    refreshMediaList();
-    getAppSettings().setMovieCurrentPosition(path, 0);
-  }
-
   public void refresh()
   {
     currentTop = 0;
@@ -285,4 +271,9 @@ public class MediaListActivity extends MediaActivity
     startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
   }
 
+  @Override
+  protected boolean supportsSort()
+  {
+    return mediaList.supportsSort() && mediaList.hasItems(path);
+  }
 }
