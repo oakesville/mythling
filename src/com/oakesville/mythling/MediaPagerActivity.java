@@ -502,6 +502,12 @@ public class MediaPagerActivity extends MediaActivity
               byte[] imageBytes = downloader.get();
               getAppData().writeImage(filePath, imageBytes);
             }
+            catch (IOException ex)
+            {
+              // fail silently
+              if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            }
           }
           
           return 0L;
