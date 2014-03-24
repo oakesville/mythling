@@ -57,11 +57,6 @@
         android:value=".SearchActivity" />
     </activity>
     <activity
-      android:name="com.oakesville.mythling.VideoActivity"
-      android:configChanges="orientation|keyboardHidden|navigation"
-      android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-    </activity>
-    <activity
       android:name="com.oakesville.mythling.prefs.PrefsActivity"
       android:label="@string/title_activity_prefs">
       <meta-data
