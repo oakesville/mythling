@@ -36,10 +36,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.SearchResults;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.JsonParser;
+import com.oakesville.mythling.util.MythlingParser;
 
 public class SearchActivity extends MediaActivity
 {
@@ -128,7 +128,7 @@ public class SearchActivity extends MediaActivity
         HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
         downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
         resultsJson = new String(downloader.get(), downloader.getCharSet());
-        searchResults = new JsonParser(resultsJson).parseSearchResults();
+        searchResults = new MythlingParser(resultsJson).parseSearchResults();
         searchResults.setCharSet(downloader.getCharSet());
         return 0L;
       }
@@ -160,14 +160,13 @@ public class SearchActivity extends MediaActivity
           {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-              Item oldItem = (Item)items.get(position);
-              Item item = new Item(oldItem);
-              if (item.isMusic())
-                item.setPath(searchResults.getMusicBase() + "/" + oldItem.getPath());
-              else if (item.isRecording() || item.isLiveTv())
+              Item item = (Item)items.get(position);
+              if (item.isMusic() && !item.getPath().startsWith(searchResults.getMusicBase()))
+                item.setPath(searchResults.getMusicBase() + "/" + item.getSearchPath());
+              else if ((item.isRecording() || item.isLiveTv()))
                 item.setPath(searchResults.getRecordingsBase());
               else
-                item.setPath(searchResults.getVideoBase() + "/" + oldItem.getPath());
+                item.setPath(searchResults.getVideoBase() + "/" + item.getSearchPath());
               playItem(item);
             }
           });

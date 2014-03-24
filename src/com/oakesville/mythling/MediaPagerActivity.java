@@ -58,10 +58,12 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.TvEpisode;
+import com.oakesville.mythling.media.Video;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.util.HttpHelper;
 
 /**
@@ -347,9 +349,9 @@ public class MediaPagerActivity extends MediaActivity
       TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
       titleView.setText(listable.getLabel());
       
-      if (listable instanceof Item)
+      if (listable instanceof Video)
       {
-        Item item = (Item) listable;
+        Video item = (Video) listable;
         if (item.isMovie() || item.isTvSeries())
         {
           if (item.getArtwork() != null)
@@ -405,8 +407,12 @@ public class MediaPagerActivity extends MediaActivity
           {
             TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
             String summary = item.getSummary();
-            if (item.getSeason() != 0)
-              summary = "Season " + item.getSeason() + ", Episode " + item.getEpisode() + ":\n" + summary; 
+            if (item instanceof TvEpisode)
+            {
+              TvEpisode tve = (TvEpisode) item;
+              if (tve.getSeason() != 0)
+                summary = "Season " + tve.getSeason() + ", Episode " + tve.getEpisode() + ":\n" + summary; 
+            }
             tv.setText(summary);
           }
           
@@ -459,8 +465,7 @@ public class MediaPagerActivity extends MediaActivity
           {
             public void onClick(View v)
             {
-              Item oldItem = (Item)listable;
-              Item item = new Item(oldItem);
+              Item item = (Item)listable;
               item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
               pagerActivity.playItem(item);
             }

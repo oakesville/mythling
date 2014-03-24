@@ -39,10 +39,10 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class MainActivity extends MediaActivity
 {
@@ -153,10 +153,10 @@ public class MainActivity extends MediaActivity
         View topV = listView.getChildAt(0);
         topOffset = (topV == null) ? 0 : topV.getTop();        
         List<Listable> listables = mediaList.getTopCategoriesAndItems();
-        boolean isItem = listables.get(position) instanceof Item;
-        if (isItem)
+        boolean isMediaItem = listables.get(position) instanceof Item;
+        if (isMediaItem)
         {
-          Item item = new Item((Item)listables.get(position));
+          Item item = (Item)listables.get(position);
           item.setPath(mediaList.getBasePath());
           playItem(item);
         }
@@ -175,9 +175,12 @@ public class MainActivity extends MediaActivity
     listView.setSelectionFromTop(currentTop, topOffset);
   }
   
+  
+  
   @Override
   protected boolean supportsSort()
   {
-    return mediaList.supportsSort() && (mediaList.hasTopLevelItems() || mediaList.getMediaType() == MediaType.recordings);
+    super.supportsSort();
+    return mediaList != null && mediaList.supportsSort() && (mediaList.hasTopLevelItems() || mediaList.getMediaType() == MediaType.recordings);
   }
 }

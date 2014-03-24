@@ -34,7 +34,8 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Item;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Recording;
 
 public class FrontendPlayer
 {
@@ -57,7 +58,7 @@ public class FrontendPlayer
   
   public boolean checkIsPlaying() throws IOException
   {
-    int timeout = 5000;
+    int timeout = 5000;  // TODO: pref
     
     status = null;
     new StatusTask().execute();
@@ -109,8 +110,8 @@ public class FrontendPlayer
         }
         else if (item.isRecording())
         {
-          run("jump playbackrecordings");
-          run("play program " + item.getChannelId() + " " + item.getStartTimeParam());
+          //run("jump playbackrecordings");
+          run("play program " + ((Recording)item).getChannelId() + " " + ((Recording)item).getStartTimeParam());
         }
         else
         {
@@ -249,15 +250,22 @@ public class FrontendPlayer
   
   private String run(String command) throws IOException
   {
+    if (BuildConfig.DEBUG)
+      Log.i(TAG, "Running frontend control socket command: '" + command + "'");
     out.println(command);
     out.flush();
-    String line = null;
-    while ((line = in.readLine()) != null)
+    String line = in.readLine();
+    if (line != null)
     {
       if (line.startsWith("#"))
-        return line.substring(2);
+        line = line.substring(2);
+      // the error about playbackbox mode is misleading in MythTV 0.26 and seems to be reported erroneously 
+      if (line.startsWith("ERROR:") && !line.startsWith("ERROR: You are in playbackbox mode and this command is only for playback mode"))
+        throw new FrontendPlaybackException(line);
     }
-    return null;
+    if (BuildConfig.DEBUG)
+      Log.i(TAG, "Frontend control socket response: " + line);
+    return line;
   }
   
   private void open() throws IOException
@@ -283,5 +291,13 @@ public class FrontendPlayer
       in.close();
     if (socket != null)
       socket.close();
+  }
+  
+  class FrontendPlaybackException extends IOException
+  {
+    public FrontendPlaybackException(String msg)
+    {
+      super(msg);
+    }
   }
 }

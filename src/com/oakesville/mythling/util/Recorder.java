@@ -31,11 +31,13 @@ import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Category;
-import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.app.TunerInUseException;
+import com.oakesville.mythling.media.Category;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.TunerInUseException;
+import com.oakesville.mythling.media.TvShow;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Recorder
 {
@@ -48,21 +50,21 @@ public class Recorder
     this.appSettings = appSettings;
   }
   
-  private Item tvShow;
+  private TvShow tvShow;
   private int recRuleId;
-  private Item recording;
-  public Item getRecording() { return recording; }
+  private Recording recording;
+  public Recording getRecording() { return recording; }
   
   /**
    * Returns true if a matching recording was already scheduled.  Must be called from a background thread.
    */
-  public boolean scheduleRecording(Item item) throws IOException, JSONException, ParseException
+  public boolean scheduleRecording(TvShow show) throws IOException, JSONException, ParseException
   {
     boolean preExist = false;
     
     // check whether there's a recording for chanid and starttime
-    tvShow = item;
-    recording = getRecording(item);
+    tvShow = show;
+    recording = getRecording(show);
     if (recording != null)
     {
       preExist = true;
@@ -71,12 +73,12 @@ public class Recorder
     {
       // schedule the recording
       URL addRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() 
-          + "/Dvr/AddRecordSchedule?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam());
+          + "/Dvr/AddRecordSchedule?ChanId=" + show.getChannelId() + "&StartTime=" + show.getStartTimeParam());
         
       String addRecJson = new String(getServiceHelper(addRecUrl).post());
-      recRuleId = new JsonParser(addRecJson).parseInt();
+      recRuleId = new MythTvParser(addRecJson, appSettings).parseInt();
       if (recRuleId <= 0)
-        throw new IOException("Problem scheduling recording for: " + item.getTitle());
+        throw new IOException("Problem scheduling recording for: " + show.getTitle());
     }
 
     return preExist;
@@ -123,7 +125,7 @@ public class Recorder
     Thread.sleep(lagSeconds * 1000);
   }
   
-  public void deleteRecording(Item recording) throws IOException, JSONException, InterruptedException
+  public void deleteRecording(Recording recording) throws IOException, JSONException, InterruptedException
   {
     // delete the recording
     URL delRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecorded?ChanId=" + recording.getChannelId() + "&StartTime=" + recording.getStartTimeParam());
@@ -131,7 +133,7 @@ public class Recorder
     if (BuildConfig.DEBUG)
       Log.d(TAG, "Delete recording result: " + delRecRes);
     
-    boolean deleteResult = new JsonParser(delRecRes).parseBool();
+    boolean deleteResult = new MythTvParser(delRecRes, appSettings).parseBool();
     if (!deleteResult)
       throw new IOException("Problem deleting recording for: " + recording.getTitle());
 
@@ -140,21 +142,18 @@ public class Recorder
     Thread.sleep(lagSeconds * 1000);
   }
   
-  private Item getRecording(Item tvShow) throws IOException, JSONException, ParseException
+  private Recording getRecording(TvShow tvShow) throws IOException, JSONException, ParseException
   {
     HttpHelper recordingsHelper = appSettings.getMediaListDownloader(new URL[]{appSettings.getMediaListUrl(MediaType.recordings)});
     String recordingsListJson = new String(recordingsHelper.get());
-    JsonParser jsonParser = new JsonParser(recordingsListJson);
-    MediaList recordingsList = null;
-    if (appSettings.isMythlingMediaServices())
-      recordingsList = jsonParser.parseMythlingMediaList(MediaType.recordings);
-    else
-      recordingsList = jsonParser.parseMythTvMediaList(MediaType.recordings, appSettings);
+    MediaListParser jsonParser = appSettings.getMediaListParser(recordingsListJson);
+    MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {
-      for (Item rec : cat.getItems())
+      for (Item item : cat.getItems())
       {
+        Recording rec = ((Recording)item);
         if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw()))
         {
           recording = rec;

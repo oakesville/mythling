@@ -24,8 +24,8 @@ import android.preference.PreferenceFragment;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.MediaSettings;
-import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
+import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 
 public class CategoriesPrefs extends PreferenceFragment
 {

@@ -16,32 +16,38 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.app;
+package com.oakesville.mythling.media;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Comparator;
 
-import android.util.Log;
+import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-
-public class Item implements Listable
+public abstract class Item implements Listable
 {
-  private static final String TAG = Item.class.getSimpleName();
+  public static final char ARROW = 0x25BA;
+  public static final char STAR = 0x2605;
+  public static final char HALF_STAR = 0x00BD;
+  public static final String PREFIX = String.valueOf(ARROW) + " ";
+  
+  public abstract MediaType getType();
+  public abstract String getTypeTitle();
 
   private String id;
   public String getId() { return id; }
 
-  // path is pre-populated for search results
+  // searchPath is populated for search results
+  private String searchPath;
+  public String getSearchPath() { return searchPath; }
+  public void setSearchPath(String searchPath) { this.searchPath = searchPath; }
+
+  /**
+   * Path for item playback (set when item is played)
+   */
   private String path;
   public String getPath() { return path; }
   public void setPath(String path) { this.path = path; }
-  
-  private MediaType type;
-  public MediaType getType() { return type; }
   
   private String title;
   public String getTitle() { return title; }
@@ -66,113 +72,20 @@ public class Item implements Listable
   public String getExtra() { return extra; }
   public void setExtra(String extra) { this.extra = extra; }
   
-  private String callsign;
-  public String getCallsign() { return callsign; }
-  public void setCallsign(String callsign) { this.callsign = callsign; }
-  
   private String subTitle;
   public String getSubTitle() { return subTitle; }
   public void setSubTitle(String subTitle) { this.subTitle = subTitle; }
-  
-  private String description;
-  public String getDescription() { return description; }
-  public void setDescription(String description) { this.description = description; }
-  
-  private Date originallyAired;
-  public Date getOriginallyAired() { return originallyAired; }
-  public void setOriginallyAired(Date aired) { this.originallyAired = aired; }
-  
-  private int year;
-  public int getYear() { return year; }
-  public void setYear(int year) { this.year = year; }
-  
-  private int season;
-  public int getSeason() { return season; }
-  public void setSeason(int season) { this.season = season; }
-  
-  private int episode;
-  public int getEpisode() { return episode; }
-  public void setEpisode(int episode) { this.episode = episode; }
   
   private float rating;
   public float getRating() { return rating; }
   public void setRating(float rating) { this.rating = rating; }
   
-  private String director;
-  public String getDirector() { return director; }
-  public void setDirector(String director) { this.director = director; }
-  
-  private String actors;
-  public String getActors() { return actors; }
-  public void setActors(String actors) { this.actors = actors; }
-  
-  private String summary;
-  public String getSummary() { return summary; }
-  public void setSummary(String summary) { this.summary = summary; }
-  
-  private String artworkStorageGroup;
-  public String getArtworkStorageGroup() { return artworkStorageGroup; }
-  public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
-  
-  private String artwork;
-  public String getArtwork() { return artwork; }
-  public void setArtwork(String artwork) { this.artwork = artwork; }
-
-  private String internetRef;
-  public String getInternetRef() { return internetRef; }
-  public void setInternetRef(String inetRef) { this.internetRef = inetRef; }
-  
-  private String pageUrl;
-  public String getPageUrl() { return pageUrl; }
-  public void setPageUrl(String pageUrl) { this.pageUrl = pageUrl; }
-  
-  private Date startTime;
-  public Date getStartTime() { return startTime; }
-  public void setStartTime(Date startTime) { this.startTime = startTime; }
-
-  private Date endTime;
-  public Date getEndTime() { return endTime; }
-  public void setEndTime(Date endTime) { this.endTime = endTime; }
-  
-  private int recordingRuleId;
-  public int getRecordingRuleId() { return recordingRuleId; }
-  public void setRecordingRuleId(int rrid) { this.recordingRuleId = rrid; }
-  
-  private String programStart;
-  public String getProgramStart() { return programStart; }
-  public void setProgramStart(String programStart) { this.programStart = programStart; }
-  
-  public Item(String id, MediaType type, String title)
+  public Item(String id, String title)
   {
     this.id = id;
-    this.type = type;
     this.title = title;
   }
 
-  public Item(Item other)
-  {
-    this.id = other.id;
-    this.type = other.type;
-    this.title = other.title;
-    this.file = other.file;
-    this.format = other.format;
-    this.artist = other.artist;
-    this.extra = other.extra;
-    this.callsign = other.callsign;
-    this.startTime = other.startTime;
-    this.endTime = other.endTime;
-    this.programStart = other.programStart;
-    this.subTitle = other.subTitle;
-    this.description = other.description;
-    this.originallyAired = other.originallyAired;
-    this.year = other.year;
-    this.rating = other.rating;
-    this.director = other.director;
-    this.actors = other.actors;
-    this.artwork = other.artwork;
-    this.pageUrl = other.pageUrl;
-  }
-  
   public String getFileName()
   {
     if (file != null)
@@ -191,236 +104,144 @@ public class Item implements Listable
     }
   }
   
+  /**
+   * full file path for item 
+   */
   public String getFilePath()
   {
     return getPath() + "/" + getFileName();
   }
   
-  public int getChannelId()
-  {
-    if (!isRecording() && !isLiveTv())
-      return -1;
-    else
-      return Integer.parseInt(getId().substring(0,  getId().indexOf('~')));
-  }
-  
-  public int getChannelNumber()
-  {
-    if (!isRecording() && !isLiveTv())
-      return -1;
-    else
-      return Integer.parseInt(getId().substring(1,  getId().indexOf('~')));
-  }
-  
-  public String getStartTimeParam()
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    else
-      return getStartTimeRaw().replace(' ', 'T');
-  }
-  public String getStartTimeRaw()
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    return getId().substring(getId().indexOf('~') + 1);
-  }
-
-  private static DateFormat dateFormat = new SimpleDateFormat("MMM d yyyy");
-  private static DateFormat timeFormat = new SimpleDateFormat("h:mm a");
-  private static DateFormat dateTimeFormat = new SimpleDateFormat("MMM d  h:mm a");
-  public String getStartDateTimeFormatted() throws ParseException
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    return dateTimeFormat.format(getStartTime());
-  }
-  public String getStartTimeFormatted() throws ParseException
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    return timeFormat.format(getStartTime());
-  }
-    
-  public String getEndDateTimeFormatted() throws ParseException
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    return dateTimeFormat.format(getEndTime());    
-  }
-  public String getEndTimeFormatted() throws ParseException
-  {
-    if (!isRecording() && !isLiveTv())
-      return null;
-    return timeFormat.format(getEndTime());
-  }
-  
-  public String getShowInfo()
-  {
-    if (!isRecording() && !isLiveTv() && !isMovie())
-      return null;
-    
-    String str = "";
-    
-    if (isMovie())
-    {
-      str += (getYear() == 0 ? "" : getYear() + "   ") + getRatingString() + "\n";
-      str += getDirector() == null ? "" : "Directed By: " + getDirector() + "\n";
-      str += getActors() == null ? "" : "Starring: " + getActors() + "\n\n";
-      str += getSummary() == null ? "" : getSummary();
-    }
-    else
-    {
-      if (isLiveTv())
-      {
-        str += getChannelNumber() + " (" + getCallsign() + ") ";
-        try
-        {
-          str += getStartTimeFormatted() + " - " + getEndTimeFormatted();
-        }
-        catch (ParseException ex)
-        {
-          if (BuildConfig.DEBUG)
-            Log.e(TAG, ex.getMessage(), ex);
-        }
-        str += "\n";
-      }
-      
-      if (subTitle != null)
-        str += "\"" + subTitle + "\"\n";
-      if (originallyAired != null)
-        str += "(Originally Aired " + dateFormat.format(originallyAired) + ")\n";
-      if (description != null)
-        str += description;
-    }
-    
-    return str;
-  }
-  
   public boolean isMusic()
   {
-    return type == MediaType.music;
+    return getType() == MediaType.music;
   }
   
   public boolean isRecording()
   {
-    return type == MediaType.recordings;
+    return getType() == MediaType.recordings;
   }
   
   public boolean isLiveTv()
   {
-    return type == MediaType.liveTv;
+    return getType() == MediaType.liveTv;
   }
   
   public boolean isMovie()
   {
-    return type == MediaType.movies;
+    return getType() == MediaType.movies;
   }
   
   public boolean isTvSeries()
   {
-    return type == MediaType.tvSeries;
+    return getType() == MediaType.tvSeries;
   }
-  
-  private static final int arrowChar = 0x25BA;
-  private static final int starChar = 0x2605;
-  private static final int halfChar = 0x00BD;
   
   public String toString()
   {
-    String str = String.valueOf((char)arrowChar) + " ";
-    
-    if (path != null)
-    {
-      // indicates search result
-      if (isMusic())
-        str += "(Song)";
-      else if (isRecording())
-        str += "(Recording)";
-      else if (isLiveTv())
-        str += "(Live TV)";
-      else if (isMovie())
-        str += "(Movie)";
-      else if (isTvSeries())
-        str += "(TV Series)";
-      else
-        str += "(Video)";
-      
-      str += " " + (path.length() == 0 ? "" : path + "/");
-    }
-    
-    if (isRecording())
-    {
-      if (path != null)
-        str += title + " - ";
-      try
-      {
-        str += getStartDateTimeFormatted() + " - ";
-        str += getChannelNumber() + " (" + getCallsign() + ") ";
-      }
-      catch (ParseException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-      if (path == null)
-      {
-        str += "\n" + title;
-        str += "\n" + getShowInfo();
-      }
-    }
-    else if (isLiveTv())
-    {
-      str += getChannelNumber() + " (" + getCallsign() + ") ";
-      str += title;
-      try
-      {
-        str += " (" + getStartTimeFormatted() + " - " + getEndTimeFormatted() + ")";
-      }
-      catch (ParseException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-    }
+    if (isSearchResult()) 
+      return getSearchResultText();
     else
-    {
-      str += title;
-      if (extra != null)
-        str += " (" + extra + ")";
-      if (artist != null)
-        str += " - " + artist;
-      else if (isMovie())
-      {
-        str += " (" + getYear() + ")  " + getRatingString();
-      }
-      else if (subTitle != null)
-        str += " - \"" + subTitle + "\"";
-    }
-    return str;
+      return getText();
   }
   
-  public String getRatingString()
+  public String getText()
   {
-    String str = "";
-    for (int i = 0; i < getRating(); i++)
-    {
-      if (i <= getRating() - 1)
-        str += String.valueOf((char)starChar);
-      else
-        str += String.valueOf((char)halfChar);
-    }
-    return str;
+    StringBuffer buf = new StringBuffer(PREFIX + getTitle());
+    if (getExtra() != null)
+      buf.append(" (").append(getExtra()).append(")");
+    if (getArtist() != null)
+      buf.append(" - ").append(getArtist());
+    else if (getSubTitle() != null)
+      buf.append(" - \"").append(getSubTitle()).append("\"");
+    return buf.toString();
+  }
+
+  public String getSearchResultText()
+  {
+    StringBuffer buf = new StringBuffer(PREFIX);
+    buf.append("(").append(getTypeTitle()).append(") ");
+    if (getPath() != null && getPath().length() > 0)
+      buf.append(getPath()).append("/");
+    buf.append(getTitle());
+    if (getExtra() != null)
+      buf.append(" (").append(getExtra()).append(")");
+    if (getArtist() != null)
+      buf.append(" - ").append(getArtist());
+    else if (getSubTitle() != null)
+      buf.append(" - \"").append(getSubTitle()).append("\"");
+    return buf.toString();
+  }
+  
+  public boolean isSearchResult()
+  {
+    return getSearchPath() != null;
   }
 
   public String getLabel()
   {
     String label = title;
-    if (isMovie() && year > 0)
-      label += " (" + year + ")";
-    else if (subTitle != null)
+    if (subTitle != null)
       label += " - \"" + subTitle + "\"";
-    
     return label;
   }
+  
+  public String getRatingString(float stars)
+  {
+    String str = "";
+    for (int i = 0; i < stars; i++)
+    {
+      if (i <= stars - 1)
+        str += String.valueOf(STAR);
+      else
+        str += String.valueOf(HALF_STAR);
+    }
+    return str;
+  }  
+  
+  /**
+   * Default supports by title or rating.
+   */
+  public Comparator<Item> getComparator(SortType sort)
+  {
+    if (sort == SortType.byRating)
+      return getRatingComparator();
+    else if (sort == SortType.byDate)
+      return getDateComparator();
+    else
+      return getTitleComparator();
+  }
+  
+  protected Comparator<Item> getTitleComparator()
+  {
+    return new Comparator<Item>()
+    {
+      public int compare(Item item1, Item item2)
+      {
+        return item1.getTitle().compareTo(item2.getTitle());
+      }
+    };
+  }
+  
+  protected Comparator<Item> getRatingComparator()
+  {
+    return new Comparator<Item>()
+    {
+      public int compare(Item item1, Item item2)
+      {
+        float f = item2.getRating() - item1.getRating();
+        if (f > 0)
+          return 1;
+        else if (f < 0)
+          return -1;
+        else
+          return 0;
+      }
+    };
+  }
+  
+  protected Comparator<Item> getDateComparator()
+  {
+    return getTitleComparator(); // supported only for specific types
+  }  
 }

@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.app;
+package com.oakesville.mythling.media;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.app.MediaSettings.SortType;
+import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class MediaList
 {
@@ -201,82 +202,16 @@ public class MediaList
   
   public void sort(SortType sortType)
   {
+    if (!items.isEmpty())
+      Collections.sort(items, items.get(0).getComparator(sortType));
     for (Category cat : getCategories())
-      sortCategory(cat, new ItemSortComparator(sortType));
+      sortCategory(cat, sortType);
   }
   
-  public void sortCategory(Category category, Comparator<Item> comparator)
+  public void sortCategory(Category category, SortType sort)
   {
-    category.sortItems(comparator);
+    category.sortItems(sort);
     for (Category child : category.getChildren())
-      sortCategory(child, comparator);
-  }
-  
-  private class ItemSortComparator implements Comparator<Item>
-  {
-    private SortType sort;
-    ItemSortComparator(SortType sort)
-    {
-      this.sort = sort;
-    }
-    
-    public int compare(Item item1, Item item2)
-    {
-      if (sort == SortType.byDate)
-      {
-        if (item1.isMovie())
-        {
-          if (item1.getYear() == item2.getYear())
-            return item1.toString().compareTo(item2.toString());
-          else
-            return item1.getYear() - item2.getYear();
-        }
-        else if (item1.isTvSeries())
-        {
-          if (item1.getSeason() == item2.getSeason())
-            return item1.getEpisode() - item2.getEpisode();
-          else
-            return item1.getSeason() - item2.getSeason();
-        }
-        else if (item1.isRecording())
-        {
-          if (item1.getStartTime() == null)
-          {
-            if (item2.getStartTime() == null)
-              return item1.toString().compareTo(item2.toString());
-            else return 1;
-          }
-          else if (item2.getStartTime() == null)
-          {
-            return -1;
-          }
-          else
-          {
-            if (item1.getStartTime().equals(item2.getStartTime()))
-              return item1.toString().compareTo(item2.toString());
-            else
-              return item2.getStartTime().compareTo(item1.getStartTime());
-          }
-        }
-        else
-        {
-          return item1.toString().compareTo(item2.toString());
-        }
-      }
-      else if (sort == SortType.byRating)
-      {
-        float f = item2.getRating() - item1.getRating();
-        if (f > 0)
-          return 1;
-        else if (f < 0)
-          return -1;
-        else
-          return 0;
-      }
-      else
-      {
-        return item1.toString().compareTo(item2.toString());
-      }
-    }
+      sortCategory(child, sort);
   }
 }

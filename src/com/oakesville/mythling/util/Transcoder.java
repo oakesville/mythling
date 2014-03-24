@@ -26,10 +26,11 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.LiveStreamInfo;
-import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.LiveStreamInfo;
+import com.oakesville.mythling.media.Recording;
 
 public class Transcoder
 {
@@ -65,7 +66,7 @@ public class Transcoder
       streamListUrl = new URL(baseUrl + "/Content/GetLiveStreamList");
     
     String liveStreamJson = new String(getServiceDownloader(streamListUrl).get(), "UTF-8");
-    List<LiveStreamInfo> liveStreams = new JsonParser(liveStreamJson).parseStreamInfoList();
+    List<LiveStreamInfo> liveStreams = new MythTvParser(liveStreamJson, appSettings).parseStreamInfoList();
     int inProgress = 0;
     for (LiveStreamInfo liveStream : liveStreams)
     {
@@ -110,18 +111,17 @@ public class Transcoder
       // add the stream
       URL addStreamUrl;
       if (item.isRecording())
-        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + item.getChannelId() + "&StartTime=" + item.getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
+        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + ((Recording)item).getChannelId() + "&StartTime=" + ((Recording)item).getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
       else
         addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
       String addStreamJson = new String(getServiceDownloader(addStreamUrl).get(), "UTF-8");
-      streamInfo = new JsonParser(addStreamJson).parseStreamInfo();
+      streamInfo = new MythTvParser(addStreamJson, appSettings).parseStreamInfo();
       
       // get the actual streamInfo versus requested
       URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
       String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
-      streamInfo = new JsonParser(getStreamJson).parseStreamInfo();
-    }
-    
+      streamInfo = new MythTvParser(getStreamJson, appSettings).parseStreamInfo();
+    }    
     
     return preExist; 
   }

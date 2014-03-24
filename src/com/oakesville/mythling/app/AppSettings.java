@@ -35,11 +35,15 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
 import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.app.MediaSettings.MediaTypeDeterminer;
-import com.oakesville.mythling.app.MediaSettings.SortType;
-import com.oakesville.mythling.app.MediaSettings.ViewType;
+import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
+import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MythTvParser;
+import com.oakesville.mythling.util.MythlingParser;
 
 public class AppSettings
 {
@@ -126,9 +130,9 @@ public class AppSettings
       url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaType.toString();
       url += getVideoTypeParams();
       if (mediaSettings.getSortType() == SortType.byDate)
-        url += "&orderBy=year";
+        url += "&sort=date";
       else if (mediaSettings.getSortType() == SortType.byRating)
-        url += "&orderBy=userrating%20desc";
+        url += "&sort=rating";
     }
     else
     {
@@ -765,6 +769,14 @@ public class AppSettings
       downloader.setCredentials(getMythTvServicesUser(), getMythTvServicesPassword());
     }
     return downloader;
+  }
+  
+  public MediaListParser getMediaListParser(String json)
+  {
+    if (isMythlingMediaServices())
+      return new MythlingParser(json);
+    else
+      return new MythTvParser(json, this);
   }
   
   

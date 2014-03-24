@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.app;
+package com.oakesville.mythling.media;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class TunerInUseException extends IOException
     super(msg, cause);
   }
   
-  private Item recording;
-  public Item getRecording() { return recording; }
-  public void setRecording(Item rec) { this.recording = rec; }
+  private Recording recording;
+  public Recording getRecording() { return recording; }
+  public void setRecording(Recording rec) { this.recording = rec; }
 }

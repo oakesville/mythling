@@ -21,5 +21,4 @@ package com.oakesville.mythling.app;
 public interface Listable
 {
   public String getLabel();
-
 }

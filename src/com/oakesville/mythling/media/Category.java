@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.app;
+package com.oakesville.mythling.media;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-
+import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class Category implements Listable, Comparable<Category>
 {
@@ -101,9 +101,10 @@ public class Category implements Listable, Comparable<Category>
     return listable;
   }
   
-  public void sortItems(Comparator<Item> comparator)
+  public void sortItems(SortType sort)
   {
-    Collections.sort(items, comparator);
+    if (!items.isEmpty())
+      Collections.sort(items, items.get(0).getComparator(sort));
   }
   
   public String getLabel()

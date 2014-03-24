@@ -38,8 +38,12 @@ import android.util.Log;
 import android.util.LruCache;
 
 import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.util.JsonParser;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.SearchResults;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MythlingParser;
 
 public class AppData
 {
@@ -82,12 +86,9 @@ public class AppData
     if (appDataJsonFile.exists())
     {
       String mediaListJson = new String(readFile(appDataJsonFile));
-      JsonParser parser = new JsonParser(mediaListJson);
       AppSettings appSettings = new AppSettings(appContext);
-      if (appSettings.isMythlingMediaServices())
-        mediaList = parser.parseMythlingMediaList(mediaType);
-      else
-        mediaList = parser.parseMythTvMediaList(mediaType, appSettings);
+      MediaListParser parser = appSettings.getMediaListParser(mediaListJson);
+      mediaList = parser.parseMediaList(mediaType);
     }
     return mediaList;
   }
@@ -123,14 +124,14 @@ public class AppData
     return jsonObj.toString(2);
   }
   
-  public List<Item> readQueue(MediaType type) throws IOException, JSONException
+  public List<Item> readQueue(MediaType type) throws IOException, JSONException, ParseException
   {
     File cacheDir = appContext.getCacheDir();
     File queueFile = new File(cacheDir.getPath() + "/" + type + QUEUE_FILE_SUFFIX);
     if (queueFile.exists())
     {
       String queueJson = new String(readFile(queueFile));
-      JsonParser parser = new JsonParser(queueJson);
+      MythlingParser parser = new MythlingParser(queueJson);
       List<Item> queue = parser.parseQueue(type);
       queues.put(type, queue);
     }
@@ -226,4 +227,6 @@ public class AppData
       Log.d(TAG, "writing image to file: " + imageFile);
     writeFile(imageFile, bytes);
   }
+  
+  
 }

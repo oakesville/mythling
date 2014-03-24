@@ -43,11 +43,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.Item;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.app.MediaSettings;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.app.MediaSettings.ViewType;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -176,7 +176,7 @@ public class MediaListActivity extends MediaActivity
           boolean isItem = listables.get(position) instanceof Item;
           if (isItem)
           {
-            Item item = new Item((Item)listables.get(position));
+            Item item = (Item)listables.get(position);
             if (item.isRecording() || item.isLiveTv())
               item.setPath(mediaList.getBasePath());
             else
@@ -201,7 +201,7 @@ public class MediaListActivity extends MediaActivity
           boolean isItem = listables.get(position) instanceof Item;
           if (isItem)
           {
-            final Item item = new Item((Item)listables.get(position));
+            final Item item = (Item)listables.get(position);
             if (item.isRecording() || item.isLiveTv())
             {
               item.setPath(mediaList.getBasePath());

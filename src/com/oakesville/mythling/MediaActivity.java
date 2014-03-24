@@ -54,19 +54,23 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Item;
-import com.oakesville.mythling.app.LiveStreamInfo;
-import com.oakesville.mythling.app.MediaList;
-import com.oakesville.mythling.app.MediaSettings;
-import com.oakesville.mythling.app.MediaSettings.MediaType;
-import com.oakesville.mythling.app.MediaSettings.SortType;
-import com.oakesville.mythling.app.MediaSettings.ViewType;
-import com.oakesville.mythling.app.StorageGroup;
-import com.oakesville.mythling.app.TunerInUseException;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.LiveStreamInfo;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.Movie;
+import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.StorageGroup;
+import com.oakesville.mythling.media.TunerInUseException;
+import com.oakesville.mythling.media.TvShow;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.JsonParser;
+import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
 import com.oakesville.mythling.util.Transcoder;
 
@@ -430,10 +434,15 @@ public abstract class MediaActivity extends Activity
         {
           if (item.isLiveTv() || item.isMovie())
           {
+            String msg = null;
+            if (item.isLiveTv())
+              msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be started if necessary.";
+            else
+              msg = ((Movie)item).getShowInfo();
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setTitle(item.getTitle())
-            .setMessage(item.getShowInfo() + (item.isLiveTv() ? "\n\nRecording will be started if necessary." : ""))
+            .setMessage(msg)
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {
               public void onClick(DialogInterface dialog, int which)
@@ -441,7 +450,7 @@ public abstract class MediaActivity extends Activity
                 try
                 {
                   if (item.isLiveTv())
-                    new StreamTvTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                    new StreamTvTask((TvShow)item).execute(getAppSettings().getMythTvServicesBaseUrl());
                   else
                     new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                 }
@@ -470,7 +479,7 @@ public abstract class MediaActivity extends Activity
           }
         }
       }
-      else
+      else // frontend playback
       {
         final FrontendPlayer player = new FrontendPlayer(appSettings, item, getCharSet());
         if (player.checkIsPlaying())
@@ -546,7 +555,7 @@ public abstract class MediaActivity extends Activity
       new AlertDialog.Builder(this)
       .setIcon(android.R.drawable.ic_dialog_alert)
       .setTitle(item.getTitle())
-      .setMessage(item.getShowInfo())
+      .setMessage(((Recording)item).getShowInfo())
       .setPositiveButton("Play", new DialogInterface.OnClickListener()
       {
         public void onClick(DialogInterface dialog, int which)
@@ -684,20 +693,20 @@ public abstract class MediaActivity extends Activity
           ex = new IOException(mediaListJson);
           return -1L;
         }
-        JsonParser mediaListParser = new JsonParser(mediaListJson);
+        MediaListParser mediaListParser = getAppSettings().getMediaListParser(mediaListJson);
         if (getAppSettings().isMythlingMediaServices())
         {
-          mediaList = mediaListParser.parseMythlingMediaList(mediaSettings.getType());
+          mediaList = mediaListParser.parseMediaList(mediaSettings.getType());
         }
         else
         {
           // need to know about storage group
           URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
           downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
-          StorageGroup storageGroup = new JsonParser(new String(downloader.get())).parseStorageGroup(mediaSettings.getStorageGroup());
+          StorageGroup storageGroup = new MythTvParser(new String(downloader.get()), getAppSettings()).parseStorageGroup(mediaSettings.getStorageGroup());
           if (storageGroup != null)
           {
-            mediaList = mediaListParser.parseMythTvMediaList(mediaSettings.getType(), appSettings, storageGroup, storageGroup.getDirectory());
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), storageGroup, storageGroup.getDirectory());
           }
           else
           {
@@ -707,18 +716,18 @@ public abstract class MediaActivity extends Activity
             {
               // handle videos by getting the base path setting
               downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetHostName")));
-              String hostName = new JsonParser(new String(downloader.get())).parseString();
+              String hostName = new MythTvParser(new String(downloader.get()), getAppSettings()).parseString();
               String key = "VideoStartupDir";
               downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetSetting?Key=" + key + "&HostName=" + hostName)));
-              basePath = new JsonParser(new String(downloader.get())).parseMythTvSetting(key);
+              basePath = new MythTvParser(new String(downloader.get()), getAppSettings()).parseMythTvSetting(key);
               if (basePath == null)
               {
                 // try without host name
                 downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetSetting?Key=" + key)));
-                basePath = new JsonParser(new String(downloader.get())).parseMythTvSetting(key);
+                basePath = new MythTvParser(new String(downloader.get()), getAppSettings()).parseMythTvSetting(key);
               }
             }
-            mediaList = mediaListParser.parseMythTvMediaList(mediaSettings.getType(), appSettings, null, basePath);
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath);
           }
         }
         mediaList.setCharSet(downloader.getCharSet());
@@ -876,19 +885,19 @@ public abstract class MediaActivity extends Activity
   
   protected class StreamTvTask extends AsyncTask<URL,Integer,Long>
   {
-    private Item item;
-    private Item recordingToDelete;
+    private TvShow tvShow;
+    private Recording recordingToDelete;
     private LiveStreamInfo streamInfo;
     private Exception ex;
     
-    public StreamTvTask(Item item)
+    public StreamTvTask(TvShow tvShow)
     {
-      this.item = item;
+      this.tvShow = tvShow;
     }
     
-    public StreamTvTask(Item item, Item recordingToDelete)
+    public StreamTvTask(TvShow tvShow, Recording recordingToDelete)
     {
-      this.item = item;
+      this.tvShow = tvShow;
       this.recordingToDelete = recordingToDelete;
     }
     
@@ -899,7 +908,7 @@ public abstract class MediaActivity extends Activity
         Recorder recorder = new Recorder(getAppSettings());
         if (recordingToDelete != null)
           recorder.deleteRecording(recordingToDelete);
-        boolean recordAvail = recorder.scheduleRecording(item);
+        boolean recordAvail = recorder.scheduleRecording(tvShow);
         
         if (!recordAvail)
           recorder.waitAvailable();
@@ -930,7 +939,7 @@ public abstract class MediaActivity extends Activity
       {
         if (ex instanceof TunerInUseException)
         {
-          final Item inProgressRecording = ((TunerInUseException)ex).getRecording();
+          final Recording inProgressRecording = ((TunerInUseException)ex).getRecording();
           new AlertDialog.Builder(MediaActivity.this)
           .setIcon(android.R.drawable.ic_dialog_info)
           .setTitle("Recording Conflict")
@@ -942,7 +951,7 @@ public abstract class MediaActivity extends Activity
               try
               {
                 startProgress();
-                new StreamTvTask(item, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
+                new StreamTvTask(tvShow, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
               }
               catch (MalformedURLException ex)
               {
