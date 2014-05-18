@@ -259,7 +259,7 @@ if ($type->isSearch())
     echo "  ],\n";
   }
 
-  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') order by p.chanid";
+  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
   $tRes = mysql_query($tQuery) or die("Query failed: " . mysql_error());
   $tNum = mysql_numrows($tRes);
   echo '  "liveTv": ' . "\n  [\n";
@@ -389,8 +389,9 @@ else
   {
     $base = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
     $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
-    $orderBy = "order by p.chanid";
-    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad from program p, channel c " . $where . " " . $orderBy;
+    $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
+    $orderBy = "order by cast(c.channum as unsigned)";
+    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
   }
   else if ($type->isRecordings())
   {
@@ -643,7 +644,7 @@ else
         }
         printCatEnd($depth, true);
       }
-      if ($size == $prevSize && $prevPath)
+      if ($size == $prevSize && $prevPath && !$hasTopLevelItems)
       {
         printCatEnd($depth, true);
       }
