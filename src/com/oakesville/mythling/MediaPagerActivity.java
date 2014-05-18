@@ -555,6 +555,12 @@ public class MediaPagerActivity extends MediaActivity
   }
 
   @Override
+  protected boolean supportsSort()
+  {
+    return mediaList.supportsSort() && mediaList.hasItems(path);
+  }
+  
+  @Override
   public void sort() throws IOException, JSONException, ParseException
   {
     super.sort();
