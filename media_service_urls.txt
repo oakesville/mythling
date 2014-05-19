@@ -3,6 +3,7 @@ http://192.168.0.69:8888/mythling/media.php?type=movies&sort=title&movieDirs=Hor
                                                  tvSeries    date
                                                  videos      rating
                                                  recordings
+                                                 liveTv
 http://192.168.0.69:8888/mythling/media.php?type=search&query=board&movieDirs=Horror,Pre-Code&tvSeriesDirs=To Watch&videoExcludeDirs=Home Movies
 
 # Mythling Categorize using Metadata: 
@@ -18,7 +19,7 @@ http://192.168.0.69:6544/Video/GetVideoList
 http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
 
 # MythTV LiveTV Listings
-http://192.168.0.70:6565/Guide/GetProgramGuide?StartTime=2014-01-06T01:52:29&EndTime=2014-01-06T01:52:29
+http://192.168.0.70:6565/Guide/GetProgramGuide?StartTime=2014-05-18T22:28:29&EndTime=2014-05-18T22:28:29
 
 # MythTV Artwork
 http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Horror/a.jpg
