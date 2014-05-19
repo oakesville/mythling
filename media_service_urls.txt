@@ -4,6 +4,7 @@ http://192.168.0.69:8888/mythling/media.php?type=movies&sort=title&movieDirs=Hor
                                                  videos      rating
                                                  recordings
                                                  liveTv
+                                                 music
 http://192.168.0.69:8888/mythling/media.php?type=search&query=board&movieDirs=Horror,Pre-Code&tvSeriesDirs=To Watch&videoExcludeDirs=Home Movies
 
 # Mythling Categorize using Metadata: 
