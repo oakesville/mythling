@@ -235,7 +235,15 @@ public class MythlingParser implements MediaListParser
     if (jsonObj.has("endtime"))
       item.setEndTime(DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(jsonObj.getString("endtime")));
     if (jsonObj.has("programStart"))
-      item.setProgramStart(jsonObj.getString("programStart"));    
+      item.setProgramStart(jsonObj.getString("programStart"));
+    if (jsonObj.has("rating"))
+    {
+      // seems that latest mythconverg stores program.stars and recorded.stars as a fraction of one, but try to be compatible
+      Float rating = Float.parseFloat(jsonObj.getString("rating"));
+      if (rating <= 1)
+        rating = rating * 5;
+      item.setRating(rating);
+    }
   }
   
   private void addVideoInfo(Video item, JSONObject jsonObj) throws JSONException, ParseException

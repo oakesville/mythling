@@ -117,7 +117,7 @@ public class TvShow extends Item
     }
     
     if (getRating() > 0)
-      buf.append(getRatingString(getRating() * 5)).append(" ");
+      buf.append(getRatingString(getRating())).append(" ");
     if (getSubTitle() != null)
       buf.append("\"").append(getSubTitle()).append("\"\n");
     if (isRepeat())
@@ -148,6 +148,8 @@ public class TvShow extends Item
     StringBuffer buf = new StringBuffer(PREFIX);
     buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
     buf.append(getTitle());
+    if (getRating() > 0)
+      buf.append(" ").append(getRatingString(getRating()));
     try
     {
       buf.append(" (").append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted()).append(")");
