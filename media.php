@@ -558,7 +558,7 @@ else
       $basenames[$id] = $bn;
       $subtitles[$id] = $subtit;
       $descriptions[$id] = $descrip;
-      $airdates[$id] = $oad;
+      $airdates[$id] = $oad ? $oad : null;
       $endtimes[$id] = $et;
       $ratings[$id] = $rat;
       if ($type->isRecordings())
