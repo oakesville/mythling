@@ -614,46 +614,49 @@ else
   }
   // categories
   if ($hasCats)
-  {  
+  {
     while ($i < $keyCt)
     {
       $path = $keys[$i];
-      $files = $catPaths[$path];
-      $fileCt = count($files);
-      //echo $path . "($fileCt)\n";
-      $pieces = explode("/", $path);
-      $size = count($pieces);
-    
-      $piece = $pieces[$size - 1];
-      $hasItems = $fileCt > 0;
+      if ($path != "")
+      {
+        $files = $catPaths[$path];
+        $fileCt = count($files);
+        // echo $path . "($fileCt)\n";
+        $pieces = explode("/", $path);
+        $size = count($pieces);
       
-      if ($size > $prevSize)
-      {
-        printSubCatsBegin($depth, $prevHadItems);
-        $depth = $depth + ($size - $prevSize);
-      }
-      if ($size < $prevSize)
-      {
-        $j = 0;
-        while ($j < ($prevSize - $size))
+        $piece = $pieces[$size - 1];
+        $hasItems = $fileCt > 0;
+        
+        if ($size > $prevSize)
         {
-          printCatEnd($depth, false);
-          $depth--;
-          printSubCatsEnd($depth, $prevHadItems);
-          $j++;
+          printSubCatsBegin($depth, $prevHadItems);
+          $depth = $depth + ($size - $prevSize);
         }
-        printCatEnd($depth, true);
-      }
-      if ($size == $prevSize && $prevPath && !$hasTopLevelItems)
-      {
-        printCatEnd($depth, true);
-      }
-  
-      if ($path)
-      {
-        printCatBegin($piece, $depth);
-        if ($fileCt > 0)
-          printItems($path, $files, $depth);
+        if ($size < $prevSize)
+        {
+          $j = 0;
+          while ($j < ($prevSize - $size))
+          {
+            printCatEnd($depth, false);
+            $depth--;
+            printSubCatsEnd($depth, $prevHadItems);
+            $j++;
+          }
+          printCatEnd($depth, true);
+        }
+        if ($size == $prevSize && $prevPath)
+        {
+          printCatEnd($depth, true);
+        }
+    
+        if ($path)
+        {
+          printCatBegin($piece, $depth);
+          if ($fileCt > 0)
+            printItems($path, $files, $depth);
+        }
       }
     
       $prevPath = $path;
