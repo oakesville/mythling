@@ -274,6 +274,6 @@ public class MediaListActivity extends MediaActivity
   @Override
   protected boolean supportsSort()
   {
-    return mediaList.supportsSort() && mediaList.hasItems(path);
+    return mediaList.supportsSort();
   }
 }
