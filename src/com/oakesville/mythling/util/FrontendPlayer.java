@@ -259,8 +259,8 @@ public class FrontendPlayer
     {
       if (line.startsWith("#"))
         line = line.substring(2);
-      // the error about playbackbox mode is misleading in MythTV 0.26 and seems to be reported erroneously 
-      if (line.startsWith("ERROR:") && !line.startsWith("ERROR: You are in playbackbox mode and this command is only for playback mode"))
+      // the error about playback mode is misleading in MythTV 0.26/0.27 and seems to be reported erroneously 
+      if (line.startsWith("ERROR:") && !line.endsWith("this command is only for playback mode"))
         throw new FrontendPlaybackException(line);
     }
     if (BuildConfig.DEBUG)
