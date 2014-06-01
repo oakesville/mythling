@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,7 +43,7 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings;
 
 public class MainActivity extends MediaActivity
 {
@@ -143,6 +144,13 @@ public class MainActivity extends MediaActivity
     showSortMenu(supportsSort());
     showMusicMenuItem(getAppSettings().isMythlingMediaServices());
     
+    MenuItem mediaMenuItem = getMediaMenuItem();
+    if (mediaMenuItem != null)
+    {
+      String title = MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType());
+      mediaMenuItem.setTitle(title + " (" + mediaList.getCount() + ")");
+    }
+    
     adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
     listView.setAdapter(adapter);
     listView.setOnItemClickListener(new OnItemClickListener()
@@ -175,12 +183,10 @@ public class MainActivity extends MediaActivity
     listView.setSelectionFromTop(currentTop, topOffset);
   }
   
-  
-  
   @Override
   protected boolean supportsSort()
   {
     super.supportsSort();
-    return mediaList != null && mediaList.supportsSort() && (mediaList.hasTopLevelItems() || mediaList.getMediaType() == MediaType.recordings);
+    return mediaList != null && mediaList.supportsSort();
   }
 }
