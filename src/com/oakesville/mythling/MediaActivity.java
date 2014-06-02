@@ -182,7 +182,7 @@ public abstract class MediaActivity extends Activity
     {
       musicMenuItem.setEnabled(show);
       musicMenuItem.setVisible(show);
-      if (appSettings.getMediaSettings().isMusic())
+      if (!show && appSettings.getMediaSettings().isMusic())
       {
         appSettings.setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
       }
