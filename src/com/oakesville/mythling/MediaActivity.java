@@ -182,10 +182,6 @@ public abstract class MediaActivity extends Activity
     {
       musicMenuItem.setEnabled(show);
       musicMenuItem.setVisible(show);
-      if (!show && appSettings.getMediaSettings().isMusic())
-      {
-        appSettings.setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
-      }
     }
   }
   
@@ -661,6 +657,8 @@ public abstract class MediaActivity extends Activity
   {
     try
     {
+      if (getAppSettings().getMediaSettings().getType() == MediaType.music && !supportsMusic())
+        getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
       new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));
     }
     catch (Exception ex)
