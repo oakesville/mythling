@@ -154,9 +154,10 @@ public class MediaPagerActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
-    showViewMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
-    showSortMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
-    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
+    showMusicMenuItem(supportsMusic());
+    showSortMenu(supportsSort());
+    showViewMenu(supportsViewMenu());
+    showSearchMenu(supportsSearch());
     items = mediaList.getListables(path);
 
     pagerAdapter = new MediaPagerAdapter(getFragmentManager());
@@ -243,11 +244,12 @@ public class MediaPagerActivity extends MediaActivity
     }
   }
   
-  protected boolean supportsViewSelection()
+  @Override
+  protected boolean supportsViewMenu()
   {
     return true;
   }
-  
+
   public void refresh()
   {
     getAppSettings().setLastLoad(0);
@@ -554,12 +556,6 @@ public class MediaPagerActivity extends MediaActivity
     
   }
 
-  @Override
-  protected boolean supportsSort()
-  {
-    return mediaList.supportsSort() && mediaList.hasItems(path);
-  }
-  
   @Override
   public void sort() throws IOException, JSONException, ParseException
   {

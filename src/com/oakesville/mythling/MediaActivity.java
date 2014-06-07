@@ -238,6 +238,11 @@ public abstract class MediaActivity extends Activity
   {
     return mediaList != null && mediaList.supportsSort();
   }
+  
+  protected boolean supportsViewMenu()
+  {
+    return mediaList != null && (mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);    
+  }
 
   protected boolean supportsMusic()
   {
@@ -351,7 +356,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setViewType(ViewType.pager);
         item.setChecked(true);
         viewMenuItem.setIcon(R.drawable.ic_menu_detail);
-        goPagerView();
+        if (hasItems())
+          goPagerView();
         return true;
       }
       else if (item.getItemId() == R.id.menu_refresh)
@@ -367,6 +373,12 @@ public abstract class MediaActivity extends Activity
       else if (item.getItemId() == R.id.menu_search)
       {
         return onSearchRequested();
+      }
+      else if (item.getItemId() == R.id.menu_help)
+      {
+        String url = getResources().getString(R.string.url_help);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        return true;
       }
     }
     catch (BadSettingsException ex)
@@ -1027,6 +1039,12 @@ public abstract class MediaActivity extends Activity
   {
     progressBar.setVisibility(View.GONE);
   }
-  
-  
+
+  /**
+   * As opposed to just categories
+   */
+  protected boolean hasItems()
+  {
+    return false;
+  }  
 }

@@ -141,8 +141,10 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
+    showMusicMenuItem(supportsMusic());
     showSortMenu(supportsSort());
-    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
+    showViewMenu(supportsViewMenu());
+    showSearchMenu(supportsSearch());
     
     MenuItem mediaMenuItem = getMediaMenuItem();
     if (mediaMenuItem != null)
@@ -182,11 +184,11 @@ public class MainActivity extends MediaActivity
     stopProgress();
     listView.setSelectionFromTop(currentTop, topOffset);
   }
-  
+
   @Override
-  protected boolean supportsSort()
+  protected boolean hasItems()
   {
-    super.supportsSort();
-    return mediaList != null && mediaList.supportsSort();
-  }
+    return mediaList != null && mediaList.hasTopLevelItems();
+  } 
+  
 }

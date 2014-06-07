@@ -139,20 +139,15 @@ public class MediaListActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
+    showMusicMenuItem(supportsMusic());
     showSortMenu(supportsSort());
-    showViewMenu(mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);
-    showMusicMenuItem(getAppSettings().isMythlingMediaServices());
+    showViewMenu(supportsViewMenu());
+    showSearchMenu(supportsSearch());
     listables = mediaList.getListables(path);
-    if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
+    if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager && hasItems())
     {
-      for (Listable listable : listables)
-      {
-        if (listable instanceof Item)
-        {
-          goPagerView();
-          return;
-        }
-      }
+      goPagerView();
+      return;
     }
     
     if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
@@ -246,12 +241,6 @@ public class MediaListActivity extends MediaActivity
     }
   }
   
-  @Override
-  protected boolean supportsViewSelection()
-  {
-    return true;
-  }
-  
   public void refresh()
   {
     currentTop = 0;
@@ -263,17 +252,17 @@ public class MediaListActivity extends MediaActivity
     finish();
   }
 
+  @Override
+  protected boolean hasItems()
+  {
+    return mediaList != null && mediaList.hasItems(path);
+  } 
+  
   protected void goPagerView()
   {
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);
     Uri uri = builder.build();
     startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
-  }
-
-  @Override
-  protected boolean supportsSort()
-  {
-    return mediaList.supportsSort();
-  }
+  }  
 }

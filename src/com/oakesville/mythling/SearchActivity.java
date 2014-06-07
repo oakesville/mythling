@@ -181,7 +181,14 @@ public class SearchActivity extends MediaActivity
     }    
   }
   
+  @Override
   protected boolean supportsSort()
+  {
+    return false;
+  }
+  
+  @Override
+  protected boolean supportsViewMenu()
   {
     return false;
   }
