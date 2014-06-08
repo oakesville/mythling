@@ -202,10 +202,15 @@ public class AppSettings
     return new URL("http://" + ip + ":" + servicePort);    
   }
   
-  public URL getArtworkUrl(String storageGroup, String fileName) throws MalformedURLException
+  public URL getMythTvContentServiceBaseUrl() throws MalformedURLException
   {
-    return new URL(getMythTvServicesBaseUrl() + "/Content/GetImageFile?StorageGroup=" + storageGroup + "&FileName=" + fileName);    
+    return new URL(getMythTvServicesBaseUrl() + "/Content");
   }
+  
+  public URL getArtworkBaseUrl(String storageGroup) throws MalformedURLException
+  {
+    return new URL(getMythTvContentServiceBaseUrl() + "/GetImageFile?StorageGroup=" + storageGroup);
+  }  
   
   public int getMythServicePort()
   {

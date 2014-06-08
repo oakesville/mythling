@@ -18,6 +18,7 @@
  */
 package com.oakesville.mythling.media;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 
 import com.oakesville.mythling.app.Listable;
@@ -243,5 +244,23 @@ public abstract class Item implements Listable
   protected Comparator<Item> getDateComparator()
   {
     return getTitleComparator(); // supported only for specific types
-  }  
+  }
+  
+  public boolean hasArtwork()
+  {
+    return false;
+  }
+  
+  /**
+   * For local storage
+   */
+  public String getArtworkPath()
+  {
+    return null;
+  }
+  
+  public String getArtworkContentServicePath() throws UnsupportedEncodingException
+  {
+    return null;
+  }
 }

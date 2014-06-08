@@ -58,14 +58,14 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TunerInUseException;
 import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
@@ -162,7 +162,7 @@ public abstract class MediaActivity extends Activity
     showSortMenu(supportsSort());
 
     viewMenuItem = menu.findItem(R.id.menu_view);
-    showViewMenu(supportsViewSelection() && (getMediaType() == MediaType.movies || getMediaType() == MediaType.tvSeries));
+    showViewMenu(supportsViewMenu());
 
     return super.onPrepareOptionsMenu(menu);
   }
@@ -224,11 +224,6 @@ public abstract class MediaActivity extends Activity
     }
   }  
   
-  protected boolean supportsViewSelection()
-  {
-    return false;
-  }
-    
   protected boolean supportsSearch()
   {
     return getAppSettings().isMythlingMediaServices();
@@ -241,7 +236,7 @@ public abstract class MediaActivity extends Activity
   
   protected boolean supportsViewMenu()
   {
-    return mediaList != null && (mediaList.getMediaType() == MediaType.movies || mediaList.getMediaType() == MediaType.tvSeries);    
+    return mediaList != null && mediaList.canHaveArtwork();    
   }
 
   protected boolean supportsMusic()
@@ -356,8 +351,7 @@ public abstract class MediaActivity extends Activity
         appSettings.setViewType(ViewType.pager);
         item.setChecked(true);
         viewMenuItem.setIcon(R.drawable.ic_menu_detail);
-        if (hasItems())
-          goPagerView();
+        goPagerView();
         return true;
       }
       else if (item.getItemId() == R.id.menu_refresh)
@@ -421,14 +415,15 @@ public abstract class MediaActivity extends Activity
           if (mediaPlayer == null)
           {
             mediaPlayer = new MediaPlayer();
-          }
-          mediaPlayer.setOnCompletionListener(new OnCompletionListener()
-          {
-            public void onCompletion(MediaPlayer mp)
+            mediaPlayer.setOnCompletionListener(new OnCompletionListener()
             {
-              onResume();
-            }
-          });
+              public void onCompletion(MediaPlayer mp)
+              {
+                stopMediaPlayer();
+                onResume();
+              }
+            });
+          }
           String musicUrl = appSettings.getMythTvServicesBaseUrl() + "/Content/GetMusic?Id=" + item.getId();
           Map<String,String> headers = new HashMap<String,String>();
           String credentials = Base64.encodeToString((appSettings.getMythTvServicesUser() + ":" + appSettings.getMythTvServicesPassword()).getBytes(), Base64.DEFAULT);
@@ -526,7 +521,10 @@ public abstract class MediaActivity extends Activity
     if (mediaPlayer != null)
     {
       if (mediaPlayer.isPlaying())
+      {
         mediaPlayer.stop();
+        mediaPlayer.release();
+      }
       
       mediaPlayer.reset();
     }
@@ -1039,12 +1037,4 @@ public abstract class MediaActivity extends Activity
   {
     progressBar.setVisibility(View.GONE);
   }
-
-  /**
-   * As opposed to just categories
-   */
-  protected boolean hasItems()
-  {
-    return false;
-  }  
 }

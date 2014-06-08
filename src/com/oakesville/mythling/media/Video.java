@@ -1,5 +1,8 @@
 package com.oakesville.mythling.media;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Video extends Item
@@ -58,5 +61,23 @@ public class Video extends Item
     str += getActors() == null ? "" : "Starring: " + getActors() + "\n\n";
     str += getSummary() == null ? "" : getSummary();
     return str;
-  }    
+  }
+  
+  @Override
+  public boolean hasArtwork()
+  {
+    return artwork != null;
+  }
+
+  @Override
+  public String getArtworkPath()
+  {
+    return artwork;
+  }
+  
+  @Override
+  public String getArtworkContentServicePath() throws UnsupportedEncodingException
+  {
+    return "GetImageFile?StorageGroup=" + URLEncoder.encode(artworkStorageGroup, "UTF-8") + "&FileName=" + URLEncoder.encode(artwork, "UTF-8");    
+  }
 }

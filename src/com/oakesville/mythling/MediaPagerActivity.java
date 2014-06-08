@@ -34,6 +34,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,11 +60,13 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.TvEpisode;
-import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.TvEpisode;
+import com.oakesville.mythling.media.TvShow;
+import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
 
 /**
@@ -351,64 +354,47 @@ public class MediaPagerActivity extends MediaActivity
       TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
       titleView.setText(listable.getLabel());
       
-      if (listable instanceof Video)
+      if (listable instanceof Category)
       {
-        Video item = (Video) listable;
-        if (item.isMovie() || item.isTvSeries())
+        Category category = (Category) listable;
+        artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+        Drawable folder = getResources().getDrawable(R.drawable.folder);
+        artworkView.setImageDrawable(folder);
+      }
+      else if (listable instanceof Item)
+      {
+        Item item = (Item) listable;
+            
+        // rating
+        for (int i = 0; i < item.getRating(); i++)
         {
-          if (item.getArtwork() != null)
-          {
-            artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-            String artworkStorageGroup = item.getArtworkStorageGroup();
-            if (artworkStorageGroup == null)
-              artworkStorageGroup = getAppData().getMediaList().getArtworkStorageGroup();
-            try
-            {
-              String filePath = pagerActivity.path + "/" + item.getArtwork();
-              Bitmap bitmap = getAppData().getImageBitMap(filePath);
-              if (bitmap == null)
-              {
-                URL url = appSettings.getArtworkUrl(artworkStorageGroup, item.getArtwork());
-                new ImageRetrievalTask().execute(url);
-              }
-              else
-              {
-                artworkView.setImageBitmap(bitmap);
-              }
-            }
-            catch (Exception ex)
-            {
-              if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-              Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
-            }
-          }
-          // rating
-          for (int i = 0; i < item.getRating(); i++)
-          {
-            ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
-            if (i <= item.getRating() - 1)
-              star.setImageResource(R.drawable.rating_full);
-            else
-              star.setImageResource(R.drawable.rating_half);
-          }
+          ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
+          if (i <= item.getRating() - 1)
+            star.setImageResource(R.drawable.rating_full);
+          else
+            star.setImageResource(R.drawable.rating_half);
+        }
+        
+        if (item instanceof Video)
+        {
+          Video video = (Video) item;
           // director
-          if (item.getDirector() != null)
+          if (video.getDirector() != null)
           {
-            TextView tv = (TextView) detailView.findViewById(R.id.directorText);
-            tv.setText("Directed by: " + item.getDirector());
+            TextView tv = (TextView) detailView.findViewById(R.id.artistText);
+            tv.setText("Directed by: " + video.getDirector());
           }
           // actors
-          if (item.getActors() != null)
+          if (video.getActors() != null)
           {
-            TextView tv = (TextView) detailView.findViewById(R.id.actorsText);
-            tv.setText("Starring: " + item.getActors());
+            TextView tv = (TextView) detailView.findViewById(R.id.extraText);
+            tv.setText("Starring: " + video.getActors());
           }
           // summary
-          if (item.getSummary() != null)
+          if (video.getSummary() != null)
           {
             TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
-            String summary = item.getSummary();
+            String summary = video.getSummary();
             if (item instanceof TvEpisode)
             {
               TvEpisode tve = (TvEpisode) item;
@@ -418,8 +404,9 @@ public class MediaPagerActivity extends MediaActivity
             tv.setText(summary);
           }
           
-          // custom link
-          if (appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty())
+          // custom link (only for movies and tv series)
+          if ((item.isMovie() || item.isTvSeries())
+              && appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty())
           {
             try
             {
@@ -438,15 +425,15 @@ public class MediaPagerActivity extends MediaActivity
           }
           
           // page link
-          if (item.getPageUrl() != null || item.getInternetRef() != null)
+          if (video.getPageUrl() != null || video.getInternetRef() != null)
           {
             try
             {
-              String pageUrl = item.getPageUrl();
+              String pageUrl = video.getPageUrl();
               if (pageUrl == null || pageUrl.isEmpty())
               {
                 String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
-                pageUrl = baseUrl + item.getInternetRef();
+                pageUrl = baseUrl + video.getInternetRef();
               }
               URL url = new URL(pageUrl);
               TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
@@ -461,17 +448,74 @@ public class MediaPagerActivity extends MediaActivity
               Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
             }
           }
-          
-          Button button = (Button) detailView.findViewById(R.id.pagerPlay);
-          button.setOnClickListener(new OnClickListener()
+        }
+        else
+        {
+          // artist
+          if (item.getArtist() != null)
           {
-            public void onClick(View v)
+            TextView tv = (TextView) detailView.findViewById(R.id.artistText);
+            tv.setText(item.getArtist());
+          }
+          // extra
+          if (item.getExtra() != null)
+          {
+            TextView tv = (TextView) detailView.findViewById(R.id.extraText);
+            tv.setText(item.getExtra());
+          }
+          if (item instanceof TvShow)
+          {
+            TvShow tvShow = (TvShow) item;
+            // summary
+            if (tvShow.getShowInfo() != null)
             {
-              Item item = (Item)listable;
-              item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
-              pagerActivity.playItem(item);
+              TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
+              tv.setText(tvShow.getShowInfo());
             }
-          });
+          }
+        }
+            
+        Button button = (Button) detailView.findViewById(R.id.pagerPlay);
+        button.setOnClickListener(new OnClickListener()
+        {
+          public void onClick(View v)
+          {
+            Item item = (Item)listable;
+            item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+            pagerActivity.playItem(item);
+          }
+        });
+            
+        if (item.hasArtwork())
+        {
+          artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+          if (item instanceof Video)
+          {
+            // TODO: for now
+            Video video = (Video) item;
+            if (video.getArtworkStorageGroup() == null)
+              video.setArtworkStorageGroup(getAppData().getMediaList().getArtworkStorageGroup());
+          }
+          try
+          {
+            String filePath = pagerActivity.path + "/" + item.getArtworkPath();
+            Bitmap bitmap = getAppData().getImageBitMap(filePath);
+            if (bitmap == null)
+            {
+              URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + item.getArtworkContentServicePath());
+              new ImageRetrievalTask().execute(url);
+            }
+            else
+            {
+              artworkView.setImageBitmap(bitmap);
+            }
+          }
+          catch (Exception ex)
+          {
+            if (BuildConfig.DEBUG)
+              Log.e(TAG, ex.getMessage(), ex);
+            Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
+          }
         }
       }
     }

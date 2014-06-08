@@ -164,6 +164,9 @@ public class MediaList
   
   public List<Listable> getListables(String path)
   {
+    if (path == null || "".equals(path))
+      return getTopCategoriesAndItems();
+          
     Category curCat = null;
     for (Category cat : getCategories())
     {
@@ -198,6 +201,11 @@ public class MediaList
   public boolean supportsSort()
   {
     return mediaType != MediaType.liveTv && mediaType != MediaType.music;
+  }
+  
+  public boolean canHaveArtwork()
+  {
+    return true;
   }
   
   public void sort(SortType sortType)

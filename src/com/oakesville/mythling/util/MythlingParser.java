@@ -201,6 +201,8 @@ public class MythlingParser implements MediaListParser
     else if (type == MediaType.music)
     {
       item = new Song(jsonObj.getString("id"), jsonObj.getString("title"));
+      if (jsonObj.has("albumArtId"))
+        ((Song)item).setAlbumArtId(jsonObj.getInt("albumArtId"));
     }
     else
     {

@@ -49,9 +49,6 @@ public class MainActivity extends MediaActivity
 {
   private static final String TAG = MainActivity.class.getSimpleName();
   
-  private MediaList mediaList;
-  public MediaList getMediaList() { return mediaList; }
-  
   private ListView listView;
   public ListView getListView() { return listView; }
   private int currentTop = 0;  // top item in the list
@@ -185,10 +182,12 @@ public class MainActivity extends MediaActivity
     listView.setSelectionFromTop(currentTop, topOffset);
   }
 
-  @Override
-  protected boolean hasItems()
+  protected void goPagerView()
   {
-    return mediaList != null && mediaList.hasTopLevelItems();
-  } 
+    Uri.Builder builder = new Uri.Builder();
+    builder.path("");
+    Uri uri = builder.build();
+    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
+  }  
   
 }
