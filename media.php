@@ -32,6 +32,7 @@ $MUSIC_DIR_SETTING = "MusicLocation";
 $ARTWORK_STORAGE_GROUP = "Coverart";  // or Fanart or Screenshots or Banners
 $ARTWORK_DIR_SETTING = "VideoArtworkDir";
 $RECORDINGS_STORAGE_GROUP = "Default";
+$MUSIC_ART_AT_ALBUM_LEVEL = true;  // otherwise at individual song level (prob. embedded)
 
 $type = new Type($_REQUEST['type']);
 if (!$type->isSpecified())
@@ -239,7 +240,7 @@ if ($type->isSearch())
 
   if ($musicBase != null)
   {
-    $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
+    $sQuery = "select s.song_id as id concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
     $sRes = mysql_query($sQuery) or die("Query failed: " . mysql_error());
     $sNum = mysql_numrows($sRes);
     echo '  "songs": ' . "\n  [\n";
@@ -335,10 +336,11 @@ else
     $base = getSettingDir($MUSIC_DIR_SETTING);
     if ($base == null)
       die("Cannot determine base directory for music");
+    $albumArtMap = getAlbumArtMap();
     $where = "where d.directory_id = s.directory_id";
     // one option
     $orderBy = "order by filename";
-    $query = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
+    $query = "select s.song_id as id, s.directory_id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
   }
   else if ($type->isMovies() || $type->isTvSeries())
   {
@@ -451,6 +453,10 @@ else
     $artworks = array();
     $hps = array();
   }
+  else if ($type->isMusic())
+  {
+    $artworks = array();
+  }
   $prevPath = "";
   $i = 0;
   while ($i < $num)
@@ -513,6 +519,15 @@ else
       if (!$type->isMusic() && $isVideoStorageGroup)
         $full = $base . "/" . $full;
     }
+    if ($type->isMusic())
+    {
+      $dirId = mysql_result($result, $i, "directory_id");
+      if ($MUSIC_ART_AT_ALBUM_LEVEL)
+        $art = array_key_exists($dirId, $albumArtMap) ? $albumArtMap[$dirId] : null;
+      else
+        $art = array_key_exists($id, $albumArtMap) ? $albumArtMap[$id] : null;
+    }
+    
     if ($type->isMusic() || $type->isRecordings() || $type->isLiveTv())
       $part = $full;
     else
@@ -558,7 +573,7 @@ else
       $basenames[$id] = $bn;
       $subtitles[$id] = $subtit;
       $descriptions[$id] = $descrip;
-      $airdates[$id] = $oad ? $oad : null;
+      $airdates[$id] = $oad;
       $endtimes[$id] = $et;
       $ratings[$id] = $rat;
       if ($type->isRecordings())
@@ -582,6 +597,10 @@ else
       $artworks[$id] = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
       $hps[$id] = $hp;
     }
+     else if ($type->isMusic())
+     {
+       $artworks[$id] = $art;
+     }
   
     $i++;
   }
@@ -657,6 +676,11 @@ else
           if ($fileCt > 0)
             printItems($path, $files, $depth);
         }
+      }
+      else 
+      {
+        $size = 0;
+        $hasItems = false;
       }
     
       $prevPath = $path;
@@ -861,6 +885,11 @@ function printItem($path, $file, $depth, $more)
     if ($artworks[$id] != null)
       echo ', "artwork": "' . $artworks[$id] . '"';
   }
+  if ($type->isMusic())
+  {
+    if ($artworks[$id] != null)
+      echo ', "albumArtId": "' . $artworks[$id] . '"';
+  }
   echo " }";
   if ($more)
     echo ",";
@@ -1059,6 +1088,32 @@ function getCastMap()
     $i++;
   }
   return $castMap;
+}
+
+function getAlbumArtMap()
+{
+  global $MUSIC_ART_AT_ALBUM_LEVEL;
+  $albumArtMap = array();
+  if ($MUSIC_ART_AT_ALBUM_LEVEL)
+  {
+    // map relates directory_id to albumart_id
+    $query = "select albumart_id, directory_id from music_albumart where song_id = 0";
+  }
+  else
+  {
+    $query = "select albumart_id, song_id from music_albumart where song_id != 0";
+  }
+  $res = mysql_query($query) or die("Query failed: " . mysql_error());
+  $num = mysql_numrows($res);
+  $i = 0;
+  while ($i < $num)
+  {
+    $albumArtId = mysql_result($res, $i, "albumart_id");
+    $key = $MUSIC_ART_AT_ALBUM_LEVEL ? mysql_result($res, $i, "directory_id") : mysql_result($res, $i, "song_id");
+    $albumArtMap[$key] = $albumArtId;
+    $i++;
+  }
+  return $albumArtMap;
 }
 
 class Type

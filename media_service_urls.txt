@@ -22,8 +22,17 @@ http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
 # MythTV LiveTV Listings
 http://192.168.0.70:6565/Guide/GetProgramGuide?StartTime=2014-05-18T22:28:29&EndTime=2014-05-18T22:28:29
 
+# MythTV Song
+http://192.168.0.69:6544/Content/GetMusic?Id=53938
+
 # MythTV Artwork
 http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Horror/a.jpg
+
+# MythTV Album Art (Id is from music_albumart.albumart_id)
+http://192.168.0.69:6544/Content/GetAlbumArt?Id=4078
+
+# MythTV Video Artwork
+http://192.168.0.69:6544/Content/GetVideoArtwork?Id=102530
 
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
@@ -34,3 +43,4 @@ http://192.168.0.69:6544/Myth/GetStorageGroupDirs
 
 # MythTV Service Contract
 /mythtv/mythtv/libs/libmythservicecontracts/moc_mythServices.cpp
+
