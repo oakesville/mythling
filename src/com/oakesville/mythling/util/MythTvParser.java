@@ -64,13 +64,13 @@ public class MythTvParser implements MediaListParser
       MediaSettings mediaSettings = appSettings.getMediaSettings();
       JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
       mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
-      mediaList.setCount(infoList.getString("Count"));
       JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
       
       String[] movieDirs = appSettings.getMovieDirs();
       String[] tvSeriesDirs = appSettings.getTvSeriesDirs();
       String[] vidExcludeDirs = appSettings.getVidExcludeDirs();
 
+      int count = 0;
       for (int i = 0; i < vids.length(); i++)
       {
         JSONObject vid = (JSONObject) vids.get(i);
@@ -127,8 +127,12 @@ public class MythTvParser implements MediaListParser
         }
         
         if (type == mediaType)
+        {
           mediaList.addItemUnderPathCategory(buildVideoItem(type, vid));
+          count++;
+        }
       }
+      mediaList.setCount(count);
     }
     else if (list.has("ProgramList"))
     {
