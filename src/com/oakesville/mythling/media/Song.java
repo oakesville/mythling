@@ -42,7 +42,7 @@ public class Song extends Item
       public String getArtworkPath()
       {
         // cache at album level 
-        return getStorageGroup() + (songLevelArt ? "" : ("/" + getId()));
+        return getStorageGroup() + (songLevelArt ? ("/" + getId()) : "");
       }
       
       public String getArtworkContentServicePath() throws UnsupportedEncodingException
