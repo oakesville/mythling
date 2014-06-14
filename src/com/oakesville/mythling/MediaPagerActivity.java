@@ -60,10 +60,12 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.ArtworkDescriptor;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
@@ -485,24 +487,23 @@ public class MediaPagerActivity extends MediaActivity
             pagerActivity.playItem(item);
           }
         });
-            
-        if (item.hasArtwork())
+        
+        String artSg;
+        if (item.isMusic())
+          artSg = appSettings.isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
+        else
+          artSg = getAppData().getMediaList().getArtworkStorageGroup();
+        ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
+        if (art != null)
         {
           artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-          if (item instanceof Video)
-          {
-            // TODO: for now
-            Video video = (Video) item;
-            if (video.getArtworkStorageGroup() == null)
-              video.setArtworkStorageGroup(getAppData().getMediaList().getArtworkStorageGroup());
-          }
           try
           {
-            String filePath = pagerActivity.path + "/" + item.getArtworkPath();
+            String filePath = item.getType() + "/" + pagerActivity.path + "/" + art.getArtworkPath();
             Bitmap bitmap = getAppData().getImageBitMap(filePath);
             if (bitmap == null)
             {
-              URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + item.getArtworkContentServicePath());
+              URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
               new ImageRetrievalTask().execute(url);
             }
             else

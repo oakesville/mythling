@@ -37,6 +37,8 @@ public class MythTvParser implements MediaListParser
 
   private String json;
   private AppSettings appSettings;
+  private String artworkStorageGroup; 
+
   
   public MythTvParser(String json, AppSettings appSettings)
   {
@@ -52,6 +54,7 @@ public class MythTvParser implements MediaListParser
   public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath) throws JSONException, ParseException
   {
     MediaList mediaList = new MediaList();
+    this.artworkStorageGroup = appSettings.getArtworkStorageGroup(mediaType);    
     mediaList.setMediaType(mediaType);
     mediaList.setStorageGroup(storageGroup);
     mediaList.setBasePath(basePath);
@@ -241,74 +244,63 @@ public class MythTvParser implements MediaListParser
         item.setSummary(description);
     }
     
-      if (vid.has("Inetref"))
+    if (vid.has("Inetref"))
+    {
+      String inetref = vid.getString("Inetref");
+      if (!inetref.isEmpty() && !inetref.equals("00000000"))
+        item.setInternetRef(inetref);
+    }
+    if (vid.has("HomePage"))
+    {
+      String pageUrl = vid.getString("HomePage");
+      if (!pageUrl.isEmpty())
+        item.setPageUrl(pageUrl);
+    }
+    if (vid.has("ReleaseDate"))
+    {
+      String releaseDate = vid.getString("ReleaseDate");
+      if (!releaseDate.isEmpty())
       {
-        String inetref = vid.getString("Inetref");
-        if (!inetref.isEmpty() && !inetref.equals("00000000"))
-          item.setInternetRef(inetref);
+        String dateStr = releaseDate.replace('T', ' ');
+        if (dateStr.endsWith("Z"))
+          dateStr = dateStr.substring(0, dateStr.length() - 1);
+        Date date = DateTimeFormats.SERVICE_DATE_FORMAT.parse(dateStr + " UTC");
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTime(date);
+        item.setYear(cal.get(Calendar.YEAR));
       }
-      if (vid.has("HomePage"))
-      {
-        String pageUrl = vid.getString("HomePage");
-        if (!pageUrl.isEmpty())
-          item.setPageUrl(pageUrl);
-      }
-      if (vid.has("ReleaseDate"))
-      {
-        String releaseDate = vid.getString("ReleaseDate");
-        if (!releaseDate.isEmpty())
-        {
-          String dateStr = releaseDate.replace('T', ' ');
-          if (dateStr.endsWith("Z"))
-            dateStr = dateStr.substring(0, dateStr.length() - 1);
-          Date date = DateTimeFormats.SERVICE_DATE_FORMAT.parse(dateStr + " UTC");
-          Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-          cal.setTime(date);
-          item.setYear(cal.get(Calendar.YEAR));
-        }
-      }
-      if (vid.has("UserRating"))
-      {
-        String rating = vid.getString("UserRating");
-        if (!rating.isEmpty() && !rating.equals("0"))
-          item.setRating(Float.parseFloat(rating)/2);
-      }
-      if (vid.has("Coverart"))
-      {
-        String art = vid.getString("Coverart");
-        if (!art.isEmpty())
-        {
-          item.setArtwork(art);
-          item.setArtworkStorageGroup("Coverart");
-        }
-      }
-      else if (vid.has("Fanart"))
-      {
-        String art = vid.getString("Fanart");
-        if (!art.isEmpty())
-        {
-          item.setArtwork(art);
-          item.setArtworkStorageGroup("Fanart");
-        }
-      }
-      else if (vid.has("Screenshot"))
-      {
-        String art = vid.getString("Screenshot");
-        if (!art.isEmpty())
-        {
-          item.setArtwork(art);
-          item.setArtworkStorageGroup("Screenshots");
-        }
-      }
-      else if (vid.has("Banner"))
-      {
-        String art = vid.getString("Banner");
-        if (!art.isEmpty())
-        {
-          item.setArtwork(art);
-          item.setArtworkStorageGroup("Banners");
-        }
-      }
+    }
+    if (vid.has("UserRating"))
+    {
+      String rating = vid.getString("UserRating");
+      if (!rating.isEmpty() && !rating.equals("0"))
+        item.setRating(Float.parseFloat(rating)/2);
+    }
+    
+    if ("Coverart".equals(artworkStorageGroup) && vid.has("Coverart"))
+    {
+      String art = vid.getString("Coverart");
+      if (!art.isEmpty())
+        item.setArtwork(art);
+    }
+    else if ("Fanart".equals(artworkStorageGroup) && vid.has("Fanart"))
+    {
+      String art = vid.getString("Fanart");
+      if (!art.isEmpty())
+        item.setArtwork(art);
+    }
+    else if ("Screenshots".equals(artworkStorageGroup) && vid.has("Screenshot"))
+    {
+      String art = vid.getString("Screenshot");
+      if (!art.isEmpty())
+        item.setArtwork(art);
+    }
+    else if ("Banners".equals(artworkStorageGroup) && vid.has("Banner"))
+    {
+      String art = vid.getString("Banner");
+      if (!art.isEmpty())
+        item.setArtwork(art);
+    }
     
     return item;
   }
@@ -385,6 +377,23 @@ public class MythTvParser implements MediaListParser
       if (!stars.isEmpty())
         tvShow.setRating(Float.parseFloat(stars));
     }
+    if (tvShow instanceof Recording)
+    {
+      if (jsonObj.has("Inetref"))
+      {
+        String inetref = jsonObj.getString("Inetref");
+        if (!inetref.isEmpty() && !inetref.equals("00000000"))
+          ((Recording)tvShow).setInternetRef(inetref);
+      }
+      if (jsonObj.has("Season"))
+      {
+        String season = jsonObj.getString("Season");
+        if (!season.isEmpty() && !season.equals("0"))
+          ((Recording)tvShow).setSeason(Integer.parseInt(season));
+      }
+      
+    }
+    
   }
   
   public List<LiveStreamInfo> parseStreamInfoList()

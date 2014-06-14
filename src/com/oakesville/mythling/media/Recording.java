@@ -1,10 +1,12 @@
 package com.oakesville.mythling.media;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Recording extends TvShow
@@ -14,6 +16,14 @@ public class Recording extends TvShow
   private int recordingRuleId;
   public int getRecordingRuleId() { return recordingRuleId; }
   public void setRecordingRuleId(int rrid) { this.recordingRuleId = rrid; }
+  
+  private String internetRef;
+  public String getInternetRef() { return internetRef; }
+  public void setInternetRef(String inetRef) { this.internetRef = inetRef; } 
+  
+  private int season;
+  public int getSeason() { return season; }
+  public void setSeason(int season) { this.season = season; }
 
   public Recording(String id, String title)
   {
@@ -70,4 +80,39 @@ public class Recording extends TvShow
     return buf.toString();
   }
   
+  @Override
+  public ArtworkDescriptor getArtworkDescriptor(String storageGroup)
+  {
+    final boolean usePreviewImage = AppSettings.DEFAULT_ARTWORK_SG_RECORDINGS.equals(storageGroup);
+    if (getInternetRef() == null && !usePreviewImage)
+      return null;
+
+    return new ArtworkDescriptor(storageGroup)
+    {
+      public String getArtworkPath()
+      {
+        return getStorageGroup() + "/" + getId();
+      }
+      
+      public String getArtworkContentServicePath() throws UnsupportedEncodingException
+      {
+        if (usePreviewImage)
+        {
+          return "GetPreviewImage?ChanId=" + getChannelId() + "&StartTime=" + getStartTimeParam();
+        }
+        else
+        {
+          String type = "coverart";
+          if ("Fanart".equals(getStorageGroup()))
+            type = "fanart";
+          else if ("Banners".equals(getStorageGroup()))
+            type = "banners";
+          String path = "GetRecordingArtwork?Inetref=" + getInternetRef() + "&Type=" + type;
+          if (season > 0)
+            path += "&Season=" + season;
+          return path;
+        }
+      }
+    };
+  }
 }

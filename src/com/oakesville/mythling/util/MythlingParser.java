@@ -45,7 +45,6 @@ public class MythlingParser implements MediaListParser
     mediaList.setRetrieveDate(summary.getString("date"));
     mediaList.setCount(summary.getString("count"));
     mediaList.setBasePath(summary.getString("base"));
-    mediaList.setArtworkStorageGroup(summary.getString("artworkStorageGroup"));
     if (list.has("items"))
     {
       JSONArray items = list.getJSONArray("items");
@@ -197,6 +196,8 @@ public class MythlingParser implements MediaListParser
       addProgramInfo((TvShow)item, jsonObj);
       if (jsonObj.has("recordid"))
         ((Recording)item).setRecordingRuleId(jsonObj.getInt("recordid"));
+      if (jsonObj.has("internetRef"))
+        ((Recording)item).setInternetRef(jsonObj.getString("internetRef"));          
     }
     else if (type == MediaType.music)
     {
