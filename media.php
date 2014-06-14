@@ -29,10 +29,8 @@ $MYTHDB_PASSWORD = "mythtv";
 $VIDEO_STORAGE_GROUP = "Videos";
 $VIDEO_DIR_SETTING = "VideoStartupDir";
 $MUSIC_DIR_SETTING = "MusicLocation";
-$ARTWORK_STORAGE_GROUP = "Coverart";  // or Fanart or Screenshots or Banners
 $ARTWORK_DIR_SETTING = "VideoArtworkDir";
 $RECORDINGS_STORAGE_GROUP = "Default";
-$MUSIC_ART_AT_ALBUM_LEVEL = true;  // otherwise at individual song level (prob. embedded)
 
 $type = new Type($_REQUEST['type']);
 if (!$type->isSpecified())
@@ -84,6 +82,19 @@ if (isset($_REQUEST['categorizeUsingMetadata']))
     $categorizeUsingMetadata = true;
 }
 
+$artworkStorageGroup = "Coverart";  // or Fanart or Screenshots or Banners
+if (isset($_REQUEST['artworkStorageGroup']))
+{
+  $artworkStorageGroup = $_REQUEST['artworkStorageGroup'];
+}
+
+$albumArtAlbumLevel = true;  // otherwise at individual song level (prob. embedded)
+if (isset($_REQUEST['albumArtSongLevel']))
+{
+  if (strtoupper($_REQUEST['albumArtSongLevel']) == 'TRUE')
+    $albumArtAlbumLevel = false;
+}
+
 $hostname = gethostname();
 date_default_timezone_set("UTC");
 $dt = date("m-d-Y H:i:s") . " UTC";
@@ -103,12 +114,12 @@ if ($type->isSearch())
     $isVideoStorageGroup = true;
   $musicBase = getSettingDir($MUSIC_DIR_SETTING);
   $recordingsBase = getStorageGroupDir($RECORDINGS_STORAGE_GROUP);
-  $artworkBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+  $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
   
   header("Content-type:application/json");
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "date": "' . $dt . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '", "tvSeriesBase": "' . $videoBase . '", "artworkStorageGroup": "' . $ARTWORK_STORAGE_GROUP . '"';  
+  echo '  { "date": "' . $dt . '", "query": "' . $searchQuery . '", "videoBase": "' . $videoBase . '", "musicBase": "' . $musicBase . '", "recordingsBase": "' . $recordingsBase . '", "moviesBase": "' . $videoBase . '", "tvSeriesBase": "' . $videoBase . '"';  
   echo ' },' . "\n";
 
   if ($videoBase != null)
@@ -175,11 +186,11 @@ if ($type->isSearch())
         $director = mysql_result($mRes, $i, "director");
         $summary = mysql_result($mRes, $i, "summary");
         $art = mysql_result($mRes, $i, "coverfile");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
           $art = mysql_result($mRes, $i, "fanart");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
           $art = mysql_result($mRes, $i, "screenshot");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
           $art = mysql_result($mRes, $i, "banner");
         $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
@@ -222,11 +233,11 @@ if ($type->isSearch())
         $director = mysql_result($tsRes, $i, "director");
         $summary = mysql_result($tsRes, $i, "summary");
         $art = mysql_result($tsRes, $i, "coverfile");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
           $art = mysql_result($tsRes, $i, "fanart");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
           $art = mysql_result($tsRes, $i, "screenshot");
-        if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+        if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
           $art = mysql_result($tsRes, $i, "banner");
         $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
@@ -483,11 +494,11 @@ else
       if (strcmp('None', $sum) == 0)
         $sum = null;
       $art = mysql_result($result, $i, "coverfile");
-      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Fanart') == 0))
+      if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
         $art = mysql_result($result, $i, "fanart");
-      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Screenshots') == 0))
+      if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
         $art = mysql_result($result, $i, "screenshot");
-      if ($art == null || (strcmp($ARTWORK_STORAGE_GROUP, 'Banners') == 0))
+      if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
         $art = mysql_result($result, $i, "banner");
     }
     if ($type->isRecordings() || $type->isLiveTv())
@@ -529,7 +540,7 @@ else
     if ($type->isMusic())
     {
       $dirId = mysql_result($result, $i, "directory_id");
-      if ($MUSIC_ART_AT_ALBUM_LEVEL)
+      if ($albumArtAlbumLevel)
         $art = array_key_exists($dirId, $albumArtMap) ? $albumArtMap[$dirId] : null;
       else
         $art = array_key_exists($id, $albumArtMap) ? $albumArtMap[$id] : null;
@@ -591,7 +602,7 @@ else
     }
     else if ($type->isMovies() || $type->isTvSeries())
     {
-      $artworkBase = getBaseDir($ARTWORK_STORAGE_GROUP, $ARTWORK_DIR_SETTING);
+      $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
       $titles[$id] = $ttl; 
       $subtitles[$id] = $stl;
       $years[$id] = $yr;
@@ -619,7 +630,7 @@ else
   
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '", "base": "' . $base . '", "artworkStorageGroup": "' . $ARTWORK_STORAGE_GROUP . '" ';
+  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '", "base": "' . $base . '" ';
   if ($num > 0)
     echo " },\n";
   else
@@ -1107,9 +1118,9 @@ function getCastMap()
 
 function getAlbumArtMap()
 {
-  global $MUSIC_ART_AT_ALBUM_LEVEL;
+  global $albumArtAlbumLevel;
   $albumArtMap = array();
-  if ($MUSIC_ART_AT_ALBUM_LEVEL)
+  if ($albumArtAlbumLevel)
   {
     // map relates directory_id to albumart_id
     $query = "select albumart_id, directory_id from music_albumart where song_id = 0";
@@ -1124,7 +1135,7 @@ function getAlbumArtMap()
   while ($i < $num)
   {
     $albumArtId = mysql_result($res, $i, "albumart_id");
-    $key = $MUSIC_ART_AT_ALBUM_LEVEL ? mysql_result($res, $i, "directory_id") : mysql_result($res, $i, "song_id");
+    $key = $albumArtAlbumLevel ? mysql_result($res, $i, "directory_id") : mysql_result($res, $i, "song_id");
     $albumArtMap[$key] = $albumArtId;
     $i++;
   }
