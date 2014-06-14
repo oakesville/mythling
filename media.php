@@ -414,7 +414,7 @@ else
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = true;
     }
-    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, convert(r.originalairdate using utf8) as oad, rr.recordid from recorded r " . $where . " " . $orderBy;
+    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rr.recordid from recorded r " . $where . " " . $orderBy;
   }
 
   // echo $query . "\n\n";
@@ -434,7 +434,11 @@ else
     $airdates = array();
     $endtimes = array();
     $ratings = array();
-    $recordids = array();
+    if ($type->isRecordings())
+    {
+      $inetrefs = array();
+      $recordids = array();
+    }
   }
   else if ($type->isMovies() || $type->isTvSeries())
   {
@@ -511,7 +515,10 @@ else
       $et = mysql_result($result, $i, "endtime");
       $rat = mysql_result($result, $i, "stars");
       if ($type->isRecordings())
+      {
         $rid = mysql_result($result, $i, "recordid");
+        $inr = mysql_result($result, $i, "inetref");
+      }
     }
     else
     {
@@ -577,7 +584,10 @@ else
       $endtimes[$id] = $et;
       $ratings[$id] = $rat;
       if ($type->isRecordings())
+      {
+        $inetrefs[$id] = $inr;
         $recordids[$id] = $rid;
+      }
     }
     else if ($type->isMovies() || $type->isTvSeries())
     {
@@ -854,8 +864,13 @@ function printItem($path, $file, $depth, $more)
       echo ', "endtime": "' . $endtimes[$id] . '"';
     if ($ratings[$id] != null && $ratings[$id] != '0')
       echo ', "rating": "' . $ratings[$id] . '"';
-    if ($type->isRecordings() && $recordids[$id] != null)
-      echo ', "recordid": ' . $recordids[$id];
+    if ($type->isRecordings())
+    {
+      if ($inetrefs[$id] != null && $inetrefs[$id] != '00000000')
+        echo ', "internetRef": "' . $inetrefs[$id] . '"';
+      if ($recordids[$id] != null)
+        echo ', "recordid": ' . $recordids[$id];
+    }
   }
   else if ($type->isMovies() || $type->isTvSeries())
   {
