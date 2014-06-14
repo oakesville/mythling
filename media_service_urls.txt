@@ -1,5 +1,5 @@
 # Mythling Categorize using Directories: 
-http://192.168.0.69:8888/mythling/media.php?type=movies&sort=title&movieDirs=Horror%2CPre-Code&tvSeriesDirs=To+Watch&videoExcludeDirs=Home+Movies
+http://192.168.0.69:8888/mythling/media.php?type=movies&sort=title&movieDirs=Horror%2CPre-Code&tvSeriesDirs=To+Watch&videoExcludeDirs=Home+Movies&artworkStorageGroup=Coverart
                                                  tvSeries    date
                                                  videos      rating
                                                  recordings
@@ -8,7 +8,7 @@ http://192.168.0.69:8888/mythling/media.php?type=movies&sort=title&movieDirs=Hor
 http://192.168.0.69:8888/mythling/media.php?type=search&query=board&movieDirs=Horror,Pre-Code&tvSeriesDirs=To Watch&videoExcludeDirs=Home Movies
 
 # Mythling Categorize using Metadata: 
-http://192.168.0.69:8888/mythling/media.php?type=tvSeries&categorizeUsingMetadata=true
+http://192.168.0.69:8888/mythling/media.php?type=tvSeries&categorizeUsingMetadata=true&artworkStorageGroup=Coverart
 
 # Mythling No Categorization:
 http://192.168.0.69:8888/mythling/media.php?type=videos
@@ -28,11 +28,14 @@ http://192.168.0.69:6544/Content/GetMusic?Id=53938
 # MythTV Artwork
 http://192.168.0.69:6544/Content/GetImageFile?StorageGroup=Coverart&FileName=Horror/a.jpg
 
+# MythTV Recording Artwork
+http://192.168.0.69:6544/Content/GetRecordingArtwork?Inetref=80552&Type=coverart&Season=2
+
+# MythTV Recording Preview Image
+http://192.168.0.69:6544/Content/GetPreviewImage?ChanId=34736&StartTime=2014-08-29T18:59:00
+
 # MythTV Album Art (Id is from music_albumart.albumart_id)
 http://192.168.0.69:6544/Content/GetAlbumArt?Id=4078
-
-# MythTV Video Artwork
-http://192.168.0.69:6544/Content/GetVideoArtwork?Id=102530
 
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName

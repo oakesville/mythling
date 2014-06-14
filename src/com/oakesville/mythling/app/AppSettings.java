@@ -70,6 +70,14 @@ public class AppSettings
   public static final String MOVIE_DIRECTORIES = "movie_directories";
   public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
   public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
+  public static final String ARTWORK_SG_VIDEOS = "artwork_sg_videos";
+  public static final String ARTWORK_SG_RECORDINGS = "artwork_sg_recordings";
+  public static final String ARTWORK_SG_MOVIES = "artwork_sg_movies";
+  public static final String ARTWORK_SG_TVSERIES = "artwork_sg_tvseries";
+  public static final String DEFAULT_ARTWORK_SG = "Coverart";
+  public static final String DEFAULT_ARTWORK_SG_RECORDINGS = "Screenshots";
+  public static final String DEFAULT_ARTWORK_SG_RECORDINGS_LABEL = "<Use Preview Image>";
+  public static final String ALBUM_ART_LEVEL = "album_art_level";
   public static final String INTERNAL_VIDEO_RES = "internal_video_res";
   public static final String EXTERNAL_VIDEO_RES = "external_video_res";
   public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
@@ -128,7 +136,7 @@ public class AppSettings
     if (isMythlingMediaServices())
     {
       url = getMythlingWebBaseUrl() + "/media.php?type=" + mediaType.toString();
-      url += getVideoTypeParams();
+      url += getVideoTypeParams() + getArtworkParams(mediaType);
       if (mediaSettings.getSortType() == SortType.byDate)
         url += "&sort=date";
       else if (mediaSettings.getSortType() == SortType.byRating)
@@ -179,6 +187,20 @@ public class AppSettings
     {
       params += "&categorizeUsingMetadata=true";
     }
+    return params;
+  }
+
+  /**
+   * If not empty, always begins with '&'.
+   */
+  public String getArtworkParams(MediaType mediaType) throws UnsupportedEncodingException
+  {
+    String params = "";
+    String prefStorageGroup = getArtworkStorageGroup(mediaType);
+    if (!DEFAULT_ARTWORK_SG.equals(prefStorageGroup))
+      params += "&artworkStorageGroup=" + prefStorageGroup;
+    if (!isAlbumArtAlbumLevel())
+      params += "&albumArtSongLevel=true";
     return params;
   }
   
@@ -383,6 +405,25 @@ public class AppSettings
       return new URL[] { url };
   }
   
+  public String getArtworkStorageGroup(MediaType mediaType)
+  {
+    if (mediaType == MediaType.videos)
+      return prefs.getString(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG);
+    else if (mediaType == MediaType.recordings)
+      return prefs.getString(ARTWORK_SG_RECORDINGS, DEFAULT_ARTWORK_SG_RECORDINGS);
+    else if (mediaType == MediaType.movies)
+      return prefs.getString(ARTWORK_SG_MOVIES, DEFAULT_ARTWORK_SG);
+    else if (mediaType == MediaType.tvSeries)
+      return prefs.getString(ARTWORK_SG_TVSERIES, DEFAULT_ARTWORK_SG);
+    else
+      return DEFAULT_ARTWORK_SG;
+  }
+
+  public boolean isAlbumArtAlbumLevel()
+  {
+    return !prefs.getBoolean(ALBUM_ART_LEVEL, false);
+  }
+
   public int getVideoRes()
   {
     if (isExternalNetwork())

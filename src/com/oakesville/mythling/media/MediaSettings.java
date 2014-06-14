@@ -66,7 +66,7 @@ public class MediaSettings
   public String getTypeDeterminerLabel()
   {
     if (MediaTypeDeterminer.metadata == typeDeterminer)
-      return "MetaData";
+      return "Metadata";
     else if (MediaTypeDeterminer.directories == typeDeterminer)
       return "Directories";
     else if (MediaTypeDeterminer.none == typeDeterminer)

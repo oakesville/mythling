@@ -23,10 +23,6 @@ public class Video extends Item
   public String getSummary() { return summary; }
   public void setSummary(String summary) { this.summary = summary; }
 
-  private String artworkStorageGroup;
-  public String getArtworkStorageGroup() { return artworkStorageGroup; }
-  public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
-  
   private String artwork;
   public String getArtwork() { return artwork; }
   public void setArtwork(String artwork) { this.artwork = artwork; }
@@ -64,20 +60,22 @@ public class Video extends Item
   }
   
   @Override
-  public boolean hasArtwork()
+  public ArtworkDescriptor getArtworkDescriptor(String storageGroup)
   {
-    return artwork != null;
-  }
+    if (artwork == null)
+      return null;
 
-  @Override
-  public String getArtworkPath()
-  {
-    return artwork;
-  }
-  
-  @Override
-  public String getArtworkContentServicePath() throws UnsupportedEncodingException
-  {
-    return "GetImageFile?StorageGroup=" + URLEncoder.encode(artworkStorageGroup, "UTF-8") + "&FileName=" + URLEncoder.encode(artwork, "UTF-8");    
-  }
+    return new ArtworkDescriptor(storageGroup)
+    {
+      public String getArtworkPath()
+      {
+        return getStorageGroup() + "/" + artwork;
+      }
+      
+      public String getArtworkContentServicePath() throws UnsupportedEncodingException
+      {
+        return "GetImageFile?StorageGroup=" + URLEncoder.encode(getStorageGroup(), "UTF-8") + "&FileName=" + URLEncoder.encode(artwork, "UTF-8");    
+      }
+    };
+  }  
 }

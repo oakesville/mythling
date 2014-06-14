@@ -739,6 +739,7 @@ public abstract class MediaActivity extends Activity
             mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath);
           }
         }
+        mediaList.setArtworkStorageGroup(getAppSettings().getArtworkStorageGroup(mediaSettings.getType()));
         mediaList.setCharSet(downloader.getCharSet());
         getAppSettings().clearPagerCurrentPosition(mediaList.getMediaType(), "");
         

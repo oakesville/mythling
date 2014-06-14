@@ -49,6 +49,8 @@
   <string name="summary_prefs_credentials">Authentication settings</string>
   <string name="title_prefs_categories">Categories</string>
   <string name="summary_prefs_categories">How media should be categorized</string>
+  <string name="title_prefs_artwork">Artwork</string>
+  <string name="summary_prefs_artwork">Detail view artwork options</string>
   <string name="title_prefs_video_quality">Video Quality</string>
   <string name="summary_prefs_video_quality">Stream settings for device playback</string>
   <string name="title_prefs_data_caching">Data Caching</string>
@@ -78,6 +80,29 @@
   <string name="message_tv_base_url">Base URL for TV Series detail links</string>
   <string name="title_custom_base_url">Custom Base URL</string>
   <string name="message_custom_base_url">URL-encoded title is appended to this base</string>
+  <string name="title_artwork_settings">Artwork Settings</string>
+  <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
+  <string name="title_videos">Videos</string>
+  <string name="title_tvseries">TV Series</string>
+  <string name="title_movies">Movies</string>
+  <string name="title_recordings">Recordings</string>
+  <string-array name="artwork_sg_values">
+    <item>Coverart</item>
+    <item>Fanart</item>
+    <item>Banners</item>
+    <item>Screenshots</item>
+  </string-array>
+  <string-array name="artwork_sg_recording_entries">
+    <item>Coverart</item>
+    <item>Fanart</item>
+    <item>Banners</item>
+    <item>&lt;Use Preview Image&gt;</item>
+  </string-array>
+  <string name="artwork_sg_default">Coverart</string>
+  <string name="artwork_sg_default_recordings">Screenshots</string> <!-- really preview images -->
+  <string name="title_album_art_level">Album Art Level</string>
+  <string name="album_art_song">Song</string>
+  <string name="album_art_album">Album</string>
   <string name="title_device_player">Device Player</string>
   <string name="title_frontend_player">Frontend Player</string>
   <string name="title_internal_backend">Internal Backend</string>

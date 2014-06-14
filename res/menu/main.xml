@@ -25,24 +25,24 @@
     <menu>
       <group android:checkableBehavior="single">
         <item
-          android:id="@+id/media_videos"
-          android:title="@string/menu_videos" />
-        <item
-          android:id="@+id/media_music"
-          android:title="@string/menu_music" />
-        <item
           android:id="@+id/media_recordings"
           android:title="@string/menu_recordings" />
         <item
           android:id="@+id/media_tv"
           android:title="@string/menu_tv" />
         <item
+          android:id="@+id/media_videos"
+          android:title="@string/menu_videos" />
+        <item
           android:id="@+id/media_movies"
           android:title="@string/menu_movies" />
         <item
           android:id="@+id/media_tv_series"
           android:title="@string/menu_tv_series" />
-        </group>
+        <item
+          android:id="@+id/media_music"
+          android:title="@string/menu_music" />
+      </group>
     </menu>    
   </item>
 

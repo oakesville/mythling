@@ -1,0 +1,67 @@
+<!--
+ * Copyright 2013 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory android:title="@string/title_artwork_storage_groups">
+    <ListPreference 
+      android:key="artwork_sg_recordings"
+      android:title="@string/title_recordings"
+      android:entries="@array/artwork_sg_recording_entries"
+      android:entryValues="@array/artwork_sg_values"      
+      android:defaultValue="@string/artwork_sg_default_recordings"
+      android:layout="@layout/pref" />
+    
+    <ListPreference 
+      android:key="artwork_sg_videos"
+      android:title="@string/title_videos"
+      android:entries="@array/artwork_sg_values"
+      android:entryValues="@array/artwork_sg_values"      
+      android:defaultValue="@string/artwork_sg_default"
+      android:layout="@layout/pref" />
+
+    <ListPreference 
+      android:key="artwork_sg_movies"
+      android:title="@string/title_movies"
+      android:entries="@array/artwork_sg_values"
+      android:entryValues="@array/artwork_sg_values"      
+      android:defaultValue="@string/artwork_sg_default"
+      android:layout="@layout/pref" />
+    
+    <ListPreference 
+      android:key="artwork_sg_tvseries"
+      android:title="@string/title_tvseries"
+      android:entries="@array/artwork_sg_values"
+      android:entryValues="@array/artwork_sg_values"      
+      android:defaultValue="@string/artwork_sg_default"
+      android:layout="@layout/pref" />
+  </PreferenceCategory>
+  
+  <PreferenceCategory android:title="@string/title_album_art_level">
+    <com.oakesville.mythling.prefs.SwitchPreference 
+      android:key="album_art_level"
+      android:switchTextOn="@string/album_art_song"
+      android:switchTextOff="@string/album_art_album"
+      android:summaryOff="sum off"
+      android:summaryOn="sum on"
+      android:defaultValue="@string/album_art_album"
+      android:layout="@layout/sw_pref_inner"    
+      android:widgetLayout="@layout/prefs_switch" />
+  </PreferenceCategory>
+
+</PreferenceScreen>

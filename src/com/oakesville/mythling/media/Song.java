@@ -6,6 +6,9 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Song extends Item
 {
+  public static final String ARTWORK_LEVEL_ALBUM = "albumArtwork";
+  public static final String ARTWORK_LEVEL_SONG = "songArtwork";
+  
   public Song(String id, String title)
   {
     super(id, title);
@@ -26,20 +29,26 @@ public class Song extends Item
   }
   
   @Override
-  public boolean hasArtwork()
+  public ArtworkDescriptor getArtworkDescriptor(String storageGroup)
   {
-    return getAlbumArtId() != 0;
-  }
-  
-  @Override
-  public String getArtworkPath()
-  {
-    return "";  // TODO: forces caching at ALBUM level (not supporting individual song artwork -- if there is such a thing)
-  }
-  
-  @Override
-  public String getArtworkContentServicePath() throws UnsupportedEncodingException
-  {
-    return "GetAlbumArt?Id=" + getAlbumArtId();
-  }
+    if (albumArtId == 0)
+      return null;
+
+    // actually storageGroup is artwork level (album or song)
+    final boolean songLevelArt = ARTWORK_LEVEL_SONG.equals(storageGroup);
+
+    return new ArtworkDescriptor(storageGroup) 
+    {
+      public String getArtworkPath()
+      {
+        // cache at album level 
+        return getStorageGroup() + (songLevelArt ? "" : ("/" + getId()));
+      }
+      
+      public String getArtworkContentServicePath() throws UnsupportedEncodingException
+      {
+        return "GetAlbumArt?Id=" + getAlbumArtId();
+      }
+    };
+  }    
 }

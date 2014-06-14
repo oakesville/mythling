@@ -42,7 +42,12 @@
     android:fragment="com.oakesville.mythling.prefs.CategoriesPrefs"
     android:title="@string/title_prefs_categories"
     android:summary="@string/summary_prefs_categories" />
-    
+
+  <header
+    android:fragment="com.oakesville.mythling.prefs.ArtworkPrefs"
+    android:title="@string/title_prefs_artwork"
+    android:summary="@string/summary_prefs_artwork" />
+  
   <header
     android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
     android:title="@string/title_prefs_video_quality"
