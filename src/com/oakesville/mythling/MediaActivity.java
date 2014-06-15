@@ -419,7 +419,7 @@ public abstract class MediaActivity extends Activity
             {
               public void onCompletion(MediaPlayer mp)
               {
-                stopMediaPlayer();
+                mediaPlayer.reset();
                 onResume();
               }
             });
