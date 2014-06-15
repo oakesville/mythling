@@ -251,7 +251,7 @@ if ($type->isSearch())
 
   if ($musicBase != null)
   {
-    $sQuery = "select s.song_id as id concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
+    $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
     $sRes = mysql_query($sQuery) or die("Query failed: " . mysql_error());
     $sNum = mysql_numrows($sRes);
     echo '  "songs": ' . "\n  [\n";
