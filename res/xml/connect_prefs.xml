@@ -18,8 +18,7 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory
-    android:title="@string/title_content_services">
+  <PreferenceCategory android:title="@string/title_content_services">
     <EditTextPreference 
       android:key="mythtv_service_port"
       android:title="@string/title_mythtv_service_port"
@@ -28,8 +27,7 @@
       android:layout="@layout/pref" />
   </PreferenceCategory>
   
-  <PreferenceCategory
-    android:title="@string/title_media_services">
+  <PreferenceCategory android:title="@string/title_media_services">
     <com.oakesville.mythling.prefs.SwitchPreference
       android:key="media_services"
       android:switchTextOn="Mythling"
