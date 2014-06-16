@@ -102,6 +102,7 @@ public abstract class MediaActivity extends Activity
   private MenuItem viewMenuItem;
   private MenuItem sortMenuItem;
   private MenuItem musicMenuItem;
+  private MenuItem mythwebMenuItem;
   
   private static MediaPlayer mediaPlayer;
   
@@ -164,6 +165,9 @@ public abstract class MediaActivity extends Activity
     viewMenuItem = menu.findItem(R.id.menu_view);
     showViewMenu(supportsViewMenu());
 
+    mythwebMenuItem = menu.findItem(R.id.menu_mythweb);
+    showMythwebMenu(supportsMythwebMenu());
+    
     return super.onPrepareOptionsMenu(menu);
   }
   
@@ -201,6 +205,15 @@ public abstract class MediaActivity extends Activity
       }
       viewMenuItem.setEnabled(show);
       viewMenuItem.setVisible(show);
+    }
+  }
+
+  protected void showMythwebMenu(boolean show)
+  {
+    if (mythwebMenuItem != null)
+    {
+      mythwebMenuItem.setEnabled(show);
+      mythwebMenuItem.setVisible(show);
     }
   }
   
@@ -242,6 +255,11 @@ public abstract class MediaActivity extends Activity
   protected boolean supportsMusic()
   {
     return getAppSettings().isMythlingMediaServices();
+  }
+
+  protected boolean supportsMythwebMenu()
+  {
+    return getAppSettings().isMythWebAccessEnabled();    
   }
   
   @Override
@@ -372,6 +390,11 @@ public abstract class MediaActivity extends Activity
       {
         String url = getResources().getString(R.string.url_help);
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        return true;
+      }
+      else if (item.getItemId() == R.id.menu_mythweb)
+      {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl().toString())));
         return true;
       }
     }

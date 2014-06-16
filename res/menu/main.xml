@@ -1,5 +1,5 @@
 <!--
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -113,5 +113,12 @@
     android:orderInCategory="500"
     android:icon="@drawable/ic_menu_help"
     android:showAsAction="ifRoom" />
+
+  <item
+    android:id="@+id/menu_mythweb"
+    android:title="@string/menu_mythweb"
+    android:orderInCategory="600"
+    android:icon="@drawable/ic_menu_help"
+    android:showAsAction="never" />
   
 </menu>
