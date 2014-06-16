@@ -18,6 +18,7 @@
  */
 package com.oakesville.mythling.prefs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -27,11 +28,14 @@ import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListAdapter;
 
 import com.oakesville.mythling.R;
 
 public class PrefsActivity extends PreferenceActivity
 {
+  private List<Header> headers;
+  
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
@@ -69,6 +73,21 @@ public class PrefsActivity extends PreferenceActivity
     }
 
     return super.onOptionsItemSelected(item);
-  }  
+  }
   
+  @Override
+  public void setListAdapter(ListAdapter adapter)
+  {
+    if (headers == null)
+    {
+      headers = new ArrayList<Header>();
+      // when the saved state provides the list of headers, onBuildHeaders() is not called
+      // so we build it from the adapter proveded, then use our own adapter
+
+      for (int i = 0; i < adapter.getCount(); i++)
+        headers.add((Header)adapter.getItem(i));
+    }
+
+    super.setListAdapter(new HeaderListAdapter(this, headers));
+  }  
 }
