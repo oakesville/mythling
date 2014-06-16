@@ -52,8 +52,12 @@ public class AppSettings
   public static final String INTERNAL_BACKEND_CATEGORY = "internal_backend_cat";
   public static final String EXTERNAL_BACKEND_CATEGORY = "external_backend_cat";
   public static final String MYTHLING_SERVICE_ACCESS_CATEGORY = "mythling_service_access_cat";
+  public static final String MEDIA_SERVICES_CATEGORY = "media_services_cat";
+  public static final String MYTHWEB_ACCESS_CATEGORY = "mythweb_access_cat";
+  public static final String MYTHWEB_ACCESS = "mythweb_access";
   public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
   public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
+  public static final String BACKEND_WEB = "backend_web";
   public static final String MEDIA_SERVICES = "media_services";
   public static final String MYTHLING_WEB_PORT = "mythling_web_port";
   public static final String MYTHLING_WEB_ROOT = "mythling_web_root";
@@ -97,6 +101,8 @@ public class AppSettings
   public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
   public static final String TUNER_TIMEOUT = "tuner_timeout";
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
+  public static final String HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
+  public static final String HTTP_READ_TIMEOUT = "http_read_timeout";
   public static final String PAGER_CURRENT_POSITION = "movie_current_position";
   public static final String DEFAULT_MEDIA_TYPE = "recordings";
   public static final String MOVIE_BASE_URL = "movie_base_url";
@@ -104,6 +110,7 @@ public class AppSettings
   public static final String CUSTOM_BASE_URL = "custom_base_url";
   public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
   public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
+  public static final String MYTHWEB_ROOT = "mythweb";
   
   private Context appContext;
   public Context getAppContext() { return appContext; }
@@ -127,6 +134,14 @@ public class AppSettings
     int port = getMythlingServicePort();
     String root = getMythlingWebRoot();
     return new URL("http://" + ip + ":" + port + (root == null || root.length() == 0 ? "" : "/" + root));
+  }
+
+  public URL getMythWebUrl() throws MalformedURLException
+  {
+    String ip = getBackendHost();
+    int port = getMythlingWebPort();
+    String root = MYTHWEB_ROOT;
+    return new URL("http://" + ip + ":" + port + "/" + root);
   }
   
   public URL getMediaListUrl(MediaType mediaType) throws MalformedURLException, UnsupportedEncodingException
@@ -288,6 +303,16 @@ public class AppSettings
   public boolean isMythlingMediaServices()
   {
     return prefs.getBoolean(MEDIA_SERVICES, false);
+  }
+  
+  public boolean isHasBackendWeb()
+  {
+    return prefs.getBoolean(BACKEND_WEB, false);
+  }
+
+  public boolean isMythWebAccessEnabled()
+  {
+    return prefs.getBoolean(MYTHWEB_ACCESS, false);
   }
 
   public int getBuiltInPlayerBufferSize()
@@ -652,8 +677,17 @@ public class AppSettings
     return Integer.parseInt(prefs.getString(TRANSCODE_TIMEOUT, "30").trim());
   }
   
+  public int getHttpConnectTimeout()
+  {
+    return Integer.parseInt(prefs.getString(HTTP_CONNECT_TIMEOUT, "6").trim());
+  }
 
-  // change these values and recompile to route service calls through a reverse proxy
+  public int getHttpReadTimeout()
+  {
+    return Integer.parseInt(prefs.getString(HTTP_READ_TIMEOUT, "10").trim());
+  }
+  
+  // change these values and recompile to route service calls through a dev-time reverse proxy
   private boolean serviceProxy = false;
   private String serviceProxyIp = "192.168.0.100";
   private int serviceProxyPort = 8888;
