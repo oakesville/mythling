@@ -1,5 +1,5 @@
 <!--
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -28,7 +28,7 @@
       android:layout="@layout/pref" />
     <Preference
       android:key="cache_refresh"
-      android:title="@string/title_cache_refresh"
+      android:title="@string/title_media_list_cache_refresh"
       android:summary="Clear Data Now"
       android:layout="@layout/pref" />
   </PreferenceCategory>
