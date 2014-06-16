@@ -386,15 +386,14 @@ public class HttpHelper
     return backendIp;
   }
   
-  // TODO: parameterize
   public int getConnectTimeout()
   {
-    return 6000;
+    return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "6").trim()) * 1000;
   }
-  // TODO: parameterize
+  
   public int getReadTimeout()
   {
-    return 10000;
+    return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "10").trim()) * 1000;
   }
   
   private void rethrow(IOException ex, String msgPrefix) throws IOException
