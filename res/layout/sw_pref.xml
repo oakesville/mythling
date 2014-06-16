@@ -1,5 +1,5 @@
 <!--
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -17,31 +17,31 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:paddingLeft="4dip"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:paddingTop="6dip"
-    android:paddingBottom="12dip"    
-    android:baselineAligned="false"
-    android:orientation="vertical">
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:minHeight="?android:attr/listPreferredItemHeight"
+  android:gravity="center_vertical"
+  android:paddingLeft="4dip"
+  android:paddingRight="?android:attr/scrollbarSize"
+  android:paddingTop="6dip"
+  android:paddingBottom="12dip"    
+  android:baselineAligned="false"
+  android:orientation="vertical">
 
-    <TextView android:id="@+android:id/title"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:singleLine="true"
-      android:textAppearance="?android:attr/textAppearanceMedium"
-      android:textIsSelectable="true"
-      android:ellipsize="marquee"
-      android:fadingEdge="horizontal" />
-  
-    <LinearLayout android:id="@+android:id/widget_frame"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:minWidth="48dp"
-        android:gravity="center"
-        android:orientation="vertical" />
+  <TextView android:id="@+android:id/title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:singleLine="true"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textIsSelectable="true"
+    android:ellipsize="marquee"
+    android:fadingEdge="horizontal" />
+
+  <LinearLayout android:id="@+android:id/widget_frame"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:minWidth="48dp"
+    android:gravity="center"
+    android:orientation="vertical" />
 
 </LinearLayout>

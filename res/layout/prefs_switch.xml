@@ -1,5 +1,5 @@
 <!--
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -17,9 +17,9 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <Switch 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/prefs_switch"
-    android:thumb="@drawable/switch_thumb"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:switchMinWidth="100dp" />
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/prefs_switch"
+  android:thumb="@drawable/switch_thumb"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:switchMinWidth="100dp" />
