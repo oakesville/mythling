@@ -1,5 +1,5 @@
 <!--
- * Copyright 2013 Donald Oakes
+ * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -55,7 +55,12 @@
   
   <header 
     android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
-    android:title="@string/title_prefs_data_caching"
-    android:summary="@string/summary_prefs_data_caching" />
+    android:title="@string/title_prefs_caching"
+    android:summary="@string/summary_prefs_caching" />
 
+  <header 
+    android:fragment="com.oakesville.mythling.prefs.TimeoutPrefs"
+    android:title="@string/title_prefs_timeouts"
+    android:summary="@string/summary_prefs_timeouts" />
+  
 </preference-headers>
