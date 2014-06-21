@@ -40,6 +40,7 @@
   <string name="title_activity_prefs">Mythling</string>
   <string name="title_activity_search">Mythling</string>
   <string name="title_activity_pager">Mythling</string>
+  <string name="title_activity_webview">Mythling</string>
   <string name="title_prefs_playback">Playback</string>
   <string name="summary_prefs_playback">Media player selection and settings</string>
   <string name="title_prefs_network">Network</string>
@@ -244,7 +245,7 @@
     <item>metadata</item>
     <item>directories</item>
   </string-array>
-  <string name="url_help">https://github.com/oakesville/mythling/wiki</string>
+  <string name="url_help">http://oakesville.github.io/mythling/help.html</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
   <string name="enabled">Enabled</string>

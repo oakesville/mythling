@@ -17,18 +17,25 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+  
+  <item
+    android:id="@+id/menu_settings"
+    android:title="@string/menu_settings"
+    android:orderInCategory="300"
+    android:icon="@drawable/ic_menu_settings"
+    android:showAsAction="ifRoom" />
 
   <item
     android:id="@+id/menu_mythweb"
     android:title="@string/menu_mythweb"
-    android:orderInCategory="100"
+    android:orderInCategory="500"
     android:icon="@drawable/ic_menu_help"
     android:showAsAction="never" />
   
   <item
     android:id="@+id/menu_help"
     android:title="@string/menu_help"
-    android:orderInCategory="200"
+    android:orderInCategory="600"
     android:icon="@drawable/ic_menu_help"
     android:showAsAction="ifRoom" />
   

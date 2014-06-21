@@ -16,55 +16,62 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.prefs;
+package com.oakesville.mythling;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
+import com.oakesville.mythling.app.AppSettings;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListAdapter;
+import android.webkit.WebView;
+import android.widget.Toast;
 
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.WebViewActivity;
-import com.oakesville.mythling.app.AppSettings;
-
-public class PrefsActivity extends PreferenceActivity
+public class WebViewActivity extends Activity
 {
-  private List<Header> headers;
+  private static final String TAG = WebViewActivity.class.getSimpleName();
   
-  @Override
-  protected void onCreate(Bundle savedInstanceState)
+  private WebView webView;
+
+  public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    setContentView(R.layout.webview);
     getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setTitle("Settings");
-  }
-  
-  @Override
-  public void onBuildHeaders(List<Header> target)
-  {
-    this.loadHeadersFromResource(R.xml.prefs_headers, target);
+
+    webView = (WebView) findViewById(R.id.webview);
+    
+    try
+    {
+      webView.loadUrl(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
+    }
+    catch (UnsupportedEncodingException ex)
+    {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+      Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+    }
   }
   
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getMenuInflater().inflate(R.menu.settings, menu);
+    getMenuInflater().inflate(R.menu.search, menu);    
     return true;
-  }
+  }  
   
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
     if (item.getItemId() == android.R.id.home)
     {
-      NavUtils.navigateUpFromSameTask(this);
+      startActivity(new Intent(this, MainActivity.class));
       return true;
     }
     else if (item.getItemId() == R.id.menu_mythweb)
@@ -72,30 +79,15 @@ public class PrefsActivity extends PreferenceActivity
       AppSettings appSettings = new AppSettings(getApplicationContext());
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
       return true;
-    }    
+    }
     else if (item.getItemId() == R.id.menu_help)
     {
       String url = getResources().getString(R.string.url_help);
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
       return true;
     }
-
+    
     return super.onOptionsItemSelected(item);
   }
   
-  @Override
-  public void setListAdapter(ListAdapter adapter)
-  {
-    if (headers == null)
-    {
-      headers = new ArrayList<Header>();
-      // when the saved state provides the list of headers, onBuildHeaders() is not called
-      // so we build it from the adapter proveded, then use our own adapter
-
-      for (int i = 0; i < adapter.getCount(); i++)
-        headers.add((Header)adapter.getItem(i));
-    }
-
-    super.setListAdapter(new HeaderListAdapter(this, headers));
-  }  
 }

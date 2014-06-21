@@ -16,20 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <item
-    android:id="@+id/menu_mythweb"
-    android:title="@string/menu_mythweb"
-    android:orderInCategory="100"
-    android:icon="@drawable/ic_menu_help"
-    android:showAsAction="never" />
-  
-  <item
-    android:id="@+id/menu_help"
-    android:title="@string/menu_help"
-    android:orderInCategory="200"
-    android:icon="@drawable/ic_menu_help"
-    android:showAsAction="ifRoom" />
-  
-</menu>
+<WebView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/webview"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" />

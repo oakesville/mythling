@@ -23,6 +23,7 @@ import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.SearchResults;
@@ -93,6 +95,19 @@ public class SearchActivity extends MediaActivity
       startActivity(new Intent(this, MainActivity.class));
       return true;
     }
+    else if (item.getItemId() == R.id.menu_mythweb)
+    {
+      AppSettings appSettings = new AppSettings(getApplicationContext());
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+      return true;
+    }
+    else if (item.getItemId() == R.id.menu_help)
+    {
+      String url = getResources().getString(R.string.url_help);
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
+      return true;
+    }
+    
     return super.onOptionsItemSelected(item);
   }
 

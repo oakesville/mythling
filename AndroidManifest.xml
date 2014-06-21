@@ -87,6 +87,13 @@
         android:name="android.app.default_searchable"
         android:value=".SearchActivity" />
     </activity>
+    <activity
+      android:name="com.oakesville.mythling.WebViewActivity"
+      android:label="@string/title_activity_webview">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.oakesville.mythling.MainActivity"/>
+    </activity>    
   </application>
 
 </manifest>

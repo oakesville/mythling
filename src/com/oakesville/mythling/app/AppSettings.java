@@ -136,12 +136,12 @@ public class AppSettings
     return new URL("http://" + ip + ":" + port + (root == null || root.length() == 0 ? "" : "/" + root));
   }
 
-  public URL getMythWebUrl() throws MalformedURLException
+  public String getMythWebUrl()
   {
     String ip = getBackendHost();
     int port = getMythlingWebPort();
     String root = MYTHWEB_ROOT;
-    return new URL("http://" + ip + ":" + port + "/" + root);
+    return "http://" + ip + ":" + port + "/" + root;
   }
   
   public URL getMediaListUrl(MediaType mediaType) throws MalformedURLException, UnsupportedEncodingException

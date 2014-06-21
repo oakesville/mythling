@@ -386,15 +386,15 @@ public abstract class MediaActivity extends Activity
       {
         return onSearchRequested();
       }
+      else if (item.getItemId() == R.id.menu_mythweb)
+      {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+        return true;
+      }
       else if (item.getItemId() == R.id.menu_help)
       {
         String url = getResources().getString(R.string.url_help);
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        return true;
-      }
-      else if (item.getItemId() == R.id.menu_mythweb)
-      {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl().toString())));
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
         return true;
       }
     }
