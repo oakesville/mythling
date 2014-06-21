@@ -1,4 +1,4 @@
 bin/
 gen/
 myth26/
-*.js
+.docs
