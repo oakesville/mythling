@@ -45,7 +45,7 @@
   <string name="title_prefs_network">Network</string>
   <string name="summary_prefs_network">MythTV backend host settings</string>
   <string name="title_prefs_connections">Connections</string>
-  <string name="summary_prefs_connections">Backend ports, paths and timeouts</string>
+  <string name="summary_prefs_connections">Backend ports and paths</string>
   <string name="title_prefs_credentials">Credentials</string>
   <string name="summary_prefs_credentials">Authentication settings</string>
   <string name="title_prefs_categories">Categories</string>
@@ -129,7 +129,7 @@
   <string name="title_web_server">Backend Web Server</string>
   <string name="title_media_services">Media Services</string>
   <string name="title_web_port">Web Port</string>
-  <string name="title_mythweb_access">MythWeb Menu</string>
+  <string name="title_mythweb_access">MythWeb Access</string>
   <string name="message_web_port">For Mythling media services and MythWeb access</string>
   <string name="title_mythling_web_root">Mythling Web Root</string>
   <string name="message_mythling_web_root">Path under Apache DocumentRoot directory where Mythling\'s media.php resides</string>

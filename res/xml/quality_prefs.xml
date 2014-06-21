@@ -24,7 +24,7 @@
       android:title="@string/title_video_res"
       android:entries="@array/video_res_entries"
       android:entryValues="@array/video_res_values"
-      android:defaultValue="720"
+      android:defaultValue="480"
       android:layout="@layout/pref" />
     
     <ListPreference 
@@ -32,7 +32,7 @@
       android:title="@string/title_video_bitrate"
       android:entries="@array/video_bitrate_entries"
       android:entryValues="@array/video_bitrate_values"
-      android:defaultValue="1600000"
+      android:defaultValue="800000"
       android:layout="@layout/pref" />
     
     <ListPreference 

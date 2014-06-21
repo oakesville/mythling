@@ -46,6 +46,16 @@ public class ConnectionsPrefs extends PreferenceFragment
       {
         boolean hasBackendWeb = Boolean.valueOf(newValue.toString());
         getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT).setEnabled(hasBackendWeb);
+        if (!hasBackendWeb)
+        {
+          SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES);
+          if (swPref.isChecked())
+            swPref.setChecked(false);
+          swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
+          if (swPref.isChecked())
+            swPref.setChecked(false);
+        }
+        
         doCategoryEnablement(hasBackendWeb);
         return super.onPreferenceChange(preference, newValue);
       }
@@ -82,5 +92,4 @@ public class ConnectionsPrefs extends PreferenceFragment
     cat = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS_CATEGORY);
     cat.setEnabled(hasBackendWeb);
   }
-  
 }
