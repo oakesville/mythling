@@ -84,7 +84,6 @@ public class MediaPagerActivity extends MediaActivity
   private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
   private String path;
-  private MediaList mediaList;
 
   private ViewPager pager;
   private MediaPagerAdapter pagerAdapter;
@@ -387,7 +386,7 @@ public class MediaPagerActivity extends MediaActivity
              Uri.Builder builder = new Uri.Builder();
              builder.path(pagerActivity.path + "/" + listable.toString());
              Uri uri = builder.build();
-             startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaListActivity.class));
+             startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaPagerActivity.class));
            }
         };
         spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);        
@@ -532,6 +531,7 @@ public class MediaPagerActivity extends MediaActivity
         }
             
         Button button = (Button) detailView.findViewById(R.id.pagerPlay);
+        button.setVisibility( android.view.View.VISIBLE);
         button.setOnClickListener(new OnClickListener()
         {
           public void onClick(View v)
@@ -663,13 +663,4 @@ public class MediaPagerActivity extends MediaActivity
     positionBar.setProgress(1);
   }
 
-  @Override
-  public void onBackPressed()
-  {
-    Intent intent = new Intent(this, MainActivity.class);
-    startActivity(intent);
-    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    finish();
-  }  
-  
 }
