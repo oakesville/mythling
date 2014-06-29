@@ -166,6 +166,8 @@ public class MediaList
   {
     if (path == null || "".equals(path))
       return getTopCategoriesAndItems();
+    if (path.startsWith("/"))
+      path = path.substring(1);
           
     Category curCat = null;
     for (Category cat : getCategories())

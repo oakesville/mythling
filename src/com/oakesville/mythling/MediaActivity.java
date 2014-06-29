@@ -700,7 +700,7 @@ public abstract class MediaActivity extends Activity
     }
   }
   
-  protected void populate() throws IOException, JSONException, ParseException
+  protected void populate() throws IOException, JSONException, ParseException, BadSettingsException
   {
     // default does nothing
   }

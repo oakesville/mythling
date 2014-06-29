@@ -34,6 +34,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -42,7 +43,9 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +62,7 @@ import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.ArtworkDescriptor;
 import com.oakesville.mythling.media.Category;
@@ -72,7 +76,7 @@ import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
 
 /**
- * Activity for side-scrolling through paged detail views of MythTV media.
+ * Activity for side-scrolling through paged detail views of MythTV media w/artwork.
  *
  */
 public class MediaPagerActivity extends MediaActivity
@@ -99,7 +103,6 @@ public class MediaPagerActivity extends MediaActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.pager);
-    getActionBar().setDisplayHomeAsUpEnabled(true);
     
     createProgressBar();
     
@@ -107,9 +110,12 @@ public class MediaPagerActivity extends MediaActivity
 
     try
     {
-      String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
-      if (newPath != null && !newPath.isEmpty())
-        path = newPath;
+      String newPath = getIntent().getDataString();
+      if (newPath == null)
+        path = "";
+      else
+        path = URLDecoder.decode(newPath, "UTF-8");
+      getActionBar().setDisplayHomeAsUpEnabled(!path.isEmpty());
     }
     catch (Exception ex)
     {
@@ -140,7 +146,7 @@ public class MediaPagerActivity extends MediaActivity
     super.onResume();
   }
 
-  public void populate() throws IOException, JSONException, ParseException
+  public void populate() throws IOException, JSONException, ParseException, BadSettingsException
   {
     if (getAppData() == null)
     {
@@ -255,21 +261,32 @@ public class MediaPagerActivity extends MediaActivity
     return true;
   }
 
-  public void refresh()
+  public void refresh() throws BadSettingsException
   {
-    getAppSettings().setLastLoad(0);
-    Intent intent = new Intent(this, MainActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    startActivity(intent);
-    finish();
+    path = "";
+    mediaList = new MediaList();
+    
+    startProgress();
+    getAppSettings().validate();
+    
+    refreshMediaList();
   }
   
   protected void goListView()
   {
-    Uri.Builder builder = new Uri.Builder();
-    builder.path(path);
-    Uri uri = builder.build();
-    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+    if (path == null || path.isEmpty())
+    {
+      Intent intent = new Intent(this, MainActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+    }
+    else
+    {        
+      Uri.Builder builder = new Uri.Builder();
+      builder.path(path);
+      Uri uri = builder.build();
+      startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+    }
   }
   
   public ListView getListView()
@@ -354,11 +371,27 @@ public class MediaPagerActivity extends MediaActivity
       appSettings = pagerActivity.getAppSettings();  // somehow this was set to null
       
       TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
-      titleView.setText(listable.getLabel());
       
       if (listable instanceof Category)
       {
         Category category = (Category) listable;
+
+        titleView.setText(category.getName());
+        titleView.setMovementMethod(LinkMovementMethod.getInstance());        
+        Spannable spans = (Spannable) titleView.getText();
+        ClickableSpan clickSpan = new ClickableSpan()
+        {
+           public void onClick(View v)
+           {
+             ((TextView)v).setBackgroundColor(Color.GRAY);
+             Uri.Builder builder = new Uri.Builder();
+             builder.path(pagerActivity.path + "/" + listable.toString());
+             Uri uri = builder.build();
+             startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaListActivity.class));
+           }
+        };
+        spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);        
+        
         artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
         Drawable folder = getResources().getDrawable(R.drawable.folder);
         artworkView.setImageDrawable(folder);
@@ -366,15 +399,22 @@ public class MediaPagerActivity extends MediaActivity
       else if (listable instanceof Item)
       {
         Item item = (Item) listable;
+        
+        titleView.setText(item.getLabel());
             
         // rating
-        for (int i = 0; i < item.getRating(); i++)
+        if (item.getRating() > 0)
         {
-          ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
-          if (i <= item.getRating() - 1)
-            star.setImageResource(R.drawable.rating_full);
-          else
-            star.setImageResource(R.drawable.rating_half);
+          for (int i = 0; i < 5; i++)
+          {
+            ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
+            if (i <= item.getRating() - 1)
+              star.setImageResource(R.drawable.rating_full);
+            else if (i < item.getRating())
+              star.setImageResource(R.drawable.rating_half);
+            else
+              star.setImageResource(R.drawable.rating_empty);
+          }
         }
         
         if (item instanceof Video)
@@ -418,6 +458,13 @@ public class MediaPagerActivity extends MediaActivity
               String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
               tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
               tv.setMovementMethod(LinkMovementMethod.getInstance());
+              tv.setOnClickListener(new OnClickListener()
+              {
+                public void onClick(View v)
+                {
+                  ((TextView)v).setBackgroundColor(Color.GRAY);
+                }
+              });
             }
             catch (IOException ex)
             {
@@ -442,6 +489,13 @@ public class MediaPagerActivity extends MediaActivity
               String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
               tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
               tv.setMovementMethod(LinkMovementMethod.getInstance());
+              tv.setOnClickListener(new OnClickListener()
+              {
+                public void onClick(View v)
+                {
+                  ((TextView)v).setBackgroundColor(Color.GRAY);
+                }
+              });
             }
             catch (MalformedURLException ex)
             {

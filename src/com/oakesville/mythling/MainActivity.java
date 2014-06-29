@@ -44,6 +44,7 @@ import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 
 public class MainActivity extends MediaActivity
 {
@@ -77,6 +78,14 @@ public class MainActivity extends MediaActivity
     
     listView = (ListView) findViewById(R.id.categories);
 
+    if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
+    {
+      Intent intent = new Intent(this, MediaPagerActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+      finish();
+      return;
+    }
   }
   
   @Override

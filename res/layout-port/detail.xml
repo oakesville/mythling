@@ -54,35 +54,35 @@
         android:layout_height="wrap_content">
         <ImageView
           android:id="@+id/star_1"
-          android:src="@drawable/rating_empty"
+          android:src="@drawable/blank"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical|left"
           android:contentDescription="@string/rating" />
         <ImageView
           android:id="@+id/star_2"
-          android:src="@drawable/rating_empty"
+          android:src="@drawable/blank"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical|left"
           android:contentDescription="@string/rating" />
         <ImageView
           android:id="@+id/star_3"
-          android:src="@drawable/rating_empty"
+          android:src="@drawable/blank"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical|left"
           android:contentDescription="@string/rating" />
         <ImageView
           android:id="@+id/star_4"
-          android:src="@drawable/rating_empty"
+          android:src="@drawable/blank"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical|left"
           android:contentDescription="@string/rating" />
         <ImageView
           android:id="@+id/star_5"
-          android:src="@drawable/rating_empty"
+          android:src="@drawable/blank"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical|left"
