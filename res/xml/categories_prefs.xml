@@ -50,17 +50,20 @@
       android:title="@string/title_movie_base_url"
       android:defaultValue="http://www.themoviedb.org/movie/"
       android:dialogMessage="@string/message_movie_base_url"
-      android:layout="@layout/pref" />
+      android:layout="@layout/pref"
+      android:inputType="textUri" />
     <EditTextPreference 
       android:key="tv_base_url"
       android:title="@string/title_tv_base_url"
       android:defaultValue="http://www.thetvdb.com/"
       android:dialogMessage="@string/message_tv_base_url"
-      android:layout="@layout/pref" />
+      android:layout="@layout/pref"
+      android:inputType="textUri" />
     <EditTextPreference 
       android:key="custom_base_url"
       android:title="@string/title_custom_base_url"
       android:dialogMessage="@string/message_custom_base_url"
-      android:layout="@layout/pref" />
+      android:layout="@layout/pref"
+      android:inputType="textUri" />
   </PreferenceCategory>
 </PreferenceScreen>
