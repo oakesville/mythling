@@ -62,7 +62,7 @@ public class WebViewActivity extends Activity
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
   {
-    getMenuInflater().inflate(R.menu.search, menu);    
+    getMenuInflater().inflate(R.menu.webview, menu);    
     return true;
   }  
   
@@ -74,16 +74,21 @@ public class WebViewActivity extends Activity
       startActivity(new Intent(this, MainActivity.class));
       return true;
     }
-    else if (item.getItemId() == R.id.menu_mythweb)
+    else if (item.getItemId() == R.id.menu_refresh)
     {
-      AppSettings appSettings = new AppSettings(getApplicationContext());
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+      webView.reload();
       return true;
-    }
+    }    
     else if (item.getItemId() == R.id.menu_help)
     {
       String url = getResources().getString(R.string.url_help);
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
+      return true;
+    }
+    else if (item.getItemId() == R.id.menu_mythweb)
+    {
+      AppSettings appSettings = new AppSettings(getApplicationContext());
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
       return true;
     }
     
