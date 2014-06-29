@@ -289,6 +289,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.music);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.music));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
@@ -297,6 +299,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.videos);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.videos));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
@@ -305,6 +309,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.recordings);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.recordings));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
@@ -313,6 +319,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.liveTv);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.liveTv));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
@@ -321,6 +329,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.movies);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.movies));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
@@ -329,6 +339,8 @@ public abstract class MediaActivity extends Activity
         appSettings.setMediaType(MediaType.tvSeries);
         item.setChecked(true);
         mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.tvSeries));
+        showViewMenu(supportsViewMenu());
+        showSortMenu(supportsSort());
         refresh();
         return true;
       }
