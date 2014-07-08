@@ -5,6 +5,9 @@
 	clear: both;
 	margin-left: 20px;
 }
+.help_text {
+  padding-top: 10px;
+}
 .help_shot {
 	float: right;
 	width: 50%;
