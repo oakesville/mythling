@@ -5,15 +5,70 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="Mythling : Android frontend for MythTV" />
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/mythling.css">
     <title>Mythling</title>
+    <style type="text/css">
+      img { border: 1px solid black; border-radius: 4px; box-shadow: 4px 4px 4px #888888; }
+    </style>    
   </head>
 
   <body style="background:#f2f2f2;">
     <div id="main_content_wrap" class="outer" style="border-bottom:0;">
       <section id="main_content" class="inner" style="padding-top:0px;max-width:inherit;padding-left:20px;">
-        <h3>Mythling Help</h3>
+        <h3>Mythling Quick Start</h3>
+        <p>Prerequisites:</p>
+        <ul>
+          <li>A <a href="http://www.mythtv.org">MythTV</a> backend running version 0.26, 0.27, or 0.27.1.</li>
+          <li>A mobile device running Android 4.0 or later.</li>
+        </ul>
+        <p>Setup:</p>
+        <p>
+          Launch Mythling and access the Settings action menu.  
+          Basic configuration can be accomplished through the first three screens:
+        </p>
+        <div class="help_item">
+          <img src="images/screenshots/playback_settings.jpg"
+            class="help_shot"
+            alt="Playback Settings" />
+          <div>
+            <p>1. <span class="help_step">Playback Settings</span></p>
+            <p>If you choose to play media on your Device, then no further configuration is required in Playback Settings.</p>
+            <p>For playback on a MythTV frontend, Mythling uses the <a href="http://www.mythtv.org/wiki/Frontend_control_socket">Frontend Control Socket</a> interface,
+            so for that you'll need to specify the mythfrontend host name or IP address along with the control port.
+          </div>
+        </div>
+        <div class="help_item">
+          <img src="images/screenshots/network_settings.jpg"
+            class="help_shot"
+            alt="Network Settings" />
+          <div>
+            <p>2. <span class="help_step">Network Settings</span></p>
+            <p>Definitely start with an internal network.  For that you'll need to specify your mythbackend machine's host or IP address.</p>
+            <p>When you decide to set up access from an external network, then here you can also enter the externally-available host information.
+            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki">Mythling GitHub Wiki</a> site.
+          </div>
+        </div>
+        <div class="help_item">
+          <img src="images/screenshots/connections.jpg"
+            class="help_shot"
+            alt="Connections" />
+          <div>
+            <p>3. <span class="help_step">Connections</span></p>
+            <p>Mythling streams content using the MythTV <a href="http://www.mythtv.org/wiki/Services_API">Services API</a>, posting JSON over HTTP.
+            The Connections screen is where you specify the port on your backend machine where these services can be accessed.
+            </p>
+            <p>If you have Apache running on your backend machine, then you may optionally enter the host and port for that.
+            With a standalone backend web server you're able to use the Mythling media services for retrieving media lists and program data.
+            The main advantage of using Mythling media services is that they can be <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">significantly faster</a>.
+            The biggest drawback of using Mythling media services is they require you to have Apache with PHP installed and running.
+            <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">More about Mythling media services.</a>
+            <p>Lastly, using the MythWeb Access slider you can control whether <a href="http://www.mythtv.org/wiki/MythWeb">MythWeb</a> is available in the action menu.    
+          </div>
+        </div>
+        <div style="clear:both">
         <p>Help is on the way.  Please check back.</p>
-        <p><a href="https://github.com/oakesville/mythling/wiki">Mythling Wiki on GitHub</a></p>
+        <p><a href="http://oakesville.github.io/mythling/index.html">Mythling Documentation</a></p>
+        </div>
       </section>
     </div>
   </body>

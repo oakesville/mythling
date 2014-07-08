@@ -1,0 +1,16 @@
+/**
+ * Copyright 2014 Donald Oakes 
+ */
+.help_item {
+	clear: both;
+	margin-left: 20px;
+}
+.help_shot {
+	float: right;
+	width: 50%;
+	margin-left: 10px;
+	margin-right: 20px;
+}
+.help_step {
+	text-decoration: underline;
+}
