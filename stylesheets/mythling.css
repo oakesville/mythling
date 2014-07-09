@@ -1,6 +1,15 @@
 /**
  * Copyright 2014 Donald Oakes 
  */
+.help_topic {
+	font-size: 18px;
+}
+.help_topic a {
+	text-decoration: none;
+}
+.help_topic a:visited {
+	text-decoration: none;
+}
 .help_item {
 	clear: both;
 	margin-left: 20px;
