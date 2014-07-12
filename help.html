@@ -16,16 +16,23 @@
     <div id="main_content_wrap" class="outer" style="border-bottom:0;">
       <section id="main_content" class="inner" style="padding-top:0px;max-width:inherit;padding-left:20px;">
         <h3>Mythling Help</h3>
-        <div>
-          <a href="#Prerequisites">Prerequisites</a>
+        <div style="display:table;" class="help_contents">
+          <div style="display:table-row">
+            <div style="display:table-cell;" class="help_link" >
+              <a href="#Prerequisites">Prerequisites</a>
+            </div>
+            <div style="display:table-cell" class="help_link">
+              <a href="#Setup">Setup</a>
+            </div>
+          </div>
         </div>
-        <hr/>
+        <hr class="help_sep" />
         <p class="help_topic"><a id="Prerequisites">Prerequisites:</a></p>
         <ul>
           <li>A <a href="http://www.mythtv.org">MythTV</a> backend running version 0.26, 0.27, or 0.27.1.</li>
           <li>A mobile device running Android 4.0 or later.</li>
         </ul>
-        <p class="help_topic">Setup:</p>
+        <p class="help_topic"><a id="Setup">Setup:</a></p>
         <p>
           Launch Mythling and access the Settings action menu.  
           Basic configuration can be accomplished through the first three screens:
@@ -62,15 +69,16 @@
             The Connections screen is where you specify the port on your backend machine where these services can be accessed.
             </p>
             <p>If you have Apache running on your backend machine, then you may optionally enter the host and port for that.
-            With a standalone backend web server you're able to use the Mythling media services for retrieving media lists and program data.
-            The main advantage of using Mythling media services is that they can be <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">significantly faster</a>.
+            With a backend web server running you're able to use the Mythling media services for retrieving media lists and program data.
+            The advantages of using Mythling services include the ability to search and sort, along with access to your <a href="http://www.mythtv.org/wiki/MythMusic">MythMusic</a> library.
+            And Mythling services can be <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">significantly faster</a>.
             The biggest drawback of using Mythling media services is that they require you to have Apache with PHP installed and running.
             </p>
             <p>
               <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">More about Mythling media services.</a>
             </p>
             <p>
-              <span style="font-weight:bold;">Note:</span> for streaming actual content, Mythling always uses the MythTV services API. 
+              <span style="font-weight:bold;">Note:</span> For streaming actual content, Mythling always uses the MythTV services API. 
             </p>
             <p>Lastly in Connections, using the MythWeb Access slider you can control whether <a href="http://www.mythtv.org/wiki/MythWeb">MythWeb</a> is available in the action menu.    
           </div>
