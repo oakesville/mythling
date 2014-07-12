@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.prefs.PrefsActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -79,10 +80,9 @@ public class WebViewActivity extends Activity
       webView.reload();
       return true;
     }    
-    else if (item.getItemId() == R.id.menu_help)
+    else if (item.getItemId() == R.id.menu_settings)
     {
-      String url = getResources().getString(R.string.url_help);
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
+      startActivity(new Intent(this, PrefsActivity.class));
       return true;
     }
     else if (item.getItemId() == R.id.menu_mythweb)
