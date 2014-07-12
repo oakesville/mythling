@@ -77,7 +77,7 @@ public class FrontendPlayer
     }
     if (status == null)
       throw new IOException("Unable to connect to mythfrontend: " + appSettings.getFrontendHost() + ":" + appSettings.getFrontendControlPort());
-      
+    
     return status.startsWith("Playback");
   }
   
@@ -101,22 +101,17 @@ public class FrontendPlayer
       {
         String filepath = item.getFilePath();
         open(charSet);
-        run("play stop");
-        run("play program stop");
-        run("play music stop");
         if (item.isMusic())
-        {
           run("play music file " + filepath);
-        }
         else if (item.isRecording())
         {
-          //run("jump playbackrecordings");
+          String loc = run("query location");
+          if (!"playbackbox".equals(loc))
+            run("jump playbackrecordings"); // avoid "ERROR: Timed out waiting for reply from player"
           run("play program " + ((Recording)item).getChannelId() + " " + ((Recording)item).getStartTimeParam());
         }
         else
-        {
           run("play file " + filepath);
-        }
         return 0L;
       }
       catch (Exception ex)
@@ -164,6 +159,8 @@ public class FrontendPlayer
         open();
         if (item.isMusic())
           run("play music stop");
+        else if (item.isRecording())
+          run("play program stop");
         else
           run("play stop\n");
         return 0L;
@@ -257,10 +254,15 @@ public class FrontendPlayer
     String line = in.readLine();
     if (line != null)
     {
+      if (line.equals("MythFrontend Network Control"))  // why?
+      {
+        in.readLine();
+        in.readLine();
+        line = in.readLine();
+      }
       if (line.startsWith("#"))
         line = line.substring(2);
-      // the error about playback mode is misleading in MythTV 0.26/0.27 and seems to be reported erroneously 
-      if (line.startsWith("ERROR:") && !line.endsWith("this command is only for playback mode"))
+      if (line.startsWith("ERROR:"))
         throw new FrontendPlaybackException(line);
     }
     if (BuildConfig.DEBUG)
