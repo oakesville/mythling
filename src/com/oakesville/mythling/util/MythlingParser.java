@@ -41,6 +41,11 @@ import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
+/**
+ * Artist and title may be reversed for some folks
+ * but the reversal will be counteracted so that they'll 
+ * be displayed in the same order as in the filename.
+ */
 public class MythlingParser implements MediaListParser
 {
   private static final String TAG = MythlingParser.class.getSimpleName();
