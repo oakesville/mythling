@@ -47,6 +47,8 @@ public class WebViewActivity extends Activity
     getActionBar().setDisplayHomeAsUpEnabled(true);
 
     webView = (WebView) findViewById(R.id.webview);
+    webView.getSettings().setSupportZoom(true);
+    webView.getSettings().setBuiltInZoomControls(true);
     
     try
     {
