@@ -95,4 +95,13 @@ public class WebViewActivity extends Activity
     return super.onOptionsItemSelected(item);
   }
   
+  @Override
+  public void onBackPressed()
+  {
+    if (webView.canGoBack() == true)
+      webView.goBack();
+    else
+      super.onBackPressed();
+  }
+  
 }
