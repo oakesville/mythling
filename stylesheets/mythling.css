@@ -19,6 +19,7 @@
   background: none;	
 }
 .help_topic {
+	clear: both;
 	font-size: 18px;
 }
 .help_topic a {
