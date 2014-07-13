@@ -1,4 +1,6 @@
-.help_contents {
+.help_contents a {
+  color: #373737;
+  text-decoration: none;
 }
 .help_link {
 	float: left;
