@@ -41,6 +41,7 @@ import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
@@ -237,6 +238,22 @@ public class AppSettings
     String ip = getMythTvServiceHost();
     int servicePort = getMythServicePort();
     return new URL("http://" + ip + ":" + servicePort);    
+  }
+
+  public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException
+  {
+    String host = getMythTvServiceHost();
+    int servicePort = getMythServicePort();
+    if (AuthType.None.toString().equals(getMythTvServicesAuthType()))
+    {
+      return new URL("http://" + host + ":" + servicePort);
+    }
+    else
+    {
+      String encodedUser = URLEncoder.encode(getMythlingServicesUser(), "UTF-8");
+      String encodedPw = URLEncoder.encode(getMythlingServicesPassword(), "UTF-8");
+      return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
+    }
   }
   
   public URL getMythTvContentServiceBaseUrl() throws MalformedURLException

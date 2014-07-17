@@ -459,7 +459,7 @@ public abstract class MediaActivity extends Activity
               }
             });
           }
-          String musicUrl = appSettings.getMythTvServicesBaseUrl() + "/Content/GetMusic?Id=" + item.getId();
+          String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
           Map<String,String> headers = new HashMap<String,String>();
           String credentials = Base64.encodeToString((appSettings.getMythTvServicesUser() + ":" + appSettings.getMythTvServicesPassword()).getBytes(), Base64.DEFAULT);
           headers.put("Authorization", "Basic " + credentials);
@@ -1043,7 +1043,7 @@ public abstract class MediaActivity extends Activity
 
   protected void playLiveStream(LiveStreamInfo streamInfo) throws IOException
   {
-    String streamUrl = appSettings.getMythTvServicesBaseUrl() + streamInfo.getRelativeUrl();
+    String streamUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + streamInfo.getRelativeUrl();
 
     // avoid retrieving unnecessary audio-only streams
     int lastDot = streamUrl.lastIndexOf('.');
