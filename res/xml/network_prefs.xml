@@ -64,7 +64,8 @@
       android:title="@string/title_ip_retrieval_url"
       android:dialogMessage="@string/message_ip_retrieval_url"
       android:defaultValue=""
-      android:layout="@layout/pref" />    
+      android:layout="@layout/pref"
+      android:inputType="textUri" />    
   </com.oakesville.mythling.prefs.DisableableCategory>
 
 </PreferenceScreen>
