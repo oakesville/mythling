@@ -203,6 +203,10 @@ public abstract class MediaActivity extends Activity
         else
           viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
       }
+      else
+      {
+        mediaSettings.setViewType(ViewType.list);
+      }
       
       viewMenuItem.setEnabled(show);
       viewMenuItem.setVisible(show);
@@ -715,7 +719,8 @@ public abstract class MediaActivity extends Activity
     {
       if (getAppSettings().getMediaSettings().getType() == MediaType.music && !supportsMusic())
         getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
-      new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));
+
+      new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));      
     }
     catch (Exception ex)
     {
@@ -727,7 +732,7 @@ public abstract class MediaActivity extends Activity
   {
     // default does nothing
   }
-
+  
   private class RefreshTask extends AsyncTask<URL,Integer,Long>
   {
     private String mediaListJson;
@@ -802,9 +807,9 @@ public abstract class MediaActivity extends Activity
 
     protected void onPostExecute(Long result)
     {
-      stopProgress();
       if (result != 0L)
       {
+        stopProgress();
         if (ex != null)
           Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
       }
@@ -819,10 +824,24 @@ public abstract class MediaActivity extends Activity
         try
         {
           appData.writeMediaList(mediaListJson);
-          populate();
+          ViewType viewType = getAppSettings().getMediaSettings().getViewType();
+          if (viewType == ViewType.list && isDetailView())
+          {
+            goListView();
+          }
+          else if (viewType == ViewType.detail && isListView())
+          {
+            goDetailView();
+          }
+          else
+          {
+            stopProgress();
+            populate();
+          }
         }
         catch (Exception ex)
         {
+          stopProgress();          
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
         }

@@ -344,7 +344,7 @@ public class AppSettings
   
   public String getInternalBackendHost()
   {
-    return prefs.getString(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.70").trim();
+    return prefs.getString(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.69").trim();
   }
   
   public String getExternalBackendHost()
