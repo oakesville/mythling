@@ -634,7 +634,10 @@ else
   if ($num > 0)
     echo " },\n";
   else
-    echo " }\n";  
+    echo " }\n";
+
+  // echo print_r($catPaths) . "\n";
+  
   $i = 0;
   $depth = 0;
   $prevPath = "";
@@ -662,10 +665,12 @@ else
       {
         $files = $catPaths[$path];
         $fileCt = count($files);
+        
         // echo $path . "($fileCt)\n";
         $pieces = explode("/", $path);
         $size = count($pieces);
-      
+        // echo "size: " . $size . "  prevSize: " . $prevSize . "\n";
+        
         $piece = $pieces[$size - 1];
         $hasItems = $fileCt > 0;
         
@@ -697,15 +702,17 @@ else
           if ($fileCt > 0)
             printItems($path, $files, $depth);
         }
+        
+        $prevSize = $size;
       }
       else 
       {
+        $prevSize = $size;
         $size = 0;
         $hasItems = false;
       }
     
       $prevPath = $path;
-      $prevSize = $size;
       $prevHadItems = $hasItems;
       $i++;
     }
