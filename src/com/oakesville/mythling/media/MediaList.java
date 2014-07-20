@@ -207,7 +207,7 @@ public class MediaList
   
   public boolean canHaveArtwork()
   {
-    return true;
+    return mediaType != MediaType.liveTv;
   }
   
   public void sort(SortType sortType)

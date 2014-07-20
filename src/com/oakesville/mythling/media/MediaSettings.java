@@ -43,7 +43,7 @@ public class MediaSettings
   public enum ViewType
   {
     list,
-    pager
+    detail
   }
   
   public enum SortType
@@ -126,8 +126,8 @@ public class MediaSettings
   
   public String getViewTypeTitle()
   {
-    if (viewType == ViewType.pager)
-      return "Pager";
+    if (viewType == ViewType.detail)
+      return "Detail";
     else
       return "List";
   }
@@ -167,7 +167,7 @@ public class MediaSettings
   
   public int getViewIcon()
   {
-    if (getViewType() == ViewType.pager)
+    if (getViewType() == ViewType.detail)
       return R.drawable.ic_menu_detail;
     else
       return R.drawable.ic_menu_list;

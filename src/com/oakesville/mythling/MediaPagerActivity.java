@@ -254,12 +254,6 @@ public class MediaPagerActivity extends MediaActivity
     }
   }
   
-  @Override
-  protected boolean supportsViewMenu()
-  {
-    return true;
-  }
-
   public void refresh() throws BadSettingsException
   {
     path = "";
@@ -662,5 +656,11 @@ public class MediaPagerActivity extends MediaActivity
     pager.setCurrentItem(0);
     positionBar.setProgress(1);
   }
+  
+  @Override
+  protected boolean isDetailView()
+  {
+    return true;
+  }  
 
 }

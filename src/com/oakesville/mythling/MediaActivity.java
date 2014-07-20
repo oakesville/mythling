@@ -193,16 +193,17 @@ public abstract class MediaActivity extends Activity
   {
     if (viewMenuItem != null)
     {
+      MediaSettings mediaSettings = appSettings.getMediaSettings();
       if (show)
       {
         viewMenuItem.setTitle("");
-        MediaSettings mediaSettings = appSettings.getMediaSettings();
         viewMenuItem.setIcon(mediaSettings.getViewIcon());
-        if (mediaSettings.getViewType() == ViewType.pager)
-          viewMenuItem.getSubMenu().findItem(R.id.view_pager).setChecked(true);
+        if (mediaSettings.getViewType() == ViewType.detail)
+          viewMenuItem.getSubMenu().findItem(R.id.view_detail).setChecked(true);
         else
           viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
       }
+      
       viewMenuItem.setEnabled(show);
       viewMenuItem.setVisible(show);
     }
@@ -260,6 +261,16 @@ public abstract class MediaActivity extends Activity
   protected boolean supportsMythwebMenu()
   {
     return getAppSettings().isMythWebAccessEnabled();    
+  }
+  
+  protected boolean isListView()
+  {
+    return !isDetailView();
+  }
+  
+  protected boolean isDetailView()
+  {
+    return false;
   }
   
   @Override
@@ -376,12 +387,12 @@ public abstract class MediaActivity extends Activity
         goListView();
         return true;
       }
-      else if (item.getItemId() == R.id.view_pager)
+      else if (item.getItemId() == R.id.view_detail)
       {
-        appSettings.setViewType(ViewType.pager);
+        appSettings.setViewType(ViewType.detail);
         item.setChecked(true);
         viewMenuItem.setIcon(R.drawable.ic_menu_detail);
-        goPagerView();
+        goDetailView();
         return true;
       }
       else if (item.getItemId() == R.id.menu_refresh)
@@ -565,7 +576,7 @@ public abstract class MediaActivity extends Activity
     }
   }
   
-  protected void goPagerView()
+  protected void goDetailView()
   {
     // default does nothing
   }

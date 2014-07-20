@@ -144,9 +144,9 @@ public class MediaListActivity extends MediaActivity
     showViewMenu(supportsViewMenu());
     showSearchMenu(supportsSearch());
     listables = mediaList.getListables(path);
-    if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
+    if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail)
     {
-      goPagerView();
+      goDetailView();
       return;
     }
     
@@ -252,7 +252,7 @@ public class MediaListActivity extends MediaActivity
     finish();
   }
 
-  protected void goPagerView()
+  protected void goDetailView()
   {
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);

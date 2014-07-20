@@ -78,7 +78,7 @@ public class MainActivity extends MediaActivity
     
     listView = (ListView) findViewById(R.id.categories);
 
-    if (getAppSettings().getMediaSettings().getViewType() == ViewType.pager)
+    if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail)
     {
       Intent intent = new Intent(this, MediaPagerActivity.class);
       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -129,7 +129,7 @@ public class MainActivity extends MediaActivity
     refreshMediaList();
   }
   
-  protected void populate() throws IOException, JSONException, ParseException
+  protected void populate() throws IOException, JSONException, ParseException, BadSettingsException
   {
     startProgress();
     if (getAppData() == null)
@@ -191,7 +191,7 @@ public class MainActivity extends MediaActivity
     listView.setSelectionFromTop(currentTop, topOffset);
   }
 
-  protected void goPagerView()
+  protected void goDetailView()
   {
     Uri.Builder builder = new Uri.Builder();
     builder.path("");
