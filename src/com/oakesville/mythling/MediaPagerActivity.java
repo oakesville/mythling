@@ -552,7 +552,7 @@ public class MediaPagerActivity extends MediaActivity
             if (bitmap == null)
             {
               URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
-              new ImageRetrievalTask().execute(url);
+              new ImageRetrievalTask(item, art).execute(url);
             }
             else
             {
@@ -574,16 +574,20 @@ public class MediaPagerActivity extends MediaActivity
       private Exception ex;
       private String filePath;
       private Bitmap bitmap;
+      private Item item;
+      private ArtworkDescriptor descriptor;
+      
+      ImageRetrievalTask(Item item, ArtworkDescriptor descriptor)
+      {
+        this.item = item;
+        this.descriptor = descriptor;
+      }
       
       protected Long doInBackground(URL... urls)
       {
         try
         {
-          String file = urls[0].getFile();
-          // assumes FileName is last URL parameter
-          file = file.substring(urls[0].getFile().lastIndexOf("&FileName=") + 10);
-          
-          filePath = pagerActivity.path + "/" + file;
+          filePath = item.getType() + "/" + pagerActivity.path + "/" + descriptor.getArtworkPath();
           bitmap = getAppData().readImageBitmap(filePath);
           if (bitmap == null)
           {
