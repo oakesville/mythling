@@ -71,8 +71,8 @@ public class CredentialsPrefs extends PreferenceFragment
       }
     });
     pref.setSummary(appSettings.getMythlingServicesAuthType());
-    doMythlingAccessCategoryEnablement(appSettings.isMythlingMediaServices());    
-    doEnableMythlingAccessCreds(appSettings.isMythlingMediaServices() && !"None".equals(appSettings.getMythlingServicesAuthType()));
+    doBackendWebCredsEnablement(appSettings.isHasBackendWeb());    
+    doEnableMythlingAccessCreds(appSettings.isHasBackendWeb() && !"None".equals(appSettings.getMythlingServicesAuthType()));
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
@@ -102,13 +102,11 @@ public class CredentialsPrefs extends PreferenceFragment
     getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD).setEnabled(enabled);
   }
   
-  private void doMythlingAccessCategoryEnablement(boolean isMythlingServices)
+  private void doBackendWebCredsEnablement(boolean hasBackendWeb)
   {
     Preference mythlingAccessCat = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICE_ACCESS_CATEGORY);
-    mythlingAccessCat.setEnabled(isMythlingServices);
-    getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_AUTH_TYPE).setEnabled(isMythlingServices);
-//    getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER).setEnabled(isMythlingServices);
-//    getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD).setEnabled(isMythlingServices);
+    mythlingAccessCat.setEnabled(hasBackendWeb);
+    getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_AUTH_TYPE).setEnabled(hasBackendWeb);
   }
   
 }
