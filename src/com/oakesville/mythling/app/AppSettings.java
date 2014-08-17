@@ -141,10 +141,10 @@ public class AppSettings
 
   public String getMythWebUrl()
   {
-    String ip = getBackendHost();
+    String host = getBackendHost();
     int port = getMythlingWebPort();
     String root = getMythwebWebRoot();
-    return "http://" + ip + ":" + port + "/" + root;
+    return "http://" + host + ":" + port + "/" + root;
   }
   
   public URL getMediaListUrl(MediaType mediaType) throws MalformedURLException, UnsupportedEncodingException
@@ -252,8 +252,8 @@ public class AppSettings
     }
     else
     {
-      String encodedUser = URLEncoder.encode(getBackendWebUser(), "UTF-8");
-      String encodedPw = URLEncoder.encode(getBackendWebPassword(), "UTF-8");
+      String encodedUser = URLEncoder.encode(getMythTvServicesUser(), "UTF-8");
+      String encodedPw = URLEncoder.encode(getMythTvServicesPassword(), "UTF-8");
       return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
     }
   }
