@@ -62,6 +62,7 @@ public class AppSettings
   public static final String MEDIA_SERVICES = "media_services";
   public static final String MYTHLING_WEB_PORT = "mythling_web_port";
   public static final String MYTHLING_WEB_ROOT = "mythling_web_root";
+  public static final String MYTHWEB_WEB_ROOT = "mythweb_web_root";
   public static final String MYTHTV_SERVICE_PORT = "mythtv_service_port";
   public static final String MYTH_FRONTEND_HOST = "mythfe_host";
   public static final String MYTH_FRONTEND_PORT = "mythfe_port";
@@ -111,7 +112,6 @@ public class AppSettings
   public static final String CUSTOM_BASE_URL = "custom_base_url";
   public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
   public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
-  public static final String MYTHWEB_ROOT = "mythweb";
   
   private Context appContext;
   public Context getAppContext() { return appContext; }
@@ -141,7 +141,7 @@ public class AppSettings
   {
     String ip = getBackendHost();
     int port = getMythlingWebPort();
-    String root = MYTHWEB_ROOT;
+    String root = getMythwebWebRoot();
     return "http://" + ip + ":" + port + "/" + root;
   }
   
@@ -295,6 +295,11 @@ public class AppSettings
   public String getMythlingWebRoot()
   {
     return prefs.getString(MYTHLING_WEB_ROOT, "mythling");
+  }
+
+  public String getMythwebWebRoot()
+  {
+    return prefs.getString(MYTHWEB_WEB_ROOT, "mythweb");
   }
   
   public String getFrontendHost()

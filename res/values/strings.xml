@@ -135,6 +135,9 @@
   <string name="title_mythling_web_root">Mythling Web Root</string>
   <string name="message_mythling_web_root">Path under Apache DocumentRoot directory where Mythling\'s media.php resides</string>
   <string name="default_mythling_web_root">mythling</string>
+  <string name="title_mythweb_web_root">MythWeb Root</string>
+  <string name="message_mythweb_web_root">Path under Apache DocumentRoot directory where MythWeb resides</string>
+  <string name="default_mythweb_web_root">mythweb</string>
   <string name="title_mythtv_service_port">MythTV Service Port</string>
   <string name="title_app_cache">Media List Cache</string>
   <string name="title_cache_expiry">Expiry Interval</string>

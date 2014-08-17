@@ -83,6 +83,23 @@ public class ConnectionsPrefs extends PreferenceFragment
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
     pref.setSummary(appSettings.getMythlingWebRoot());
     pref.setEnabled(hasBackendWeb && appSettings.isMythlingMediaServices());
+    
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false)
+    {
+      public boolean onPreferenceChange(Preference preference, Object newValue)
+      {
+        boolean mythwebEnabled = Boolean.valueOf(newValue.toString());
+        getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT).setEnabled(mythwebEnabled);
+        return super.onPreferenceChange(preference, newValue);
+      }
+    });
+    
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+    pref.setSummary(appSettings.getMythwebWebRoot());
+    pref.setEnabled(hasBackendWeb && appSettings.isMythWebAccessEnabled());
+    
   }
   
   private void doCategoryEnablement(boolean hasBackendWeb)
