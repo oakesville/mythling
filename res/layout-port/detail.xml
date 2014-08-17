@@ -21,132 +21,144 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@android:drawable/gallery_thumb">
+  android:background="@android:drawable/gallery_thumb"
+  >
 
-    <ImageView
+  <FrameLayout
+    android:layout_weight="7"
+    android:layout_width="match_parent"
+    android:layout_height="0px"
+    android:padding="5dip">
+  
+    <com.oakesville.mythling.ImageView
       android:id="@+id/posterImage"
       android:layout_width="match_parent"
-      android:layout_height="0px"
-      android:layout_weight="3"
-      android:layout_gravity="center_horizontal|top"
+      android:layout_height="match_parent"
+      android:contentDescription="@string/poster"
+      android:background="@drawable/rounded"
       android:adjustViewBounds="true"
       android:scaleType="fitCenter"
-      android:contentDescription="@string/poster" />
+      android:padding="5dip"
+      android:layout_gravity="center" />
+    
+  </FrameLayout>
 
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="2"
+    android:gravity="center_vertical|left"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip">
+    
+    <TextView
+      android:id="@+id/titleText"
+      android:layout_width="wrap_content" 
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceLarge"
+      android:text="@string/blank"/>
+    
     <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="0px"
-      android:layout_weight="2"
-      android:gravity="center_vertical|left">
-      
-      <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content" 
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content">
+      <ImageView
+        android:id="@+id/star_1"
+        android:src="@drawable/blank"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/blank"/>
-      
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="@string/rating" />
+      <ImageView
+        android:id="@+id/star_2"
+        android:src="@drawable/blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="@string/rating" />
+      <ImageView
+        android:id="@+id/star_3"
+        android:src="@drawable/blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="@string/rating" />
+      <ImageView
+        android:id="@+id/star_4"
+        android:src="@drawable/blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="@string/rating" />
+      <ImageView
+        android:id="@+id/star_5"
+        android:src="@drawable/blank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|left"
+        android:contentDescription="@string/rating" />
       <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-          android:id="@+id/star_1"
-          android:src="@drawable/blank"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+        <Button
+          android:id="@+id/pagerPlay"
+          android:text="@string/play"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_2"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_3"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_4"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_5"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:gravity="right">
-          <Button
-            android:id="@+id/pagerPlay"
-            android:text="@string/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="25dp"
-            android:visibility="gone" />
-        </LinearLayout>
+          android:layout_gravity="right"
+          android:layout_marginRight="25dp"
+          android:visibility="gone" />
       </LinearLayout>
-
-      <TextView
-        android:id="@+id/artistText"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-      
-      <TextView
-        android:id="@+id/extraText"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-      
-      <TextView
-        android:id="@+id/summaryText"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-      
-      <TextView
-        android:id="@+id/customLink"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-      
-      <TextView
-        android:id="@+id/pageLink"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-      
     </LinearLayout>
+
+    <TextView
+      android:id="@+id/artistText"
+      android:layout_width="wrap_content" 
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:layout_marginBottom="5dp"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/blank"/>
+    
+    <TextView
+      android:id="@+id/extraText"
+      android:layout_width="match_parent" 
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="5dp"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/blank"/>
+    
+    <TextView
+      android:id="@+id/summaryText"
+      android:layout_width="match_parent" 
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="5dp"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/blank"/>
+    
+    <TextView
+      android:id="@+id/customLink"
+      android:layout_width="wrap_content" 
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/blank" />
+    
+    <TextView
+      android:id="@+id/pageLink"
+      android:layout_width="wrap_content" 
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical|left"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/blank" />
+    
+  </LinearLayout>
     
 </LinearLayout>
