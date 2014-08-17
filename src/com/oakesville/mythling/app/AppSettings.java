@@ -112,6 +112,8 @@ public class AppSettings
   public static final String CUSTOM_BASE_URL = "custom_base_url";
   public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
   public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
+  public static final String AUTH_TYPE_NONE = "None";
+  public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
   
   private Context appContext;
   public Context getAppContext() { return appContext; }
@@ -250,8 +252,8 @@ public class AppSettings
     }
     else
     {
-      String encodedUser = URLEncoder.encode(getMythlingServicesUser(), "UTF-8");
-      String encodedPw = URLEncoder.encode(getMythlingServicesPassword(), "UTF-8");
+      String encodedUser = URLEncoder.encode(getBackendWebUser(), "UTF-8");
+      String encodedPw = URLEncoder.encode(getBackendWebPassword(), "UTF-8");
       return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
     }
   }
@@ -649,7 +651,7 @@ public class AppSettings
   
   public String getMythTvServicesAuthType()
   {
-    return prefs.getString(MYTHTV_SERVICES_AUTH_TYPE, "None");
+    return prefs.getString(MYTHTV_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
   }
   public String getMythTvServicesUser()
   {
@@ -664,17 +666,58 @@ public class AppSettings
     return getMasked(getMythTvServicesPassword());
   }
   
+  /**
+   * backendWeb methods will redirect to mythtv auth settings if AUTH_TYPE_SAME
+   */
+  public String getBackendWebAuthType()
+  {
+    String authType = getMythlingServicesAuthType();
+    if (AUTH_TYPE_SAME.equals(authType))
+      authType = getMythTvServicesAuthType();
+    return authType;
+  }
   public String getMythlingServicesAuthType()
   {
-    return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, "None");
+    return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
+  }
+  public String getBackendWebUser()
+  {
+    if (AUTH_TYPE_SAME.equals(getMythlingServicesAuthType()))
+      return getMythTvServicesUser();
+    else
+      return getMythlingServicesUser();
   }
   public String getMythlingServicesUser()
   {
     return prefs.getString(MYTHLING_SERVICES_USER, "").trim();
   }
+  public boolean setMythlingServicesUser(String user)
+  {
+    Editor ed = prefs.edit();
+    ed.putString(MYTHLING_SERVICES_USER, user);
+    return ed.commit();
+  }
+  public String getBackendWebPassword()
+  {
+    if (AUTH_TYPE_SAME.equals(getMythlingServicesAuthType()))
+      return getMythTvServicesPassword();
+    else
+      return getMythlingServicesPassword();
+  }
   public String getMythlingServicesPassword()
   {
     return prefs.getString(MYTHLING_SERVICES_PASSWORD, "").trim();
+  }
+  public boolean setMythlingServicesPassword(String password)
+  {
+    Editor ed = prefs.edit();
+    ed.putString(MYTHLING_SERVICES_PASSWORD, password);
+    return ed.commit();
+  }
+  public String getBackendWebPasswordMasked()
+  {
+    String pw = AUTH_TYPE_SAME.equals(getMythlingServicesAuthType()) ? getMythTvServicesPassword() : getMythlingServicesPassword();
+    return getMasked(pw);
   }
   public String getMythlingServicesPasswordMasked()
   {
@@ -803,18 +846,23 @@ public class AppSettings
       {
         throw new BadSettingsException("Connections > Content Services > MythTV Service Port", ex);
       }
-      try
+      if (isMythlingMediaServices())
       {
-        if (isMythlingMediaServices() && getMythlingWebPort() <= 0)
-          throw new BadSettingsException("Connections > Media Services > Mythling Web Port");
-      }
-      catch (NumberFormatException ex)
-      {
-        throw new BadSettingsException("Connections > Media Services > Mythling Web Port", ex);
+        if (!isHasBackendWeb())
+          throw new BadSettingsException("Connections > Backend Web Server (Needed for Mythling Media Services)");
+        try
+        {
+          if (getMythlingWebPort() <= 0)
+            throw new BadSettingsException("Connections > Backend Web Server > Web Port");
+        }
+        catch (NumberFormatException ex)
+        {
+          throw new BadSettingsException("Connections > Backend Web Server > Web Port", ex);
+        }          
       }
       
       // services only used for device playback
-      if (!getMythTvServicesAuthType().equals("None"))
+      if (!getMythTvServicesAuthType().equals(AUTH_TYPE_NONE))
       {
         if (getMythTvServicesUser().isEmpty())
           throw new BadSettingsException("Settings > Credentials > MythTV Services > User");
@@ -828,7 +876,7 @@ public class AppSettings
         throw new BadSettingsException("Settings > Playback > Frontend Player > Host");
       try
       {
-        if (getFrontendControlPort() <=0 )
+        if (getFrontendControlPort() <= 0 )
           throw new BadSettingsException("Settings > Playback > Frontend Player > Control Port");
       }
       catch (NumberFormatException ex)
@@ -837,12 +885,16 @@ public class AppSettings
       }
     }
     
-    if (isMythlingMediaServices() && !getMythlingServicesAuthType().equals("None"))
+    if (isMythlingMediaServices())
     {
-      if (getMythlingServicesUser().isEmpty())
-        throw new BadSettingsException("Settings > Credentials > Mythling Services > User");
-      if (getMythlingServicesPassword().isEmpty())
-        throw new BadSettingsException("Settings > Credentials > Mythling Services > Password");
+      String authType = getMythlingServicesAuthType();
+      if (!authType.equals(AUTH_TYPE_NONE) && !authType.equals(AUTH_TYPE_SAME))
+      {
+        if (getMythlingServicesUser().isEmpty())
+          throw new BadSettingsException("Settings > Credentials > Mythling Services > User");
+        if (getMythlingServicesPassword().isEmpty())
+          throw new BadSettingsException("Settings > Credentials > Mythling Services > Password");
+      }
     }
     
     try
@@ -862,8 +914,8 @@ public class AppSettings
     HttpHelper downloader;
     if (isMythlingMediaServices())
     {
-      downloader = new HttpHelper(urls, getMythlingServicesAuthType(), getPrefs());
-      downloader.setCredentials(getMythlingServicesUser(), getMythlingServicesPassword());
+      downloader = new HttpHelper(urls, getBackendWebAuthType(), getPrefs());
+      downloader.setCredentials(getBackendWebUser(), getBackendWebPassword());
     }
     else
     {

@@ -40,12 +40,12 @@ public class CredentialsPrefs extends PreferenceFragment
     {
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
-        doEnableMythTvAccessCreds(!"None".equals(newValue));
+        doEnableMythTvAccessCreds(!AppSettings.AUTH_TYPE_NONE.equals(newValue));
         return super.onPreferenceChange(preference, newValue);
       }
     });
     pref.setSummary(appSettings.getMythTvServicesAuthType());
-    doEnableMythTvAccessCreds(!"None".equals(appSettings.getMythTvServicesAuthType()));
+    doEnableMythTvAccessCreds(!AppSettings.AUTH_TYPE_NONE.equals(appSettings.getMythTvServicesAuthType()));
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICES_USER);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
@@ -66,17 +66,27 @@ public class CredentialsPrefs extends PreferenceFragment
     {
       public boolean onPreferenceChange(Preference preference, Object newValue)
       {
-        doEnableMythlingAccessCreds(!"None".equals(newValue));
+        if (AppSettings.AUTH_TYPE_SAME.equals(newValue))
+        {
+          AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
+          String user = appSettings.getMythTvServicesUser();
+          appSettings.setMythlingServicesUser(user);
+          getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER).setSummary(user);
+          appSettings.setMythlingServicesPassword(appSettings.getMythTvServicesPassword());
+          getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD).setSummary(appSettings.getMythTvServicesPasswordMasked());
+        }
+        doEnableMythlingAccessCreds(!AppSettings.AUTH_TYPE_NONE.equals(newValue) & !AppSettings.AUTH_TYPE_SAME.equals(newValue));
         return super.onPreferenceChange(preference, newValue);
       }
     });
-    pref.setSummary(appSettings.getMythlingServicesAuthType());
-    doBackendWebCredsEnablement(appSettings.isHasBackendWeb());    
-    doEnableMythlingAccessCreds(appSettings.isHasBackendWeb() && !"None".equals(appSettings.getMythlingServicesAuthType()));
+    String webAuthType = appSettings.getMythlingServicesAuthType();
+    pref.setSummary(webAuthType);
+    doBackendWebCredsEnablement(appSettings.isHasBackendWeb());
+    doEnableMythlingAccessCreds(appSettings.isHasBackendWeb() && !AppSettings.AUTH_TYPE_NONE.equals(webAuthType) && !AppSettings.AUTH_TYPE_SAME.equals(webAuthType));
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-    pref.setSummary(appSettings.getMythlingServicesUser());
+    pref.setSummary(appSettings.getBackendWebUser());
 
     pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true)
@@ -86,8 +96,7 @@ public class CredentialsPrefs extends PreferenceFragment
         return super.onPreferenceChange(preference, AppSettings.getMasked(newValue.toString()));
       }
     });
-    pref.setSummary(appSettings.getMythlingServicesPasswordMasked());
-    
+    pref.setSummary(appSettings.getBackendWebPasswordMasked());
   }  
   
   private void doEnableMythTvAccessCreds(boolean enabled)

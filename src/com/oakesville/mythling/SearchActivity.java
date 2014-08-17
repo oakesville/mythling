@@ -140,8 +140,8 @@ public class SearchActivity extends MediaActivity
     {
       try
       {
-        HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythlingServicesAuthType(), getAppSettings().getPrefs());
-        downloader.setCredentials(getAppSettings().getMythlingServicesUser(), getAppSettings().getMythlingServicesPassword());
+        HttpHelper downloader = new HttpHelper(urls, getAppSettings().getBackendWebAuthType(), getAppSettings().getPrefs());
+        downloader.setCredentials(getAppSettings().getBackendWebUser(), getAppSettings().getBackendWebPassword());
         resultsJson = new String(downloader.get(), downloader.getCharSet());
         searchResults = new MythlingParser(resultsJson).parseSearchResults();
         searchResults.setCharSet(downloader.getCharSet());

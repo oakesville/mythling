@@ -216,18 +216,21 @@
   <string name="title_mythtv_services_auth_type_dialog">MythTV Authentication</string>
   <string name="title_mythling_services_auth_type">Auth Type</string>
   <string name="title_mythling_services_auth_type_dialog">Mythling Authentication</string>
-  <string-array name="auth_type_entries">
-    <item>None</item>
-    <item>Basic</item>
-    <item>Digest</item>
-  </string-array>
   <string-array name="auth_type_values">
     <item>None</item>
     <item>Basic</item>
     <item>Digest</item>
   </string-array>
-  <string name="title_access_user">User</string>
-  <string name="title_access_password">Password</string>
+  <string-array name="backend_web_auth_types">
+    <item>None</item>
+    <item>(Same as MythTV Services)</item>
+    <item>Basic</item>
+    <item>Digest</item>
+  </string-array>
+  <string name="title_mythtv_services_user">MythTV Services User</string>
+  <string name="title_mythtv_services_password">MythTV Services Password</string>
+  <string name="title_web_user">Backend Web User</string>
+  <string name="title_web_password">Backend Web Password</string>
   <string name="app_label">Mythling</string>
   <string name="search_hint">Search Mythling</string>
   <string name="icon">icon</string>
