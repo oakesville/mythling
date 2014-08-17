@@ -547,7 +547,7 @@ public class MediaPagerActivity extends MediaActivity
           artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
           try
           {
-            String filePath = item.getType() + "/" + pagerActivity.path + "/" + art.getArtworkPath();
+            String filePath = item.getType() + pagerActivity.path + "/" + art.getArtworkPath();
             Bitmap bitmap = getAppData().getImageBitMap(filePath);
             if (bitmap == null)
             {
