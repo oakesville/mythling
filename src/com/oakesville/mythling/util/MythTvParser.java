@@ -66,10 +66,16 @@ public class MythTvParser implements MediaListParser
   
   public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException
   {
-    return parseMediaList(mediaType, null, null);
+    return parseMediaList(mediaType, null, null, null);
   }
 
-  public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath) throws JSONException, ParseException
+  /**
+   * @param mediaType
+   * @param storageGroup media storage group
+   * @param basePath base path to trim from filename
+   * @param artworkBasePath base path to trim from art (pass if no Video storage group)
+   */
+  public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath, String artworkBasePath) throws JSONException, ParseException
   {
     MediaList mediaList = new MediaList();
     this.artworkStorageGroup = appSettings.getArtworkStorageGroup(mediaType);    
@@ -149,7 +155,7 @@ public class MythTvParser implements MediaListParser
         
         if (type == mediaType)
         {
-          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid));
+          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, artworkBasePath));
           count++;
         }
       }
@@ -211,7 +217,7 @@ public class MythTvParser implements MediaListParser
     return mediaList;    
   }
   
-  private Video buildVideoItem(MediaType type, JSONObject vid) throws JSONException, ParseException
+  private Video buildVideoItem(MediaType type, JSONObject vid, String artworkBasePath) throws JSONException, ParseException
   {
     Video item;
     if (type == MediaType.movies)
@@ -299,25 +305,25 @@ public class MythTvParser implements MediaListParser
     {
       String art = vid.getString("Coverart");
       if (!art.isEmpty())
-        item.setArtwork(art);
+        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
     }
     else if ("Fanart".equals(artworkStorageGroup) && vid.has("Fanart"))
     {
       String art = vid.getString("Fanart");
       if (!art.isEmpty())
-        item.setArtwork(art);
+        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
     }
     else if ("Screenshots".equals(artworkStorageGroup) && vid.has("Screenshot"))
     {
       String art = vid.getString("Screenshot");
       if (!art.isEmpty())
-        item.setArtwork(art);
+        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
     }
     else if ("Banners".equals(artworkStorageGroup) && vid.has("Banner"))
     {
       String art = vid.getString("Banner");
       if (!art.isEmpty())
-        item.setArtwork(art);
+        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
     }
     
     return item;

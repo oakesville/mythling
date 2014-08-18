@@ -453,6 +453,27 @@ public class AppSettings
     else
       return new URL[] { url };
   }
+
+  public String getStorageGroup()
+  {
+    return getStorageGroup(mediaSettings.getType());
+  }
+  
+  /**
+   * for images use getArtworkStorageGroup()
+   */
+  public static String getStorageGroup(MediaType mediaType)
+  {
+    if (mediaType == MediaType.movies || mediaType == MediaType.videos || mediaType == MediaType.tvSeries)
+      return "Videos";
+    else
+      return "Default";
+  }
+  
+  public String getArtworkStorageGroup()
+  {
+    return getArtworkStorageGroup(mediaSettings.getType());
+  }
   
   public String getArtworkStorageGroup(MediaType mediaType)
   {

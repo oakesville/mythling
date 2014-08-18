@@ -760,13 +760,14 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          // need to know about storage group
+          // need to know about storage groups
           URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
           downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
-          StorageGroup storageGroup = new MythTvParser(new String(downloader.get()), getAppSettings()).parseStorageGroup(mediaSettings.getStorageGroup());
-          if (storageGroup != null)
+          String sgJson = new String(downloader.get());
+          StorageGroup mediaStorageGroup = new MythTvParser(sgJson, getAppSettings()).parseStorageGroup(getAppSettings().getStorageGroup());
+          if (mediaStorageGroup != null)
           {
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), storageGroup, storageGroup.getDirectory());
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), mediaStorageGroup, mediaStorageGroup.getDirectory(), null);
           }
           else
           {
@@ -787,7 +788,9 @@ public abstract class MediaActivity extends Activity
                 basePath = new MythTvParser(new String(downloader.get()), getAppSettings()).parseMythTvSetting(key);
               }
             }
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath);
+            StorageGroup artworkStorageGroup = new MythTvParser(sgJson, getAppSettings()).parseStorageGroup(getAppSettings().getArtworkStorageGroup());
+            String artworkBasePath = artworkStorageGroup == null ? null : artworkStorageGroup.getDirectory();
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath, artworkBasePath);
           }
         }
         mediaList.setArtworkStorageGroup(getAppSettings().getArtworkStorageGroup(mediaSettings.getType()));
