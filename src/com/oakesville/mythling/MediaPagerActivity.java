@@ -388,6 +388,18 @@ public class MediaPagerActivity extends MediaActivity
         artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
         Drawable folder = getResources().getDrawable(R.drawable.folder);
         artworkView.setImageDrawable(folder);
+        artworkView.setClickable(true);
+        artworkView.setOnClickListener(new View.OnClickListener()
+        {
+          public void onClick(View v)
+          {
+            ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
+            Uri.Builder builder = new Uri.Builder();
+            builder.path(pagerActivity.path + "/" + listable.toString());
+            Uri uri = builder.build();
+            startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaPagerActivity.class));
+          }
+        });        
       }
       else if (listable instanceof Item)
       {
@@ -558,6 +570,16 @@ public class MediaPagerActivity extends MediaActivity
             {
               artworkView.setImageBitmap(bitmap);
             }
+            artworkView.setClickable(true);
+            artworkView.setOnClickListener(new View.OnClickListener()
+            {
+              public void onClick(View v)
+              {
+                Item item = (Item)listable;
+                item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+                pagerActivity.playItem(item);
+              }
+            });            
           }
           catch (Exception ex)
           {

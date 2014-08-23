@@ -37,6 +37,9 @@ http://192.168.0.69:6544/Content/GetPreviewImage?ChanId=34736&StartTime=2014-08-
 # MythTV Album Art (Id is from music_albumart.albumart_id)
 http://192.168.0.69:6544/Content/GetAlbumArt?Id=4078
 
+# MythTV Add Video Live Stream (start transcoding)
+http://192.168.0.69:6544/Content/AddVideoLiveStream?Id=13277
+
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
 http://192.168.0.69:6544/Status/GetStatus

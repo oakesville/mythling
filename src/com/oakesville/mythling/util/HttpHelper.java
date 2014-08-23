@@ -325,7 +325,7 @@ public class HttpHelper
       byte[] bytes = baf.toByteArray();
       if (BuildConfig.DEBUG)
       {
-        Log.d(TAG, " -> (" + url + ") http request time: " + (System.currentTimeMillis() - requestStartTime) + " ms");
+        Log.d(TAG, " -> (" + url + ") http request time: " + (requestEndTime - requestStartTime) + " ms");
         // how much memory are we using
         Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
         Debug.getMemoryInfo(memoryInfo);
