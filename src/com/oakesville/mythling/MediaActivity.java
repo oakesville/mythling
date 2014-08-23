@@ -127,8 +127,8 @@ public abstract class MediaActivity extends Activity
     progressBar = (ProgressBar)findViewById(R.id.progress);
     progressBar.setVisibility(View.GONE);
     progressBar.setIndeterminate(true);
-    progressBar.setScaleX(0.10f);
-    progressBar.setScaleY(0.10f);
+    progressBar.setScaleX(0.20f);
+    progressBar.setScaleY(0.20f);
     return progressBar;
   }
   
@@ -1097,8 +1097,6 @@ public abstract class MediaActivity extends Activity
   
   protected void startProgress()
   {
-    progressBar.setScaleX(0.50f);
-    progressBar.setScaleY(0.50f);
     progressBar.setVisibility(View.VISIBLE);
   }
   
