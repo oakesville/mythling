@@ -1,6 +1,19 @@
-Mythling is an open-source mobile frontend for MythTV.
+Mythling is an open-source mobile media player for MythTV.
 
-Learn more about Mythling here:
+Learn more:
 http://oakesville.github.io/mythling
 
-TODO: Setup and documentation.
+Get started:
+http://oakesville.github.io/mythling/help.html
+
+Developer setup:
+https://github.com/oakesville/mythling/wiki/Developer-Setup
+
+Bugs and enhancements:
+https://github.com/oakesville/mythling/issues
+
+Mythling media services:
+https://github.com/oakesville/mythling/wiki/Mythling-Media-Services
+
+External network access:
+https://github.com/oakesville/mythling/wiki/External-Network-Access
