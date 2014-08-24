@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,7 +39,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -475,10 +472,7 @@ public abstract class MediaActivity extends Activity
             });
           }
           String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
-          Map<String,String> headers = new HashMap<String,String>();
-          String credentials = Base64.encodeToString((appSettings.getMythTvServicesUser() + ":" + appSettings.getMythTvServicesPassword()).getBytes(), Base64.DEFAULT);
-          headers.put("Authorization", "Basic " + credentials);
-          mediaPlayer.setDataSource(appSettings.getAppContext(), Uri.parse(musicUrl), headers);
+          mediaPlayer.setDataSource(appSettings.getAppContext(), Uri.parse(musicUrl));
           // TODO async?
           mediaPlayer.prepare();
           mediaPlayer.start();
