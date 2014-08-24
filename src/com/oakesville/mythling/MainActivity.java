@@ -147,6 +147,8 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
+    showMoviesMenuItem(supportsMovies());
+    showTvSeriesMenuItem(supportsTvSeries());
     showMusicMenuItem(supportsMusic());
     showSortMenu(supportsSort());
     showViewMenu(supportsViewMenu());

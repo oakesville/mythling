@@ -164,6 +164,8 @@ public class MediaPagerActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
+    showMoviesMenuItem(supportsMovies());
+    showTvSeriesMenuItem(supportsTvSeries());
     showMusicMenuItem(supportsMusic());
     showSortMenu(supportsSort());
     showViewMenu(supportsViewMenu());

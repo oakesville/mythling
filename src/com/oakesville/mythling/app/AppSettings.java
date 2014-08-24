@@ -207,6 +207,11 @@ public class AppSettings
     }
     return params;
   }
+  
+  public boolean isVideosCategorization()
+  {
+    return getMediaSettings().getTypeDeterminer() != MediaTypeDeterminer.none;
+  }
 
   /**
    * If not empty, always begins with '&'.
@@ -592,11 +597,24 @@ public class AppSettings
     }
     return mediaSettings;
   }
+  public void clearMediaSettings()
+  {
+    mediaSettings = null;
+  }
   
   public boolean setMediaType(MediaType mediaType)
   {
     Editor ed = prefs.edit();
     ed.putString(MEDIA_TYPE, mediaType.toString());
+    boolean res = ed.commit();
+    mediaSettings = null;
+    return res;
+  }
+  
+  public boolean setVideoCategorization(String videosCategorization)
+  {
+    Editor ed = prefs.edit();
+    ed.putString(CATEGORIZE_VIDEOS, videosCategorization);
     boolean res = ed.commit();
     mediaSettings = null;
     return res;

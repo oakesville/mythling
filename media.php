@@ -318,7 +318,7 @@ if ($type->isSearch())
 
   mysql_close();
 }
-else
+else // non-search
 {
   header("Content-type:application/json");
   $sort = 'title';
@@ -334,6 +334,7 @@ else
     if ($base == null)
       die("Cannot determine base directory for videos");
     $where = "";
+    
     if ($categorizeUsingDirs)
       $where = "where (" . notLike(($isVideoStorageGroup ? null : $base), array_merge(array_merge($videoExcludeDirs,$movieDirs),$tvSeriesDirs)) . ")";
     else if ($categorizeUsingMetadata)
@@ -370,12 +371,16 @@ else
       else if ($type->isTvSeries())
         $where = "where (" . like(($isVideoStorageGroup ? null : $base), $tvSeriesDirs) . ")";
     }
-    else
+    else if ($categorizeUsingMetadata)
     {
       if ($type->isMovies())
         $where = "where (inetref is not null and inetref != '00000000') and (season is null or season = '0') and (episode is null or episode = '0')";
       else if ($type->isTvSeries())
         $where = "where (season is not null and season != '0') or (episode is not null and episode != '0')";
+    }
+    else
+    {
+      $where = "where 1 = 0"; // can't determine movies or tv series
     }
     if ($sort == "date")
     {

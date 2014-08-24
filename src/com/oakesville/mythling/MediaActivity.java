@@ -98,6 +98,8 @@ public abstract class MediaActivity extends Activity
   private MenuItem searchMenuItem;
   private MenuItem viewMenuItem;
   private MenuItem sortMenuItem;
+  private MenuItem moviesMenuItem;
+  private MenuItem tvSeriesMenuItem;
   private MenuItem musicMenuItem;
   private MenuItem mythwebMenuItem;
   
@@ -144,11 +146,17 @@ public abstract class MediaActivity extends Activity
         mediaMenuItem.getSubMenu().findItem(R.id.media_tv).setChecked(true);
       else if (mediaSettings.isMovies())
         mediaMenuItem.getSubMenu().findItem(R.id.media_movies).setChecked(true);
+      else if (mediaSettings.isTvSeries())
+        mediaMenuItem.getSubMenu().findItem(R.id.media_tv_series).setChecked(true);
       else if (mediaSettings.isVideos())
         mediaMenuItem.getSubMenu().findItem(R.id.media_videos).setChecked(true);
       else
         mediaMenuItem.getSubMenu().findItem(R.id.media_recordings).setChecked(true);
       
+      moviesMenuItem = mediaMenuItem.getSubMenu().findItem(R.id.media_movies);
+      showMoviesMenuItem(supportsMovies());
+      tvSeriesMenuItem = mediaMenuItem.getSubMenu().findItem(R.id.media_tv_series);
+      showTvSeriesMenuItem(supportsTvSeries());
       musicMenuItem = mediaMenuItem.getSubMenu().findItem(R.id.media_music);
       showMusicMenuItem(supportsMusic());
     }
@@ -176,6 +184,24 @@ public abstract class MediaActivity extends Activity
       searchMenuItem.setVisible(show);
     }
   }  
+
+  protected void showMoviesMenuItem(boolean show)
+  {
+    if (moviesMenuItem != null)
+    {
+      moviesMenuItem.setEnabled(show);
+      moviesMenuItem.setVisible(show);
+    }
+  }
+  
+  protected void showTvSeriesMenuItem(boolean show)
+  {
+    if (tvSeriesMenuItem != null)
+    {
+      tvSeriesMenuItem.setEnabled(show);
+      tvSeriesMenuItem.setVisible(show);
+    }
+  }
 
   protected void showMusicMenuItem(boolean show)
   {
@@ -253,7 +279,17 @@ public abstract class MediaActivity extends Activity
   {
     return mediaList != null && mediaList.canHaveArtwork();    
   }
+  
+  protected boolean supportsMovies()
+  {
+    return getAppSettings().isVideosCategorization();
+  }
 
+  protected boolean supportsTvSeries()
+  {
+    return getAppSettings().isVideosCategorization();
+  }
+  
   protected boolean supportsMusic()
   {
     return getAppSettings().isMythlingMediaServices();
@@ -711,6 +747,11 @@ public abstract class MediaActivity extends Activity
   {
     try
     {
+      getAppSettings().clearMediaSettings(); // in case prefs changed
+      if (getAppSettings().getMediaSettings().getType() == MediaType.movies && !supportsMovies())
+        getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
+      if (getAppSettings().getMediaSettings().getType() == MediaType.tvSeries && !supportsTvSeries())
+        getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
       if (getAppSettings().getMediaSettings().getType() == MediaType.music && !supportsMusic())
         getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
 
