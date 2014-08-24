@@ -57,8 +57,6 @@
       android:key="album_art_level"
       android:switchTextOn="@string/album_art_song"
       android:switchTextOff="@string/album_art_album"
-      android:summaryOff="sum off"
-      android:summaryOn="sum on"
       android:defaultValue="@string/album_art_album"
       android:layout="@layout/sw_pref_inner"    
       android:widgetLayout="@layout/prefs_switch" />

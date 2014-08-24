@@ -40,8 +40,7 @@
       android:adjustViewBounds="true"
       android:scaleType="fitCenter"
       android:padding="5dip"
-      android:layout_gravity="center"
-       />
+      android:layout_gravity="center" />
   </FrameLayout>
 
   <LinearLayout
@@ -116,7 +115,7 @@
     </LinearLayout>
 
     <TextView
-      android:id="@+id/artistText"
+      android:id="@+id/directorText"
       android:layout_width="wrap_content" 
       android:layout_height="wrap_content"
       android:layout_marginTop="5dp"
@@ -126,7 +125,7 @@
       android:text="@string/blank"/>
     
     <TextView
-      android:id="@+id/extraText"
+      android:id="@+id/actorsText"
       android:layout_width="match_parent" 
       android:layout_height="wrap_content"
       android:layout_marginBottom="5dp"

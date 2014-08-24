@@ -240,10 +240,6 @@ public class MythlingParser implements MediaListParser
       item.setSearchPath(jsonObj.getString("path"));
     if (jsonObj.has("file"))
       item.setFile(jsonObj.getString("file"));
-    if (jsonObj.has("artist"))
-      item.setArtist(jsonObj.getString("artist"));
-    if (jsonObj.has("extra"))
-      item.setExtra(jsonObj.getString("extra"));
     if (jsonObj.has("subtitle"))
       item.setSubTitle(jsonObj.getString("subtitle"));
     return item;

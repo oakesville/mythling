@@ -802,62 +802,27 @@ function printItem($path, $file, $depth, $more)
   {
     $lastdot = strrpos($file, ".");
     $title = substr($file, 0, $lastdot);
-    $artist = null;
-    $extra = null;
     $filetype = substr($file, $lastdot + 1);
   }
   else if ($type->isRecordings() || $type->isLiveTv())
   {
     $title = $titles[$id];
-    $artist = null;
-    $extra = null;
     $filetype = null;
   }
   else
   {
-    $lastDash = strrpos($file, "- ");
-    if ($lastDash)
-    {
-      $parta = substr($file, 0, $lastDash - 1);
-      $openParen = strpos($parta, "(");
-      if ($openParen)
-      {
-        $closeParen = strrpos($parta, ")");
-        $title = substr($parta, 0, $openParen - 1);
-        $extra = substr($parta, $openParen +1, $closeParen - $openParen - 1);
-      }
-      else
-      {
-        $title = $parta;
-        $extra = null;
-      }
-      $partb = substr($file, $lastDash + 2);
-      $lastdot = strrpos($partb, ".");
-      $artist = substr($partb, 0, $lastdot);
-      $filetype = substr($partb, $lastdot + 1);
-    }
-    else
-    {
-      // no artist
-      $lastdot = strpos($file, ".");
-      $title = substr($file, 0, $lastdot);
-      $filetype = substr($file, $lastdot + 1);
-      $artist = null;
-      $extra = null;
-    }
-    if (!($type->isVideos() || $type->isMusic()))
+    $lastdot = strpos($file, ".");
+    $title = substr($file, 0, $lastdot);
+    $filetype = substr($file, $lastdot + 1);
+    if (!($type->isVideos()))
       $title = $titles[$id];
   }
 
   echo "{ ";
   echo '"id": "' . $id . '"';
   echo ', "title": "' . $title . '"';
-  if ($artist != null)
-    echo ', "artist": "' . $artist . '"';
   if ($filetype != null)
     echo ', "format": "' . $filetype . '"';
-  if ($extra != null)
-    echo ', "extra": "' . $extra . '"';
   if ($type->isRecordings() || $type->isLiveTv())
   {
     if ($progstarts[$id] != null)

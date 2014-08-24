@@ -428,13 +428,13 @@ public class MediaPagerActivity extends MediaActivity
           // director
           if (video.getDirector() != null)
           {
-            TextView tv = (TextView) detailView.findViewById(R.id.artistText);
+            TextView tv = (TextView) detailView.findViewById(R.id.directorText);
             tv.setText("Directed by: " + video.getDirector());
           }
           // actors
           if (video.getActors() != null)
           {
-            TextView tv = (TextView) detailView.findViewById(R.id.extraText);
+            TextView tv = (TextView) detailView.findViewById(R.id.actorsText);
             tv.setText("Starring: " + video.getActors());
           }
           // summary
@@ -512,18 +512,6 @@ public class MediaPagerActivity extends MediaActivity
         }
         else
         {
-          // artist
-          if (item.getArtist() != null)
-          {
-            TextView tv = (TextView) detailView.findViewById(R.id.artistText);
-            tv.setText(item.getArtist());
-          }
-          // extra
-          if (item.getExtra() != null)
-          {
-            TextView tv = (TextView) detailView.findViewById(R.id.extraText);
-            tv.setText(item.getExtra());
-          }
           if (item instanceof TvShow)
           {
             TvShow tvShow = (TvShow) item;

@@ -60,17 +60,9 @@ public abstract class Item implements Listable
   public String getFile() { return file; }
   public void setFile(String file) { this.file = file; }
   
-  private String artist;
-  public String getArtist() { return artist; }
-  public void setArtist(String artist) { this.artist = artist; }
-  
   private String format;
   public String getFormat() { return format; }
   public void setFormat(String format) { this.format = format; }
-  
-  private String extra;
-  public String getExtra() { return extra; }
-  public void setExtra(String extra) { this.extra = extra; }
   
   private String subTitle;
   public String getSubTitle() { return subTitle; }
@@ -94,13 +86,7 @@ public abstract class Item implements Listable
     }
     else
     {
-      // reconstruct
-      String str = title;
-      if (extra != null)
-        str += " (" + extra + ")";
-      if (artist != null)
-        str += " - " + artist;
-      return str + "." + format;
+      return title + "." + format;
     }
   }
   
@@ -148,11 +134,7 @@ public abstract class Item implements Listable
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX + getTitle());
-    if (getExtra() != null)
-      buf.append(" (").append(getExtra()).append(")");
-    if (getArtist() != null)
-      buf.append(" - ").append(getArtist());
-    else if (getSubTitle() != null)
+    if (getSubTitle() != null)
       buf.append(" - \"").append(getSubTitle()).append("\"");
     return buf.toString();
   }
@@ -164,11 +146,7 @@ public abstract class Item implements Listable
     if (getPath() != null && getPath().length() > 0)
       buf.append(getPath()).append("/");
     buf.append(getTitle());
-    if (getExtra() != null)
-      buf.append(" (").append(getExtra()).append(")");
-    if (getArtist() != null)
-      buf.append(" - ").append(getArtist());
-    else if (getSubTitle() != null)
+    if (getSubTitle() != null)
       buf.append(" - \"").append(getSubTitle()).append("\"");
     return buf.toString();
   }
