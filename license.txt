@@ -1,3 +1,15 @@
+Mythling is free and open source software released under version 3 or later
+of the GPL (GNU General Public License). A copy of which is included below.
+
+This means you may use and modify Mythling as you wish but if you distribute
+it, you must include a copy of the GPL and you must make the entire source 
+code available, including any changes you've made.
+
+Mythling uses the juniversalchardet library
+(https://code.google.com/p/juniversalchardet), which is licensed under the
+Mozilla Public License (https://www.mozilla.org/MPL/2.0/). 
+
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
