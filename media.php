@@ -249,6 +249,7 @@ if ($type->isSearch())
     echo "  ],\n";
   }
 
+  // music
   if ($musicBase != null)
   {
     $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
@@ -271,6 +272,7 @@ if ($type->isSearch())
     echo "  ],\n";
   }
 
+  // liveTv
   $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
   $tRes = mysql_query($tQuery) or die("Query failed: " . mysql_error());
   $tNum = mysql_numrows($tRes);
@@ -293,6 +295,7 @@ if ($type->isSearch())
   }
   echo "  ],\n";
 
+  // recordings
   $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))) as title, r.basename, r.subtitle, r.description, convert(r.originalairdate using utf8) as oad, r.endtime from recorded r, channel c where r.chanid = c.chanid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   $rRes = mysql_query($rQuery) or die("Query failed: " . mysql_error());
   $rNum = mysql_numrows($rRes);

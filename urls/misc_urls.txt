@@ -1,4 +1,4 @@
-Test Installation
+tester install:
 https://play.google.com/apps/testing/com.oakesville.mythling
 
 mythling issues:
