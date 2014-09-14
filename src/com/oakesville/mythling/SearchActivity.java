@@ -177,11 +177,11 @@ public class SearchActivity extends MediaActivity
             {
               Item item = (Item)items.get(position);
               if (item.isMusic() && !item.getPath().startsWith(searchResults.getMusicBase()))
-                item.setPath(searchResults.getMusicBase() + "/" + item.getSearchPath());
-              else if ((item.isRecording() || item.isLiveTv()))
-                item.setPath(searchResults.getRecordingsBase());
+                item.setPath(item.getSearchPath());
+//              else if ((item.isRecording() || item.isLiveTv()))
+//                item.setPath(searchResults.getRecordingsBase());
               else
-                item.setPath(searchResults.getVideoBase() + "/" + item.getSearchPath());
+                item.setPath(item.getSearchPath());
               playItem(item);
             }
           });

@@ -57,17 +57,20 @@ public class MythlingParser implements MediaListParser
     this.json = json;
   }
 
-  public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException
+  public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException, ServiceException
   {
     MediaList mediaList = new MediaList();
     mediaList.setMediaType(mediaType);
 
     long startTime = System.currentTimeMillis();
     JSONObject list = new JSONObject(json);
+    if (list.has("error"))
+      throw new ServiceException("Mythling service error: " + list.getString("error"));
     JSONObject summary = list.getJSONObject("summary");
     mediaList.setRetrieveDate(summary.getString("date"));
     mediaList.setCount(summary.getString("count"));
-    mediaList.setBasePath(summary.getString("base"));
+    if (summary.has("base"))
+      mediaList.setBasePath(summary.getString("base"));
     if (list.has("items"))
     {
       JSONArray items = list.getJSONArray("items");
@@ -116,73 +119,68 @@ public class MythlingParser implements MediaListParser
     return category;
   }
   
-  public SearchResults parseSearchResults()
+  public SearchResults parseSearchResults() throws JSONException, ParseException, ServiceException
   {
     SearchResults searchResults = new SearchResults();
-    try
+    
+    long startTime = System.currentTimeMillis();
+    JSONObject list = new JSONObject(json);
+    if (list.has("error"))
+      throw new ServiceException("Mythling service error: " + list.getString("error"));
+        
+    JSONObject summary = list.getJSONObject("summary");
+    searchResults.setRetrieveDate(summary.getString("date"));
+    searchResults.setQuery(summary.getString("query"));
+    searchResults.setVideoBase(summary.getString("videoBase"));
+    searchResults.setMusicBase(summary.getString("musicBase"));
+    
+    JSONArray vids = list.getJSONArray("videos");
+    for (int i = 0; i < vids.length(); i++)
     {
-      long startTime = System.currentTimeMillis();
-      JSONObject list = new JSONObject(json);
-      JSONObject summary = list.getJSONObject("summary");
-      searchResults.setRetrieveDate(summary.getString("date"));
-      searchResults.setQuery(summary.getString("query"));
-      searchResults.setVideoBase(summary.getString("videoBase"));
-      searchResults.setMusicBase(summary.getString("musicBase"));
-      searchResults.setRecordingsBase(summary.getString("recordingsBase"));
-      searchResults.setMoviesBase(summary.getString("moviesBase"));
-      
-      JSONArray vids = list.getJSONArray("videos");
-      for (int i = 0; i < vids.length(); i++)
-      {
-        JSONObject vid = (JSONObject) vids.get(i);
-        searchResults.addVideo(buildItem(MediaType.videos, vid));
-      }
-      
-      JSONArray recordings = list.getJSONArray("recordings");
-      for (int i = 0; i < recordings.length(); i++)
-      {
-        JSONObject recording = (JSONObject) recordings.get(i);
-        recording.put("path", "");
-        searchResults.addRecording(buildItem(MediaType.recordings, recording));
-      }
-
-      JSONArray tvShows = list.getJSONArray("liveTv");
-      for (int i = 0; i < tvShows.length(); i++)
-      {
-        JSONObject tvShow = (JSONObject) tvShows.get(i);
-        tvShow.put("path", "");
-        searchResults.addLiveTvItem(buildItem(MediaType.liveTv, tvShow));
-      }
-
-      JSONArray movies = list.getJSONArray("movies");
-      for (int i = 0; i < movies.length(); i++)
-      {
-        JSONObject movie = (JSONObject) movies.get(i);
-        searchResults.addMovie(buildItem(MediaType.movies, movie));
-      }
-
-      JSONArray tvSeries = list.getJSONArray("tvSeries");
-      for (int i = 0; i < tvSeries.length(); i++)
-      {
-        JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
-        searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
-      }
-
-      JSONArray songs = list.getJSONArray("songs");
-      for (int i = 0; i < songs.length(); i++)
-      {
-        JSONObject song = (JSONObject) songs.get(i);
-        searchResults.addSong(buildItem(MediaType.music, song));
-      }
-      
-      if (BuildConfig.DEBUG)
-        Log.d(TAG, " -> search results parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+      JSONObject vid = (JSONObject) vids.get(i);
+      searchResults.addVideo(buildItem(MediaType.videos, vid));
     }
-    catch (Exception ex)
+    
+    JSONArray recordings = list.getJSONArray("recordings");
+    for (int i = 0; i < recordings.length(); i++)
     {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
+      JSONObject recording = (JSONObject) recordings.get(i);
+      recording.put("path", "");
+      searchResults.addRecording(buildItem(MediaType.recordings, recording));
     }
+
+    JSONArray tvShows = list.getJSONArray("liveTv");
+    for (int i = 0; i < tvShows.length(); i++)
+    {
+      JSONObject tvShow = (JSONObject) tvShows.get(i);
+      tvShow.put("path", "");
+      searchResults.addLiveTvItem(buildItem(MediaType.liveTv, tvShow));
+    }
+
+    JSONArray movies = list.getJSONArray("movies");
+    for (int i = 0; i < movies.length(); i++)
+    {
+      JSONObject movie = (JSONObject) movies.get(i);
+      searchResults.addMovie(buildItem(MediaType.movies, movie));
+    }
+
+    JSONArray tvSeries = list.getJSONArray("tvSeries");
+    for (int i = 0; i < tvSeries.length(); i++)
+    {
+      JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
+      searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
+    }
+
+    JSONArray songs = list.getJSONArray("songs");
+    for (int i = 0; i < songs.length(); i++)
+    {
+      JSONObject song = (JSONObject) songs.get(i);
+      searchResults.addSong(buildItem(MediaType.music, song));
+    }
+    
+    if (BuildConfig.DEBUG)
+      Log.d(TAG, " -> search results parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+      
     return searchResults; 
   }
 
@@ -239,7 +237,7 @@ public class MythlingParser implements MediaListParser
     if (jsonObj.has("path"))
       item.setSearchPath(jsonObj.getString("path"));
     if (jsonObj.has("file"))
-      item.setFile(jsonObj.getString("file"));
+      item.setFileBase(jsonObj.getString("file"));
     if (jsonObj.has("subtitle"))
       item.setSubTitle(jsonObj.getString("subtitle"));
     return item;

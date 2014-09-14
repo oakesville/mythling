@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -39,15 +41,15 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
-import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class MythTvParser implements MediaListParser
 {
@@ -55,7 +57,6 @@ public class MythTvParser implements MediaListParser
 
   private String json;
   private AppSettings appSettings;
-  private String artworkStorageGroup; 
 
   
   public MythTvParser(String json, AppSettings appSettings)
@@ -72,13 +73,12 @@ public class MythTvParser implements MediaListParser
   /**
    * @param mediaType
    * @param storageGroup media storage group
-   * @param basePath base path to trim from filename
-   * @param artworkBasePath base path to trim from art (pass if no Video storage group)
+   * @param basePath base path to trim from filename (when no storage group)
+   * @param artworkStorageGroup with base path to trim from art (pass if no Video storage group)
    */
-  public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath, String artworkBasePath) throws JSONException, ParseException
+  public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath, StorageGroup artworkStorageGroup) throws JSONException, ParseException
   {
     MediaList mediaList = new MediaList();
-    this.artworkStorageGroup = appSettings.getArtworkStorageGroup(mediaType);    
     mediaList.setMediaType(mediaType);
     mediaList.setStorageGroup(storageGroup);
     mediaList.setBasePath(basePath);
@@ -155,7 +155,7 @@ public class MythTvParser implements MediaListParser
         
         if (type == mediaType)
         {
-          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, artworkBasePath));
+          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, artworkStorageGroup));
           count++;
         }
       }
@@ -217,7 +217,7 @@ public class MythTvParser implements MediaListParser
     return mediaList;    
   }
   
-  private Video buildVideoItem(MediaType type, JSONObject vid, String artworkBasePath) throws JSONException, ParseException
+  private Video buildVideoItem(MediaType type, JSONObject vid, StorageGroup artworkStorageGroup) throws JSONException, ParseException
   {
     Video item;
     if (type == MediaType.movies)
@@ -247,7 +247,7 @@ public class MythTvParser implements MediaListParser
     
     String filename = vid.getString("FileName");
     int lastdot = filename.lastIndexOf('.');
-    item.setFile(filename.substring(0, lastdot));
+    item.setFileBase(filename.substring(0, lastdot));
     item.setFormat(filename.substring(lastdot + 1));
     if (vid.has("SubTitle"))
     {
@@ -305,25 +305,57 @@ public class MythTvParser implements MediaListParser
     {
       String art = vid.getString("Coverart");
       if (!art.isEmpty())
-        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
+      {
+        for (String artDir : artworkStorageGroup.getDirectories())
+        {
+          if (art.startsWith(artDir))
+            item.setArtwork(art.substring(artDir.length() + 1));
+        }
+        if (item.getArtwork() == null)
+          item.setArtwork(art);
+      }
     }
     else if ("Fanart".equals(artworkStorageGroup) && vid.has("Fanart"))
     {
       String art = vid.getString("Fanart");
       if (!art.isEmpty())
-        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
+      {
+        for (String artDir : artworkStorageGroup.getDirectories())
+        {
+          if (art.startsWith(artDir))
+            item.setArtwork(art.substring(artDir.length() + 1));
+        }
+        if (item.getArtwork() == null)
+          item.setArtwork(art);
+      }
     }
     else if ("Screenshots".equals(artworkStorageGroup) && vid.has("Screenshot"))
     {
       String art = vid.getString("Screenshot");
       if (!art.isEmpty())
-        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
+      {
+        for (String artDir : artworkStorageGroup.getDirectories())
+        {
+          if (art.startsWith(artDir))
+            item.setArtwork(art.substring(artDir.length() + 1));
+        }
+        if (item.getArtwork() == null)
+          item.setArtwork(art);
+      }
     }
     else if ("Banners".equals(artworkStorageGroup) && vid.has("Banner"))
     {
       String art = vid.getString("Banner");
       if (!art.isEmpty())
-        item.setArtwork(art.startsWith(artworkBasePath) ? art.substring(artworkBasePath.length() + 1) : art);
+      {
+        for (String artDir : artworkStorageGroup.getDirectories())
+        {
+          if (art.startsWith(artDir))
+            item.setArtwork(art.substring(artDir.length() + 1));
+        }
+        if (item.getArtwork() == null)
+          item.setArtwork(art);
+      }
     }
     
     return item;
@@ -340,7 +372,7 @@ public class MythTvParser implements MediaListParser
     recording.setStartTime(parseMythDateTime(startTime));
     String filename = rec.getString("FileName");
     int lastdot = filename.lastIndexOf('.');
-    recording.setFile(filename.substring(0, lastdot));
+    recording.setFileBase(filename.substring(0, lastdot));
     recording.setFormat(filename.substring(lastdot + 1));
     recording.setProgramStart(startTime);
     if (channel.has("CallSign"))
@@ -499,27 +531,35 @@ public class MythTvParser implements MediaListParser
     return streamInfo;
   }
   
-  public StorageGroup parseStorageGroup(String name) throws JSONException
+  public Map<String,StorageGroup> parseStorageGroups() throws JSONException
   {
+    Map<String,StorageGroup> storageGroups = new HashMap<String,StorageGroup>();
+    
     JSONObject dirList = new JSONObject(json).getJSONObject("StorageGroupDirList");
-    JSONArray dirs = dirList.getJSONArray("StorageGroupDirs");
-    for (int i = 0; i < dirs.length(); i++)
+    if (dirList.has("StorageGroupDirs"))
     {
-      JSONObject dir = (JSONObject) dirs.get(i);
-      if (dir.getString("GroupName").equals(name))
+      JSONArray dirs = dirList.getJSONArray("StorageGroupDirs");
+      for (int i = 0; i < dirs.length(); i++)
       {
-        StorageGroup storageGroup = new StorageGroup();
-        storageGroup.setName(name);
+        JSONObject dir = (JSONObject) dirs.get(i);
+        String name = dir.getString("GroupName");
+        StorageGroup storageGroup = storageGroups.get(name);
+        if (storageGroup == null)
+        {
+          storageGroup = new StorageGroup(name);
+          storageGroups.put(name, storageGroup);
+        }
+
         String dirPath = dir.getString("DirName");
         if (dirPath.endsWith("/"))
           dirPath = dirPath.substring(0, dirPath.length() - 1);
-        storageGroup.setDirectory(dirPath);
+        storageGroup.addDirectory(dirPath);
         if (dir.has("HostName"))
           storageGroup.setHost(dir.getString("HostName"));
-        return storageGroup;
       }
     }
-    return null;
+    
+    return storageGroups;
   }
   
   public String parseMythTvSetting(String key) throws JSONException
@@ -538,6 +578,19 @@ public class MythTvParser implements MediaListParser
     if (str.endsWith("Z"))
       str = str.substring(0, str.length() - 1);
     return DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(str + " UTC");    
+  }
+  
+  public String parseFrontendStatus(String key) throws JSONException
+  {
+    JSONObject frontendStatus = new JSONObject(json).getJSONObject("FrontendStatus");
+    JSONArray strings = frontendStatus.getJSONArray("State");
+    for (int i = 0; i < strings.length(); i++)
+    {
+      JSONObject string = (JSONObject) strings.get(i);
+      if (string.has("Key") && key.equals(string.getString("Key")))
+        return string.getString("Value");
+    }
+    return null;
   }
   
   public String parseString() throws JSONException

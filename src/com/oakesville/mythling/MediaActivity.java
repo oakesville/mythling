@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,6 +70,7 @@ import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
+import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
 
 /**
@@ -472,7 +474,7 @@ public abstract class MediaActivity extends Activity
     }
 
     return super.onOptionsItemSelected(item);
-  }
+  }  
   
   protected void playItem(final Item item)
   {
@@ -565,7 +567,7 @@ public abstract class MediaActivity extends Activity
       }
       else // frontend playback
       {
-        final FrontendPlayer player = new FrontendPlayer(appSettings, item, getCharSet());
+        final SocketFrontendPlayer player = new SocketFrontendPlayer(appSettings, item, getCharSet());
         if (player.checkIsPlaying())
         {
           new AlertDialog.Builder(this)
@@ -779,6 +781,7 @@ public abstract class MediaActivity extends Activity
       try
       {
         MediaSettings mediaSettings = getAppSettings().getMediaSettings();
+        
         HttpHelper downloader = getAppSettings().getMediaListDownloader(urls);
         byte[] bytes = downloader.get();
         mediaListJson = new String(bytes, downloader.getCharSet());
@@ -789,24 +792,29 @@ public abstract class MediaActivity extends Activity
           return -1L;
         }
         MediaListParser mediaListParser = getAppSettings().getMediaListParser(mediaListJson);
+
+        
         if (getAppSettings().isMythlingMediaServices())
         {
           mediaList = mediaListParser.parseMediaList(mediaSettings.getType());
+          if (mediaList.getBasePath() == null)
+          {
+            // otherwise can avoid retrieving storage groups at least until MythTV 0.28
+            mediaList.setStorageGroup(retrieveStorageGroups().get(getAppSettings().getStorageGroup()));
+          }
         }
         else
         {
-          // need to know about storage groups
-          URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
-          downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
-          String sgJson = new String(downloader.get());
-          StorageGroup mediaStorageGroup = new MythTvParser(sgJson, getAppSettings()).parseStorageGroup(getAppSettings().getStorageGroup());
+          Map<String,StorageGroup> storageGroups = retrieveStorageGroups();
+          StorageGroup mediaStorageGroup = storageGroups.get(getAppSettings().getStorageGroup());
           if (mediaStorageGroup != null)
           {
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), mediaStorageGroup, mediaStorageGroup.getDirectory(), null);
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), mediaStorageGroup, null, null);
           }
           else
           {
             // no storage group for media type
+            URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
             String basePath = null;
             if (mediaSettings.getType() == MediaType.videos || mediaSettings.getType() == MediaType.movies || mediaSettings.getType() == MediaType.tvSeries)
             {
@@ -823,11 +831,11 @@ public abstract class MediaActivity extends Activity
                 basePath = new MythTvParser(new String(downloader.get()), getAppSettings()).parseMythTvSetting(key);
               }
             }
-            StorageGroup artworkStorageGroup = new MythTvParser(sgJson, getAppSettings()).parseStorageGroup(getAppSettings().getArtworkStorageGroup());
-            String artworkBasePath = artworkStorageGroup == null ? null : artworkStorageGroup.getDirectory();
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath, artworkBasePath);
+            StorageGroup artworkStorageGroup = storageGroups.get(getAppSettings().getArtworkStorageGroup());
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath, artworkStorageGroup);
           }
         }
+        
         mediaList.setArtworkStorageGroup(getAppSettings().getArtworkStorageGroup(mediaSettings.getType()));
         mediaList.setCharSet(downloader.getCharSet());
         getAppSettings().clearPagerCurrentPosition(mediaList.getMediaType(), "");
@@ -841,6 +849,14 @@ public abstract class MediaActivity extends Activity
           Log.e(TAG, ex.getMessage(), ex);
         return -1L;
       }
+    }
+    
+    private Map<String,StorageGroup> retrieveStorageGroups() throws IOException, JSONException
+    {
+      URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
+      HttpHelper downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
+      String sgJson = new String(downloader.get());
+      return new MythTvParser(sgJson, getAppSettings()).parseStorageGroups();          
     }
 
     protected void onPostExecute(Long result)
@@ -902,7 +918,11 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        Transcoder transcoder = new Transcoder(getAppSettings());
+        Transcoder transcoder;
+        if (mediaList.getStorageGroup() == null)
+          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
+        else
+          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
 
         // TODO: do this retry for tv playback
         int ct = 0;
@@ -971,7 +991,11 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        Transcoder transcoder = new Transcoder(getAppSettings());
+        Transcoder transcoder;
+        if (mediaList.getStorageGroup() == null)
+          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
+        else
+          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
         transcoder.beginTranscode(item);
         return 0L;
       }
@@ -1026,7 +1050,11 @@ public abstract class MediaActivity extends Activity
         if (!recordAvail)
           recorder.waitAvailable();
         
-        Transcoder transcoder = new Transcoder(getAppSettings());
+        Transcoder transcoder;
+        if (mediaList.getStorageGroup() == null)
+          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
+        else
+          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
         boolean streamAvail = transcoder.beginTranscode(recorder.getRecording());
         
         streamInfo = transcoder.getStreamInfo();

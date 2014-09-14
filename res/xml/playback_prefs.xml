@@ -60,12 +60,20 @@
       android:defaultValue="192.168.0.68"
       android:layout="@layout/pref" />
     <EditTextPreference 
-      android:key="mythfe_port"
-      android:title="@string/title_frontend_port"
-      android:dialogTitle="@string/title_frontend_port_dialog"
-      android:dialogMessage="@string/message_frontend_port"
+      android:key="mythfe_socket_port"
+      android:title="@string/title_frontend_socket_port"
+      android:dialogTitle="@string/title_frontend_socket_port_dialog"
+      android:dialogMessage="@string/message_frontend_socket_port"
       android:inputType="number"
       android:defaultValue="6546"
+      android:layout="@layout/pref" />
+    <EditTextPreference 
+      android:key="mythfe_service_port"
+      android:title="@string/title_frontend_service_port"
+      android:dialogTitle="@string/title_frontend_service_port_dialog"
+      android:dialogMessage="@string/message_frontend_service_port"
+      android:inputType="number"
+      android:defaultValue="6547"
       android:layout="@layout/pref" />
   </com.oakesville.mythling.prefs.DisableableCategory>
     

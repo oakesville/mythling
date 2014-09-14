@@ -533,7 +533,7 @@ public class MediaPagerActivity extends MediaActivity
           public void onClick(View v)
           {
             Item item = (Item)listable;
-            item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+            item.setPath(pagerActivity.path);
             pagerActivity.playItem(item);
           }
         });
@@ -566,7 +566,7 @@ public class MediaPagerActivity extends MediaActivity
               public void onClick(View v)
               {
                 Item item = (Item)listable;
-                item.setPath(getAppData().getMediaList().getBasePath() + "/" + pagerActivity.path);
+                item.setPath(pagerActivity.path);
                 pagerActivity.playItem(item);
               }
             });            

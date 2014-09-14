@@ -31,6 +31,7 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.StorageGroup;
 
 public class Transcoder
 {
@@ -38,9 +39,20 @@ public class Transcoder
 
   private AppSettings appSettings;
   
-  public Transcoder(AppSettings appSettings)
+  // for matching up existing transcodes
+  private StorageGroup storageGroup;
+  private String basePath;
+  
+  public Transcoder(AppSettings appSettings, StorageGroup storageGroup)
   {
     this.appSettings = appSettings;
+    this.storageGroup = storageGroup;
+  }
+
+  public Transcoder(AppSettings appSettings, String basePath)
+  {
+    this.appSettings = appSettings;
+    this.basePath = basePath;
   }
   
   private LiveStreamInfo streamInfo;
@@ -55,13 +67,12 @@ public class Transcoder
 
     boolean preExist = false;
     int maxTranscodes = 3;  // TODO prefs
-    boolean filtered = false;
+    boolean filtered = false;  // filtering doesn't work for shit
 
     // check if stream is already available
     URL streamListUrl;
     if (filtered)
-      streamListUrl = new URL(baseUrl + "/Content/GetFilteredLiveStreamList?FileName=" 
-                              + item.getFilePath().replaceAll(" ", "%20"));
+      streamListUrl = new URL(baseUrl + "/Content/GetFilteredLiveStreamList?FileName=" + item.getFileName().replaceAll(" ", "%20"));
     else
       streamListUrl = new URL(baseUrl + "/Content/GetLiveStreamList");
     
@@ -70,7 +81,7 @@ public class Transcoder
     int inProgress = 0;
     for (LiveStreamInfo liveStream : liveStreams)
     {
-      if (isLiveStreamForItem(liveStream, item))
+      if (liveStreamMatchesItemAndQuality(liveStream, item))
       {
         streamInfo = liveStream;
         preExist = true;
@@ -79,7 +90,7 @@ public class Transcoder
       {
         if ("Transcoding".equals(liveStream.getMessage()))
         {
-          if (item.getFilePath().equals(liveStream.getFile()))
+          if (liveStreamMatchesItem(liveStream, item))
           {
             // stop and delete in-progress transcoding jobs for same file
             try
@@ -111,7 +122,7 @@ public class Transcoder
       // add the stream
       URL addStreamUrl;
       if (item.isRecording())
-        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?ChanId=" + ((Recording)item).getChannelId() + "&StartTime=" + ((Recording)item).getStartTimeParam() + "&" + appSettings.getVideoQualityParams());
+        addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?" + ((Recording)item).getChanIdStartTimeParams() + "&" + appSettings.getVideoQualityParams());
       else
         addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
       String addStreamJson = new String(getServiceDownloader(addStreamUrl).get(), "UTF-8");
@@ -190,9 +201,27 @@ public class Transcoder
     return downloader;
   }
   
-  private boolean isLiveStreamForItem(LiveStreamInfo liveStream, Item item)
+  private boolean liveStreamMatchesItem(LiveStreamInfo liveStream, Item item)
   {
-    if (!item.getFilePath().equals(liveStream.getFile()))
+    String itemPath = item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
+    if (storageGroup == null)
+    {
+      return liveStream.getFile().equals(basePath + "/" + itemPath);
+    }
+    else
+    {
+      for (String dir : storageGroup.getDirectories())
+      {
+        if (liveStream.getFile().equals(dir + "/" + itemPath))
+          return true;
+      }
+    }
+    return false;
+  }
+  
+  private boolean liveStreamMatchesItemAndQuality(LiveStreamInfo liveStream, Item item)
+  {
+    if (!liveStreamMatchesItem(liveStream, item))
       return false;
     
     int desiredRes = appSettings.getVideoRes();

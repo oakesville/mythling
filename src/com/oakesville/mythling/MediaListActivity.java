@@ -175,9 +175,9 @@ public class MediaListActivity extends MediaActivity
           {
             Item item = (Item)listables.get(position);
             if (item.isRecording() || item.isLiveTv())
-              item.setPath(mediaList.getBasePath());
+              item.setPath("");
             else
-              item.setPath(mediaList.getBasePath() + "/" + path);
+              item.setPath(path);
             playItem(item);
           }
           else
@@ -201,7 +201,7 @@ public class MediaListActivity extends MediaActivity
             final Item item = (Item)listables.get(position);
             if (item.isRecording() || item.isLiveTv())
             {
-              item.setPath(mediaList.getBasePath());
+              item.setPath("");
               new AlertDialog.Builder(view.getContext())
               .setIcon(android.R.drawable.ic_dialog_info)
               .setTitle("Transcode")

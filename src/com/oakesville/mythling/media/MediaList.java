@@ -69,10 +69,12 @@ public class MediaList
     count = Integer.parseInt(ct);
   }
   
+  /**
+   * either storageGroup or basePath should be populated 
+   */
   private String basePath;
   public String getBasePath() { return basePath; }
   public void setBasePath(String bp) { this.basePath = bp; }
-  
   private StorageGroup storageGroup;
   public StorageGroup getStorageGroup() { return storageGroup; }
   public void setStorageGroup(StorageGroup sg) { this.storageGroup = sg; }
@@ -99,11 +101,11 @@ public class MediaList
   
   public void addItemUnderPathCategory(Item item)
   {
-    String filepath = item.getFile();
+    String filepath = item.getFileBase();
     if (getStorageGroup() == null && filepath.startsWith(basePath + "/"))
     {
       filepath = filepath.substring(basePath.length() + 1);
-      item.setFile(filepath);
+      item.setFileBase(filepath);
     }
     String[] segments = filepath.split("/");
     if (segments.length > 1 && !filepath.startsWith("/"))
@@ -126,7 +128,7 @@ public class MediaList
         }
         else
         {
-          item.setFile(seg);
+          item.setFileBase(seg);
         }
       }
       cat.addItem(item);

@@ -7,6 +7,6 @@ https://github.com/oakesville/mythling/issues
 mythtv pull requests:
 https://github.com/MythTV/mythtv/pull/84
 
-mythtv track tickets:
+mythtv trak tickets:
 https://code.mythtv.org/trac/ticket/12250#ticket
 

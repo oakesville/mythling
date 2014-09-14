@@ -172,7 +172,7 @@ public class MediaSettings
     else
       return R.drawable.ic_menu_list;
   }
-
+  
   public boolean isMusic()
   {
     return type == MediaType.music;

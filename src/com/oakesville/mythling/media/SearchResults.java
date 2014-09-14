@@ -53,14 +53,6 @@ public class SearchResults
   public String getMusicBase() { return musicBase; }
   public void setMusicBase(String mb) { this.musicBase = mb; }
   
-  private String recordingsBase;
-  public String getRecordingsBase() { return recordingsBase; }
-  public void setRecordingsBase(String rb) { this.recordingsBase = rb; }
-  
-  private String moviesBase;
-  public String getMoviesBase() { return moviesBase; }
-  public void setMoviesBase(String mb) { this.moviesBase = mb; }
-  
   private List<Item> videos = new ArrayList<Item>();
   public List<Item> getVideos() { return videos; }
   public void setVideos(List<Item> videos) { this.videos = videos; }

@@ -73,9 +73,13 @@ public class PlaybackPrefs extends PreferenceFragment
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
     pref.setSummary(appSettings.getFrontendHost());
 
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_PORT);
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SOCKET_PORT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary("" + appSettings.getFrontendControlPort());
+    pref.setSummary("" + appSettings.getFrontendSocketPort());
+
+    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SERVICE_PORT);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+    pref.setSummary("" + appSettings.getFrontendServicePort());
   }
   
   private void doCategoryEnablement(boolean isDevice)

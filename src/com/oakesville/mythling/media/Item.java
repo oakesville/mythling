@@ -56,9 +56,9 @@ public abstract class Item implements Listable
   /**
    * Just the base part of the filename.
    */
-  private String file;
-  public String getFile() { return file; }
-  public void setFile(String file) { this.file = file; }
+  private String fileBase;
+  public String getFileBase() { return fileBase; }
+  public void setFileBase(String file) { this.fileBase = file; }
   
   private String format;
   public String getFormat() { return format; }
@@ -80,24 +80,16 @@ public abstract class Item implements Listable
 
   public String getFileName()
   {
-    if (file != null)
+    if (fileBase != null)
     {
-      return file + "." + format;
+      return fileBase + "." + format;
     }
     else
     {
       return title + "." + format;
     }
   }
-  
-  /**
-   * full file path for item 
-   */
-  public String getFilePath()
-  {
-    return getPath() + "/" + getFileName();
-  }
-  
+
   public boolean isMusic()
   {
     return getType() == MediaType.music;

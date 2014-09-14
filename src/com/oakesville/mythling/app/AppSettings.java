@@ -65,7 +65,8 @@ public class AppSettings
   public static final String MYTHWEB_WEB_ROOT = "mythweb_web_root";
   public static final String MYTHTV_SERVICE_PORT = "mythtv_service_port";
   public static final String MYTH_FRONTEND_HOST = "mythfe_host";
-  public static final String MYTH_FRONTEND_PORT = "mythfe_port";
+  public static final String MYTH_FRONTEND_SOCKET_PORT = "mythfe_socket_port";
+  public static final String MYTH_FRONTEND_SERVICE_PORT = "mythfe_service_port";
   public static final String MEDIA_TYPE = "media_type";
   public static final String VIEW_TYPE = "view_type";
   public static final String SORT_TYPE = "sort_type";
@@ -314,9 +315,21 @@ public class AppSettings
     return prefs.getString(MYTH_FRONTEND_HOST, "192.168.0.68").trim();
   }
   
-  public int getFrontendControlPort()
+  public int getFrontendSocketPort()
   {    
-    return Integer.parseInt(prefs.getString(MYTH_FRONTEND_PORT, "6546").trim());
+    return Integer.parseInt(prefs.getString(MYTH_FRONTEND_SOCKET_PORT, "6546").trim());
+  }
+  
+  public int getFrontendServicePort()
+  {    
+    return Integer.parseInt(prefs.getString(MYTH_FRONTEND_SERVICE_PORT, "6547").trim());
+  }
+
+  public URL getFrontendServiceBaseUrl() throws MalformedURLException
+  {
+    String ip = getFrontendHost();
+    int servicePort = getFrontendServicePort();
+    return new URL("http://" + ip + ":" + servicePort);    
   }
   
   public boolean isDevicePlayback()
@@ -465,14 +478,18 @@ public class AppSettings
   }
   
   /**
+   * this is for media itself
    * for images use getArtworkStorageGroup()
    */
   public static String getStorageGroup(MediaType mediaType)
   {
-    if (mediaType == MediaType.movies || mediaType == MediaType.videos || mediaType == MediaType.tvSeries)
-      return "Videos";
-    else
+    // TODO prefs
+    if (mediaType == MediaType.music)
+      return null;
+    else if (mediaType == MediaType.recordings || mediaType == MediaType.liveTv)
       return "Default";
+    else
+      return "Videos";
   }
   
   public String getArtworkStorageGroup()
@@ -915,12 +932,21 @@ public class AppSettings
         throw new BadSettingsException("Settings > Playback > Frontend Player > Host");
       try
       {
-        if (getFrontendControlPort() <= 0 )
-          throw new BadSettingsException("Settings > Playback > Frontend Player > Control Port");
+        if (getFrontendSocketPort() <= 0 )
+          throw new BadSettingsException("Settings > Playback > Frontend Player > Socket Port");
       }
       catch (NumberFormatException ex)
       {
-        throw new BadSettingsException("Settings > Playback > Frontend Player > Control Port", ex);
+        throw new BadSettingsException("Settings > Playback > Frontend Player > Socket Port", ex);
+      }
+      try
+      {
+        if (getFrontendServicePort() <= 0 )
+          throw new BadSettingsException("Settings > Playback > Frontend Player > Service Port");
+      }
+      catch (NumberFormatException ex)
+      {
+        throw new BadSettingsException("Settings > Playback > Frontend Player > Service Port", ex);
       }
     }
     

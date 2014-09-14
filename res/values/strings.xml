@@ -70,9 +70,12 @@
   <string name="title_frontend_host">Host</string>
   <string name="title_frontend_host_dialog">Frontend Host</string>
   <string name="message_frontend_host">Host name or IP address for frontend playback</string>
-  <string name="title_frontend_port">Control Port</string>
-  <string name="title_frontend_port_dialog">Frontend Control Port</string>
-  <string name="message_frontend_port">TCP port for frontend control socket connection</string>
+  <string name="title_frontend_socket_port">Socket Port</string>
+  <string name="title_frontend_socket_port_dialog">Frontend Socket Control Port</string>
+  <string name="message_frontend_socket_port">TCP port for frontend control socket connection</string>
+  <string name="title_frontend_service_port">Service Port</string>
+  <string name="title_frontend_service_port_dialog">Frontend Service Port</string>
+  <string name="message_frontend_service_port">HTTP port for frontend service connection</string>
   <string name="title_network_location">Network</string>
   <string name="title_playback_mode">Playback</string>
   <string name="title_video_categorization">Categorization</string>

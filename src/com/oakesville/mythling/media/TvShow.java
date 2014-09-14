@@ -100,6 +100,11 @@ public class TvShow extends Item
     return DateTimeFormats.TIME_FORMAT.format(getEndTime());
   }
   
+  public String getChanIdStartTimeParams()
+  {
+    return "ChanId=" + getChannelId() + "&StartTime=" + getStartTimeParam();
+  }
+  
   public TvShow(String id, String title)
   {
     super(id, title);

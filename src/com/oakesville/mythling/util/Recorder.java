@@ -157,7 +157,7 @@ public class Recorder
         if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw()))
         {
           recording = rec;
-          recording.setPath(recordingsList.getBasePath());
+          recording.setPath("");
           return recording;
         }
         else if (rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0)

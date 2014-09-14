@@ -27,5 +27,5 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public interface MediaListParser
 {
-  public abstract MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException;
+  public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException, ServiceException;
 }

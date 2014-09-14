@@ -175,7 +175,7 @@ public class MainActivity extends MediaActivity
         if (isMediaItem)
         {
           Item item = (Item)listables.get(position);
-          item.setPath(mediaList.getBasePath());
+          item.setPath("");
           playItem(item);
         }
         else
@@ -199,6 +199,6 @@ public class MainActivity extends MediaActivity
     builder.path("");
     Uri uri = builder.build();
     startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
-  }  
+  }
   
 }

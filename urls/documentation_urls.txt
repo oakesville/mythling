@@ -1,0 +1,8 @@
+GitHub Pages Home:
+http://oakesville.github.io/mythling
+
+Mythling Help:
+http://oakesville.github.io/mythling/help.html
+
+Wiki:
+https://github.com/oakesville/mythling/wiki
