@@ -40,8 +40,10 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.SearchResults;
+import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MythlingParser;
+import com.oakesville.mythling.util.Transcoder;
 
 public class SearchActivity extends MediaActivity
 {
@@ -145,6 +147,7 @@ public class SearchActivity extends MediaActivity
         resultsJson = new String(downloader.get(), downloader.getCharSet());
         searchResults = new MythlingParser(resultsJson).parseSearchResults();
         searchResults.setCharSet(downloader.getCharSet());
+        searchResults.setStorageGroups(retrieveStorageGroups());
         return 0L;
       }
       catch (Exception ex)
@@ -220,6 +223,22 @@ public class SearchActivity extends MediaActivity
     startActivity(intent);
     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     finish();
-  }  
-  
+  }
+
+  @Override
+  protected Transcoder getTranscoder(Item item)
+  {
+    StorageGroup storageGroup = searchResults.getStorageGroups().get(AppSettings.getStorageGroup(item.getType()));
+    if (storageGroup == null)
+    {
+      if (item.isMusic())
+        return new Transcoder(getAppSettings(), searchResults.getMusicBase());
+      else
+        return new Transcoder(getAppSettings(), searchResults.getVideoBase());
+    }
+    else
+    {
+      return new Transcoder(getAppSettings(), storageGroup);
+    }
+  }
 }

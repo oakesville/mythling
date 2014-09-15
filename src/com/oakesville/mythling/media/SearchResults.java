@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class SearchResults
 {
@@ -52,6 +53,10 @@ public class SearchResults
   private String musicBase;
   public String getMusicBase() { return musicBase; }
   public void setMusicBase(String mb) { this.musicBase = mb; }
+  
+  private Map<String,StorageGroup> storageGroups;
+  public Map<String,StorageGroup> getStorageGroups() { return storageGroups; }
+  public void setStorageGroups(Map<String,StorageGroup> sgs) { this.storageGroups = sgs; }
   
   private List<Item> videos = new ArrayList<Item>();
   public List<Item> getVideos() { return videos; }

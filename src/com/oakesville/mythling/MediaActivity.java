@@ -770,6 +770,25 @@ public abstract class MediaActivity extends Activity
     // default does nothing
   }
   
+  protected Transcoder getTranscoder(Item item)
+  {
+    if (mediaList.getStorageGroup() == null)
+      return new Transcoder(getAppSettings(), mediaList.getBasePath());
+    else
+      return new Transcoder(getAppSettings(), mediaList.getStorageGroup());
+  }
+  
+  /**
+   * must be run in background thread
+   */
+  protected Map<String,StorageGroup> retrieveStorageGroups() throws IOException, JSONException
+  {
+    URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
+    HttpHelper downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
+    String sgJson = new String(downloader.get());
+    return new MythTvParser(sgJson, getAppSettings()).parseStorageGroups();          
+  }
+  
   private class RefreshTask extends AsyncTask<URL,Integer,Long>
   {
     private String mediaListJson;
@@ -797,9 +816,8 @@ public abstract class MediaActivity extends Activity
         if (getAppSettings().isMythlingMediaServices())
         {
           mediaList = mediaListParser.parseMediaList(mediaSettings.getType());
-          if (mediaList.getBasePath() == null)
+          if (mediaList.getBasePath() == null) // otherwise can avoid retrieving storage groups at least until MythTV 0.28
           {
-            // otherwise can avoid retrieving storage groups at least until MythTV 0.28
             mediaList.setStorageGroup(retrieveStorageGroups().get(getAppSettings().getStorageGroup()));
           }
         }
@@ -851,14 +869,6 @@ public abstract class MediaActivity extends Activity
       }
     }
     
-    private Map<String,StorageGroup> retrieveStorageGroups() throws IOException, JSONException
-    {
-      URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
-      HttpHelper downloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(new URL(baseUrl + "/Myth/GetStorageGroupDirs")));
-      String sgJson = new String(downloader.get());
-      return new MythTvParser(sgJson, getAppSettings()).parseStorageGroups();          
-    }
-
     protected void onPostExecute(Long result)
     {
       if (result != 0L)
@@ -918,12 +928,8 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        Transcoder transcoder;
-        if (mediaList.getStorageGroup() == null)
-          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
-        else
-          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
-
+        Transcoder transcoder = getTranscoder(item);
+        
         // TODO: do this retry for tv playback
         int ct = 0;
         int maxTries = 3;
@@ -991,11 +997,7 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        Transcoder transcoder;
-        if (mediaList.getStorageGroup() == null)
-          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
-        else
-          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
+        Transcoder transcoder = getTranscoder(item);
         transcoder.beginTranscode(item);
         return 0L;
       }
@@ -1050,11 +1052,7 @@ public abstract class MediaActivity extends Activity
         if (!recordAvail)
           recorder.waitAvailable();
         
-        Transcoder transcoder;
-        if (mediaList.getStorageGroup() == null)
-          transcoder = new Transcoder(getAppSettings(), mediaList.getBasePath());
-        else
-          transcoder = new Transcoder(getAppSettings(), mediaList.getStorageGroup());
+        Transcoder transcoder = getTranscoder(tvShow);
         boolean streamAvail = transcoder.beginTranscode(recorder.getRecording());
         
         streamInfo = transcoder.getStreamInfo();

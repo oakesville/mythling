@@ -131,8 +131,10 @@ public class MythlingParser implements MediaListParser
     JSONObject summary = list.getJSONObject("summary");
     searchResults.setRetrieveDate(summary.getString("date"));
     searchResults.setQuery(summary.getString("query"));
-    searchResults.setVideoBase(summary.getString("videoBase"));
-    searchResults.setMusicBase(summary.getString("musicBase"));
+    if (summary.has("videoBase"))
+      searchResults.setVideoBase(summary.getString("videoBase"));
+    if (summary.has("musicBase"))
+      searchResults.setMusicBase(summary.getString("musicBase"));
     
     JSONArray vids = list.getJSONArray("videos");
     for (int i = 0; i < vids.length(); i++)
