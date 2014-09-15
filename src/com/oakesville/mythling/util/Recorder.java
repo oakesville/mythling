@@ -72,11 +72,11 @@ public class Recorder
     else
     {
       // schedule the recording
-      URL addRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() 
-          + "/Dvr/AddRecordSchedule?ChanId=" + show.getChannelId() + "&StartTime=" + show.getStartTimeParam());
+      URL addRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/AddRecordSchedule?" + show.getChanIdStartTimeParams()
+          + "&EndTime=" + show.getEndTimeParam() + "&Title=" + show.getEncodedTitle() + "&Station=" + show.getCallsign() + "&FindDay=0&FindTime=00:00:00");
         
       String addRecJson = new String(getServiceHelper(addRecUrl).post());
-      recRuleId = new MythTvParser(addRecJson, appSettings).parseInt();
+      recRuleId = new MythTvParser(addRecJson, appSettings).parseUint();
       if (recRuleId <= 0)
         throw new IOException("Problem scheduling recording for: " + show.getTitle());
     }
@@ -117,7 +117,7 @@ public class Recorder
         URL remRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecordSchedule?RecordId=" + recRuleId);
         getServiceHelper(remRecUrl).post();
       }
-      throw new FileNotFoundException("No recording available.");
+      throw new FileNotFoundException("No recording available (there may be a scheduling conflict).");
     }
     
     // wait a few seconds
@@ -160,9 +160,9 @@ public class Recorder
           recording.setPath("");
           return recording;
         }
-        else if (rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0)
+        else if (!"Deleted".equals(rec.getRecordingGroup()) && rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0)
         {
-          if (rec.getRecordingRuleId() != 0)
+          if (rec.getRecordId() != 0)
           {
             TunerInUseException ex = new TunerInUseException(rec.toString());
             ex.setRecording(rec);

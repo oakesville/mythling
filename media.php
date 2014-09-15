@@ -104,8 +104,426 @@ mysql_select_db($MYTHDB_DATABASE) or die(error("Unable to select database"));
 $isVideoStorageGroup = false;
 $castMap = null;
 
-if ($type->isSearch())
+if (!$type->isSearch())
 {
+  // non-search request
+  header("Content-type:application/json");
+  $base = null;
+  $sort = 'title';
+  if (array_key_exists('sort', $_REQUEST))
+    $sort = $_REQUEST['sort'];
+  if ($type->isVideos() || $type->isMovies() || $type->isTvSeries())
+  {
+    if (hasStorageGroup($VIDEO_STORAGE_GROUP))
+      $isVideoStorageGroup = true;
+    else
+      $base = getSettingDir($VIDEO_DIR_SETTING);
+
+    if (!$isVideoStorageGroup && $base == null)
+      die(error("No Videos storage group and no " . $VIDEO_DIR_SETTING . " setting for videos"));
+
+    $where = "";
+
+    if ($type->isVideos())
+    {
+      if ($categorizeUsingDirs)
+        $where = "where (" . notLike($base, array_merge(array_merge($videoExcludeDirs,$movieDirs),$tvSeriesDirs)) . ")";
+      else if ($categorizeUsingMetadata)
+        $where = "where (inetref is null or inetref = '00000000') and ((season is null or season = '0') and (episode is null or episode = '0'))";
+      // one option
+      $orderBy = "order by filename";
+      $query = "select intid as id, filename from videometadata " . $where . " " . $orderBy;
+    }
+    else
+    {
+      $castMap = getCastMap();
+      if ($categorizeUsingDirs)
+      {
+        if ($type->isMovies())
+          $where = "where (" . like($base, $movieDirs) . ")";
+        else if ($type->isTvSeries())
+          $where = "where (" . like($base, $tvSeriesDirs) . ")";
+      }
+      else if ($categorizeUsingMetadata)
+      {
+        if ($type->isMovies())
+          $where = "where (inetref is not null and inetref != '00000000') and (season is null or season = '0') and (episode is null or episode = '0')";
+        else if ($type->isTvSeries())
+          $where = "where (season is not null and season != '0') or (episode is not null and episode != '0')";
+      }
+      else
+      {
+        $where = "where 1 = 0"; // can't determine movies or tv series
+      }
+      if ($sort == "date")
+      {
+        if ($type->isMovies())
+          $orderBy = "order by year, filename";
+        else if ($type->isTvSeries())
+          $orderBy = "order by season, episode";
+      }
+      else if ($sort == "rating")
+      {
+        if ($type->isMovies())
+          $orderBy = "order by userrating desc, filename";
+        else if ($type->isTvSeries())
+          $orderBy = "order by userrating desc, filename";
+      }
+      else
+      {
+        $orderBy = "order by filename";
+      }
+
+      $query = "select intid as id, title, subtitle, filename, inetref, homepage, season, episode, year, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $where . " " . $orderBy;
+    }
+  }
+  else if ($type->isMusic())
+  {
+    $base = getSettingDir($MUSIC_DIR_SETTING);
+    if ($base == null)
+      die(error("No " . $MUSIC_DIR_SETTING . " setting for music"));
+    $albumArtMap = getAlbumArtMap();
+    $where = "where d.directory_id = s.directory_id";
+    // one option
+    $orderBy = "order by filename";
+    $query = "select s.song_id as id, s.directory_id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
+  }
+  else if ($type->isLiveTv())
+  {
+    $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
+    $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
+    $orderBy = "order by cast(c.channum as unsigned)";
+    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
+  }
+  else if ($type->isRecordings())
+  {
+    $where = "inner join channel c on (r.chanid = c.chanid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
+    if ($sort == "date")
+    {
+      $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
+      $groupRecordingsByTitle = false;
+    }
+    else if ($sort == "rating")
+    {
+      $orderBy = "order by r.stars desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
+      $groupRecordingsByTitle = false;
+    }
+    else
+    {
+      $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+      $groupRecordingsByTitle = true;
+    }
+    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rr.recordid, r.recgroup from recorded r " . $where . " " . $orderBy;
+  }
+
+  // echo $query . "\n\n";
+
+  $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
+  $num = mysql_numrows($result);
+  $catPaths = array();
+  $fileIds = array();
+  if ($type->isRecordings() || $type->isLiveTv())
+  {
+    $progstarts = array();
+    $titles = array();
+    $callsigns = array();
+    $basenames = array();
+    $subtitles = array();
+    $descriptions = array();
+    $airdates = array();
+    $endtimes = array();
+    $ratings = array();
+    if ($type->isRecordings())
+    {
+      $inetrefs = array();
+      $recordids = array();
+      $recgroups = array();
+    }
+  }
+  else if ($type->isMovies() || $type->isTvSeries())
+  {
+    $titles = array();
+    $subtitles = array();
+    $inetrefs = array();
+    $homepages = array();
+    $seasons = array();
+    $episodes = array();
+    $airedDates = array();
+    $years = array();
+    $ratings = array();
+    $directors = array();
+    $actors = array();
+    $summaries = array();
+    $artworks = array();
+    $hps = array();
+  }
+  else if ($type->isMusic())
+  {
+    $artworks = array();
+  }
+  $prevPath = "";
+  $i = 0;
+  while ($i < $num)
+  {
+    $id = mysql_result($result, $i, "id");
+    if ($type->isMovies() || $type->isTvSeries())
+    {
+      $ttl = mysql_result($result, $i, "title");
+      $stl = mysql_result($result, $i, "subtitle");
+      $inr = mysql_result($result, $i, "inetref");
+      $hp = mysql_result($result, $i, "homepage");
+      $seas = mysql_result($result, $i, "season");
+      $ep = mysql_result($result, $i, "episode");
+      $yr = mysql_result($result, $i, "year");
+      $aired = mysql_result($result, $i, "releasedate");
+      $rt = mysql_result($result, $i, "userrating");
+      $dir = mysql_result($result, $i, "director");
+      $act = array_key_exists($id, $castMap) ? $castMap[$id] : null;
+      $sum = mysql_result($result, $i, "summary");
+      if (strcmp('None', $sum) == 0)
+        $sum = null;
+      $art = mysql_result($result, $i, "coverfile");
+      if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
+        $art = mysql_result($result, $i, "fanart");
+      if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
+        $art = mysql_result($result, $i, "screenshot");
+      if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
+        $art = mysql_result($result, $i, "banner");
+    }
+
+    if ($type->isRecordings() || $type->isLiveTv())
+    {
+      if ($type->isRecordings())
+        $progst = mysql_result($result, $i, "progstart");
+      else
+        $progst = null;
+      $cs = mysql_result($result, $i, "callsign");
+      $tit = mysql_result($result, $i, "title");
+      $tit = str_replace("/", "--", $tit);
+      if ($type->isRecordings() && $groupRecordingsByTitle)
+        $full = $tit . "/" . $tit;
+      else
+        $full = $tit;
+      if ($type->isRecordings())
+        $bn = mysql_result($result, $i, "basename");
+      else
+        $bn = null;
+      $subtit = mysql_result($result, $i, "subtitle");
+      $descrip = mysql_result($result, $i, "description");
+      $oads = mysql_result($result, $i, "oad");
+      if (strcmp("0000-00-00", $oads) != 0)
+        $oad = $oads;
+      $et = mysql_result($result, $i, "endtime");
+      $rat = mysql_result($result, $i, "stars");
+      if ($type->isRecordings())
+      {
+        $rid = mysql_result($result, $i, "recordid");
+        $inr = mysql_result($result, $i, "inetref");
+        $rg = mysql_result($result, $i, "recgroup");
+      }
+    }
+    else
+    {
+      $full = mysql_result($result, $i, "filename");
+    }
+
+    if ($type->isMusic())
+    {
+      $dirId = mysql_result($result, $i, "directory_id");
+      if ($albumArtAlbumLevel)
+        $art = array_key_exists($dirId, $albumArtMap) ? $albumArtMap[$dirId] : null;
+      else
+        $art = array_key_exists($id, $albumArtMap) ? $albumArtMap[$id] : null;
+    }
+
+    if ($type->isMusic() || $type->isRecordings() || $type->isLiveTv() || $isVideoStorageGroup)
+      $part = $full;
+    else
+      $part = substr($full, strlen($base) + 1);
+
+    // echo $part . "\n";
+    $lastSlash = strrpos($part, "/");
+    $path = substr($part, 0, $lastSlash);
+    $file = $lastSlash ? substr($part, $lastSlash + 1) : $part;
+    if ($type->isMusic() && strcmp($path, $base) == 0)
+      $path = "";
+    if (strcmp($prevPath, $path) != 0)
+    {
+      // make sure shorter segments are added first
+      $pieces = explode("/", $path);
+      $j = 0;
+      $seg = "";
+      while ($j < count($pieces))
+      {
+        $seg = $seg . $pieces[$j];
+        if (!array_key_exists($seg, $catPaths))
+          $catPaths[$seg] = array();
+        $seg = $seg . "/";
+        $j++;
+      }
+    }
+
+    if (array_key_exists($path, $catPaths))
+      $files = $catPaths[$path];
+    else
+      $files = array();
+    if ($type->isRecordings() || $type->isLiveTv())
+      $files[] = $id;  // $files actually contains ids
+    else
+      $files[] = $file;
+    $catPaths[$path] = $files;
+    $prevPath = $path;
+    $fileIds[$path . '/' . $file] = $id;
+    if ($type->isRecordings() || $type->isLiveTv())
+    {
+      $progstarts[$id] = $progst;
+      $titles[$id] = $tit;
+      $callsigns[$id] = $cs;
+      $basenames[$id] = $bn;
+      $subtitles[$id] = $subtit;
+      $descriptions[$id] = $descrip;
+      $airdates[$id] = $oad;
+      $endtimes[$id] = $et;
+      $ratings[$id] = $rat;
+      if ($type->isRecordings())
+      {
+        $inetrefs[$id] = $inr;
+        $recordids[$id] = $rid;
+        $recgroups[$id] = $rg;
+      }
+    }
+    else if ($type->isMovies() || $type->isTvSeries())
+    {
+      $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
+      $titles[$id] = $ttl;
+      $subtitles[$id] = $stl;
+      $years[$id] = $yr;
+      $airedDates[$id] = $aired;
+      $inetrefs[$id] = $inr;
+      $homepages[$id] = $hp;
+      $seasons[$id] = $seas;
+      $episodes[$id] = $ep;
+      $ratings[$id] = $rt;
+      $directors[$id] = $dir;
+      $actors[$id] = $act;
+      $summaries[$id] = $sum;
+      $artworks[$id] = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
+      $hps[$id] = $hp;
+    }
+    else if ($type->isMusic())
+    {
+      $artworks[$id] = $art;
+    }
+
+    $i++;
+  }
+
+  mysql_close();
+
+  echo "{\n";
+  echo '  "summary": ' . "\n";
+  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '"';
+  if ($base != null)
+    echo ', "base": "' . $base . '" ';
+  if ($num > 0)
+    echo " },\n";
+  else
+    echo " }\n";
+
+  // echo print_r($catPaths) . "\n";
+
+  $i = 0;
+  $depth = 0;
+  $prevPath = "";
+  $prevSize = 0;
+  $prevHadItems = false;
+  $keys = array_keys($catPaths);
+  $keyCt = count($keys);
+  $hasTopLevelItems = array_key_exists("", $catPaths);
+  $hasCats = $hasTopLevelItems ? $keyCt > 1 : $keyCt > 0;
+  // top-level items
+  if ($hasTopLevelItems)
+  {
+    printItems("", $catPaths[""], 0);
+    if ($hasCats)
+      echo ",";
+    echo "\n";
+  }
+  // categories
+  if ($hasCats)
+  {
+    while ($i < $keyCt)
+    {
+      $path = $keys[$i];
+      if ($path != "")
+      {
+        $files = $catPaths[$path];
+        $fileCt = count($files);
+
+        // echo $path . "($fileCt)\n";
+        $pieces = explode("/", $path);
+        $size = count($pieces);
+        // echo "size: " . $size . "  prevSize: " . $prevSize . "\n";
+
+        $piece = $pieces[$size - 1];
+        $hasItems = $fileCt > 0;
+
+        if ($size > $prevSize)
+        {
+          printSubCatsBegin($depth, $prevHadItems);
+          $depth = $depth + ($size - $prevSize);
+        }
+        if ($size < $prevSize)
+        {
+          $j = 0;
+          while ($j < ($prevSize - $size))
+          {
+            printCatEnd($depth, false);
+            $depth--;
+            printSubCatsEnd($depth, $prevHadItems);
+            $j++;
+          }
+          printCatEnd($depth, true);
+        }
+        if ($size == $prevSize && $prevPath)
+        {
+          printCatEnd($depth, true);
+        }
+
+        if ($path)
+        {
+          printCatBegin($piece, $depth);
+          if ($fileCt > 0)
+            printItems($path, $files, $depth);
+        }
+
+        $prevSize = $size;
+      }
+      else
+      {
+        $prevSize = $size;
+        $size = 0;
+        $hasItems = false;
+      }
+
+      $prevPath = $path;
+      $prevHadItems = $hasItems;
+      $i++;
+    }
+  }
+
+  while ($depth > 0)
+  {
+    printCatEnd($depth, false);
+    $depth--;
+    printSubCatsEnd($depth, $prevHadItems);
+    $prevHadItems = false;
+  }
+  echo "}\n";
+}
+else
+{
+  // search request
   $videoBase = null;
   if (hasStorageGroup($VIDEO_STORAGE_GROUP))
     $isVideoStorageGroup = true;
@@ -327,419 +745,6 @@ if ($type->isSearch())
 
   mysql_close();
 }
-else // non-search
-{
-  header("Content-type:application/json");
-  $base = null;
-  $sort = 'title';
-  if (array_key_exists('sort', $_REQUEST))
-    $sort = $_REQUEST['sort'];
-  if ($type->isVideos() || $type->isMovies() || $type->isTvSeries())
-  {
-    if (hasStorageGroup($VIDEO_STORAGE_GROUP))
-      $isVideoStorageGroup = true;
-    else
-      $base = getSettingDir($VIDEO_DIR_SETTING);
-    
-    if (!$isVideoStorageGroup && $base == null)
-      die(error("No Videos storage group and no " . $VIDEO_DIR_SETTING . " setting for videos"));
-    
-    $where = "";
-    
-    if ($type->isVideos())
-    {
-      if ($categorizeUsingDirs)
-        $where = "where (" . notLike($base, array_merge(array_merge($videoExcludeDirs,$movieDirs),$tvSeriesDirs)) . ")";
-      else if ($categorizeUsingMetadata)
-        $where = "where (inetref is null or inetref = '00000000') and ((season is null or season = '0') and (episode is null or episode = '0'))";
-      // one option
-      $orderBy = "order by filename";
-      $query = "select intid as id, filename from videometadata " . $where . " " . $orderBy;
-    }
-    else
-    {
-      $castMap = getCastMap();
-      if ($categorizeUsingDirs)
-      {
-        if ($type->isMovies())
-          $where = "where (" . like($base, $movieDirs) . ")";
-        else if ($type->isTvSeries())
-          $where = "where (" . like($base, $tvSeriesDirs) . ")";
-      }
-      else if ($categorizeUsingMetadata)
-      {
-        if ($type->isMovies())
-          $where = "where (inetref is not null and inetref != '00000000') and (season is null or season = '0') and (episode is null or episode = '0')";
-        else if ($type->isTvSeries())
-          $where = "where (season is not null and season != '0') or (episode is not null and episode != '0')";
-      }
-      else
-      {
-        $where = "where 1 = 0"; // can't determine movies or tv series
-      }
-      if ($sort == "date")
-      {
-        if ($type->isMovies())
-          $orderBy = "order by year, filename";
-        else if ($type->isTvSeries())
-          $orderBy = "order by season, episode";
-      }
-      else if ($sort == "rating")
-      {
-        if ($type->isMovies())
-          $orderBy = "order by userrating desc, filename";
-        else if ($type->isTvSeries())
-          $orderBy = "order by userrating desc, filename";
-      }
-      else
-      {
-        $orderBy = "order by filename";
-      }
-      
-      $query = "select intid as id, title, subtitle, filename, inetref, homepage, season, episode, year, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $where . " " . $orderBy;
-    }
-  }
-  else if ($type->isMusic())
-  {
-     $base = getSettingDir($MUSIC_DIR_SETTING);
-     if ($base == null)
-       die(error("No " . $MUSIC_DIR_SETTING . " setting for music"));
-    $albumArtMap = getAlbumArtMap();
-    $where = "where d.directory_id = s.directory_id";
-    // one option
-    $orderBy = "order by filename";
-    $query = "select s.song_id as id, s.directory_id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
-  }
-  else if ($type->isLiveTv())
-  {
-    $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
-    $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
-    $orderBy = "order by cast(c.channum as unsigned)";
-    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
-  }
-  else if ($type->isRecordings())
-  {
-    $where = "inner join channel c on (r.chanid = c.chanid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
-    if ($sort == "date")
-    {
-      $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
-      $groupRecordingsByTitle = false;
-    }
-    else if ($sort == "rating")
-    {
-      $orderBy = "order by r.stars desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
-      $groupRecordingsByTitle = false;
-    }
-    else
-    {
-      $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
-      $groupRecordingsByTitle = true;
-    }
-    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rr.recordid from recorded r " . $where . " " . $orderBy;
-  }
-
-  // echo $query . "\n\n";
-
-  $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($result);
-  $catPaths = array();
-  $fileIds = array();
-  if ($type->isRecordings() || $type->isLiveTv())
-  {
-    $progstarts = array();
-    $titles = array();
-    $callsigns = array();
-    $basenames = array();
-    $subtitles = array();
-    $descriptions = array();
-    $airdates = array();
-    $endtimes = array();
-    $ratings = array();
-    if ($type->isRecordings())
-    {
-      $inetrefs = array();
-      $recordids = array();
-    }
-  }
-  else if ($type->isMovies() || $type->isTvSeries())
-  {
-    $titles = array();
-    $subtitles = array();
-    $inetrefs = array();
-    $homepages = array();
-    $seasons = array();
-    $episodes = array();
-    $airedDates = array();
-    $years = array();
-    $ratings = array();
-    $directors = array();
-    $actors = array();
-    $summaries = array();
-    $artworks = array();
-    $hps = array();
-  }
-  else if ($type->isMusic())
-  {
-    $artworks = array();
-  }
-  $prevPath = "";
-  $i = 0;
-  while ($i < $num)
-  {
-    $id = mysql_result($result, $i, "id");
-    if ($type->isMovies() || $type->isTvSeries())
-    {
-      $ttl = mysql_result($result, $i, "title");
-      $stl = mysql_result($result, $i, "subtitle");
-      $inr = mysql_result($result, $i, "inetref");
-      $hp = mysql_result($result, $i, "homepage");
-      $seas = mysql_result($result, $i, "season");
-      $ep = mysql_result($result, $i, "episode");
-      $yr = mysql_result($result, $i, "year");
-      $aired = mysql_result($result, $i, "releasedate");
-      $rt = mysql_result($result, $i, "userrating");
-      $dir = mysql_result($result, $i, "director");
-      $act = array_key_exists($id, $castMap) ? $castMap[$id] : null;
-      $sum = mysql_result($result, $i, "summary");
-      if (strcmp('None', $sum) == 0)
-        $sum = null;
-      $art = mysql_result($result, $i, "coverfile");
-      if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
-        $art = mysql_result($result, $i, "fanart");
-      if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
-        $art = mysql_result($result, $i, "screenshot");
-      if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
-        $art = mysql_result($result, $i, "banner");
-    }
-    
-    if ($type->isRecordings() || $type->isLiveTv())
-    {
-      if ($type->isRecordings())
-        $progst = mysql_result($result, $i, "progstart");
-      else
-        $progst = null;
-      $cs = mysql_result($result, $i, "callsign");
-      $tit = mysql_result($result, $i, "title");
-      $tit = str_replace("/", "--", $tit);
-      if ($type->isRecordings() && $groupRecordingsByTitle)
-        $full = $tit . "/" . $tit;
-      else
-        $full = $tit;
-      if ($type->isRecordings())
-        $bn = mysql_result($result, $i, "basename");
-      else
-        $bn = null;
-      $subtit = mysql_result($result, $i, "subtitle");
-      $descrip = mysql_result($result, $i, "description");
-      $oads = mysql_result($result, $i, "oad");
-      if (strcmp("0000-00-00", $oads) != 0)
-        $oad = $oads;
-      $et = mysql_result($result, $i, "endtime");
-      $rat = mysql_result($result, $i, "stars");
-      if ($type->isRecordings())
-      {
-        $rid = mysql_result($result, $i, "recordid");
-        $inr = mysql_result($result, $i, "inetref");
-      }
-    }
-    else
-    {
-      $full = mysql_result($result, $i, "filename");
-    }
-    
-    if ($type->isMusic())
-    {
-      $dirId = mysql_result($result, $i, "directory_id");
-      if ($albumArtAlbumLevel)
-        $art = array_key_exists($dirId, $albumArtMap) ? $albumArtMap[$dirId] : null;
-      else
-        $art = array_key_exists($id, $albumArtMap) ? $albumArtMap[$id] : null;
-    }
-    
-    if ($type->isMusic() || $type->isRecordings() || $type->isLiveTv() || $isVideoStorageGroup)
-      $part = $full;
-    else
-      $part = substr($full, strlen($base) + 1);
-    
-    // echo $part . "\n";
-    $lastSlash = strrpos($part, "/");
-    $path = substr($part, 0, $lastSlash);
-    $file = $lastSlash ? substr($part, $lastSlash + 1) : $part;
-    if ($type->isMusic() && strcmp($path, $base) == 0)
-      $path = "";
-    if (strcmp($prevPath, $path) != 0)
-    {
-      // make sure shorter segments are added first
-      $pieces = explode("/", $path);
-      $j = 0;
-      $seg = "";
-      while ($j < count($pieces))
-      {
-        $seg = $seg . $pieces[$j];
-        if (!array_key_exists($seg, $catPaths))
-          $catPaths[$seg] = array();
-        $seg = $seg . "/";
-        $j++;
-      }
-    }
-  
-    if (array_key_exists($path, $catPaths))
-      $files = $catPaths[$path];
-    else
-      $files = array();
-    if ($type->isRecordings() || $type->isLiveTv())
-      $files[] = $id;  // $files actually contains ids
-    else
-      $files[] = $file;
-    $catPaths[$path] = $files;
-    $prevPath = $path;
-    $fileIds[$path . '/' . $file] = $id;
-    if ($type->isRecordings() || $type->isLiveTv())
-    {
-      $progstarts[$id] = $progst;
-      $titles[$id] = $tit;
-      $callsigns[$id] = $cs;
-      $basenames[$id] = $bn;
-      $subtitles[$id] = $subtit;
-      $descriptions[$id] = $descrip;
-      $airdates[$id] = $oad;
-      $endtimes[$id] = $et;
-      $ratings[$id] = $rat;
-      if ($type->isRecordings())
-      {
-        $inetrefs[$id] = $inr;
-        $recordids[$id] = $rid;
-      }
-    }
-    else if ($type->isMovies() || $type->isTvSeries())
-    {
-      $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
-      $titles[$id] = $ttl; 
-      $subtitles[$id] = $stl;
-      $years[$id] = $yr;
-      $airedDates[$id] = $aired;
-      $inetrefs[$id] = $inr;
-      $homepages[$id] = $hp;
-      $seasons[$id] = $seas;
-      $episodes[$id] = $ep;
-      $ratings[$id] = $rt;
-      $directors[$id] = $dir;
-      $actors[$id] = $act;
-      $summaries[$id] = $sum;
-      $artworks[$id] = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
-      $hps[$id] = $hp;
-    }
-     else if ($type->isMusic())
-     {
-       $artworks[$id] = $art;
-     }
-  
-    $i++;
-  }
-
-  mysql_close();
-  
-  echo "{\n";
-  echo '  "summary": ' . "\n";
-  echo '  { "type": "' . $type->type . '", "date": "' . $dt . '", "count": "' . $num . '"';
-  if ($base != null)
-    echo ', "base": "' . $base . '" ';
-  if ($num > 0)
-    echo " },\n";
-  else
-    echo " }\n";
-
-  // echo print_r($catPaths) . "\n";
-  
-  $i = 0;
-  $depth = 0;
-  $prevPath = "";
-  $prevSize = 0;
-  $prevHadItems = false;
-  $keys = array_keys($catPaths);
-  $keyCt = count($keys);
-  $hasTopLevelItems = array_key_exists("", $catPaths);
-  $hasCats = $hasTopLevelItems ? $keyCt > 1 : $keyCt > 0;
-  // top-level items
-  if ($hasTopLevelItems)
-  {
-    printItems("", $catPaths[""], 0);
-    if ($hasCats)
-      echo ",";
-    echo "\n";
-  }
-  // categories
-  if ($hasCats)
-  {
-    while ($i < $keyCt)
-    {
-      $path = $keys[$i];
-      if ($path != "")
-      {
-        $files = $catPaths[$path];
-        $fileCt = count($files);
-        
-        // echo $path . "($fileCt)\n";
-        $pieces = explode("/", $path);
-        $size = count($pieces);
-        // echo "size: " . $size . "  prevSize: " . $prevSize . "\n";
-        
-        $piece = $pieces[$size - 1];
-        $hasItems = $fileCt > 0;
-        
-        if ($size > $prevSize)
-        {
-          printSubCatsBegin($depth, $prevHadItems);
-          $depth = $depth + ($size - $prevSize);
-        }
-        if ($size < $prevSize)
-        {
-          $j = 0;
-          while ($j < ($prevSize - $size))
-          {
-            printCatEnd($depth, false);
-            $depth--;
-            printSubCatsEnd($depth, $prevHadItems);
-            $j++;
-          }
-          printCatEnd($depth, true);
-        }
-        if ($size == $prevSize && $prevPath)
-        {
-          printCatEnd($depth, true);
-        }
-    
-        if ($path)
-        {
-          printCatBegin($piece, $depth);
-          if ($fileCt > 0)
-            printItems($path, $files, $depth);
-        }
-        
-        $prevSize = $size;
-      }
-      else 
-      {
-        $prevSize = $size;
-        $size = 0;
-        $hasItems = false;
-      }
-    
-      $prevPath = $path;
-      $prevHadItems = $hasItems;
-      $i++;
-    }
-  }
-
-  while ($depth > 0)
-  {
-    printCatEnd($depth, false);
-    $depth--;
-    printSubCatsEnd($depth, $prevHadItems);
-    $prevHadItems = false;
-  }
-  echo "}\n";
-}
 
 function printCatBegin($name, $depth)
 {
@@ -802,7 +807,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
+  global $type, $fileIds, $progstarts, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $recgroups, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
 
   echo indent($depth * 4 + 2);
 
@@ -866,6 +871,8 @@ function printItem($path, $file, $depth, $more)
         echo ', "internetRef": "' . $inetrefs[$id] . '"';
       if ($recordids[$id] != null)
         echo ', "recordid": ' . $recordids[$id];
+      if ($recgroups[$id] != null)
+        echo ', "recgroup": "' . $recgroups[$id] . '"';
     }
   }
   else if ($type->isMovies() || $type->isTvSeries())

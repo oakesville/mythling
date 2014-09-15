@@ -31,9 +31,9 @@ public class Recording extends TvShow
 {
   private static final String TAG = Recording.class.getSimpleName();
 
-  private int recordingRuleId;
-  public int getRecordingRuleId() { return recordingRuleId; }
-  public void setRecordingRuleId(int rrid) { this.recordingRuleId = rrid; }
+  private int recordId;
+  public int getRecordId() { return recordId; }
+  public void setRecordRuleId(int rid) { this.recordId = rid; }
   
   private String internetRef;
   public String getInternetRef() { return internetRef; }
@@ -42,6 +42,10 @@ public class Recording extends TvShow
   private int season;
   public int getSeason() { return season; }
   public void setSeason(int season) { this.season = season; }
+  
+  private String recordingGroup;
+  public String getRecordingGroup() { return recordingGroup; }
+  public void setRecordingGroup(String recGroup) { this.recordingGroup = recGroup; }  
 
   public Recording(String id, String title)
   {

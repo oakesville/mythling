@@ -522,7 +522,7 @@ public abstract class MediaActivity extends Activity
           {
             String msg = null;
             if (item.isLiveTv())
-              msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be started if necessary.";
+              msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be scheduled if necessary.";
             else
               msg = ((Movie)item).getShowInfo();
             new AlertDialog.Builder(this)
@@ -1080,7 +1080,6 @@ public abstract class MediaActivity extends Activity
       {
         if (ex instanceof TunerInUseException)
         {
-          final Recording inProgressRecording = ((TunerInUseException)ex).getRecording();
           new AlertDialog.Builder(MediaActivity.this)
           .setIcon(android.R.drawable.ic_dialog_info)
           .setTitle("Recording Conflict")
@@ -1089,18 +1088,38 @@ public abstract class MediaActivity extends Activity
           {
             public void onClick(DialogInterface dialog, int which)
             {
-              try
+              final Recording inProgressRecording = ((TunerInUseException)ex).getRecording();
+              new AlertDialog.Builder(MediaActivity.this)
+              .setIcon(android.R.drawable.ic_dialog_alert)
+              .setTitle("Confirm Delete")
+              .setMessage("Delete in-progress recording?\n" + inProgressRecording)
+              .setPositiveButton("Yes", new DialogInterface.OnClickListener()
               {
-                startProgress();
-                new StreamTvTask(tvShow, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
-              }
-              catch (MalformedURLException ex)
+                public void onClick(DialogInterface dialog, int which)
+                {
+                  try
+                  {
+                    startProgress();
+                    new StreamTvTask(tvShow, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
+                  }
+                  catch (MalformedURLException ex)
+                  {
+                    stopProgress();
+                    if (BuildConfig.DEBUG)
+                      Log.e(TAG, ex.getMessage(), ex);
+                    Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+                  }
+                }
+              })
+              .setNegativeButton("No", new DialogInterface.OnClickListener()
               {
-                stopProgress();
-                if (BuildConfig.DEBUG)
-                  Log.e(TAG, ex.getMessage(), ex);
-                Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-              }
+                public void onClick(DialogInterface dialog, int which)
+                {
+                  stopProgress();
+                  onResume();
+                }
+              })
+              .show();              
             }
           })
           .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -1112,7 +1131,6 @@ public abstract class MediaActivity extends Activity
             }
           })
           .show();
-          
         }
         else 
         {

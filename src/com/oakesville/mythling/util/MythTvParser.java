@@ -370,11 +370,14 @@ public class MythTvParser implements MediaListParser
     String id = chanId + "~" + startTime;
     Recording recording = new Recording(id, rec.getString("Title"));
     recording.setStartTime(parseMythDateTime(startTime));
+    if (recObj.has("RecordId"))
+      recording.setRecordRuleId(Integer.parseInt(recObj.getString("RecordId")));
+    if (recObj.has("RecGroup"))
+      recording.setRecordingGroup(recObj.getString("RecGroup"));
     String filename = rec.getString("FileName");
     int lastdot = filename.lastIndexOf('.');
     recording.setFileBase(filename.substring(0, lastdot));
     recording.setFormat(filename.substring(lastdot + 1));
-    recording.setProgramStart(startTime);
     if (channel.has("CallSign"))
       recording.setCallsign(channel.getString("CallSign"));
     addProgramInfo(recording, rec);
@@ -420,6 +423,12 @@ public class MythTvParser implements MediaListParser
       String airdate = jsonObj.getString("Airdate");
       if (!airdate.isEmpty())
         tvShow.setOriginallyAired(DateTimeFormats.SERVICE_DATE_FORMAT.parse(airdate));
+    }
+    if (jsonObj.has("StartTime"))
+    {
+      String startTime = jsonObj.getString("StartTime");
+      if (!startTime.isEmpty())
+        tvShow.setProgramStart(startTime.replace('T', ' '));
     }
     if (jsonObj.has("EndTime"))
     {
@@ -601,6 +610,11 @@ public class MythTvParser implements MediaListParser
   public int parseInt() throws JSONException
   {
     return Integer.parseInt(new JSONObject(json).getString("int"));
+  }
+
+  public int parseUint() throws JSONException
+  {
+    return Integer.parseInt(new JSONObject(json).getString("uint"));
   }
   
   public boolean parseBool() throws JSONException

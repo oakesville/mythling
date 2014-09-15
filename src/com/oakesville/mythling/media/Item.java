@@ -18,6 +18,8 @@
  */
 package com.oakesville.mythling.media;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Comparator;
 
 import com.oakesville.mythling.app.Listable;
@@ -52,6 +54,18 @@ public abstract class Item implements Listable
   private String title;
   public String getTitle() { return title; }
   public void setTitle(String title) { this.title = title; }
+  
+  public String getEncodedTitle()
+  {
+    try
+    {
+      return URLEncoder.encode(title, "UTF-8");
+    }
+    catch (UnsupportedEncodingException ex)
+    {
+      throw new RuntimeException(ex.getMessage(), ex);
+    }
+  }
   
   /**
    * Just the base part of the filename.

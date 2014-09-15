@@ -216,7 +216,9 @@ public class MythlingParser implements MediaListParser
       item = new Recording(jsonObj.getString("id"), jsonObj.getString("title"));
       addProgramInfo((TvShow)item, jsonObj);
       if (jsonObj.has("recordid"))
-        ((Recording)item).setRecordingRuleId(jsonObj.getInt("recordid"));
+        ((Recording)item).setRecordRuleId(jsonObj.getInt("recordid"));
+      if (jsonObj.has("recgroup"))
+        ((Recording)item).setRecordingGroup(jsonObj.getString("recgroup"));
       if (jsonObj.has("internetRef"))
         ((Recording)item).setInternetRef(jsonObj.getString("internetRef"));          
     }

@@ -50,9 +50,6 @@ http://192.168.0.69:6544/Myth/GetSetting?Key=DefaultTranscoder
 http://192.168.0.69:6544/Myth/GetSetting?Key=VideoStartupDir&HostName=mythbe
 http://192.168.0.69:6544/Myth/GetStorageGroupDirs
 
-# MythTV Service Contract
-/mythtv/mythtv/libs/libmythservicecontracts/moc_mythServices.cpp
-
 # MythTV Frontend Service Action List
 http://192.168.0.69:6547/Frontend/GetActionList
 

@@ -99,6 +99,10 @@ public class TvShow extends Item
   {
     return DateTimeFormats.TIME_FORMAT.format(getEndTime());
   }
+  public String getEndTimeParam()
+  {
+    return DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.format(getEndTime()).replace(' ', 'T');
+  }
   
   public String getChanIdStartTimeParams()
   {

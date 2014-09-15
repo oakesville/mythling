@@ -43,6 +43,10 @@ public class Transcoder
   private StorageGroup storageGroup;
   private String basePath;
   
+  /**
+   * transcoder needs to know about the storage group to match-up
+   * currently-executing jobs versus the requested playback item
+   */
   public Transcoder(AppSettings appSettings, StorageGroup storageGroup)
   {
     this.appSettings = appSettings;
