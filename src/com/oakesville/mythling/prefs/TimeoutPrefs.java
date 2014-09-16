@@ -42,6 +42,10 @@ public class TimeoutPrefs extends PreferenceFragment
     pref = getPreferenceScreen().findPreference(AppSettings.TRANSCODE_TIMEOUT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
     pref.setSummary("" + appSettings.getTranscodeTimeout() + " Seconds");
+
+    pref = getPreferenceScreen().findPreference(AppSettings.TRANSCODE_JOB_LIMIT);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+    pref.setSummary("" + appSettings.getTranscodeJobLimit());
     
     pref = getPreferenceScreen().findPreference(AppSettings.HTTP_CONNECT_TIMEOUT);
     pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));

@@ -31,7 +31,14 @@
       android:inputType="number"
       android:defaultValue="30"
       android:layout="@layout/pref" />
-  </PreferenceCategory>
+    <EditTextPreference 
+      android:key="transcode_job_limit"
+      android:title="@string/title_transcode_job_limit"
+      android:inputType="number"
+      android:defaultValue="3"
+      android:dialogMessage="@string/message_transcode_job_limit"
+      android:layout="@layout/pref" />
+    </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/title_http_timeouts">
     <EditTextPreference 

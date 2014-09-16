@@ -57,8 +57,8 @@
   <string name="summary_prefs_video_quality">Stream settings for device playback</string>
   <string name="title_prefs_caching">Data Caching</string>
   <string name="summary_prefs_caching">Media list data cache</string>
-  <string name="title_prefs_timeouts">Timeouts</string>
-  <string name="summary_prefs_timeouts">Backend timeout settings</string>
+  <string name="title_prefs_timeouts">Timeouts &amp; Limits</string>
+  <string name="summary_prefs_timeouts">Allowable performance ranges</string>
   <string name="title_playback_settings">Playback Settings</string>
   <string name="title_network_settings">Network Settings</string>
   <string name="title_connect_settings">Connections</string>
@@ -122,6 +122,8 @@
   <string name="title_http_timeouts">HTTP</string>
   <string name="title_tuner_timeout">Tuner Timeout</string>
   <string name="title_transcode_timeout">Transcode Timeout</string>
+  <string name="title_transcode_job_limit">Transcode Job Limit</string>
+  <string name="message_transcode_job_limit">Maximum number of simultaneous HLS transcoding jobs Mythling will request</string>
   <string name="title_connect_timeout">Connect Timeout</string>
   <string name="title_read_timeout">Read Timeout</string>
   <string name="title_internal_backend_host">Host</string>

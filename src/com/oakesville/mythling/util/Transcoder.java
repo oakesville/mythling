@@ -70,7 +70,7 @@ public class Transcoder
     URL baseUrl = appSettings.getMythTvServicesBaseUrl();
 
     boolean preExist = false;
-    int maxTranscodes = 3;  // TODO prefs
+    int maxTranscodes = appSettings.getTranscodeJobLimit();
     boolean filtered = false;  // filtering doesn't work for shit
 
     // check if stream is already available

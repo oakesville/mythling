@@ -104,6 +104,7 @@ public class AppSettings
   public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
   public static final String TUNER_TIMEOUT = "tuner_timeout";
   public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
+  public static final String TRANSCODE_JOB_LIMIT = "transcode_job_limit";
   public static final String HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
   public static final String HTTP_READ_TIMEOUT = "http_read_timeout";
   public static final String PAGER_CURRENT_POSITION = "movie_current_position";
@@ -557,7 +558,7 @@ public class AppSettings
   
   public int getInternalVideoBitrate()
   {
-    return Integer.parseInt(prefs.getString(INTERNAL_VIDEO_BITRATE, "1600000"));
+    return Integer.parseInt(prefs.getString(INTERNAL_VIDEO_BITRATE, "600000"));
   }
 
   public int getExternalVideoBitrate()
@@ -796,6 +797,11 @@ public class AppSettings
   public int getTranscodeTimeout()
   {
     return Integer.parseInt(prefs.getString(TRANSCODE_TIMEOUT, "30").trim());
+  }
+
+  public int getTranscodeJobLimit()
+  {
+    return Integer.parseInt(prefs.getString(TRANSCODE_JOB_LIMIT, "3").trim());
   }
   
   public int getHttpConnectTimeout()
