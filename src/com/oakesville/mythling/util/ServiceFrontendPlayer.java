@@ -124,12 +124,9 @@ public class ServiceFrontendPlayer implements FrontendPlayer
     {
       try
       {
-        
         URL url = appSettings.getFrontendServiceBaseUrl();
         if (item.isRecording() || item.isLiveTv())
           url = new URL(url + "/Frontend/PlayRecording?" + ((Recording)item).getChanIdStartTimeParams());
-//        else if (item.isLiveTv())
-//          throw new UnsupportedOperationException("LiveTV not supported by ServiceFrontendPlayer");
         else if (item.isMusic())
           throw new UnsupportedOperationException("Music playback not supported by ServiceFrontendPlayer");
         else
