@@ -209,7 +209,7 @@ public class Transcoder
   
   private boolean liveStreamMatchesItem(LiveStreamInfo liveStream, Item item)
   {
-    String itemPath = item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
+    String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
     if (storageGroup == null)
     {
       return liveStream.getFile().equals(basePath + "/" + itemPath);
