@@ -43,15 +43,17 @@ public class SocketFrontendPlayer implements FrontendPlayer
   
   private AppSettings appSettings;
   private String charSet;
+  private String basePath;
   private Item item;
   private Socket socket;
   private PrintWriter out;
   private BufferedReader in;
   private String status;
   
-  public SocketFrontendPlayer(AppSettings settings, Item item, String charSet)
+  public SocketFrontendPlayer(AppSettings settings, String basePath, Item item, String charSet)
   {
     this.appSettings = settings;
+    this.basePath = basePath;
     this.item = item;
     this.charSet = charSet;
   }
@@ -99,7 +101,10 @@ public class SocketFrontendPlayer implements FrontendPlayer
     {
       try
       {
-        String filepath = ""; // TODO item.getFilePath();
+        String filepath = basePath == null ? "" : basePath;
+        if (item.getPath() != null)
+          filepath += "/" + item.getPath();
+        filepath += "/" + item.getFileName();
         open(charSet);
         if (item.isMusic())
           run("play music file " + filepath);

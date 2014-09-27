@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,6 +72,7 @@ import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
+import com.oakesville.mythling.util.ServiceFrontendPlayer;
 import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
 
@@ -520,6 +523,18 @@ public abstract class MediaActivity extends Activity
         {
           if (item.isLiveTv() || item.isMovie())
           {
+            if (item.isLiveTv() && ((TvShow)item).getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
+            {
+              new AlertDialog.Builder(this)
+              .setIcon(android.R.drawable.ic_dialog_alert)
+              .setTitle("Live TV")
+              .setMessage("Show has already ended: " + ((TvShow)item).getShowInfo())
+              .setPositiveButton("OK", null)
+              .show();
+              stopProgress();
+              onResume();
+              return;
+            }
             String msg = null;
             if (item.isLiveTv())
               msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be scheduled if necessary.";
@@ -567,7 +582,11 @@ public abstract class MediaActivity extends Activity
       }
       else // frontend playback
       {
-        final SocketFrontendPlayer player = new SocketFrontendPlayer(appSettings, item, getCharSet());
+        final FrontendPlayer player;
+        if (item.isMusic())
+          player = new SocketFrontendPlayer(appSettings, mediaList.getBasePath(), item, getCharSet());
+        else
+          player = new ServiceFrontendPlayer(appSettings, item);
         if (player.checkIsPlaying())
         {
           new AlertDialog.Builder(this)
@@ -578,6 +597,7 @@ public abstract class MediaActivity extends Activity
           {
             public void onClick(DialogInterface dialog, int which)
             {
+              player.stop();
               startPlayback(item, player);
             }
           })

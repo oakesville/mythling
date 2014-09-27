@@ -136,6 +136,8 @@ public class Transcoder
       URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
       String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
       streamInfo = new MythTvParser(getStreamJson, appSettings).parseStreamInfo();
+      if (streamInfo.getRelativeUrl().isEmpty())
+        throw new IOException("No live stream found.");
     }    
     
     return preExist; 

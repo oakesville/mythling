@@ -68,7 +68,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
       }
     }
     if (state == null)
-      throw new IOException("Unable to connect to mythfrontend: " + appSettings.getFrontendServiceBaseUrl());
+      throw new IOException("Error checking mythfrontend frontend status at " + appSettings.getFrontendServiceBaseUrl());
     
     return !state.equals("idle");
   }
@@ -94,7 +94,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/GetStatus");        
         HttpHelper downloader = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
         String frontendStatusJson = new String(downloader.get(), "UTF-8");
-        state = new MythTvParser(frontendStatusJson, appSettings).parseFrontendStatus("state");
+        state = new MythTvParser(frontendStatusJson, appSettings).parseFrontendStatus();
         return 0L;
       }
       catch (Exception ex)
@@ -111,7 +111,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
       if (result != 0L)
       {
         if (ex != null)
-          Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+          Toast.makeText(appSettings.getAppContext(), ex.toString(), Toast.LENGTH_LONG).show();
       }
     }
   }
@@ -126,18 +126,20 @@ public class ServiceFrontendPlayer implements FrontendPlayer
       {
         
         URL url = appSettings.getFrontendServiceBaseUrl();
-        if (item.isRecording())
-          url = new URL(url + "/Frontend/PlayRecording?ChanId" + ((Recording)item).getChanIdStartTimeParams());
-        else if (item.isLiveTv())
-          throw new UnsupportedOperationException("LiveTV not supported by ServiceFrontendPlayer");
+        if (item.isRecording() || item.isLiveTv())
+          url = new URL(url + "/Frontend/PlayRecording?" + ((Recording)item).getChanIdStartTimeParams());
+//        else if (item.isLiveTv())
+//          throw new UnsupportedOperationException("LiveTV not supported by ServiceFrontendPlayer");
         else if (item.isMusic())
           throw new UnsupportedOperationException("Music playback not supported by ServiceFrontendPlayer");
         else
-          url = new URL(url + "/Frontend/PlayVideo?Id" + item.getId());
+          url = new URL(url + "/Frontend/PlayVideo?Id=" + item.getId());
               
         HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-        String frontendStatusJson = new String(poster.post(), "UTF-8");
-        state = new MythTvParser(frontendStatusJson, appSettings).parseFrontendStatus("state");
+        String resJson = new String(poster.post(), "UTF-8");
+        boolean res = new MythTvParser(resJson, appSettings).parseBool();
+        if (!res)
+          throw new ServiceException("Frontend playback failed for url " + url);
         return 0L;
       }
       catch (Exception ex)
@@ -167,11 +169,12 @@ public class ServiceFrontendPlayer implements FrontendPlayer
     {
       try
       {
-        
         URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");              
         HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-        String frontendStatusJson = new String(poster.get(), "UTF-8");
-        state = new MythTvParser(frontendStatusJson, appSettings).parseFrontendStatus("state");
+        String resJson = new String(poster.get(), "UTF-8");
+        boolean res = new MythTvParser(resJson, appSettings).parseBool();
+        if (!res)
+          throw new ServiceException("Error stopping frontend playback: " + url);
         return 0L;
       }
       catch (Exception ex)

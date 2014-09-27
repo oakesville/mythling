@@ -589,17 +589,11 @@ public class MythTvParser implements MediaListParser
     return DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(str + " UTC");    
   }
   
-  public String parseFrontendStatus(String key) throws JSONException
+  public String parseFrontendStatus() throws JSONException
   {
     JSONObject frontendStatus = new JSONObject(json).getJSONObject("FrontendStatus");
-    JSONArray strings = frontendStatus.getJSONArray("State");
-    for (int i = 0; i < strings.length(); i++)
-    {
-      JSONObject string = (JSONObject) strings.get(i);
-      if (string.has("Key") && key.equals(string.getString("Key")))
-        return string.getString("Value");
-    }
-    return null;
+    JSONObject stateObj = frontendStatus.getJSONObject("State");
+    return stateObj.getString("state");
   }
   
   public String parseString() throws JSONException
