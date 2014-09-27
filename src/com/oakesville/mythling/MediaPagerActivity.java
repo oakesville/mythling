@@ -380,7 +380,7 @@ public class MediaPagerActivity extends MediaActivity
            {
              ((TextView)v).setBackgroundColor(Color.GRAY);
              Uri.Builder builder = new Uri.Builder();
-             builder.path(pagerActivity.path + "/" + listable.toString());
+             builder.path(pagerActivity.path.length() == 0 ? listable.toString() : pagerActivity.path + "/" + listable.toString());
              Uri uri = builder.build();
              startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaPagerActivity.class));
            }
@@ -397,7 +397,7 @@ public class MediaPagerActivity extends MediaActivity
           {
             ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
             Uri.Builder builder = new Uri.Builder();
-            builder.path(pagerActivity.path + "/" + listable.toString());
+            builder.path(pagerActivity.path.length() == 0 ? listable.toString() : pagerActivity.path + "/" + listable.toString());
             Uri uri = builder.build();
             startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(),  MediaPagerActivity.class));
           }
