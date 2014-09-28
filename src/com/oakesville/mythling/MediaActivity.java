@@ -583,7 +583,7 @@ public abstract class MediaActivity extends Activity
       else // frontend playback
       {
         final FrontendPlayer player;
-        if (item.isMusic())
+        if (item.isMusic() || mediaList.getStorageGroup() == null) // frontend services require storage groups
           player = new SocketFrontendPlayer(appSettings, mediaList.getBasePath(), item, getCharSet());
         else
           player = new ServiceFrontendPlayer(appSettings, item);
