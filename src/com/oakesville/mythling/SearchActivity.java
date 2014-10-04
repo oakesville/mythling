@@ -239,12 +239,6 @@ public class SearchActivity extends MediaActivity
   } 
   
   @Override
-  public void onBackPressed()
-  {
-    super.onBackPressed();
-  }
-
-  @Override
   protected Transcoder getTranscoder(Item item)
   {
     StorageGroup storageGroup = searchResults.getStorageGroups().get(AppSettings.getStorageGroup(item.getType()));
