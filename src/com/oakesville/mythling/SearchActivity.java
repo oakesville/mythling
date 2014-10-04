@@ -81,7 +81,20 @@ public class SearchActivity extends MediaActivity
     {
       searchQuery = intent.getStringExtra(SearchManager.QUERY);
       search();
+    }    
+  }
+  
+  @Override
+  public void onNewIntent(Intent intent)
+  {
+    // verify the action and get the query
+    if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+    {
+      searchQuery = intent.getStringExtra(SearchManager.QUERY);
+      search();
     }
+    
+    super.onNewIntent(intent);
   }
     
   @Override

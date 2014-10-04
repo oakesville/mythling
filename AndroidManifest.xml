@@ -66,7 +66,8 @@
     <activity 
       android:name="com.oakesville.mythling.SearchActivity"
       android:label="@string/title_activity_search"
-      android:exported="false">
+      android:exported="false"
+      android:launchMode="singleTask">
       <meta-data
         android:name="android.app.searchable"
         android:resource="@xml/searchable" />
