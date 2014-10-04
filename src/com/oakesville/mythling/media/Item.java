@@ -149,8 +149,8 @@ public abstract class Item implements Listable
   {
     StringBuffer buf = new StringBuffer(PREFIX);
     buf.append("(").append(getTypeTitle()).append(") ");
-    if (getPath() != null && getPath().length() > 0)
-      buf.append(getPath()).append("/");
+    if (getSearchPath() != null && getSearchPath().length() > 0)
+      buf.append(getSearchPath()).append("/");
     buf.append(getTitle());
     if (getSubTitle() != null)
       buf.append(" - \"").append(getSubTitle()).append("\"");

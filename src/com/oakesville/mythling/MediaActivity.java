@@ -63,6 +63,7 @@ import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TunerInUseException;
 import com.oakesville.mythling.media.TvShow;
@@ -585,10 +586,28 @@ public abstract class MediaActivity extends Activity
       else // frontend playback
       {
         final FrontendPlayer player;
-        if (item.isMusic() || mediaList.getStorageGroup() == null) // frontend services require storage groups
-          player = new SocketFrontendPlayer(appSettings, mediaList.getBasePath(), item, getCharSet());
+        if (item.isSearchResult())
+        {
+          SearchResults searchResults = ((SearchActivity)this).searchResults;
+          StorageGroup storageGroup = searchResults.getStorageGroups().get(AppSettings.getStorageGroup(item.getType()));
+          String basePath = null;
+          if (item.isMusic())
+            basePath = searchResults.getMusicBase();
+          else if (storageGroup == null)
+            basePath = searchResults.getVideoBase();
+          if (basePath != null)
+            player = new SocketFrontendPlayer(appSettings, basePath, item, getCharSet());
+          else
+            player = new ServiceFrontendPlayer(appSettings, item);
+        }
         else
-          player = new ServiceFrontendPlayer(appSettings, item);
+        {
+          if (item.isMusic() || mediaList.getStorageGroup() == null) // frontend services require storage groups
+            player = new SocketFrontendPlayer(appSettings, mediaList.getBasePath(), item, getCharSet());
+          else
+            player = new ServiceFrontendPlayer(appSettings, item);
+        }
+        
         if (player.checkIsPlaying())
         {
           new AlertDialog.Builder(this)
@@ -627,7 +646,7 @@ public abstract class MediaActivity extends Activity
       if (mediaPlayer.isPlaying())
       {
         mediaPlayer.stop();
-        mediaPlayer.release();
+        // mediaPlayer.release();
       }
       
       mediaPlayer.reset();

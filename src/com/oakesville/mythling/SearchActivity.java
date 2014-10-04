@@ -51,7 +51,7 @@ public class SearchActivity extends MediaActivity
   
   private String searchQuery;
   private String resultsJson;
-  private SearchResults searchResults;
+  SearchResults searchResults;
   private ListView listView;
   public ListView getListView() { return listView; }
 
@@ -179,12 +179,7 @@ public class SearchActivity extends MediaActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
               Item item = (Item)items.get(position);
-              if (item.isMusic() && !item.getPath().startsWith(searchResults.getMusicBase()))
-                item.setPath(item.getSearchPath());
-//              else if ((item.isRecording() || item.isLiveTv()))
-//                item.setPath(searchResults.getRecordingsBase());
-              else
-                item.setPath(item.getSearchPath());
+              item.setPath(item.getSearchPath());
               playItem(item);
             }
           });
@@ -213,15 +208,18 @@ public class SearchActivity extends MediaActivity
 
   public void refresh() throws BadSettingsException
   {
-    startActivity(new Intent(this, MainActivity.class));
+    Intent intent = new Intent(this, MainActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
+    finish();
   } 
   
   @Override
   public void onBackPressed()
   {
     Intent intent = new Intent(this, MainActivity.class);
-    startActivity(intent);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
     finish();
   }
 
