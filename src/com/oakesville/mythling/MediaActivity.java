@@ -116,6 +116,8 @@ public abstract class MediaActivity extends Activity
   private int count;
   private Timer timer;
   
+  protected boolean modeSwitch;
+  
   public abstract void refresh() throws BadSettingsException;
   public abstract ListView getListView();
 
@@ -598,7 +600,7 @@ public abstract class MediaActivity extends Activity
             public void onClick(DialogInterface dialog, int which)
             {
               player.stop();
-              startPlayback(item, player);
+              startFrontendPlayback(item, player);
             }
           })
           .setNegativeButton("No", null)
@@ -606,7 +608,7 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          startPlayback(item, player);
+          startFrontendPlayback(item, player);
         }
       }
     }
@@ -648,7 +650,7 @@ public abstract class MediaActivity extends Activity
     refreshMediaList();
   }
   
-  private void startPlayback(Item item, final FrontendPlayer player)
+  private void startFrontendPlayback(Item item, final FrontendPlayer player)
   {
     if (item.isLiveTv())
     {
@@ -710,6 +712,7 @@ public abstract class MediaActivity extends Activity
           }
         });
         countdownDialog.setCanceledOnTouchOutside(true);
+        // countdownDialog.setProgressDrawable(getResources().getDrawable(R.drawable.countdown_bar));
         countdownDialog.show();
         countdownDialog.setProgress(10);
     

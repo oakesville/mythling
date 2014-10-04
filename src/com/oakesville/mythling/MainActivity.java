@@ -81,7 +81,7 @@ public class MainActivity extends MediaActivity
     if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail)
     {
       Intent intent = new Intent(this, MediaPagerActivity.class);
-      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(intent);
       finish();
       return;
@@ -198,7 +198,9 @@ public class MainActivity extends MediaActivity
     Uri.Builder builder = new Uri.Builder();
     builder.path("");
     Uri uri = builder.build();
-    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
+    Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
   }
   
 }

@@ -47,7 +47,6 @@ import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -84,6 +83,8 @@ public class MediaListActivity extends MediaActivity
       String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
       if (newPath != null && !newPath.isEmpty())
         path = newPath;
+      
+      modeSwitch = getIntent().getBooleanExtra("modeSwitch", false);
       
       if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -146,11 +147,6 @@ public class MediaListActivity extends MediaActivity
     showViewMenu(supportsViewMenu());
     showSearchMenu(supportsSearch());
     listables = mediaList.getListables(path);
-    if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail)
-    {
-      goDetailView();
-      return;
-    }
     
     if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
     {
@@ -249,7 +245,7 @@ public class MediaListActivity extends MediaActivity
     topOffset = 0;
     getAppSettings().setLastLoad(0);
     Intent intent = new Intent(this, MainActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
     finish();
   }
@@ -259,6 +255,27 @@ public class MediaListActivity extends MediaActivity
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);
     Uri uri = builder.build();
-    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class));
-  }  
+    Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class);
+    intent.putExtra("modeSwitch", true);
+//    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
+  }
+  
+  @Override
+  public void onBackPressed()
+  {
+    if (modeSwitch)
+    {
+      modeSwitch = false;
+      Intent intent = new Intent(this, MainActivity.class);
+      startActivity(intent);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+      finish();
+    }
+    else
+    {
+      super.onBackPressed();
+    }
+  }
+  
 }

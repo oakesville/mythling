@@ -221,7 +221,7 @@ public class SearchActivity extends MediaActivity
   {
     Intent intent = new Intent(this, MainActivity.class);
     startActivity(intent);
-    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     finish();
   }
 

@@ -114,6 +114,9 @@ public class MediaPagerActivity extends MediaActivity
         path = "";
       else
         path = URLDecoder.decode(newPath, "UTF-8");
+      
+      modeSwitch = getIntent().getBooleanExtra("modeSwitch", false);
+      
       getActionBar().setDisplayHomeAsUpEnabled(!path.isEmpty());
     }
     catch (Exception ex)
@@ -272,7 +275,8 @@ public class MediaPagerActivity extends MediaActivity
     if (path == null || path.isEmpty())
     {
       Intent intent = new Intent(this, MainActivity.class);
-      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.putExtra("modeSwitch", true);
       startActivity(intent);
     }
     else
@@ -280,7 +284,9 @@ public class MediaPagerActivity extends MediaActivity
       Uri.Builder builder = new Uri.Builder();
       builder.path(path);
       Uri uri = builder.build();
-      startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
+      Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class);
+      intent.putExtra("modeSwitch", true);
+      startActivity(intent);
     }
   }
   
@@ -288,7 +294,23 @@ public class MediaPagerActivity extends MediaActivity
   {
     return null;
   }
-      
+  
+  @Override
+  public void onBackPressed()
+  {
+    if (modeSwitch)
+    {
+      modeSwitch = false;
+      Intent intent = new Intent(this, MediaPagerActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
+      finish();
+    }
+    else
+    {
+      super.onBackPressed();
+    }
+  }       
   
   private class MediaPagerAdapter extends FragmentPagerAdapter
   {
