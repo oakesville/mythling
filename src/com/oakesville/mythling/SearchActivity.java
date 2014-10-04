@@ -100,7 +100,20 @@ public class SearchActivity extends MediaActivity
   @Override
   protected void onResume()
   {
-    populate();
+    try
+    {
+      if (getAppData() == null || getAppData().isExpired())
+        refresh();
+      else
+        populate();
+    }
+    catch (Exception ex)
+    {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+      Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+    }
+    
     super.onResume();
   }
   
