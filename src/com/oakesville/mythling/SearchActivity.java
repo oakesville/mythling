@@ -52,6 +52,7 @@ public class SearchActivity extends MediaActivity
   private String searchQuery;
   private String resultsJson;
   SearchResults searchResults;
+  
   private ListView listView;
   public ListView getListView() { return listView; }
 
@@ -66,6 +67,7 @@ public class SearchActivity extends MediaActivity
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    
     setContentView(R.layout.search);
     getActionBar().setDisplayHomeAsUpEnabled(true);
     
@@ -80,6 +82,13 @@ public class SearchActivity extends MediaActivity
       searchQuery = intent.getStringExtra(SearchManager.QUERY);
       search();
     }
+  }
+    
+  @Override
+  protected void onResume()
+  {
+    populate();
+    super.onResume();
   }
   
   @Override
@@ -134,6 +143,22 @@ public class SearchActivity extends MediaActivity
     }
   }
   
+  protected void populate()
+  {
+    final List<Item> items = searchResults.getAll();
+    adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Item[0]));
+    listView.setAdapter(adapter);
+    listView.setOnItemClickListener(new OnItemClickListener()
+    {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+      {
+        Item item = (Item)items.get(position);
+        item.setPath(item.getSearchPath());
+        playItem(item);
+      }
+    });    
+  }
+  
   private class SearchTask extends AsyncTask<URL,Integer,Long>
   {
     private Exception ex;
@@ -171,18 +196,7 @@ public class SearchActivity extends MediaActivity
       {
         try
         {
-          final List<Item> items = searchResults.getAll();
-          adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Item[0]));
-          listView.setAdapter(adapter);
-          listView.setOnItemClickListener(new OnItemClickListener()
-          {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-              Item item = (Item)items.get(position);
-              item.setPath(item.getSearchPath());
-              playItem(item);
-            }
-          });
+          populate();
         }
         catch (Exception ex)
         {
@@ -208,19 +222,13 @@ public class SearchActivity extends MediaActivity
 
   public void refresh() throws BadSettingsException
   {
-    Intent intent = new Intent(this, MainActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-    finish();
+    search();
   } 
   
   @Override
   public void onBackPressed()
   {
-    Intent intent = new Intent(this, MainActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-    finish();
+    super.onBackPressed();
   }
 
   @Override

@@ -257,7 +257,6 @@ public class MediaListActivity extends MediaActivity
     Uri uri = builder.build();
     Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class);
     intent.putExtra("modeSwitch", true);
-//    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
   
