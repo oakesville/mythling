@@ -69,6 +69,7 @@ public class Recording extends TvShow
     try
     {
       buf.append(getStartDateTimeFormatted()).append(" - ");
+      buf.append(getEndTimeFormatted()).append(" ");
       buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
     }
     catch (ParseException ex)

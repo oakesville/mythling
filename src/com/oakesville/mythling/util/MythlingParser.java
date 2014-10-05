@@ -265,10 +265,9 @@ public class MythlingParser implements MediaListParser
       item.setProgramStart(jsonObj.getString("programStart"));
     if (jsonObj.has("rating"))
     {
-      // seems that latest mythconverg stores program.stars and recorded.stars as a fraction of one, but try to be compatible
-      Float rating = Float.parseFloat(jsonObj.getString("rating"));
-      if (rating <= 1)
-        rating = rating * 5;
+      // mythconverg stores program.stars and recorded.stars as a fraction of one
+      Float rating = Float.parseFloat(jsonObj.getString("rating")) * 10;
+      rating = (float)Math.round(rating) / 2;
       item.setRating(rating);
     }
   }

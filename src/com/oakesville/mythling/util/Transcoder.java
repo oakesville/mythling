@@ -133,6 +133,14 @@ public class Transcoder
       streamInfo = new MythTvParser(addStreamJson, appSettings).parseStreamInfo();
       
       // get the actual streamInfo versus requested
+      try
+      {
+        // occasionally the follow-up request comes too soon 
+        Thread.sleep(200);
+      }
+      catch (InterruptedException ex) 
+      {
+      }
       URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
       String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
       streamInfo = new MythTvParser(getStreamJson, appSettings).parseStreamInfo();

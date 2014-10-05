@@ -438,9 +438,10 @@ public class MythTvParser implements MediaListParser
     }
     if (jsonObj.has("Stars"))
     {
-      String stars = jsonObj.getString("Stars");
-      if (!stars.isEmpty())
-        tvShow.setRating(Float.parseFloat(stars));
+      // mythconverg stores program.stars and recorded.stars as a fraction of one
+      Float rating = Float.parseFloat(jsonObj.getString("Stars")) * 10;
+      rating = (float)Math.round(rating) / 2;
+      tvShow.setRating(rating);
     }
     if (tvShow instanceof Recording)
     {
