@@ -173,11 +173,14 @@ public class MythlingParser implements MediaListParser
       searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
     }
 
-    JSONArray songs = list.getJSONArray("songs");
-    for (int i = 0; i < songs.length(); i++)
+    if (list.has("songs"))
     {
-      JSONObject song = (JSONObject) songs.get(i);
-      searchResults.addSong(buildItem(MediaType.music, song));
+      JSONArray songs = list.getJSONArray("songs");
+      for (int i = 0; i < songs.length(); i++)
+      {
+        JSONObject song = (JSONObject) songs.get(i);
+        searchResults.addSong(buildItem(MediaType.music, song));
+      }
     }
     
     if (BuildConfig.DEBUG)

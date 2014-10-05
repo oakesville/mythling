@@ -435,6 +435,7 @@ if (!$type->isSearch())
   $i = 0;
   $depth = 0;
   $prevPath = "";
+  $size = 0;
   $prevSize = 0;
   $prevHadItems = false;
   $keys = array_keys($catPaths);

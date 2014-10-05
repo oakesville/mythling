@@ -88,7 +88,7 @@ public class Recording extends TvShow
     buf.append("(").append(getTypeTitle()).append(") ");
     if (getPath() != null && getPath().length() > 0)
       buf.append(getPath()).append("/");
-    buf.append(getTitle());
+    buf.append(getTitle()).append(" ");
     try
     {
       buf.append(getStartDateTimeFormatted()).append(" - ");
