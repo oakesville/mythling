@@ -313,6 +313,8 @@ if (!$type->isSearch())
       $oads = mysql_result($result, $i, "oad");
       if (strcmp("0000-00-00", $oads) != 0)
         $oad = $oads;
+      else
+        $oad = null;
       $et = mysql_result($result, $i, "endtime");
       $rat = mysql_result($result, $i, "stars");
       if ($type->isRecordings())
