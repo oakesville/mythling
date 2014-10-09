@@ -115,6 +115,22 @@ public class Category implements Listable, Comparable<Category>
   @Override
   public int compareTo(Category another)
   {
-    return this.name.compareTo(another.name);
+    String n1 = stripLeadingArticle(this.name);
+    String n2 = stripLeadingArticle(another.name);
+    return n1.compareToIgnoreCase(n2);
+  }
+  
+  /**
+   * TODO duplicated in Item.java 
+   */
+  private String stripLeadingArticle(String inStr)
+  {
+    if (inStr.startsWith("The "))
+      return inStr.substring(4);
+    if (inStr.startsWith("A "))
+      return inStr.substring(2);
+    if (inStr.startsWith("An "))
+      return inStr.substring(3);
+    return inStr;
   }
 }

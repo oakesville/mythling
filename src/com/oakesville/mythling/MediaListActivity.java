@@ -47,6 +47,7 @@ import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -83,7 +84,7 @@ public class MediaListActivity extends MediaActivity
       String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
       if (newPath != null && !newPath.isEmpty())
         path = newPath;
-      
+            
       modeSwitch = getIntent().getBooleanExtra("modeSwitch", false);
       
       if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
@@ -252,6 +253,9 @@ public class MediaListActivity extends MediaActivity
 
   protected void goDetailView()
   {
+    if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+      getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
+    
     Uri.Builder builder = new Uri.Builder();
     builder.path(path);
     Uri uri = builder.build();

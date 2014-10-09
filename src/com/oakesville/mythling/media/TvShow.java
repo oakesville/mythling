@@ -81,23 +81,23 @@ public class TvShow extends Item
   public String getStartDateTimeFormatted() throws ParseException
   {
     String startYear = DateTimeFormats.YEAR_FORMAT.format(getStartTime()); 
-    String sdtf = DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime());
+    String sdtf = DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace("AM", "a").replace("PM", "p");
     if (!startYear.equals(DateTimeFormats.YEAR_FORMAT.format(new Date())))
       sdtf += ", " + startYear;
     return sdtf;
   }
   public String getStartTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.TIME_FORMAT.format(getStartTime());
+    return DateTimeFormats.TIME_FORMAT.format(getStartTime()).replace("AM", "a").replace("PM", "p");
   }
     
   public String getEndDateTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.DATE_TIME_FORMAT.format(getEndTime());    
+    return DateTimeFormats.DATE_TIME_FORMAT.format(getEndTime()).replace("AM", "a").replace("PM", "p");    
   }
   public String getEndTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.TIME_FORMAT.format(getEndTime());
+    return DateTimeFormats.TIME_FORMAT.format(getEndTime()).replace("AM", "a").replace("PM", "p");
   }
   public String getEndTimeParam()
   {
@@ -126,33 +126,86 @@ public class TvShow extends Item
   
   public String getShowInfo()
   {
-    StringBuffer buf = new StringBuffer();
+    StringBuffer info = new StringBuffer();
     
     if (isLiveTv())
     {
-      buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
+      info.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
       try
       {
-        buf.append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted());
+        info.append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted());
       }
       catch (ParseException ex)
       {
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
       }
-      buf.append("\n");
     }
     
-    if (getRating() > 0)
-      buf.append(getRatingString(getRating())).append(" ");
     if (getSubTitle() != null)
-      buf.append("\"").append(getSubTitle()).append("\"\n");
+      info.append("\n\"").append(getSubTitle()).append("\"");
     if (isRepeat())
-      buf.append("(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")\n");
-    if (description != null)
-      buf.append(description);
+      info.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
+    
+    return info.toString();
+  }
+  
+  public String getShowTimeInfo()
+  {
+    StringBuffer buf = new StringBuffer();
+    try
+    {
+      buf.append("\n").append(getStartDateTimeFormatted()).append(" - ");
+      buf.append(getEndTimeFormatted()).append(" ");
+      buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(")");
+    }
+    catch (ParseException ex)
+    {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+    }
     
     return buf.toString();
+  }
+  
+  public String getAirDateInfo()
+  {
+    StringBuffer buf = new StringBuffer();
+    if (isRepeat())
+    {
+      if (getRating() > 0) // proxy for determining the show is a movie
+        buf.append("(").append(DateTimeFormats.YEAR_FORMAT.format(originallyAired)).append(")");
+      else
+        buf.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
+    }
+    return buf.toString();
+  }
+  
+  public String getLabel()
+  {
+    String label = getTitle();
+    if (isShowMovie() && getYear() > 0)
+      label += " (" + getYear() + ")";    
+    if (getSubTitle() != null)
+      label += "\n\"" + getSubTitle() + "\"";
+    return label;
+  }  
+  
+  public String getShowDescription()
+  {
+    return description == null ? "" : description;
+  }
+  
+  public boolean isShowMovie()
+  {
+    return getRating() > 0; // proxy for determining the show is a movie
+  }
+  
+  public int getYear()
+  {
+    if (originallyAired == null)
+      return 0;
+    return Integer.parseInt(DateTimeFormats.YEAR_FORMAT.format(originallyAired));
   }
   
   protected boolean isRepeat()
@@ -164,9 +217,9 @@ public class TvShow extends Item
     origCal.setTime(originallyAired);
     Calendar startCal = Calendar.getInstance();
     startCal.setTime(startTime);
-    return origCal.get(Calendar.YEAR) == startCal.get(Calendar.YEAR)
+    return !(origCal.get(Calendar.YEAR) == startCal.get(Calendar.YEAR)
         && origCal.get(Calendar.MONTH) == startCal.get(Calendar.MONTH)
-        && origCal.get(Calendar.DAY_OF_MONTH) == startCal.get(Calendar.DAY_OF_MONTH);
+        && origCal.get(Calendar.DAY_OF_MONTH) == startCal.get(Calendar.DAY_OF_MONTH));
   }
 
   @Override

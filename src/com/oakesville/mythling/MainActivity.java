@@ -44,6 +44,8 @@ import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 
 public class MainActivity extends MediaActivity
@@ -195,6 +197,9 @@ public class MainActivity extends MediaActivity
 
   protected void goDetailView()
   {
+    if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+      getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
+    
     Uri.Builder builder = new Uri.Builder();
     builder.path("");
     Uri uri = builder.build();

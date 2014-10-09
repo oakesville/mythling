@@ -44,6 +44,7 @@ import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.StorageGroup;
@@ -172,7 +173,8 @@ public class MythTvParser implements MediaListParser
       {
         JSONObject rec = (JSONObject) recs.get(i);
         Item recItem = buildRecordingItem(rec);
-        if (sortType == null || sortType == SortType.byTitle)
+        ViewType viewType = appSettings.getMediaSettings().getViewType(); 
+        if (viewType == ViewType.list && (sortType == null || sortType == SortType.byTitle))
         {
           // categorize by title
           Category cat = mediaList.getCategory(recItem.getTitle());
@@ -207,7 +209,7 @@ public class MythTvParser implements MediaListParser
     }
     if (BuildConfig.DEBUG)
       Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
-    if (sortType != null && sortType != SortType.byTitle)
+    if (sortType != null)
     {
       startTime = System.currentTimeMillis();
       mediaList.sort(sortType);

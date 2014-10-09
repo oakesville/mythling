@@ -69,6 +69,7 @@ import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
@@ -90,7 +91,7 @@ public class MediaPagerActivity extends MediaActivity
   private List<Listable> items;
   private int currentPosition;
   private SeekBar positionBar;
-  private int[] ratingViewIds = new int[5];
+  private int[] ratingViewIds = new int[] {R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
   
   public String getCharSet()
   {
@@ -238,12 +239,6 @@ public class MediaPagerActivity extends MediaActivity
     TextView tv = (TextView) findViewById(R.id.lastItem);
     tv.setText(String.valueOf(items.size()));
     
-    ratingViewIds[0] = R.id.star_1;
-    ratingViewIds[1] = R.id.star_2;
-    ratingViewIds[2] = R.id.star_3;
-    ratingViewIds[3] = R.id.star_4;
-    ratingViewIds[4] = R.id.star_5;
-
     currentPosition = getAppSettings().getPagerCurrentPosition(mediaList.getMediaType(), path);
     if (items.size() > currentPosition)
     {
@@ -272,6 +267,9 @@ public class MediaPagerActivity extends MediaActivity
   
   protected void goListView()
   {
+    if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+      getAppSettings().clearCache(); // refresh since we're switching from flattened hierarchy
+    
     if (path == null || path.isEmpty())
     {
       Intent intent = new Intent(this, MainActivity.class);
@@ -325,7 +323,7 @@ public class MediaPagerActivity extends MediaActivity
     }
     
     public Fragment getItem(int position)
-    {
+    {      
       Fragment frag = new MediaPagerFragment();
       Bundle args = new Bundle();
       args.putInt("idx", position);
@@ -540,11 +538,16 @@ public class MediaPagerActivity extends MediaActivity
           {
             TvShow tvShow = (TvShow) item;
             // summary
-            if (tvShow.getShowInfo() != null)
-            {
-              TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
-              tv.setText(tvShow.getShowInfo());
-            }
+            StringBuffer summary = new StringBuffer();
+            summary.append(tvShow.getShowTimeInfo());
+            if (!tvShow.isShowMovie())
+              summary.append(tvShow.getAirDateInfo());
+            String details = tvShow.getShowDescription();
+            if (details != null)
+              summary.append("\n").append(details);
+            
+            TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
+            tv.setText(summary.toString());
           }
         }
             

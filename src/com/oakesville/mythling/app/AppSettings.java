@@ -161,6 +161,8 @@ public class AppSettings
         url += "&sort=date";
       else if (mediaSettings.getSortType() == SortType.byRating)
         url += "&sort=rating";
+      else if (mediaType == MediaType.recordings && getMediaSettings().getViewType() == ViewType.detail)
+        url += "&flatten=true";
     }
     else
     {
@@ -689,6 +691,10 @@ public class AppSettings
     Editor ed = prefs.edit();
     ed.putLong(LAST_LOAD, ll);
     return ed.commit();
+  }
+  public boolean clearCache()
+  {
+    return setLastLoad(0);
   }
   
   public URL getIpRetrievalUrl() throws MalformedURLException

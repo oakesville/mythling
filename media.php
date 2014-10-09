@@ -94,6 +94,13 @@ if (isset($_REQUEST['albumArtSongLevel']))
     $albumArtAlbumLevel = false;
 }
 
+$flatten = false;  // currently only affects recordings
+if (isset($_REQUEST['flatten']))
+{
+  if (strtoupper($_REQUEST['flatten']) == 'TRUE')
+    $flatten = true;
+}
+
 $hostname = gethostname();
 date_default_timezone_set("UTC");
 $dt = date("m-d-Y H:i:s") . " UTC";
@@ -211,7 +218,7 @@ if (!$type->isSearch())
     else
     {
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
-      $groupRecordingsByTitle = true;
+      $groupRecordingsByTitle = !$flatten;
     }
     $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rr.recordid, r.recgroup from recorded r " . $where . " " . $orderBy;
   }

@@ -66,22 +66,19 @@ public class Recording extends TvShow
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX);
-    try
-    {
-      buf.append(getStartDateTimeFormatted()).append(" - ");
-      buf.append(getEndTimeFormatted()).append(" ");
-      buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
-    }
-    catch (ParseException ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-    }
-    buf.append("\n").append(getTitle());
-    buf.append("\n").append(getShowInfo());
+    buf.append(getTitle());
+    if (isShowMovie() && getYear() > 0)
+      buf.append(" (").append(getYear()).append(")");
+    if (getRating() > 0)
+      buf.append(" ").append(getRatingString(getRating()));
+    buf.append(getShowTimeInfo());
+    if (getSubTitle() != null)
+      buf.append("\n\"").append(getSubTitle()).append("\"");
+    if (!isShowMovie())
+      buf.append(getAirDateInfo());
     return buf.toString();
   }
-
+  
   @Override
   public String getSearchResultText()
   {
