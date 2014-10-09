@@ -118,6 +118,7 @@ public abstract class MediaActivity extends Activity
   private Timer timer;
   
   protected boolean modeSwitch;
+  protected boolean refreshing;
   
   public abstract void refresh() throws BadSettingsException;
   public abstract ListView getListView();
@@ -799,6 +800,7 @@ public abstract class MediaActivity extends Activity
       if (getAppSettings().getMediaSettings().getType() == MediaType.music && !supportsMusic())
         getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
 
+      refreshing = true;
       new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));      
     }
     catch (Exception ex)
@@ -867,9 +869,10 @@ public abstract class MediaActivity extends Activity
         {
           Map<String,StorageGroup> storageGroups = retrieveStorageGroups();
           StorageGroup mediaStorageGroup = storageGroups.get(getAppSettings().getStorageGroup());
+          StorageGroup artworkStorageGroup = storageGroups.get(getAppSettings().getArtworkStorageGroup());
           if (mediaStorageGroup != null)
           {
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), mediaStorageGroup, null, null);
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), mediaStorageGroup, artworkStorageGroup);
           }
           else
           {
@@ -891,12 +894,10 @@ public abstract class MediaActivity extends Activity
                 basePath = new MythTvParser(new String(downloader.get()), getAppSettings()).parseMythTvSetting(key);
               }
             }
-            StorageGroup artworkStorageGroup = storageGroups.get(getAppSettings().getArtworkStorageGroup());
-            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), null, basePath, artworkStorageGroup);
+            mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), basePath, artworkStorageGroup);
           }
         }
         
-        mediaList.setArtworkStorageGroup(getAppSettings().getArtworkStorageGroup(mediaSettings.getType()));
         mediaList.setCharSet(downloader.getCharSet());
         getAppSettings().clearPagerCurrentPosition(mediaList.getMediaType(), "");
         
@@ -913,6 +914,7 @@ public abstract class MediaActivity extends Activity
     
     protected void onPostExecute(Long result)
     {
+      refreshing = false;
       if (result != 0L)
       {
         stopProgress();

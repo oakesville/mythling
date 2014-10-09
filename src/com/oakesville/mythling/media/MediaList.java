@@ -79,10 +79,6 @@ public class MediaList
   public StorageGroup getStorageGroup() { return storageGroup; }
   public void setStorageGroup(StorageGroup sg) { this.storageGroup = sg; }
   
-  private String artworkStorageGroup;
-  public String getArtworkStorageGroup() { return artworkStorageGroup; }
-  public void setArtworkStorageGroup(String asg) { this.artworkStorageGroup = asg; }
-  
   private List<Item> items = new ArrayList<Item>();
   public List<Item> getItems() { return items; }
   public void setItems(List<Item> items) { this.items = items; }

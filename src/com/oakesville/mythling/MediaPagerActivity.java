@@ -381,6 +381,8 @@ public class MediaPagerActivity extends MediaActivity
     public void onResume()
     {
       super.onResume();
+      if (pagerActivity.refreshing)
+        return;
       
       listable = pagerActivity.items.get(idx);
       appSettings = pagerActivity.getAppSettings();  // somehow this was set to null
@@ -567,14 +569,14 @@ public class MediaPagerActivity extends MediaActivity
         if (item.isMusic())
           artSg = appSettings.isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
         else
-          artSg = getAppData().getMediaList().getArtworkStorageGroup();
+          artSg = appSettings.getArtworkStorageGroup();
         ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
         if (art != null)
         {
           artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
           try
           {
-            String filePath = item.getType() + pagerActivity.path + "/" + art.getArtworkPath();
+            String filePath = item.getType() + "/" + pagerActivity.path + "/" + art.getArtworkPath();
             Bitmap bitmap = getAppData().getImageBitMap(filePath);
             if (bitmap == null)
             {
