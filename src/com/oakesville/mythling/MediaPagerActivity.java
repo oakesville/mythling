@@ -450,17 +450,19 @@ public class MediaPagerActivity extends MediaActivity
         {
           Video video = (Video) item;
           // director
+          TextView tvDir = (TextView) detailView.findViewById(R.id.directorText);
           if (video.getDirector() != null)
-          {
-            TextView tv = (TextView) detailView.findViewById(R.id.directorText);
-            tv.setText("Directed by: " + video.getDirector());
-          }
+            tvDir.setText("Directed by: " + video.getDirector());
+          else
+            tvDir.setVisibility(View.GONE);
+          
+          TextView tvAct = (TextView) detailView.findViewById(R.id.actorsText);
           // actors
           if (video.getActors() != null)
-          {
-            TextView tv = (TextView) detailView.findViewById(R.id.actorsText);
-            tv.setText("Starring: " + video.getActors());
-          }
+            tvAct.setText("Starring: " + video.getActors());
+          else
+            tvAct.setVisibility(View.GONE);
+          
           // summary
           if (video.getSummary() != null)
           {
@@ -548,6 +550,9 @@ public class MediaPagerActivity extends MediaActivity
             if (details != null)
               summary.append("\n").append(details);
             
+            ((TextView)detailView.findViewById(R.id.directorText)).setVisibility(View.GONE);
+            ((TextView)detailView.findViewById(R.id.actorsText)).setVisibility(View.GONE);
+
             TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
             tv.setText(summary.toString());
           }
