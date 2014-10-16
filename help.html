@@ -80,13 +80,13 @@
             The Connections screen is where you specify the port on your backend machine where these services can be accessed.
             </p>
             <p>If you have Apache running on your backend server, then you may optionally enter the host and port for that.
-            With a backend web host running you're able to use the Mythling media services for retrieving media lists and program data.
+            With a backend web host running you're able to use Mythling media services for retrieving media lists and program data.
             The advantages of using Mythling services include the ability to perform searches and to access your <a href="http://www.mythtv.org/wiki/MythMusic">MythMusic</a> library.
             Also, sorting and filtering are considerably faster with Mythling services since these take place on the server rather than on the device.
             The main drawback of using Mythling media services is that they require you to have Apache with PHP installed and running.
             </p>
             <p>
-              <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">More about Mythling media services.</a>
+              <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-Services">More about Mythling media services.</a>
             </p>
             <p>
               <span style="font-weight:bold;">Note:</span> For streaming actual content, Mythling always uses the MythTV services API. 
@@ -110,16 +110,17 @@
               To select a different type, touch the action menu labeled Recordings to show your other options as illustrated in this screenshot.  
             </p>
             <p>
-              Mythling in List mode favors a hierarchical view of your media.
+              Mythling in List Mode favors a hierarchical view of your media.
               Recordings are grouped by title so that when you touch a title you drill in to see the recordings for that title.
               When you select a media library type such as Videos or Movies, you'll notice that Mythling organizes your collection the same way it's arranged on your server's file system.
               This navigational approach is a key motivation behind Mythling.
               If you've spent time organizing your content into a directory structure, you'll appreciate that Mythling reflects that arrangement. 
             </p>
             <p>
-              Movies, TV Series and Videos are each populated from MythTV's video metadata.
-              To decide which videos are treated as Movies and TV Series, Mythling consults the video metadata which will have been retrieved through <a href="http://www.mythtv.org/wiki/MythVideo#Metadata_Lookup">MythVideo Metadata Lookup</a>.
-              Alternatively, if your server's directory structure already segregates according to these types, you can use the Categories preference screen to specify the root locations.
+              Information about Movies, TV Series and Videos is retrieved from the data in MythTV's videometadata table.
+              To identify which videos are treated as Movies and TV Series, Mythling consults this video metadata 
+              Alternatively, if your server's directory structure already segregates according to these media types, you can use the Categories preference screen to specify their root locations.
+              See <a href="http://www.mythtv.org/wiki/MythVideo#Metadata_Lookup">MythVideo Metadata Lookup</a> for more about metadata.
             </p>
           </div>
         </div>
@@ -140,7 +141,7 @@
               and use their excellent browser-based interface.   
             </p>
             <p>
-              Music is always sorted alphabetically by filename or directory (and remember, music access requires <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-List-Services">Mythling Media Services</a>).
+              Music is always sorted alphabetically by filename or directory (and remember, music access requires <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-Services">Mythling Media Services</a>).
             </p>
           </div>
         </div>
@@ -164,15 +165,15 @@
         <div class="help_item">
           <img src="images/screenshots/detail_view.png"
             class="help_shot"
-            alt="Detail View" />
+            alt="Detail Mode" />
           <div class="help_text">
-            <p><span class="help_step">Detail View</span></p>
+            <p><span class="help_step">Detail Mode</span></p>
             <p>
-              The complement to plain-text List mode is Mythling's Detail view, which displays metadata particulars for each item (such as director, cast and description) along with artwork if available.
-              You can switch to Detail view by touching the list icon in the action menu.
+              The complement to plain-text List Mode is Mythling's Detail Mode, which displays metadata particulars for each item (such as director, cast and description) along with artwork if available.
+              You can switch to Detail Mode by touching the list icon in the action menu.
             </p>
             <p>
-              Detail view offers a side-scrolling interface where you swipe from left-to-right or vice-versa to page forward and backward through the list.
+              Detail Mode offers a side-scrolling interface where you swipe from left-to-right or vice-versa to page forward and backward through the list.
               You can also jump ahead and back using the scrollbar at the bottom of the page.    
             </p>
             <p>
@@ -180,7 +181,7 @@
               The artwork to display for each media type is controlled through the Artwork preference screen in Mythling settings.
             </p>
             <p>
-              If your video metadata includes internet references to sites such as themoviedb.org, a link to the site info for your Movies and TV Series is displayed in Detail view.
+              If your video metadata includes internet references to sites such as themoviedb.org, a link to the site info for your Movies and TV Series is displayed in Detail Mode.
               The internet reference base URL for these links is controlled through the Categories preference screen in the Internet section.    
             </p>
           </div>
@@ -199,8 +200,8 @@
               There are a number of excellent video player apps with HLS support available in the Google Play store, including DicePlayer and MX Player. 
             </p>
             <p>
-              As you navigate through your media library in Mythling List mode, content files are differentiated from folders or categories by an arrow symbol (&#x25ba;).
-              In detail mode directories and categories are represented by a folder image with a link to drill in.
+              As you navigate through your media library in Mythling List Mode, content files are differentiated from folders or categories by an arrow symbol (&#x25ba;).
+              In Detail Mode directories and categories are represented by a folder image with a link to drill in.
             </p>
             <p>
               Depending on the selected media type, a confirmation dialog as illustrated here may be presented when you touch a content file for playback.
