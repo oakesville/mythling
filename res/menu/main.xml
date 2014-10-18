@@ -98,7 +98,7 @@
     android:title="@string/menu_settings"
     android:orderInCategory="300"
     android:icon="@drawable/ic_menu_settings"
-    android:showAsAction="ifRoom" />
+    android:showAsAction="never" />
 
   <item
     android:id="@+id/menu_search"
@@ -119,6 +119,6 @@
     android:title="@string/menu_help"
     android:orderInCategory="600"
     android:icon="@drawable/ic_menu_help"
-    android:showAsAction="ifRoom" />
+    android:showAsAction="never" />
 
 </menu>
