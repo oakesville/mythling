@@ -249,8 +249,7 @@ public class MediaListActivity extends MediaActivity
   @Override
   public void sort() throws IOException, JSONException, ParseException
   {
-    path = "";
-    super.sort();
+    refresh();
   }
   
   private void goMain()
