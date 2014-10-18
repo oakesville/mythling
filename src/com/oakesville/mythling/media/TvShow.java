@@ -81,23 +81,23 @@ public class TvShow extends Item
   public String getStartDateTimeFormatted() throws ParseException
   {
     String startYear = DateTimeFormats.YEAR_FORMAT.format(getStartTime()); 
-    String sdtf = DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace("AM", "a").replace("PM", "p");
+    String sdtf = DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
     if (!startYear.equals(DateTimeFormats.YEAR_FORMAT.format(new Date())))
       sdtf += ", " + startYear;
     return sdtf;
   }
   public String getStartTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.TIME_FORMAT.format(getStartTime()).replace("AM", "a").replace("PM", "p");
+    return DateTimeFormats.TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
   }
     
   public String getEndDateTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.DATE_TIME_FORMAT.format(getEndTime()).replace("AM", "a").replace("PM", "p");    
+    return DateTimeFormats.DATE_TIME_FORMAT.format(getEndTime()).replace(" AM", "a").replace(" PM", "p");    
   }
   public String getEndTimeFormatted() throws ParseException
   {
-    return DateTimeFormats.TIME_FORMAT.format(getEndTime()).replace("AM", "a").replace("PM", "p");
+    return DateTimeFormats.TIME_FORMAT.format(getEndTime()).replace(" AM", "a").replace(" PM", "p");
   }
   public String getEndTimeParam()
   {
@@ -155,7 +155,7 @@ public class TvShow extends Item
     StringBuffer buf = new StringBuffer();
     try
     {
-      buf.append("\n").append(getStartDateTimeFormatted()).append(" - ");
+      buf.append("\n").append(getStartDateTimeFormatted()).append("-");
       buf.append(getEndTimeFormatted()).append(" ");
       buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(")");
     }
