@@ -61,7 +61,6 @@ import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
-import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
@@ -525,9 +524,9 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          if (item.isLiveTv() || item.isMovie())
+          if (item.isLiveTv())
           {
-            if (item.isLiveTv() && ((TvShow)item).getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
+            if (((TvShow)item).getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
             {
               new AlertDialog.Builder(this)
               .setIcon(android.R.drawable.ic_dialog_alert)
@@ -539,11 +538,7 @@ public abstract class MediaActivity extends Activity
               onResume();
               return;
             }
-            String msg = null;
-            if (item.isLiveTv())
-              msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be scheduled if necessary.";
-            else
-              msg = ((Movie)item).getShowInfo();
+            String msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be scheduled if necessary.";
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setTitle(item.getTitle())
@@ -554,10 +549,7 @@ public abstract class MediaActivity extends Activity
               {
                 try
                 {
-                  if (item.isLiveTv())
-                    new StreamTvTask((TvShow)item).execute(getAppSettings().getMythTvServicesBaseUrl());
-                  else
-                    new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                  new StreamTvTask((TvShow)item).execute(getAppSettings().getMythTvServicesBaseUrl());
                 }
                 catch (MalformedURLException ex)
                 {
@@ -679,22 +671,6 @@ public abstract class MediaActivity extends Activity
       .setTitle(item.getTitle())
       .setMessage("TODO: Frontend Live TV playback not yet supported.")
       .setPositiveButton("OK", null)
-      .show();
-    }
-    else if (item.isRecording())
-    {
-      new AlertDialog.Builder(this)
-      .setIcon(android.R.drawable.ic_dialog_alert)
-      .setTitle(item.getTitle())
-      .setMessage(((Recording)item).getShowDescription())
-      .setPositiveButton("Play", new DialogInterface.OnClickListener()
-      {
-        public void onClick(DialogInterface dialog, int which)
-        {
-          player.play();
-        }
-      })
-      .setNegativeButton("Cancel", null)
       .show();
     }
     else
