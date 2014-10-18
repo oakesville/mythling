@@ -538,10 +538,11 @@ public abstract class MediaActivity extends Activity
               onResume();
               return;
             }
-            String msg = ((TvShow)item).getShowInfo() + "\n\nRecording will be scheduled if necessary.";
+            String msg = item.getTitle() + "\n" + ((TvShow)item).getShowInfo() + "\n" + ((TvShow)item).getDescription() 
+                + "\n\nRecording will be scheduled if necessary.";
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle(item.getTitle())
+            .setTitle("Live TV")
             .setMessage(msg)
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {

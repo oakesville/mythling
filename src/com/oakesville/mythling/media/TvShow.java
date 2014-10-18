@@ -291,5 +291,20 @@ public class TvShow extends Item
         }
       }
     };
-  }  
+  }
+  
+  @Override
+  protected Comparator<Item> getChannelNumberComparator()
+  {
+    return new Comparator<Item>()
+    {
+      public int compare(Item item1, Item item2)
+      {
+        TvShow show1 = (TvShow) item1;
+        TvShow show2 = (TvShow) item2;
+        return show1.getChannelNumber() - show2.getChannelNumber();
+      }
+    };
+  }
+  
 }

@@ -188,7 +188,9 @@ public abstract class Item implements Listable
    */
   public Comparator<Item> getComparator(SortType sort)
   {
-    if (sort == SortType.byRating)
+    if (isLiveTv())
+      return getChannelNumberComparator();
+    else if (sort == SortType.byRating)
       return getRatingComparator();
     else if (sort == SortType.byDate)
       return getDateComparator();
@@ -238,6 +240,11 @@ public abstract class Item implements Listable
   }
   
   protected Comparator<Item> getDateComparator()
+  {
+    return getTitleComparator(); // supported only for specific types
+  }
+
+  protected Comparator<Item> getChannelNumberComparator()
   {
     return getTitleComparator(); // supported only for specific types
   }
