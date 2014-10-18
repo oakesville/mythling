@@ -242,9 +242,21 @@ public class MediaListActivity extends MediaActivity
   
   public void refresh()
   {
+    getAppSettings().setLastLoad(0);
+    goMain();
+  }
+  
+  @Override
+  public void sort() throws IOException, JSONException, ParseException
+  {
+    path = "";
+    super.sort();
+  }
+  
+  private void goMain()
+  {
     currentTop = 0;
     topOffset = 0;
-    getAppSettings().setLastLoad(0);
     Intent intent = new Intent(this, MainActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);

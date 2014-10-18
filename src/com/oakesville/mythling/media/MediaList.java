@@ -173,6 +173,10 @@ public class MediaList
       if (path.startsWith(cat.getName()))
         curCat = cat;
     }
+    
+    if (curCat == null)  // how?
+      return getTopCategoriesAndItems();
+    
     StringTokenizer st = new StringTokenizer(path.substring(curCat.getName().length()), "/");
     while (st.hasMoreTokens())
     {
