@@ -223,7 +223,8 @@ if (!$type->isSearch())
     $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rr.recordid, r.recgroup from recorded r " . $where . " " . $orderBy;
   }
 
-  // echo $query . "\n\n";
+  if (isset($_REQUEST['showQuery']) && strtoupper($_REQUEST['showQuery']) == 'TRUE')
+    echo $query . "\n\n";
 
   $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($result);

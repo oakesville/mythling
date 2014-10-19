@@ -80,9 +80,15 @@ public class Movie extends Video
         Movie movie1 = (Movie) item1;
         Movie movie2 = (Movie) item2;
         if (movie1.getYear() == movie2.getYear())
-          return movie1.getTitle().compareTo(movie2.getTitle());
+        {
+          String t1 = stripLeadingArticle(movie1.getTitle());
+          String t2 = stripLeadingArticle(movie2.getTitle());
+          return t1.compareToIgnoreCase(t2);
+        }
         else
+        {
           return movie1.getYear() - movie2.getYear();
+        }
       }
     };
   }

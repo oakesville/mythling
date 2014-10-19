@@ -131,7 +131,7 @@ public class AppData
     if (queueFile.exists())
     {
       String queueJson = new String(readFile(queueFile));
-      MythlingParser parser = new MythlingParser(queueJson);
+      MythlingParser parser = new MythlingParser(queueJson, new AppSettings(appContext));
       List<Item> queue = parser.parseQueue(type);
       queues.put(type, queue);
     }

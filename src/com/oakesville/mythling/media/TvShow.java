@@ -300,9 +300,15 @@ public class TvShow extends Item
         else
         {
           if (show1.getStartTime().equals(show2.getStartTime()))
-            return show1.getTitle().compareTo(show2.getTitle());
+          {
+            String t1 = stripLeadingArticle(show1.getTitle());
+            String t2 = stripLeadingArticle(show2.getTitle());
+            return t1.compareToIgnoreCase(t2);
+          }
           else
+          {
             return show2.getStartTime().compareTo(show1.getStartTime());
+          }
         }
       }
     };

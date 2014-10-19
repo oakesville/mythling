@@ -196,7 +196,7 @@ public class SearchActivity extends MediaActivity
         HttpHelper downloader = new HttpHelper(urls, getAppSettings().getBackendWebAuthType(), getAppSettings().getPrefs());
         downloader.setCredentials(getAppSettings().getBackendWebUser(), getAppSettings().getBackendWebPassword());
         resultsJson = new String(downloader.get(), downloader.getCharSet());
-        searchResults = new MythlingParser(resultsJson).parseSearchResults();
+        searchResults = new MythlingParser(resultsJson, getAppSettings()).parseSearchResults();
         searchResults.setCharSet(downloader.getCharSet());
         searchResults.setStorageGroups(retrieveStorageGroups());
         return 0L;

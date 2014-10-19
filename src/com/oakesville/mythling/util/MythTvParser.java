@@ -21,7 +21,6 @@ package com.oakesville.mythling.util;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +57,6 @@ public class MythTvParser implements MediaListParser
 
   private String json;
   private AppSettings appSettings;
-
   
   public MythTvParser(String json, AppSettings appSettings)
   {
@@ -206,7 +204,6 @@ public class MythTvParser implements MediaListParser
         {
           mediaList.addItem(recItem);
         }
-        Collections.sort(mediaList.getCategories());
       }
     }
     else if (list.has("ProgramGuide"))
@@ -229,7 +226,7 @@ public class MythTvParser implements MediaListParser
     if (sortType != null)
     {
       startTime = System.currentTimeMillis();
-      mediaList.sort(sortType);
+      mediaList.sort(sortType, true);
       if (BuildConfig.DEBUG)
         Log.d(TAG, " -> media list sort time: " + (System.currentTimeMillis() - startTime) + " ms");
     }

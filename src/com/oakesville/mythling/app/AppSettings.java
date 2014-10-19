@@ -1005,7 +1005,7 @@ public class AppSettings
   public MediaListParser getMediaListParser(String json)
   {
     if (isMythlingMediaServices())
-      return new MythlingParser(json);
+      return new MythlingParser(json, this);
     else
       return new MythTvParser(json, this);
   }

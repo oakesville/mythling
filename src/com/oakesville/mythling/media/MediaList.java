@@ -212,18 +212,23 @@ public class MediaList
     return mediaType != MediaType.liveTv;
   }
   
-  public void sort(SortType sortType)
+  public void sort(SortType sortType, boolean includeItems)
   {
-    if (!items.isEmpty())
+    if (includeItems && !items.isEmpty())
       Collections.sort(items, items.get(0).getComparator(sortType));
+    Collections.sort(getCategories());
+    // the categories themselves are always sorted by title
     for (Category cat : getCategories())
-      sortCategory(cat, sortType);
+      sortCategory(cat, sortType, includeItems);
   }
   
-  public void sortCategory(Category category, SortType sort)
+  public void sortCategory(Category category, SortType sort, boolean includeItems)
   {
-    category.sortItems(sort);
+    if (includeItems)
+      category.sortItems(sort);
+    // the categories themselves are always sorted by title
+    Collections.sort(category.getChildren());
     for (Category child : category.getChildren())
-      sortCategory(child, sort);
+      sortCategory(child, sort, includeItems);
   }
 }

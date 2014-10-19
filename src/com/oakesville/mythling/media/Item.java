@@ -211,7 +211,7 @@ public abstract class Item implements Listable
     };
   }
   
-  private String stripLeadingArticle(String inStr)
+  protected String stripLeadingArticle(String inStr)
   {
     if (inStr.startsWith("The "))
       return inStr.substring(4);
@@ -230,11 +230,19 @@ public abstract class Item implements Listable
       {
         float f = item2.getRating() - item1.getRating();
         if (f > 0)
+        {
           return 1;
+        }
         else if (f < 0)
+        {
           return -1;
+        }
         else
-          return 0;
+        {
+          String t1 = stripLeadingArticle(item1.getTitle());
+          String t2 = stripLeadingArticle(item2.getTitle());
+          return t1.compareToIgnoreCase(t2);
+        }
       }
     };
   }

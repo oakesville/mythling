@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
@@ -40,6 +41,7 @@ import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 
 /**
  * Artist and title may be reversed for some folks
@@ -51,10 +53,12 @@ public class MythlingParser implements MediaListParser
   private static final String TAG = MythlingParser.class.getSimpleName();
   
   private String json;
+  private AppSettings appSettings;
   
-  public MythlingParser(String json)
+  public MythlingParser(String json, AppSettings appSettings)
   {
     this.json = json;
+    this.appSettings = appSettings;
   }
 
   public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException, ServiceException
@@ -91,6 +95,18 @@ public class MythlingParser implements MediaListParser
     }
     if (BuildConfig.DEBUG)
       Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
+    
+    SortType sortType = appSettings.getMediaSettings().getSortType();
+    if ((mediaType == MediaType.movies || mediaType == MediaType.tvSeries) 
+        && (sortType == SortType.byDate || sortType == SortType.byRating))
+    {
+      // media.php will have sorted by sortType within categories, but categories must be sorted by title
+      startTime = System.currentTimeMillis();
+      mediaList.sort(SortType.byTitle, false);
+      if (BuildConfig.DEBUG)
+        Log.d(TAG, " -> media list sort time: " + (System.currentTimeMillis() - startTime) + " ms");
+    }
+    
     return mediaList;    
   }
   
