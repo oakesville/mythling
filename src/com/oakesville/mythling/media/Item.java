@@ -157,6 +157,12 @@ public abstract class Item implements Listable
     return buf.toString();
   }
   
+  public String getDialogText()
+  {
+    // default
+    return getText();
+  }
+  
   public boolean isSearchResult()
   {
     return getSearchPath() != null;

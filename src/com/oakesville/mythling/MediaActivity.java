@@ -526,24 +526,23 @@ public abstract class MediaActivity extends Activity
         {
           if (item.isLiveTv())
           {
-            if (((TvShow)item).getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
+            TvShow tvShow = (TvShow)item;
+            if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
             {
               new AlertDialog.Builder(this)
               .setIcon(android.R.drawable.ic_dialog_alert)
               .setTitle("Live TV")
-              .setMessage("Show has already ended: " + ((TvShow)item).getShowInfo())
+              .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
               .setPositiveButton("OK", null)
               .show();
               stopProgress();
               onResume();
               return;
             }
-            String msg = item.getTitle() + "\n" + ((TvShow)item).getShowInfo() + "\n" + ((TvShow)item).getShowDescription() 
-                + "\n\nRecording will be scheduled if necessary.";
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle("Live TV")
-            .setMessage(msg)
+            .setTitle(appSettings.getMediaSettings().getLabel())
+            .setMessage(item.getDialogText() + "\n\nRecording will be scheduled if necessary.")
             .setPositiveButton("Watch", new DialogInterface.OnClickListener()
             {
               public void onClick(DialogInterface dialog, int which)
@@ -571,9 +570,34 @@ public abstract class MediaActivity extends Activity
             })
             .show();
           }
+          else if (appSettings.getMediaSettings().getViewType() == ViewType.list && (item.isMovie() || item.isTvSeries()))
+          {
+            // confirmation dialog with details TODO: include image
+            new AlertDialog.Builder(this)
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .setTitle(appSettings.getMediaSettings().getLabel())
+            .setMessage(item.getDialogText())
+            .setPositiveButton("Play", new DialogInterface.OnClickListener()
+            {
+              public void onClick(DialogInterface dialog, int which)
+              {
+                playVideoStream(item);
+              }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+            {
+              public void onClick(DialogInterface dialog, int which)
+              {
+                stopProgress();
+                onResume();
+              }
+            })
+            .show();
+          }
           else
           {
-            new StreamVideoTask(item).execute(appSettings.getMythTvServicesBaseUrl());
+            // no confirmation dialog
+            playVideoStream(item);
           }
         }
       }
@@ -627,6 +651,21 @@ public abstract class MediaActivity extends Activity
     }
     catch (Exception ex)
     {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+      Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+    }
+  }
+  
+  private void playVideoStream(Item item)
+  {
+    try
+    {
+      new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+    }
+    catch (MalformedURLException ex)
+    {
+      stopProgress();
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();

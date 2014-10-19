@@ -71,7 +71,6 @@ import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.Song;
-import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
@@ -468,12 +467,6 @@ public class MediaPagerActivity extends MediaActivity
           {
             TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
             String summary = video.getSummary();
-            if (item instanceof TvEpisode)
-            {
-              TvEpisode tve = (TvEpisode) item;
-              if (tve.getSeason() != 0)
-                summary = "Season " + tve.getSeason() + ", Episode " + tve.getEpisode() + ":\n" + summary; 
-            }
             tv.setText(summary);
           }
           
@@ -540,23 +533,12 @@ public class MediaPagerActivity extends MediaActivity
         {
           if (item instanceof TvShow)
           {
-            TvShow tvShow = (TvShow) item;
-            // summary
-            StringBuffer summary = new StringBuffer();
-            summary.append(tvShow.getShowDateTimeInfo());
-            summary.append(tvShow.getChannelInfo());
-
-            if (!tvShow.isShowMovie())
-              summary.append(tvShow.getAirDateInfo());
-            String details = tvShow.getShowDescription();
-            if (details != null)
-              summary.append("\n").append(details);
-            
             ((TextView)detailView.findViewById(R.id.directorText)).setVisibility(View.GONE);
             ((TextView)detailView.findViewById(R.id.actorsText)).setVisibility(View.GONE);
-
+            
+            TvShow tvShow = (TvShow) item;
             TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
-            tv.setText(summary.toString());
+            tv.setText(tvShow.getSummary());
           }
         }
             
@@ -696,7 +678,6 @@ public class MediaPagerActivity extends MediaActivity
         }
       }    
     }
-    
   }
 
   @Override

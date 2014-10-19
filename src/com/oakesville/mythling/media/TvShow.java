@@ -124,29 +124,19 @@ public class TvShow extends Item
     return "Live TV";
   }  
   
-  public String getShowInfo()
+  /**
+   * Works for liveTV.  Override for recordings.
+   */
+  public String getDialogText()
   {
-    StringBuffer info = new StringBuffer();
-    
-    if (isLiveTv())
-    {
-      info.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
-      try
-      {
-        info.append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted());
-      }
-      catch (ParseException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-    }
-    
+    StringBuffer info = new StringBuffer(getTitle());
+    info.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
     if (getSubTitle() != null)
       info.append("\n\"").append(getSubTitle()).append("\"");
     if (isRepeat())
       info.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
-    
+    if (getDescription() != null)
+      info.append("\n").append(getDescription());
     return info.toString();
   }
   
@@ -167,11 +157,6 @@ public class TvShow extends Item
     return buf.toString();
   }
   
-  public String getChannelInfo()
-  {
-    return new StringBuffer().append(getChannelNumber()).append(" (").append(getCallsign()).append(")").toString();
-  }
-
   public String getShowTimeInfo()
   {
     StringBuffer buf = new StringBuffer();
@@ -187,6 +172,11 @@ public class TvShow extends Item
     }
     
     return buf.toString();
+  }
+  
+  public String getChannelInfo()
+  {
+    return new StringBuffer().append(getChannelNumber()).append(" (").append(getCallsign()).append(")").toString();
   }
   
   public String getAirDateInfo()
@@ -211,11 +201,6 @@ public class TvShow extends Item
       label += "\n\"" + getSubTitle() + "\"";
     return label;
   }  
-  
-  public String getShowDescription()
-  {
-    return description == null ? "" : description;
-  }
   
   public boolean isShowMovie()
   {
@@ -276,6 +261,18 @@ public class TvShow extends Item
         Log.e(TAG, ex.getMessage(), ex);
     }
     return buf.toString();
+  }
+  
+  public String getSummary()
+  {
+    StringBuffer summary = new StringBuffer();
+    summary.append(getShowDateTimeInfo());
+    summary.append(getChannelInfo());
+    if (isShowMovie())
+      summary.append(getAirDateInfo());
+    if (getDescription() != null)
+      summary.append("\n").append(getDescription());
+    return summary.toString();
   }
   
   @Override

@@ -69,7 +69,7 @@ public class Movie extends Video
       buf.append(" (").append(getYear()).append(")");
     return buf.toString();
   }
-  
+
   @Override
   protected Comparator<Item> getDateComparator()
   {

@@ -68,15 +68,22 @@ public class Video extends Item
     return "Video";
   }
   
-  public String getShowInfo()
+  public String getDialogText()
   {
-    String str = (getYear() == 0 ? "" : getYear() + "   ") + getRatingString(getRating()) + "\n";
-    str += getDirector() == null ? "" : "Directed By: " + getDirector() + "\n";
-    str += getActors() == null ? "" : "Starring: " + getActors() + "\n\n";
-    str += getSummary() == null ? "" : getSummary();
-    return str;
+    StringBuffer buf = new StringBuffer(getTitle());
+    if (getYear() > 0)
+      buf.append(" (").append(getYear()).append(")");
+    if (getRating() > 0)
+      buf.append(" ").append(getRatingString(getRating()));
+    if (getDirector() != null)
+      buf.append("\nDirected by: ").append(getDirector());
+    if (getActors() != null)
+      buf.append("\nStarring: ").append(getActors());
+    if (getSummary() != null)
+      buf.append("\n\n").append(getSummary());
+    return buf.toString();
   }
-  
+    
   @Override
   public ArtworkDescriptor getArtworkDescriptor(String storageGroup)
   {

@@ -71,6 +71,22 @@ public class TvEpisode extends Video
     return buf.toString();
   }
   
+  public String getSummary()
+  {
+    if (getSeason() != 0)
+    {
+      StringBuffer sum = new StringBuffer();
+      sum.append("Season ").append(getSeason()).append(", Episode ").append(getEpisode());
+      if (super.getSummary() != null)
+        sum.append("\n").append(super.getSummary());
+      return sum.toString();
+    }
+    else
+    {
+      return super.getSummary();
+    }
+  }
+  
   @Override
   protected Comparator<Item> getDateComparator()
   {
