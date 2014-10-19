@@ -538,7 +538,7 @@ public abstract class MediaActivity extends Activity
               onResume();
               return;
             }
-            String msg = item.getTitle() + "\n" + ((TvShow)item).getShowInfo() + "\n" + ((TvShow)item).getDescription() 
+            String msg = item.getTitle() + "\n" + ((TvShow)item).getShowInfo() + "\n" + ((TvShow)item).getShowDescription() 
                 + "\n\nRecording will be scheduled if necessary.";
             new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_info)

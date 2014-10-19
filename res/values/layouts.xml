@@ -17,7 +17,5 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <resources>
-
-  <style name="AppTheme" parent="android:Theme.Holo.Light"/>
-
+  <bool name="isTablet">false</bool>
 </resources>

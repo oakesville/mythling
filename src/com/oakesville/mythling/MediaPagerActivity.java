@@ -543,7 +543,9 @@ public class MediaPagerActivity extends MediaActivity
             TvShow tvShow = (TvShow) item;
             // summary
             StringBuffer summary = new StringBuffer();
-            summary.append(tvShow.getShowTimeInfo());
+            summary.append(tvShow.getShowDateTimeInfo());
+            summary.append(tvShow.getChannelInfo());
+
             if (!tvShow.isShowMovie())
               summary.append(tvShow.getAirDateInfo());
             String details = tvShow.getShowDescription();

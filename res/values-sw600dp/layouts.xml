@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
+<!-- used by AppSettings.isTablet() -->
 <resources>
-
-  <dimen name="padding_small">8dp</dimen>
-  <dimen name="padding_medium">16dp</dimen>
-  <dimen name="padding_large">16dp</dimen>
-
+  <bool name="isTablet">true</bool>
 </resources>

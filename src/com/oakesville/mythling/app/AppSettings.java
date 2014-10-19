@@ -1009,6 +1009,10 @@ public class AppSettings
     else
       return new MythTvParser(json, this);
   }
-  
+
+  public boolean isTablet()
+  {
+    return appContext.getResources().getBoolean(R.bool.isTablet);
+  }
   
 }

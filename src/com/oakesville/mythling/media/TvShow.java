@@ -150,14 +150,35 @@ public class TvShow extends Item
     return info.toString();
   }
   
-  public String getShowTimeInfo()
+  public String getShowDateTimeInfo()
   {
     StringBuffer buf = new StringBuffer();
     try
     {
       buf.append("\n").append(getStartDateTimeFormatted()).append("-");
       buf.append(getEndTimeFormatted()).append(" ");
-      buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(")");
+    }
+    catch (ParseException ex)
+    {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+    }
+    
+    return buf.toString();
+  }
+  
+  public String getChannelInfo()
+  {
+    return new StringBuffer().append(getChannelNumber()).append(" (").append(getCallsign()).append(")").toString();
+  }
+
+  public String getShowTimeInfo()
+  {
+    StringBuffer buf = new StringBuffer();
+    try
+    {
+      buf.append(getStartTimeFormatted()).append("-");
+      buf.append(getEndTimeFormatted()).append(" ");
     }
     catch (ParseException ex)
     {
@@ -226,19 +247,13 @@ public class TvShow extends Item
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
-    buf.append(getTitle());
+    buf.append(getChannelInfo());
+    buf.append(" ").append(getShowTimeInfo());
+    buf.append("\n").append(getTitle());
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
-    try
-    {
-      buf.append(" (").append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted()).append(")");
-    }
-    catch (ParseException ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-    }
+    if (getSubTitle() != null)
+      buf.append("\n\"").append(getSubTitle()).append("\"");
     return buf.toString();
   }
 
