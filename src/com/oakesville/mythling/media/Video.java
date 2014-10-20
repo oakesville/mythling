@@ -68,6 +68,7 @@ public class Video extends Item
     return "Video";
   }
   
+  @Override
   public String getDialogText()
   {
     StringBuffer buf = new StringBuffer(getTitle());

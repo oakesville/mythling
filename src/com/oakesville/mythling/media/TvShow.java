@@ -123,10 +123,8 @@ public class TvShow extends Item
   {
     return "Live TV";
   }  
-  
-  /**
-   * Works for liveTV.  Override for recordings.
-   */
+
+  @Override
   public String getDialogText()
   {
     StringBuffer info = new StringBuffer(getTitle());

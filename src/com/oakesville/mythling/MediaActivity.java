@@ -570,7 +570,8 @@ public abstract class MediaActivity extends Activity
             })
             .show();
           }
-          else if (appSettings.getMediaSettings().getViewType() == ViewType.list && (item.isMovie() || item.isTvSeries()))
+          else if (appSettings.getMediaSettings().getViewType() == ViewType.list 
+              && (item.isMovie() || item.isTvSeries() || item.isRecording()))
           {
             // confirmation dialog with details TODO: include image
             new AlertDialog.Builder(this)
