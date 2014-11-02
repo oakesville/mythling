@@ -81,5 +81,15 @@
       android:defaultValue="@string/default_mythweb_web_root"
       android:layout="@layout/pref" />
   </com.oakesville.mythling.prefs.DisableableCategory>
+
+  <PreferenceCategory android:title="@string/title_error_reporting">
+    <com.oakesville.mythling.prefs.SwitchPreference
+      android:key="error_reporting"
+      android:switchTextOn="@string/enabled"
+      android:switchTextOff="@string/disabled"
+      android:defaultValue="@string/disabled"
+      android:layout="@layout/sw_pref_inner"
+      android:widgetLayout="@layout/prefs_switch" />    
+  </PreferenceCategory>
   
 </PreferenceScreen>

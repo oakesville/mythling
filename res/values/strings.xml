@@ -156,6 +156,7 @@
   <string name="title_directories_movies">Movie Directories</string>
   <string name="title_directories_tv_series">TV Series Directories</string>
   <string name="title_directories_exclude">Excluded Directories</string>
+  <string name="title_error_reporting">Error Reporting</string>
   <string name="message_directories_movies">Comma-separated list of video directory paths containing movies</string>
   <string name="message_directories_tv_series">Comma-separated list of video directory paths containing TV series\'</string>
   <string name="message_directories_exclude">Comma-separated list of video directory paths to exclude</string>

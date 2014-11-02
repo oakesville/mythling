@@ -111,6 +111,8 @@ public class ConnectionsPrefs extends PreferenceFragment
     pref.setSummary(appSettings.getMythwebWebRoot());
     pref.setEnabled(hasBackendWeb && appSettings.isMythWebAccessEnabled());
     
+    pref = getPreferenceScreen().findPreference(AppSettings.ERROR_REPORTING);
+    pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
   }
   
   private void doCategoryEnablement(boolean hasBackendWeb)

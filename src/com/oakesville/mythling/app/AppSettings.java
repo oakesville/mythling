@@ -56,6 +56,7 @@ public class AppSettings
   public static final String MEDIA_SERVICES_CATEGORY = "media_services_cat";
   public static final String MYTHWEB_ACCESS_CATEGORY = "mythweb_access_cat";
   public static final String MYTHWEB_ACCESS = "mythweb_access";
+  public static final String ERROR_REPORTING = "error_reporting";
   public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
   public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
   public static final String BACKEND_WEB = "backend_web";
@@ -360,6 +361,11 @@ public class AppSettings
     return prefs.getBoolean(MYTHWEB_ACCESS, false);
   }
 
+  public boolean isErrorReportingEnabled()
+  {
+    return prefs.getBoolean(ERROR_REPORTING, false);
+  }
+  
   public int getBuiltInPlayerBufferSize()
   {
     return Integer.parseInt(prefs.getString(BUILT_IN_PLAYER_BUFFER_SIZE, "8000"));
