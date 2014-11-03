@@ -72,6 +72,7 @@ import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
+import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.ServiceFrontendPlayer;
 import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
@@ -925,6 +926,8 @@ public abstract class MediaActivity extends Activity
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (getAppSettings().isErrorReportingEnabled())
+          new Reporter(ex).send();
         return -1L;
       }
     }

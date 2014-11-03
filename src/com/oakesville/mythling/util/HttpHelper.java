@@ -19,9 +19,11 @@
 package com.oakesville.mythling.util;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -84,9 +86,15 @@ public class HttpHelper
   private SharedPreferences sharedPrefs;
   private boolean binary;
   private String charset = "UTF-8";
+  private byte[] postContent;
   
   public String getCharSet() { return charset; }
-  
+
+  public HttpHelper(URL url)
+  {
+    this(new URL[]{url}, AuthType.None, null, false);
+  }
+
   public HttpHelper(URL[] urls, String authType, SharedPreferences prefs)
   {
     this(urls, AuthType.valueOf(authType), prefs, false);
@@ -128,6 +136,12 @@ public class HttpHelper
     return request();
   }
   
+  public byte[] post(byte[] content) throws IOException
+  {
+    postContent = content;
+    return post();
+  }
+
   private byte[] request() throws IOException
   {
     if (authType == AuthType.Basic)
@@ -249,8 +263,11 @@ public class HttpHelper
       long startTime = System.currentTimeMillis();
       conn = (HttpURLConnection) url.openConnection();
       prepareConnection(conn, headers);
+      
       try
       {
+        if (postContent != null)
+          writeRequestBytes(conn.getOutputStream());
         is = conn.getInputStream();
       }
       catch (IOException ex)
@@ -306,6 +323,23 @@ public class HttpHelper
     if (method == Method.Post)
     {
       ((HttpURLConnection)conn).setRequestMethod("POST");
+      if (postContent != null)
+        conn.setDoOutput(true);
+    }
+  }
+  
+  private void writeRequestBytes(OutputStream os) throws IOException
+  {
+    BufferedOutputStream bos = null;
+    try
+    {
+      bos = new BufferedOutputStream(os);
+      bos.write(postContent);
+    }
+    finally
+    {
+      if (bos != null)
+        bos.close();
     }
   }
 
@@ -388,12 +422,18 @@ public class HttpHelper
   
   public int getConnectTimeout()
   {
-    return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "6").trim()) * 1000;
+    if (sharedPrefs != null)
+      return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "6").trim()) * 1000;
+    else
+      return 6000;
   }
   
   public int getReadTimeout()
   {
-    return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "10").trim()) * 1000;
+    if (sharedPrefs != null)
+      return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "10").trim()) * 1000;
+    else
+      return 10000;
   }
   
   private void rethrow(IOException ex, String msgPrefix) throws IOException
