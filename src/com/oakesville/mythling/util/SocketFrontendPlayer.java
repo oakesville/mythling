@@ -75,6 +75,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
       {
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
       }
     }
     if (status == null)
@@ -124,6 +126,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
       finally
@@ -136,6 +140,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         {
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (appSettings.isErrorReportingEnabled())
+            new Reporter(ex).send();          
         }
       }
     }
@@ -175,6 +181,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
       finally
@@ -187,6 +195,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         {
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (appSettings.isErrorReportingEnabled())
+            new Reporter(ex).send();          
         }
       }
     }
@@ -221,6 +231,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
       finally
@@ -233,6 +245,8 @@ public class SocketFrontendPlayer implements FrontendPlayer
         {
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (appSettings.isErrorReportingEnabled())
+            new Reporter(ex).send();          
         }
       }
     }

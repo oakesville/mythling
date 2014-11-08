@@ -476,6 +476,8 @@ public abstract class MediaActivity extends Activity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       stopProgress();
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
@@ -557,6 +559,8 @@ public abstract class MediaActivity extends Activity
                   stopProgress();
                   if (BuildConfig.DEBUG)
                     Log.e(TAG, ex.getMessage(), ex);
+                  if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();                  
                   Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
                 }
               }
@@ -655,6 +659,8 @@ public abstract class MediaActivity extends Activity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
@@ -670,6 +676,8 @@ public abstract class MediaActivity extends Activity
       stopProgress();
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
@@ -760,6 +768,8 @@ public abstract class MediaActivity extends Activity
       {
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (getAppSettings().isErrorReportingEnabled())
+          new Reporter(ex).send();        
         stopTimer();
       }
     }
@@ -972,6 +982,8 @@ public abstract class MediaActivity extends Activity
           stopProgress();          
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (getAppSettings().isErrorReportingEnabled())
+            new Reporter(ex).send();          
         }
       }
     }    
@@ -1018,6 +1030,8 @@ public abstract class MediaActivity extends Activity
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (getAppSettings().isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }
@@ -1041,6 +1055,8 @@ public abstract class MediaActivity extends Activity
         {
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (getAppSettings().isErrorReportingEnabled())
+            new Reporter(ex).send();          
           Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
         }
       }
@@ -1070,6 +1086,8 @@ public abstract class MediaActivity extends Activity
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (getAppSettings().isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }
@@ -1131,6 +1149,8 @@ public abstract class MediaActivity extends Activity
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (getAppSettings().isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }
@@ -1169,6 +1189,8 @@ public abstract class MediaActivity extends Activity
                     stopProgress();
                     if (BuildConfig.DEBUG)
                       Log.e(TAG, ex.getMessage(), ex);
+                    if (getAppSettings().isErrorReportingEnabled())
+                      new Reporter(ex).send();                    
                     Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
                   }
                 }
@@ -1211,6 +1233,8 @@ public abstract class MediaActivity extends Activity
         {
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (getAppSettings().isErrorReportingEnabled())
+            new Reporter(ex).send();          
           Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
         }
       }

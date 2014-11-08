@@ -74,6 +74,7 @@ import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.Reporter;
 
 /**
  * Activity for side-scrolling through paged detail views of MythTV media w/artwork.
@@ -123,6 +124,8 @@ public class MediaPagerActivity extends MediaActivity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
@@ -142,6 +145,8 @@ public class MediaPagerActivity extends MediaActivity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
     
@@ -494,6 +499,8 @@ public class MediaPagerActivity extends MediaActivity
             {
               if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
+              if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();              
             }
           }
           
@@ -525,6 +532,8 @@ public class MediaPagerActivity extends MediaActivity
             {
               if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
+              if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();              
               Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
             }
           }
@@ -591,6 +600,8 @@ public class MediaPagerActivity extends MediaActivity
           {
             if (BuildConfig.DEBUG)
               Log.e(TAG, ex.getMessage(), ex);
+            if (appSettings.isErrorReportingEnabled())
+              new Reporter(ex).send();            
             Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
           }
         }
@@ -639,6 +650,8 @@ public class MediaPagerActivity extends MediaActivity
               // fail silently
               if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
+              if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();              
             }
           }
           
@@ -649,6 +662,8 @@ public class MediaPagerActivity extends MediaActivity
           this.ex = ex;
           if (BuildConfig.DEBUG)
             Log.e(TAG, ex.getMessage(), ex);
+          if (appSettings.isErrorReportingEnabled())
+            new Reporter(ex).send();          
           return -1L;
         }
       }
@@ -661,6 +676,8 @@ public class MediaPagerActivity extends MediaActivity
           {
             if (BuildConfig.DEBUG)
               Log.e(TAG, ex.getMessage(), ex);
+            if (appSettings.isErrorReportingEnabled())
+              new Reporter(ex).send();            
             Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
           }
         }
@@ -674,6 +691,8 @@ public class MediaPagerActivity extends MediaActivity
           {
             if (BuildConfig.DEBUG)
               Log.e(TAG, ex.getMessage(), ex);
+            if (appSettings.isErrorReportingEnabled())
+              new Reporter(ex).send();            
           }
         }
       }    

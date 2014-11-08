@@ -65,6 +65,8 @@ public class ServiceFrontendPlayer implements FrontendPlayer
       {
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
       }
     }
     if (state == null)
@@ -102,6 +104,8 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }
@@ -144,6 +148,8 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }
@@ -179,6 +185,8 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         this.ex = ex;
         if (BuildConfig.DEBUG)
           Log.e(TAG, ex.getMessage(), ex);
+        if (appSettings.isErrorReportingEnabled())
+          new Reporter(ex).send();        
         return -1L;
       }
     }

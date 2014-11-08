@@ -48,6 +48,7 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.util.Reporter;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -98,6 +99,8 @@ public class MediaListActivity extends MediaActivity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
@@ -116,6 +119,8 @@ public class MediaListActivity extends MediaActivity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
     
@@ -218,6 +223,8 @@ public class MediaListActivity extends MediaActivity
                     stopProgress();
                     if (BuildConfig.DEBUG)
                       Log.e(TAG, ex.getMessage(), ex);
+                    if (getAppSettings().isErrorReportingEnabled())
+                      new Reporter(ex).send();                    
                     Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
                   }
                 }

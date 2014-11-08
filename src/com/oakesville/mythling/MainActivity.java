@@ -47,6 +47,7 @@ import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.util.Reporter;
 
 public class MainActivity extends MediaActivity
 {
@@ -109,6 +110,8 @@ public class MainActivity extends MediaActivity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
       stopProgress();
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }

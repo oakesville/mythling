@@ -107,6 +107,8 @@ public class Transcoder
               // don't let this stop us
               if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
+              if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();              
             }
           }
           else

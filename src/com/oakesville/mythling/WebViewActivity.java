@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefsActivity;
+import com.oakesville.mythling.util.Reporter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -58,6 +59,8 @@ public class WebViewActivity extends Activity
     {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
+      if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
+        new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
