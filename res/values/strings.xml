@@ -121,11 +121,15 @@
   <string name="title_operation_timeouts">Operations</string>
   <string name="title_http_timeouts">HTTP</string>
   <string name="title_tuner_timeout">Tuner Timeout</string>
+  <string name="title_tuner_timeout_dialog">Tuner Timeout (seconds)</string>
   <string name="title_transcode_timeout">Transcode Timeout</string>
+  <string name="title_transcode_timeout_dialog">Transcode Timeout (seconds)</string>
   <string name="title_transcode_job_limit">Transcode Job Limit</string>
   <string name="message_transcode_job_limit">Maximum number of simultaneous HLS transcoding jobs Mythling will request</string>
   <string name="title_connect_timeout">Connect Timeout</string>
+  <string name="title_connect_timeout_dialog">Connect Timeout (seconds)</string>
   <string name="title_read_timeout">Read Timeout</string>
+  <string name="title_read_timeout_dialog">Read Timeout (seconds)</string>
   <string name="title_internal_backend_host">Host</string>
   <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
   <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>

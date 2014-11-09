@@ -138,7 +138,7 @@ public class Transcoder
       try
       {
         // occasionally the follow-up request comes too soon 
-        Thread.sleep(200);
+        Thread.sleep(300);
       }
       catch (InterruptedException ex) 
       {
@@ -203,7 +203,7 @@ public class Transcoder
     }
     
     if (!hasTs)
-      throw new FileNotFoundException("No stream available: " + streamUrl);
+      throw new FileNotFoundException("No stream available (try increasing transcode timeout):\n" + streamUrl);
     
     // wait one more second for good measure
     int lagSeconds = 1;  // TODO: prefs?
