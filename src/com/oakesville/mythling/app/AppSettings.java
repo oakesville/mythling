@@ -32,6 +32,9 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 
 import com.oakesville.mythling.R;
@@ -1020,5 +1023,16 @@ public class AppSettings
   {
     return appContext.getResources().getBoolean(R.bool.isTablet);
   }
-  
+
+  private static String mythlingVersion;
+  public void initMythlingVersion() throws NameNotFoundException
+  {
+    PackageManager manager = appContext.getPackageManager();
+    PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
+    mythlingVersion = info.versionName;
+  }
+  public static String getMythlingVersion()
+  {
+    return mythlingVersion;
+  }
 }

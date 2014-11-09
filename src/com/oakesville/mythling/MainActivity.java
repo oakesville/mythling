@@ -25,6 +25,7 @@ import java.util.List;
 import org.json.JSONException;
 
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -74,6 +75,18 @@ public class MainActivity extends MediaActivity
     PreferenceManager.setDefaultValues(this, R.xml.network_prefs, false);
     PreferenceManager.setDefaultValues(this, R.xml.playback_prefs, false);
     PreferenceManager.setDefaultValues(this, R.xml.quality_prefs, false);
+    
+    try
+    {
+      getAppSettings().initMythlingVersion();
+    }
+    catch (NameNotFoundException ex)
+    {
+      if (BuildConfig.DEBUG)
+        Log.e(TAG, ex.getMessage(), ex);
+      if (getAppSettings().isErrorReportingEnabled())
+        new Reporter(ex).send();      
+    }
 
     setContentView(R.layout.categories);
     

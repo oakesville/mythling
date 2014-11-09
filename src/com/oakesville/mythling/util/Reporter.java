@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
 
 public class Reporter
 {
@@ -83,7 +84,7 @@ public class Reporter
     JSONObject json = new JSONObject();
     JSONObject report = new JSONObject();
     json.put("report", report);
-    report.put("source", "Mythling");
+    report.put("source", "Mythling v" + AppSettings.getMythlingVersion());
     report.put("message", message);
     if (throwable != null)
     {
@@ -92,5 +93,5 @@ public class Reporter
       report.put("stackTrace", new String(out.toByteArray()));
     }
     return json;
-  }
+  }  
 }
