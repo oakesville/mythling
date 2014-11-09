@@ -117,7 +117,7 @@ public class Recorder
         URL remRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecordSchedule?RecordId=" + recRuleId);
         getServiceHelper(remRecUrl).post();
       }
-      throw new FileNotFoundException("No recording available (there may be a scheduling conflict).");
+      throw new FileNotFoundException("No recording available (there may be a scheduling conflict, or possibly a tuner timeout occurred).");
     }
     
     // wait a few seconds
