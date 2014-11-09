@@ -128,11 +128,13 @@ public class TvShow extends Item
   public String getDialogText()
   {
     StringBuffer info = new StringBuffer(getTitle());
+    if (isShowMovie())
+      info.append(" ").append(getAirDateInfo());    
     info.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
     if (getSubTitle() != null)
       info.append("\n\"").append(getSubTitle()).append("\"");
-    if (isRepeat())
-      info.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
+    if (!isShowMovie() && isRepeat())
+      info.append(getAirDateInfo());
     if (getDescription() != null)
       info.append("\n").append(getDescription());
     return info.toString();
@@ -266,8 +268,6 @@ public class TvShow extends Item
     StringBuffer summary = new StringBuffer();
     summary.append(getShowDateTimeInfo());
     summary.append(getChannelInfo());
-    if (isShowMovie())
-      summary.append(getAirDateInfo());
     if (getDescription() != null)
       summary.append("\n").append(getDescription());
     return summary.toString();
