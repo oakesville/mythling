@@ -10,6 +10,9 @@ https://github.com/MythTV/mythtv/pull/84
 mythtv trak tickets:
 https://code.mythtv.org/trac/ticket/12250#ticket
 
+mythweb:
+http://192.168.0.69:80/mythweb
+
 error reports url on amazon ec2:
 http://54.187.163.194/oakesville/report
 
