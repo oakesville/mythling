@@ -161,9 +161,9 @@
   <string name="title_directories_tv_series">TV Series Directories</string>
   <string name="title_directories_exclude">Excluded Directories</string>
   <string name="title_error_reporting">Error Reporting</string>
-  <string name="message_directories_movies">Comma-separated list of video directory paths containing movies</string>
-  <string name="message_directories_tv_series">Comma-separated list of video directory paths containing TV series\'</string>
-  <string name="message_directories_exclude">Comma-separated list of video directory paths to exclude</string>
+  <string name="message_directories_movies">Comma-separated list of video directory paths (relative to storage dir) containing movies</string>
+  <string name="message_directories_tv_series">Comma-separated list of video directory paths (relative to storage dir) containing TV series\'</string>
+  <string name="message_directories_exclude">Comma-separated list of video directory paths (relative to storage dir) to exclude</string>
   <string-array name="video_res_entries">
     <item>720p</item>
     <item>600p</item>
