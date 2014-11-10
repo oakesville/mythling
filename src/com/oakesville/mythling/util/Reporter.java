@@ -85,7 +85,7 @@ public class Reporter
     JSONObject report = new JSONObject();
     json.put("report", report);
     report.put("source", "Mythling v" + AppSettings.getMythlingVersion());
-    report.put("message", message);
+    report.put("message", message == null ? "No message" : message);
     if (throwable != null)
     {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
