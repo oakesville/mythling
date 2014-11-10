@@ -317,7 +317,7 @@ public class MythTvParser implements MediaListParser
         item.setRating(Float.parseFloat(rating)/2);
     }
     
-    if (vid.has("Artwork"))
+    if (vid.has("Artwork") && artworkStorageGroup != null)
     {
       JSONObject artwork = vid.getJSONObject("Artwork");
       if (artwork.has("ArtworkInfos"))
