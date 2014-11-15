@@ -124,22 +124,6 @@ public class TvShow extends Item
     return "Live TV";
   }  
 
-  @Override
-  public String getDialogText()
-  {
-    StringBuffer info = new StringBuffer(getTitle());
-    if (isShowMovie())
-      info.append(" ").append(getAirDateInfo());    
-    info.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
-    if (getSubTitle() != null)
-      info.append("\n\"").append(getSubTitle()).append("\"");
-    if (!isShowMovie() && isRepeat())
-      info.append(getAirDateInfo());
-    if (getDescription() != null)
-      info.append("\n").append(getDescription());
-    return info.toString();
-  }
-  
   public String getShowDateTimeInfo()
   {
     StringBuffer buf = new StringBuffer();
@@ -184,7 +168,7 @@ public class TvShow extends Item
     StringBuffer buf = new StringBuffer();
     if (isRepeat())
     {
-      if (getRating() > 0) // proxy for determining the show is a movie
+      if (isShowMovie())
         buf.append("(").append(DateTimeFormats.YEAR_FORMAT.format(originallyAired)).append(")");
       else
         buf.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
@@ -228,6 +212,9 @@ public class TvShow extends Item
         && origCal.get(Calendar.DAY_OF_MONTH) == startCal.get(Calendar.DAY_OF_MONTH));
   }
 
+  /**
+   * Overridden for Recordings, so this is for LiveTV.
+   */
   @Override
   public String getText()
   {
@@ -235,13 +222,33 @@ public class TvShow extends Item
     buf.append(getChannelInfo());
     buf.append(" ").append(getShowTimeInfo());
     buf.append("\n").append(getTitle());
+    if (isShowMovie() && getYear() > 0)
+      buf.append(" (").append(getYear()).append(")");    
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
     if (getSubTitle() != null)
       buf.append("\n\"").append(getSubTitle()).append("\"");
     return buf.toString();
   }
-
+  
+  @Override
+  public String getDialogText()
+  {
+    StringBuffer info = new StringBuffer(getTitle());
+    if (isShowMovie() && getYear() > 0)
+      info.append(" (").append(getYear()).append(")");    
+    if (getRating() > 0)
+      info.append(" ").append(getRatingString(getRating()));
+    info.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
+    if (getSubTitle() != null)
+      info.append("\n\"").append(getSubTitle()).append("\"");
+    if (!isShowMovie() && isRepeat())
+      info.append(getAirDateInfo());
+    if (getDescription() != null)
+      info.append("\n").append(getDescription());
+    return info.toString();
+  }  
+  
   @Override
   public String getSearchResultText()
   {

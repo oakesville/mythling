@@ -53,11 +53,17 @@ public class TvEpisode extends Video
   @Override
   public String getText()
   {
-    StringBuffer buf = new StringBuffer(PREFIX + getTitle());
-    buf.append(" (s").append(getSeason()).append("e").append(getEpisode()).append(")");
-    if (getRating() > 0)
-      buf.append(" ").append(getRatingString(getRating()));
+    StringBuffer buf = new StringBuffer(PREFIX);
+    buf.append(getTitle());
+    buf.append(getSeasonEpisodeInfo());
+    if (getSubTitle() != null)
+      buf.append("\n\"").append(getSubTitle()).append("\"");
     return buf.toString();
+  }
+  
+  private String getSeasonEpisodeInfo()
+  {
+    return " (" + (getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode() + ")";    
   }
 
   public String getSearchResultText()
@@ -67,7 +73,9 @@ public class TvEpisode extends Video
     if (getPath() != null && getPath().length() > 0)
       buf.append(getPath()).append("/");
     buf.append(getTitle());
-    buf.append(" (s").append(getSeason()).append("e").append(getEpisode()).append(")");
+    buf.append(getSeasonEpisodeInfo());
+    if (getSubTitle() != null)
+      buf.append("\n\"").append(getSubTitle()).append("\"");
     return buf.toString();
   }
   

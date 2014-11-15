@@ -61,23 +61,39 @@ public class Recording extends TvShow
   {
     return "Recording";
   }
-  
+    
   @Override
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append(getTitle());
-    if (isShowMovie() && getYear() > 0)
-      buf.append(" (").append(getYear()).append(")");
-    if (getRating() > 0)
-      buf.append(" ").append(getRatingString(getRating()));
-    buf.append(getShowDateTimeInfo());
-    buf.append(getChannelInfo());
-    if (getSubTitle() != null)
-      buf.append("\n\"").append(getSubTitle()).append("\"");
-    if (!isShowMovie())
-      buf.append(getAirDateInfo());
+    buf.append(getCommonInfo());
     return buf.toString();
+  }
+  
+  @Override
+  public String getDialogText()
+  {
+    StringBuffer buf = new StringBuffer();
+    buf.append(getCommonInfo());
+    if (getDescription() != null)
+      buf.append("\n").append(getDescription());
+    return buf.toString();
+  }
+  
+  private String getCommonInfo()
+  {
+    StringBuffer info = new StringBuffer(getTitle());
+    if (isShowMovie() && getYear() > 0)
+      info.append(" (").append(getYear()).append(")");
+    if (getRating() > 0)
+      info.append(" ").append(getRatingString(getRating()));
+    info.append(getShowDateTimeInfo());
+    info.append(getChannelInfo());
+    if (getSubTitle() != null)
+      info.append("\n\"").append(getSubTitle()).append("\"");
+    if (!isShowMovie() && isRepeat())
+      info.append(getAirDateInfo());
+    return info.toString();
   }
   
   @Override
@@ -91,7 +107,7 @@ public class Recording extends TvShow
     try
     {
       buf.append(getStartDateTimeFormatted()).append(" - ");
-      buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
+      buf.append(getChannelInfo()).append(" ");
     }
     catch (ParseException ex)
     {

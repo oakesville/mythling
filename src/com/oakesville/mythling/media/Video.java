@@ -76,6 +76,8 @@ public class Video extends Item
       buf.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
+    if (getSubTitle() != null)
+      buf.append("\n\"" + getSubTitle() + "\"");
     if (getDirector() != null)
       buf.append("\nDirected by: ").append(getDirector());
     if (getActors() != null)
