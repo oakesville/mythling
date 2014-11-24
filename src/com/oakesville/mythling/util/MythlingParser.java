@@ -175,18 +175,24 @@ public class MythlingParser implements MediaListParser
       searchResults.addLiveTvItem(buildItem(MediaType.liveTv, tvShow));
     }
 
-    JSONArray movies = list.getJSONArray("movies");
-    for (int i = 0; i < movies.length(); i++)
+    if (list.has("movies")) // if no videos categorization
     {
-      JSONObject movie = (JSONObject) movies.get(i);
-      searchResults.addMovie(buildItem(MediaType.movies, movie));
+      JSONArray movies = list.getJSONArray("movies");
+      for (int i = 0; i < movies.length(); i++)
+      {
+        JSONObject movie = (JSONObject) movies.get(i);
+        searchResults.addMovie(buildItem(MediaType.movies, movie));
+      }
     }
 
-    JSONArray tvSeries = list.getJSONArray("tvSeries");
-    for (int i = 0; i < tvSeries.length(); i++)
+    if (list.has("tvSeries")) // if no videos categorization
     {
-      JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
-      searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
+      JSONArray tvSeries = list.getJSONArray("tvSeries");
+      for (int i = 0; i < tvSeries.length(); i++)
+      {
+        JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
+        searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
+      }
     }
 
     if (list.has("songs"))
