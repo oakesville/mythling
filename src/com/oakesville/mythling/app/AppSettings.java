@@ -441,7 +441,7 @@ public class AppSettings
   
   public String getHlsFileExtensions()
   {
-    return prefs.getString(HLS_FILE_EXTENSIONS, "");
+    return prefs.getString(HLS_FILE_EXTENSIONS, "mpg");
   }
   
   public boolean isPreferHls(String fileExtension)
@@ -468,7 +468,7 @@ public class AppSettings
   
   public String getStreamRawFileExtensions()
   {
-    return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "");
+    return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "mkv,mov,mp4");
   }
   
   public boolean isPreferStreamRaw(String fileExtension)

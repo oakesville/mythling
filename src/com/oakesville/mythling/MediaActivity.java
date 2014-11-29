@@ -543,8 +543,6 @@ public abstract class MediaActivity extends Activity
             }
             public void onClickCancel()
             {
-              stopProgress();
-              onResume();
             }
           });
           
@@ -562,8 +560,6 @@ public abstract class MediaActivity extends Activity
                 .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
                 .setPositiveButton("OK", null)
                 .show();
-                stopProgress();
-                onResume();
                 return;
               }
               dialogMessage += "\n\nRecording will be scheduled if necessary.";
@@ -580,6 +576,8 @@ public abstract class MediaActivity extends Activity
             else
               dialog.show(getFragmentManager(), "StreamVideoDialog");
           }
+          stopProgress();
+          onResume();
         }
       }
       else // frontend playback
