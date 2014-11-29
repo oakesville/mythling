@@ -647,7 +647,9 @@ public abstract class MediaActivity extends Activity
       final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
       String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
       String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
-      if (mediaList.getStorageGroup() != null)
+      if (mediaList.getStorageGroup() == null)
+        fileUrl += "&StorageGroup=None";  // requires MythTV content.cpp patch to work without storage groups
+      else
         fileUrl += "&StorageGroup=" + mediaList.getStorageGroup().getName();
       Intent toStart = new Intent(Intent.ACTION_VIEW);
       toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
