@@ -21,6 +21,7 @@ package com.oakesville.mythling;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
@@ -51,6 +52,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
@@ -527,83 +529,56 @@ public abstract class MediaActivity extends Activity
         }
         else
         {
-          if (item.isLiveTv())
+          StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
+          dialog.setMessage(item.getTitle());
+          dialog.setListener(new StreamDialogListener()
           {
-            TvShow tvShow = (TvShow)item;
-            if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
+            public void onClickHls()
             {
-              new AlertDialog.Builder(this)
-              .setIcon(android.R.drawable.ic_dialog_alert)
-              .setTitle("Live TV")
-              .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
-              .setPositiveButton("OK", null)
-              .show();
+              new StreamHlsTask(item).execute((URL)null);
+            }
+            public void onClickStream()
+            {
+              playRawVideoStream(item);
+            }
+            public void onClickCancel()
+            {
               stopProgress();
               onResume();
-              return;
             }
-            new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle(appSettings.getMediaSettings().getLabel())
-            .setMessage(item.getDialogText() + "\n\nRecording will be scheduled if necessary.")
-            .setPositiveButton("Watch", new DialogInterface.OnClickListener()
+          });
+          
+          if (appSettings.getMediaSettings().getViewType() == ViewType.list)
+          {
+            String dialogMessage = item.getDialogText();
+            if (item.isLiveTv())
             {
-              public void onClick(DialogInterface dialog, int which)
+              TvShow tvShow = (TvShow)item;
+              if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0)
               {
-                try
-                {
-                  new StreamTvTask((TvShow)item).execute(getAppSettings().getMythTvServicesBaseUrl());
-                }
-                catch (MalformedURLException ex)
-                {
-                  stopProgress();
-                  if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
-                  if (getAppSettings().isErrorReportingEnabled())
-                    new Reporter(ex).send();                  
-                  Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-                }
-              }
-            })
-            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-            {
-              public void onClick(DialogInterface dialog, int which)
-              {
+                new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Live TV")
+                .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
+                .setPositiveButton("OK", null)
+                .show();
                 stopProgress();
                 onResume();
+                return;
               }
-            })
-            .show();
+              dialogMessage += "\n\nRecording will be scheduled if necessary.";
+            }
+            dialog.setMessage(dialogMessage);
+            dialog.show(getFragmentManager(), "StreamVideoDialog");
           }
-          else if (appSettings.getMediaSettings().getViewType() == ViewType.list 
-              && (item.isMovie() || item.isTvSeries() || item.isRecording()))
+          else // detail mode -- no dialog unless preferred stream mode is unknown
           {
-            // confirmation dialog with details TODO: include image
-            new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle(appSettings.getMediaSettings().getLabel())
-            .setMessage(item.getDialogText())
-            .setPositiveButton("Play", new DialogInterface.OnClickListener()
-            {
-              public void onClick(DialogInterface dialog, int which)
-              {
-                playVideoStream(item);
-              }
-            })
-            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-            {
-              public void onClick(DialogInterface dialog, int which)
-              {
-                stopProgress();
-                onResume();
-              }
-            })
-            .show();
-          }
-          else
-          {
-            // no confirmation dialog
-            playVideoStream(item);
+            if (appSettings.isPreferHls(item.getFormat()))
+              new StreamHlsTask(item).execute((URL)null);
+            else if (appSettings.isPreferStreamRaw(item.getFormat()))
+              playRawVideoStream(item);
+            else
+              dialog.show(getFragmentManager(), "StreamVideoDialog");
           }
         }
       }
@@ -664,22 +639,29 @@ public abstract class MediaActivity extends Activity
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
     }
   }
-  
-  private void playVideoStream(Item item)
+
+  private void playRawVideoStream(Item item)
   {
     try
     {
-      new StreamVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
-    }
-    catch (MalformedURLException ex)
-    {
+      final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
+      String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
+      String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
+      if (mediaList.getStorageGroup() != null)
+        fileUrl += "&StorageGroup=" + mediaList.getStorageGroup().getName();
+      Intent toStart = new Intent(Intent.ACTION_VIEW);
+      toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
       stopProgress();
+      startActivity(toStart);
+    }
+    catch (IOException ex)
+    {
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
       if (getAppSettings().isErrorReportingEnabled())
         new Reporter(ex).send();      
       Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-    }
+    }    
   }
   
   private void stopMediaPlayer()
@@ -989,13 +971,13 @@ public abstract class MediaActivity extends Activity
     }    
   }
   
-  private class StreamVideoTask extends AsyncTask<URL,Integer,Long>
+  private class StreamHlsTask extends AsyncTask<URL,Integer,Long>
   {
     private Item item;
     private LiveStreamInfo streamInfo;
     private Exception ex;
     
-    public StreamVideoTask(Item item)
+    public StreamHlsTask(Item item)
     {
       this.item = item;
     }

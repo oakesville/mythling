@@ -176,6 +176,14 @@ public class TvShow extends Item
     return buf.toString();
   }
   
+  public String getFormat()
+  {
+    if (getType() == MediaType.liveTv)
+      return "Live TV"; // for remembering stream option
+    else
+      return super.getFormat();
+  }
+  
   public String getLabel()
   {
     String label = getTitle();

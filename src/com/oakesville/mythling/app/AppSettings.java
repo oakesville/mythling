@@ -81,6 +81,8 @@ public class AppSettings
   public static final String MOVIE_DIRECTORIES = "movie_directories";
   public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
   public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
+  public static final String HLS_FILE_EXTENSIONS = "hls_file_extensions";
+  public static final String STREAM_RAW_FILE_EXTENSIONS = "stream_raw_file_extensions";
   public static final String ARTWORK_SG_VIDEOS = "artwork_sg_videos";
   public static final String ARTWORK_SG_RECORDINGS = "artwork_sg_recordings";
   public static final String ARTWORK_SG_MOVIES = "artwork_sg_movies";
@@ -435,6 +437,60 @@ public class AppSettings
         vidExcludeDirs[i] += "/";
     }
     return vidExcludeDirs;
+  }
+  
+  public String getHlsFileExtensions()
+  {
+    return prefs.getString(HLS_FILE_EXTENSIONS, "");
+  }
+  
+  public boolean isPreferHls(String fileExtension)
+  {
+    String[] hlsFileExtensions = getHlsFileExtensions().split(",");
+    for (int i = 0; i < hlsFileExtensions.length; i++)
+    {
+      if (hlsFileExtensions[i].equals(fileExtension) || hlsFileExtensions.equals("." + fileExtension))
+        return true;
+    }
+    return false;
+  }
+
+  public boolean setPreferHls(String fileExtension)
+  {
+    String hlsFileExtensions = getHlsFileExtensions();
+    if (!hlsFileExtensions.isEmpty())
+      hlsFileExtensions += ",";
+    hlsFileExtensions += fileExtension;
+    Editor ed = prefs.edit();
+    ed.putString(HLS_FILE_EXTENSIONS, hlsFileExtensions);
+    return ed.commit();
+  }
+  
+  public String getStreamRawFileExtensions()
+  {
+    return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "");
+  }
+  
+  public boolean isPreferStreamRaw(String fileExtension)
+  {
+    String[] streamRawFileExtensionss = getStreamRawFileExtensions().split(",");
+    for (int i = 0; i < streamRawFileExtensionss.length; i++)
+    {
+      if (streamRawFileExtensionss[i].equals(fileExtension) || streamRawFileExtensionss[i].equals("." + fileExtension))
+        return true;
+    }
+    return false;
+  }
+  
+  public boolean setPreferStreamRaw(String fileExtension)
+  {
+    String streamRawFileExtensions = getStreamRawFileExtensions();
+    if (!streamRawFileExtensions.isEmpty())
+      streamRawFileExtensions += ",";
+    streamRawFileExtensions += fileExtension;
+    Editor ed = prefs.edit();
+    ed.putString(STREAM_RAW_FILE_EXTENSIONS, streamRawFileExtensions);
+    return ed.commit();
   }
   
   public String getMovieBaseUrl()

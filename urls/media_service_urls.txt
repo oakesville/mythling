@@ -43,6 +43,9 @@ http://192.168.0.69:6544/Content/GetLiveStreamList
 # MythTV Add Video Live Stream (start transcoding)
 http://192.168.0.69:6544/Content/AddVideoLiveStream?Id=13277
 
+# MythTV Direct Stream
+http://192.168.0.69:6544/Content/GetFile?StorageGroup=Default&FileName=1855_20141127193000.mpg
+
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
 http://192.168.0.69:6544/Status/GetStatus

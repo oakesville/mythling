@@ -81,6 +81,7 @@
   <string name="title_video_categorization">Categorization</string>
   <string name="title_video_categorization_dialog">Video Categorization</string>
   <string name="title_categorize_videos">Videos</string>
+  <string name="title_categorize_transcoding">Transcoding</string>
   <string name="title_categorize_internet">Internet</string>
   <string name="title_movie_base_url">Movie Base URL</string>
   <string name="message_movie_base_url">Base URL for Movie detail links</string>
@@ -160,10 +161,14 @@
   <string name="title_directories_movies">Movie Directories</string>
   <string name="title_directories_tv_series">TV Series Directories</string>
   <string name="title_directories_exclude">Excluded Directories</string>
+  <string name="title_transcode_hls">Transcode to HLS</string>
+  <string name="title_stream_raw">Stream Raw File</string>
   <string name="title_error_reporting">Error Reporting</string>
   <string name="message_directories_movies">Comma-separated list of video directory paths (relative to storage dir) containing movies</string>
   <string name="message_directories_tv_series">Comma-separated list of video directory paths (relative to storage dir) containing TV series\'</string>
   <string name="message_directories_exclude">Comma-separated list of video directory paths (relative to storage dir) to exclude</string>
+  <string name="message_transcode_hls">Comma-separated list of filename extensions to always transcode to HTTP Live Streams for playback</string>
+  <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
   <string-array name="video_res_entries">
     <item>720p</item>
     <item>600p</item>
