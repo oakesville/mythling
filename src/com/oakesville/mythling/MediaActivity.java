@@ -638,6 +638,10 @@ public abstract class MediaActivity extends Activity
     }
   }
 
+  /**
+   * Requires MythTV content.cpp patch to work without storage groups (or maybe create 
+   * a bogus SG called None that points to your backend videos base location).
+   */
   private void playRawVideoStream(Item item)
   {
     try
@@ -646,7 +650,7 @@ public abstract class MediaActivity extends Activity
       String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
       String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
       if (mediaList.getStorageGroup() == null)
-        fileUrl += "&StorageGroup=None";  // requires MythTV content.cpp patch to work without storage groups
+        fileUrl += "&StorageGroup=None"; 
       else
         fileUrl += "&StorageGroup=" + mediaList.getStorageGroup().getName();
       Intent toStart = new Intent(Intent.ACTION_VIEW);
