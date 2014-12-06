@@ -39,6 +39,7 @@ import android.preference.PreferenceManager;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.media.MediaSettings;
+import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
@@ -540,34 +541,17 @@ public class AppSettings
       return new URL[] { url };
   }
 
-  public String getStorageGroup()
-  {
-    return getStorageGroup(mediaSettings.getType());
-  }
-  
-  /**
-   * this is for media itself
-   * for images use getArtworkStorageGroup()
-   */
-  public static String getStorageGroup(MediaType mediaType)
+  public String getVideoStorageGroup()
   {
     // TODO prefs
-    if (mediaType == MediaType.music)
-      return null;
-    else if (mediaType == MediaType.recordings || mediaType == MediaType.liveTv)
-      return "Default";
-    else
-      return "Videos";
-  }
-  
-  public String getArtworkStorageGroup()
-  {
-    return getArtworkStorageGroup(mediaSettings.getType());
+    return "Videos";
   }
   
   public String getArtworkStorageGroup(MediaType mediaType)
   {
-    if (mediaType == MediaType.videos)
+    if (mediaType == MediaType.music)
+      return isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
+    else if (mediaType == MediaType.videos)
       return prefs.getString(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG);
     else if (mediaType == MediaType.recordings)
       return prefs.getString(ARTWORK_SG_RECORDINGS, DEFAULT_ARTWORK_SG_RECORDINGS);
@@ -1070,9 +1054,9 @@ public class AppSettings
   public MediaListParser getMediaListParser(String json)
   {
     if (isMythlingMediaServices())
-      return new MythlingParser(json, this);
+      return new MythlingParser(this, json);
     else
-      return new MythTvParser(json, this);
+      return new MythTvParser(this, json);
   }
 
   public boolean isTablet()

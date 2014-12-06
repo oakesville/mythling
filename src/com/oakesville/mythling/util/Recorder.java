@@ -76,7 +76,7 @@ public class Recorder
           + "&EndTime=" + show.getEndTimeParam() + "&Title=" + show.getEncodedTitle() + "&Station=" + show.getCallsign() + "&FindDay=0&FindTime=00:00:00");
         
       String addRecJson = new String(getServiceHelper(addRecUrl).post());
-      recRuleId = new MythTvParser(addRecJson, appSettings).parseUint();
+      recRuleId = new MythTvParser(appSettings, addRecJson).parseUint();
       if (recRuleId <= 0)
         throw new IOException("Problem scheduling recording for: " + show.getTitle());
     }
@@ -133,7 +133,7 @@ public class Recorder
     if (BuildConfig.DEBUG)
       Log.d(TAG, "Delete recording result: " + delRecRes);
     
-    boolean deleteResult = new MythTvParser(delRecRes, appSettings).parseBool();
+    boolean deleteResult = new MythTvParser(appSettings, delRecRes).parseBool();
     if (!deleteResult)
       throw new IOException("Problem deleting recording for: " + recording.getTitle());
 
@@ -147,7 +147,7 @@ public class Recorder
     HttpHelper recordingsHelper = appSettings.getMediaListDownloader(new URL[]{appSettings.getMediaListUrl(MediaType.recordings)});
     String recordingsListJson = new String(recordingsHelper.get());
     MediaListParser jsonParser = appSettings.getMediaListParser(recordingsListJson);
-    MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings);
+    MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings, null);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {

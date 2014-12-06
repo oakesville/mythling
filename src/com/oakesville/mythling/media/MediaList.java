@@ -70,15 +70,13 @@ public class MediaList
   }
   
   /**
-   * either storageGroup or basePath should be populated 
+   * basePath should be populated if no storage group for media type
+   * (music and possibly videos) 
    */
   private String basePath;
   public String getBasePath() { return basePath; }
   public void setBasePath(String bp) { this.basePath = bp; }
-  private StorageGroup storageGroup;
-  public StorageGroup getStorageGroup() { return storageGroup; }
-  public void setStorageGroup(StorageGroup sg) { this.storageGroup = sg; }
-  
+
   private List<Item> items = new ArrayList<Item>();
   public List<Item> getItems() { return items; }
   public void setItems(List<Item> items) { this.items = items; }
@@ -98,7 +96,7 @@ public class MediaList
   public void addItemUnderPathCategory(Item item)
   {
     String filepath = item.getFileBase();
-    if (getStorageGroup() == null && filepath.startsWith(basePath + "/"))
+    if (item.getStorageGroup() == null && filepath.startsWith(basePath + "/"))
     {
       filepath = filepath.substring(basePath.length() + 1);
       item.setFileBase(filepath);

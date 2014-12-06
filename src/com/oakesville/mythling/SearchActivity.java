@@ -20,6 +20,7 @@ package com.oakesville.mythling;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -42,6 +43,7 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
 import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.Transcoder;
@@ -51,7 +53,6 @@ public class SearchActivity extends MediaActivity
   private static final String TAG = SearchActivity.class.getSimpleName();
   
   private String searchQuery;
-  private String resultsJson;
   SearchResults searchResults;
   
   private ListView listView;
@@ -200,10 +201,14 @@ public class SearchActivity extends MediaActivity
       {
         HttpHelper downloader = new HttpHelper(urls, getAppSettings().getBackendWebAuthType(), getAppSettings().getPrefs());
         downloader.setCredentials(getAppSettings().getBackendWebUser(), getAppSettings().getBackendWebPassword());
-        resultsJson = new String(downloader.get(), downloader.getCharSet());
-        searchResults = new MythlingParser(resultsJson, getAppSettings()).parseSearchResults();
+        String resultsJson = new String(downloader.get(), downloader.getCharSet());
+        URL sgUrl = new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs");
+        HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
+        String storageGroupsJson = new String(sgDownloader.get());
+        Map<String,StorageGroup> storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();
+        searchResults = new MythlingParser(getAppSettings(), resultsJson).parseSearchResults(storageGroups);
         searchResults.setCharSet(downloader.getCharSet());
-        searchResults.setStorageGroups(retrieveStorageGroups());
+        searchResults.setStorageGroups(storageGroups);
         return 0L;
       }
       catch (Exception ex)
@@ -263,7 +268,7 @@ public class SearchActivity extends MediaActivity
   @Override
   protected Transcoder getTranscoder(Item item)
   {
-    StorageGroup storageGroup = searchResults.getStorageGroups().get(AppSettings.getStorageGroup(item.getType()));
+    StorageGroup storageGroup = item.getStorageGroup();
     if (storageGroup == null)
     {
       if (item.isMusic())

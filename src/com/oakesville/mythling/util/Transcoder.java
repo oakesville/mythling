@@ -81,7 +81,7 @@ public class Transcoder
       streamListUrl = new URL(baseUrl + "/Content/GetLiveStreamList");
     
     String liveStreamJson = new String(getServiceDownloader(streamListUrl).get(), "UTF-8");
-    List<LiveStreamInfo> liveStreams = new MythTvParser(liveStreamJson, appSettings).parseStreamInfoList();
+    List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
     int inProgress = 0;
     for (LiveStreamInfo liveStream : liveStreams)
     {
@@ -132,7 +132,7 @@ public class Transcoder
       else
         addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
       String addStreamJson = new String(getServiceDownloader(addStreamUrl).get(), "UTF-8");
-      streamInfo = new MythTvParser(addStreamJson, appSettings).parseStreamInfo();
+      streamInfo = new MythTvParser(appSettings, addStreamJson).parseStreamInfo();
       
       // get the actual streamInfo versus requested
       try
@@ -145,7 +145,7 @@ public class Transcoder
       }
       URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
       String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
-      streamInfo = new MythTvParser(getStreamJson, appSettings).parseStreamInfo();
+      streamInfo = new MythTvParser(appSettings, getStreamJson).parseStreamInfo();
       if (streamInfo.getRelativeUrl().isEmpty())
         throw new IOException("No live stream found.");
     }    

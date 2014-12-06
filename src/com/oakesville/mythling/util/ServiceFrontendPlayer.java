@@ -96,7 +96,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/GetStatus");        
         HttpHelper downloader = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
         String frontendStatusJson = new String(downloader.get(), "UTF-8");
-        state = new MythTvParser(frontendStatusJson, appSettings).parseFrontendStatus();
+        state = new MythTvParser(appSettings, frontendStatusJson).parseFrontendStatus();
         return 0L;
       }
       catch (Exception ex)
@@ -138,7 +138,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
               
         HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
         String resJson = new String(poster.post(), "UTF-8");
-        boolean res = new MythTvParser(resJson, appSettings).parseBool();
+        boolean res = new MythTvParser(appSettings, resJson).parseBool();
         if (!res)
           throw new ServiceException("Frontend playback failed for url " + url);
         return 0L;
@@ -175,7 +175,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer
         URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");              
         HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
         String resJson = new String(poster.get(), "UTF-8");
-        boolean res = new MythTvParser(resJson, appSettings).parseBool();
+        boolean res = new MythTvParser(appSettings, resJson).parseBool();
         if (!res)
           throw new ServiceException("Error stopping frontend playback: " + url);
         return 0L;

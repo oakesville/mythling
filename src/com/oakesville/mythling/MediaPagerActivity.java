@@ -70,7 +70,6 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
@@ -563,11 +562,7 @@ public class MediaPagerActivity extends MediaActivity
           }
         });
         
-        String artSg;
-        if (item.isMusic())
-          artSg = appSettings.isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
-        else
-          artSg = appSettings.getArtworkStorageGroup();
+        String artSg = appSettings.getArtworkStorageGroup(item.getType());
         ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
         if (art != null)
         {

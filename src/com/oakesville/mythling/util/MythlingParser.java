@@ -21,6 +21,7 @@ package com.oakesville.mythling.util;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,15 +34,16 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.Song;
+import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
 
 /**
  * Artist and title may be reversed for some folks
@@ -52,16 +54,16 @@ public class MythlingParser implements MediaListParser
 {
   private static final String TAG = MythlingParser.class.getSimpleName();
   
-  private String json;
   private AppSettings appSettings;
+  private String json;
   
-  public MythlingParser(String json, AppSettings appSettings)
+  public MythlingParser(AppSettings appSettings, String json)
   {
-    this.json = json;
     this.appSettings = appSettings;
+    this.json = json;
   }
 
-  public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException, ServiceException
+  public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException
   {
     MediaList mediaList = new MediaList();
     mediaList.setMediaType(mediaType);
@@ -81,7 +83,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < items.length(); i++)
       {
         JSONObject item = (JSONObject) items.get(i);
-        mediaList.addItem(buildItem(mediaList.getMediaType(), item));
+        mediaList.addItem(buildItem(mediaList.getMediaType(), item, storageGroups));
       }
     }
     if (list.has("categories"))
@@ -90,7 +92,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < cats.length(); i++)
       {
         JSONObject cat = (JSONObject) cats.get(i);
-        mediaList.addCategory(buildCategory(mediaList.getMediaType(), cat, null));
+        mediaList.addCategory(buildCategory(mediaList.getMediaType(), cat, null, storageGroups));
       }
     }
     if (BuildConfig.DEBUG)
@@ -110,7 +112,7 @@ public class MythlingParser implements MediaListParser
     return mediaList;    
   }
   
-  private Category buildCategory(MediaType type, JSONObject cat, Category parent) throws JSONException, ParseException
+  private Category buildCategory(MediaType type, JSONObject cat, Category parent, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
     String name = cat.getString("name");
     Category category = parent == null ? new Category(name, type) : new Category(name, parent);
@@ -120,7 +122,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < childs.length(); i++)
       {
         JSONObject childCat = (JSONObject) childs.get(i);
-        category.addChild(buildCategory(type, childCat, category));
+        category.addChild(buildCategory(type, childCat, category, storageGroups));
       }
     }
     if (cat.has("items"))
@@ -129,13 +131,13 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < items.length(); i++)
       {
         JSONObject item = (JSONObject) items.get(i);
-        category.addItem(buildItem(type, item));
+        category.addItem(buildItem(type, item, storageGroups));
       }
     }
     return category;
   }
   
-  public SearchResults parseSearchResults() throws JSONException, ParseException, ServiceException
+  public SearchResults parseSearchResults(Map<String,StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException
   {
     SearchResults searchResults = new SearchResults();
     
@@ -156,7 +158,7 @@ public class MythlingParser implements MediaListParser
     for (int i = 0; i < vids.length(); i++)
     {
       JSONObject vid = (JSONObject) vids.get(i);
-      searchResults.addVideo(buildItem(MediaType.videos, vid));
+      searchResults.addVideo(buildItem(MediaType.videos, vid, storageGroups));
     }
     
     JSONArray recordings = list.getJSONArray("recordings");
@@ -164,7 +166,7 @@ public class MythlingParser implements MediaListParser
     {
       JSONObject recording = (JSONObject) recordings.get(i);
       recording.put("path", "");
-      searchResults.addRecording(buildItem(MediaType.recordings, recording));
+      searchResults.addRecording(buildItem(MediaType.recordings, recording, storageGroups));
     }
 
     JSONArray tvShows = list.getJSONArray("liveTv");
@@ -172,7 +174,7 @@ public class MythlingParser implements MediaListParser
     {
       JSONObject tvShow = (JSONObject) tvShows.get(i);
       tvShow.put("path", "");
-      searchResults.addLiveTvItem(buildItem(MediaType.liveTv, tvShow));
+      searchResults.addLiveTvItem(buildItem(MediaType.liveTv, tvShow, storageGroups));
     }
 
     if (list.has("movies")) // if no videos categorization
@@ -181,7 +183,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < movies.length(); i++)
       {
         JSONObject movie = (JSONObject) movies.get(i);
-        searchResults.addMovie(buildItem(MediaType.movies, movie));
+        searchResults.addMovie(buildItem(MediaType.movies, movie, storageGroups));
       }
     }
 
@@ -191,7 +193,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < tvSeries.length(); i++)
       {
         JSONObject tvSeriesItem = (JSONObject) tvSeries.get(i);
-        searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem));
+        searchResults.addTvSeriesItem(buildItem(MediaType.tvSeries, tvSeriesItem, storageGroups));
       }
     }
 
@@ -201,7 +203,7 @@ public class MythlingParser implements MediaListParser
       for (int i = 0; i < songs.length(); i++)
       {
         JSONObject song = (JSONObject) songs.get(i);
-        searchResults.addSong(buildItem(MediaType.music, song));
+        searchResults.addSong(buildItem(MediaType.music, song, storageGroups));
       }
     }
     
@@ -211,17 +213,21 @@ public class MythlingParser implements MediaListParser
     return searchResults; 
   }
 
-  private Item buildItem(MediaType type, JSONObject jsonObj) throws JSONException, ParseException
+  private Item buildItem(MediaType type, JSONObject jsonObj, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
     Item item;
     if (type == MediaType.movies)
     {
       item = new Movie(jsonObj.getString("id"), jsonObj.getString("title"));
+      if (storageGroups != null)
+        item.setStorageGroup(storageGroups.get(appSettings.getVideoStorageGroup()));
       addVideoInfo((Video)item, jsonObj);
     }
     else if (type == MediaType.tvSeries)
     {
       item = new TvEpisode(jsonObj.getString("id"), jsonObj.getString("title"));
+      if (storageGroups != null)
+        item.setStorageGroup(storageGroups.get(appSettings.getVideoStorageGroup()));
       addVideoInfo((Video)item, jsonObj);
       if (jsonObj.has("season"))
         ((TvEpisode)item).setSeason(Integer.parseInt(jsonObj.getString("season")));
@@ -231,6 +237,8 @@ public class MythlingParser implements MediaListParser
     else if (type == MediaType.videos)
     {
       item = new Video(jsonObj.getString("id"), jsonObj.getString("title"));
+      if (storageGroups != null)
+        item.setStorageGroup(storageGroups.get(appSettings.getVideoStorageGroup()));
       addVideoInfo((Video)item, jsonObj);
     }
     else if (type == MediaType.liveTv)
@@ -242,10 +250,12 @@ public class MythlingParser implements MediaListParser
     {
       item = new Recording(jsonObj.getString("id"), jsonObj.getString("title"));
       addProgramInfo((TvShow)item, jsonObj);
-      if (jsonObj.has("recordid"))
-        ((Recording)item).setRecordRuleId(jsonObj.getInt("recordid"));
-      if (jsonObj.has("recgroup"))
-        ((Recording)item).setRecordingGroup(jsonObj.getString("recgroup"));
+      if (jsonObj.has("recordId"))
+        ((Recording)item).setRecordRuleId(jsonObj.getInt("recordId"));
+      if (storageGroups != null && jsonObj.has("storageGroup"))
+        item.setStorageGroup(storageGroups.get(jsonObj.getString("storageGroup")));
+      if (jsonObj.has("recGroup"))
+        ((Recording)item).setRecordingGroup(jsonObj.getString("recGroup"));
       if (jsonObj.has("internetRef"))
         ((Recording)item).setInternetRef(jsonObj.getString("internetRef"));          
     }
@@ -314,7 +324,7 @@ public class MythlingParser implements MediaListParser
       item.setPageUrl(jsonObj.getString("pageUrl"));
   }
   
-  public List<Item> parseQueue(MediaType type) throws JSONException, ParseException
+  public List<Item> parseQueue(MediaType type, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
     List<Item> queue = new ArrayList<Item>();
     long startTime = System.currentTimeMillis();
@@ -323,7 +333,7 @@ public class MythlingParser implements MediaListParser
     for (int i = 0; i < vids.length(); i++)
     {
       JSONObject vid = (JSONObject) vids.get(i);
-      queue.add(buildItem(type, vid));
+      queue.add(buildItem(type, vid, storageGroups));
     }
     if (BuildConfig.DEBUG)
       Log.d(TAG, " -> (" + type + ") queue parse time: " + (System.currentTimeMillis() - startTime) + " ms");

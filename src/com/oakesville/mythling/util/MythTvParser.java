@@ -55,48 +55,38 @@ public class MythTvParser implements MediaListParser
 {
   private static final String TAG = MythTvParser.class.getSimpleName();
 
-  private String json;
   private AppSettings appSettings;
+  private String json;
   
-  public MythTvParser(String json, AppSettings appSettings)
+  public MythTvParser(AppSettings appSettings, String json)
   {
-    this.json = json;
     this.appSettings = appSettings;
+    this.json = json;
   }
   
   public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException
   {
-    return parseMediaList(mediaType, null, null, null);
+    return parseMediaList(mediaType, null, null);
   }
 
   /**
    * @param mediaType
    * @param storageGroup media storage group
    */
-  public MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, StorageGroup artworkStorageGroup) throws JSONException, ParseException
+  public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
-    return parseMediaList(mediaType, storageGroup, null, artworkStorageGroup);
+    return parseMediaList(mediaType, storageGroups, null);
   }
 
-  /**
-   * @param mediaType
-   * @param basePath base path to trim from filename (when no storage group)
-   */
-  public MediaList parseMediaList(MediaType mediaType, String basePath, StorageGroup artworkStorageGroup) throws JSONException, ParseException
-  {
-    return parseMediaList(mediaType, null, basePath, artworkStorageGroup);
-  }
-  
   /**
    * @param mediaType
    * @param storageGroup media storage group
    * @param basePath base path to trim from filename (when no storage group)
    */
-  private MediaList parseMediaList(MediaType mediaType, StorageGroup storageGroup, String basePath, StorageGroup artworkStorageGroup) throws JSONException, ParseException
+  public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups, String basePath) throws JSONException, ParseException
   {
     MediaList mediaList = new MediaList();
     mediaList.setMediaType(mediaType);
-    mediaList.setStorageGroup(storageGroup);
     mediaList.setBasePath(basePath);
     long startTime = System.currentTimeMillis();
     JSONObject list = new JSONObject(json);
@@ -124,7 +114,7 @@ public class MythTvParser implements MediaListParser
           if (vid.has("FileName"))
           {
             String filePath = vid.getString("FileName");
-            if (mediaList.getStorageGroup() == null && filePath.startsWith(basePath + "/"))
+            if (storageGroups.get(appSettings.getVideoStorageGroup()) == null && filePath.startsWith(basePath + "/"))
               filePath = filePath.substring(basePath.length() + 1);
             
             for (String movieDir : movieDirs)
@@ -171,7 +161,7 @@ public class MythTvParser implements MediaListParser
         
         if (type == mediaType)
         {
-          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, artworkStorageGroup));
+          mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, storageGroups));
           count++;
         }
       }
@@ -187,7 +177,7 @@ public class MythTvParser implements MediaListParser
       for (int i = 0; i < recs.length(); i++)
       {
         JSONObject rec = (JSONObject) recs.get(i);
-        Item recItem = buildRecordingItem(rec);
+        Item recItem = buildRecordingItem(rec, storageGroups);
         ViewType viewType = appSettings.getMediaSettings().getViewType(); 
         if (viewType == ViewType.list && (sortType == null || sortType == SortType.byTitle))
         {
@@ -233,7 +223,7 @@ public class MythTvParser implements MediaListParser
     return mediaList;    
   }
   
-  private Video buildVideoItem(MediaType type, JSONObject vid, StorageGroup artworkStorageGroup) throws JSONException, ParseException
+  private Video buildVideoItem(MediaType type, JSONObject vid, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
     Video item;
     if (type == MediaType.movies)
@@ -265,6 +255,9 @@ public class MythTvParser implements MediaListParser
     int lastdot = filename.lastIndexOf('.');
     item.setFileBase(filename.substring(0, lastdot));
     item.setFormat(filename.substring(lastdot + 1));
+    if (storageGroups != null)
+      item.setStorageGroup(storageGroups.get(appSettings.getVideoStorageGroup()));
+    
     if (vid.has("SubTitle"))
     {
       String subtitle = vid.getString("SubTitle");
@@ -317,37 +310,41 @@ public class MythTvParser implements MediaListParser
         item.setRating(Float.parseFloat(rating)/2);
     }
     
-    if (vid.has("Artwork") && artworkStorageGroup != null)
+    if (vid.has("Artwork"))
     {
-      JSONObject artwork = vid.getJSONObject("Artwork");
-      if (artwork.has("ArtworkInfos"))
+      StorageGroup artworkStorageGroup = storageGroups == null ? null : storageGroups.get(appSettings.getArtworkStorageGroup(type));          
+      if (artworkStorageGroup != null)
       {
-        JSONArray artworkInfos = artwork.getJSONArray("ArtworkInfos");
-        for (int i = 0; i < artworkInfos.length(); i++)
+        JSONObject artwork = vid.getJSONObject("Artwork");
+        if (artwork.has("ArtworkInfos"))
         {
-          JSONObject artworkInfo = (JSONObject)artworkInfos.get(i);
-          if (artworkInfo.has("StorageGroup") && artworkStorageGroup.getName().equals(artworkInfo.getString("StorageGroup")))
+          JSONArray artworkInfos = artwork.getJSONArray("ArtworkInfos");
+          for (int i = 0; i < artworkInfos.length(); i++)
           {
-            if (artworkInfo.has("URL"))
+            JSONObject artworkInfo = (JSONObject)artworkInfos.get(i);
+            if (artworkInfo.has("StorageGroup") && artworkStorageGroup.getName().equals(artworkInfo.getString("StorageGroup")))
             {
-              String url = artworkInfo.getString("URL");
-              // assumes FileName is last parameter
-              int amp = url.lastIndexOf("&FileName=");
-              if (amp > 0)
+              if (artworkInfo.has("URL"))
               {
-                String artPath = url.substring(amp + 10);
-                if (artPath.startsWith("/")) // indicates no video storage group
+                String url = artworkInfo.getString("URL");
+                // assumes FileName is last parameter
+                int amp = url.lastIndexOf("&FileName=");
+                if (amp > 0)
                 {
-                  for (String artDir : artworkStorageGroup.getDirectories())
+                  String artPath = url.substring(amp + 10);
+                  if (artPath.startsWith("/")) // indicates no video storage group
                   {
-                    if (artPath.startsWith(artDir))
+                    for (String artDir : artworkStorageGroup.getDirectories())
                     {
-                      artPath = artPath.substring(artDir.length() + 1);
-                      break;
+                      if (artPath.startsWith(artDir))
+                      {
+                        artPath = artPath.substring(artDir.length() + 1);
+                        break;
+                      }
                     }
                   }
+                  item.setArtwork(artPath);
                 }
-                item.setArtwork(artPath);
               }
             }
           }
@@ -358,7 +355,7 @@ public class MythTvParser implements MediaListParser
     return item;
   }
   
-  private Recording buildRecordingItem(JSONObject rec) throws JSONException, ParseException
+  private Recording buildRecordingItem(JSONObject rec, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException
   {
     JSONObject channel = rec.getJSONObject("Channel");
     String chanId = channel.getString("ChanId");
@@ -369,6 +366,8 @@ public class MythTvParser implements MediaListParser
     recording.setStartTime(parseMythDateTime(startTime));
     if (recObj.has("RecordId"))
       recording.setRecordRuleId(Integer.parseInt(recObj.getString("RecordId")));
+    if (recObj.has("StorageGroup"))
+      recording.setStorageGroup(storageGroups.get(recObj.getString("StorageGroup")));
     if (recObj.has("RecGroup"))
       recording.setRecordingGroup(recObj.getString("RecGroup"));
     String filename = rec.getString("FileName");

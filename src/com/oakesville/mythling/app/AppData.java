@@ -40,9 +40,11 @@ import android.util.LruCache;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.SearchResults;
+import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
 
 public class AppData
@@ -73,31 +75,61 @@ public class AppData
   public MediaList getMediaList() { return mediaList; }
   public void setMediaList(MediaList wl) { this.mediaList = wl; }
   
+  private Map<String,StorageGroup> storageGroups;
+  public Map<String,StorageGroup> getStorageGroups() { return storageGroups; }
+  public void setStorageGroups(Map<String,StorageGroup> sgs) { this.storageGroups = sgs; }
+  
   private SearchResults searchResults;
   public SearchResults getSearchResults() { return searchResults; }
   public void setSearchResults(SearchResults results) { this.searchResults = results; }
   
   private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
+  private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
   private static final String QUEUE_FILE_SUFFIX = "Queue.json";
   public MediaList readMediaList(MediaType mediaType) throws IOException, JSONException, ParseException
   {
-    File cacheDir = appContext.getCacheDir();
-    File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
-    if (appDataJsonFile.exists())
+    Map<String,StorageGroup> storageGroups = readStorageGroups();
+    if (storageGroups != null)
     {
-      String mediaListJson = new String(readFile(appDataJsonFile));
-      AppSettings appSettings = new AppSettings(appContext);
-      MediaListParser parser = appSettings.getMediaListParser(mediaListJson);
-      mediaList = parser.parseMediaList(mediaType);
+      File cacheDir = appContext.getCacheDir();
+      File mediaListJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
+      if (mediaListJsonFile.exists())
+      {
+        AppSettings appSettings = new AppSettings(appContext);
+        String mediaListJson = new String(readFile(mediaListJsonFile));
+        MediaListParser mediaListParser = appSettings.getMediaListParser(mediaListJson);
+        mediaList = mediaListParser.parseMediaList(mediaType, storageGroups);
+      }
     }
     return mediaList;
+  }
+  
+  public Map<String,StorageGroup> readStorageGroups() throws IOException, JSONException, ParseException
+  {
+    File cacheDir = appContext.getCacheDir();
+    File storageGroupsJsonFile = new File(cacheDir.getPath() + "/" + STORAGE_GROUPS_JSON_FILE);
+    if (storageGroupsJsonFile.exists())
+    {
+      AppSettings appSettings = new AppSettings(appContext);
+      String storageGroupsJson = new String(readFile(storageGroupsJsonFile));
+      MythTvParser storageGroupParser = new MythTvParser(appSettings, storageGroupsJson);
+      storageGroups = storageGroupParser.parseStorageGroups();
+    }
+    return storageGroups;
   }
   
   public void writeMediaList(String json) throws IOException, JSONException
   {
     File cacheDir = appContext.getCacheDir();
-    File appDataJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
-    writeFile(appDataJsonFile, json.getBytes());
+    File jsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
+    writeFile(jsonFile, json.getBytes());
+  }
+  
+  public void writeStorageGroups(String json) throws IOException, JSONException
+  {
+    File cacheDir = appContext.getCacheDir();
+    File jsonFile = new File(cacheDir.getPath() + "/" + STORAGE_GROUPS_JSON_FILE);
+    writeFile(jsonFile, json.getBytes());
   }
   
   private Map<MediaType,List<Item>> queues = new HashMap<MediaType,List<Item>>();
@@ -131,8 +163,8 @@ public class AppData
     if (queueFile.exists())
     {
       String queueJson = new String(readFile(queueFile));
-      MythlingParser parser = new MythlingParser(queueJson, new AppSettings(appContext));
-      List<Item> queue = parser.parseQueue(type);
+      MythlingParser parser = new MythlingParser(new AppSettings(appContext), queueJson);
+      List<Item> queue = parser.parseQueue(type, storageGroups);
       queues.put(type, queue);
     }
     return queues.get(type);

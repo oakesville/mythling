@@ -19,13 +19,16 @@
 package com.oakesville.mythling.util;
 
 import java.text.ParseException;
+import java.util.Map;
 
 import org.json.JSONException;
 
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.StorageGroup;
 
 public interface MediaListParser
 {
-  public MediaList parseMediaList(MediaType mediaType) throws JSONException, ParseException, ServiceException;
+  public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups)
+  throws JSONException, ParseException, ServiceException;
 }

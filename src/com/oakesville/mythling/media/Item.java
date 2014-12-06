@@ -55,6 +55,10 @@ public abstract class Item implements Listable
   public String getTitle() { return title; }
   public void setTitle(String title) { this.title = title; }
   
+  private StorageGroup storageGroup;
+  public StorageGroup getStorageGroup() { return storageGroup; }
+  public void setStorageGroup(StorageGroup storageGroup) { this.storageGroup = storageGroup; }
+  
   public String getEncodedTitle()
   {
     try
