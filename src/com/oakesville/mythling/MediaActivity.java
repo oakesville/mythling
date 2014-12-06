@@ -19,7 +19,6 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -87,6 +86,7 @@ public abstract class MediaActivity extends Activity
   private static final String TAG = MediaActivity.class.getSimpleName();
   
   protected MediaList mediaList;
+  protected Map<String,StorageGroup> storageGroups;
 
   private static AppData appData;
   public static AppData getAppData() { return appData; }
@@ -535,12 +535,18 @@ public abstract class MediaActivity extends Activity
             public void onClickHls()
             {
               startProgress();
-              new StreamHlsTask(item).execute((URL)null);
+              if (item.isLiveTv())
+                new StreamTvTask((TvShow)item, false).execute();
+              else
+                new StreamHlsTask(item).execute();
             }
             public void onClickStream()
             {
               startProgress();
-              playRawVideoStream(item);
+              if (item.isLiveTv())
+                new StreamTvTask((TvShow)item, true).execute();
+              else
+                playRawVideoStream(item);
             }
             public void onClickCancel()
             {
@@ -866,13 +872,13 @@ public abstract class MediaActivity extends Activity
           ex = new IOException(mediaListJson);
           return -1L;
         }
-        MediaListParser mediaListParser = getAppSettings().getMediaListParser(mediaListJson);
         
         URL sgUrl = new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs");
         HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
         storageGroupsJson = new String(sgDownloader.get());
-        Map<String,StorageGroup> storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();          
+        storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();          
         
+        MediaListParser mediaListParser = getAppSettings().getMediaListParser(mediaListJson);
         if (getAppSettings().isMythlingMediaServices())
         {
           mediaList = mediaListParser.parseMediaList(mediaSettings.getType(), storageGroups);
@@ -938,6 +944,7 @@ public abstract class MediaActivity extends Activity
       {
         AppData appData = new AppData(getApplicationContext());
         appData.setMediaList(mediaList);
+        appData.setStorageGroups(storageGroups);
         setAppData(appData);
         setMediaType(appData.getMediaList().getMediaType());
         getAppSettings().setLastLoad(System.currentTimeMillis());
@@ -1091,18 +1098,21 @@ public abstract class MediaActivity extends Activity
   protected class StreamTvTask extends AsyncTask<URL,Integer,Long>
   {
     private TvShow tvShow;
+    private Recording recording;
     private Recording recordingToDelete;
     private LiveStreamInfo streamInfo;
+    private boolean raw;
     private Exception ex;
     
-    public StreamTvTask(TvShow tvShow)
+    public StreamTvTask(TvShow tvShow, boolean raw)
     {
       this.tvShow = tvShow;
+      this.raw = raw;
     }
     
-    public StreamTvTask(TvShow tvShow, Recording recordingToDelete)
+    public StreamTvTask(TvShow tvShow, boolean raw, Recording recordingToDelete)
     {
-      this.tvShow = tvShow;
+      this(tvShow, raw);
       this.recordingToDelete = recordingToDelete;
     }
     
@@ -1110,7 +1120,7 @@ public abstract class MediaActivity extends Activity
     {
       try
       {
-        Recorder recorder = new Recorder(getAppSettings());
+        Recorder recorder = new Recorder(getAppSettings(), storageGroups);
         if (recordingToDelete != null)
           recorder.deleteRecording(recordingToDelete);
         boolean recordAvail = recorder.scheduleRecording(tvShow);
@@ -1118,13 +1128,19 @@ public abstract class MediaActivity extends Activity
         if (!recordAvail)
           recorder.waitAvailable();
         
-        Transcoder transcoder = getTranscoder(tvShow);
-        boolean streamAvail = transcoder.beginTranscode(recorder.getRecording());
+        recording = recorder.getRecording();
         
-        streamInfo = transcoder.getStreamInfo();
-        
-        if (!streamAvail)
-          transcoder.waitAvailable();
+        if (!raw)
+        {
+          tvShow.setStorageGroup(recorder.getRecording().getStorageGroup());
+          Transcoder transcoder = getTranscoder(tvShow);
+          boolean streamAvail = transcoder.beginTranscode(recorder.getRecording());
+          
+          streamInfo = transcoder.getStreamInfo();
+          
+          if (!streamAvail)
+            transcoder.waitAvailable();
+        }
         
         return 0L;
       }
@@ -1163,20 +1179,8 @@ public abstract class MediaActivity extends Activity
               {
                 public void onClick(DialogInterface dialog, int which)
                 {
-                  try
-                  {
-                    startProgress();
-                    new StreamTvTask(tvShow, inProgressRecording).execute(getAppSettings().getMythTvServicesBaseUrl());
-                  }
-                  catch (MalformedURLException ex)
-                  {
-                    stopProgress();
-                    if (BuildConfig.DEBUG)
-                      Log.e(TAG, ex.getMessage(), ex);
-                    if (getAppSettings().isErrorReportingEnabled())
-                      new Reporter(ex).send();                    
-                    Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-                  }
+                  startProgress();
+                  new StreamTvTask(tvShow, raw, inProgressRecording).execute();
                 }
               })
               .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -1211,7 +1215,10 @@ public abstract class MediaActivity extends Activity
       {
         try
         {
-          playLiveStream(streamInfo);
+          if (raw)
+            playRawVideoStream(recording);
+          else
+            playLiveStream(streamInfo);
         }
         catch (Exception ex)
         {

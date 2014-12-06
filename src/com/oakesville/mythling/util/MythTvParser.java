@@ -366,7 +366,7 @@ public class MythTvParser implements MediaListParser
     recording.setStartTime(parseMythDateTime(startTime));
     if (recObj.has("RecordId"))
       recording.setRecordRuleId(Integer.parseInt(recObj.getString("RecordId")));
-    if (recObj.has("StorageGroup"))
+    if (recObj.has("StorageGroup") && storageGroups != null)
       recording.setStorageGroup(storageGroups.get(recObj.getString("StorageGroup")));
     if (recObj.has("RecGroup"))
       recording.setRecordingGroup(recObj.getString("RecGroup"));

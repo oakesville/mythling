@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import org.json.JSONException;
 
@@ -34,20 +35,23 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TunerInUseException;
 import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Recorder
 {
   private static final String TAG = Recorder.class.getSimpleName();
 
   private AppSettings appSettings;
+  private Map<String,StorageGroup> storageGroups;
   
-  public Recorder(AppSettings appSettings)
+  public Recorder(AppSettings appSettings, Map<String,StorageGroup> storageGroups)
   {
     this.appSettings = appSettings;
+    this.storageGroups = storageGroups;
   }
   
   private TvShow tvShow;
@@ -147,7 +151,7 @@ public class Recorder
     HttpHelper recordingsHelper = appSettings.getMediaListDownloader(new URL[]{appSettings.getMediaListUrl(MediaType.recordings)});
     String recordingsListJson = new String(recordingsHelper.get());
     MediaListParser jsonParser = appSettings.getMediaListParser(recordingsListJson);
-    MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings, null);
+    MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings, storageGroups);
     Date now = new Date();
     for (Category cat : recordingsList.getCategories())
     {
