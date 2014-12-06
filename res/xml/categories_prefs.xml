@@ -49,13 +49,11 @@
       android:key="hls_file_extensions"
       android:title="@string/title_transcode_hls"
       android:dialogMessage="@string/message_transcode_hls"
-      android:defaultValue="mpg"
       android:layout="@layout/pref" />
     <EditTextPreference
       android:key="stream_raw_file_extensions"
       android:title="@string/title_stream_raw"
       android:dialogMessage="@string/message_stream_raw"
-      android:defaultValue="mkv,mov,mp4"
       android:layout="@layout/pref" />
   </PreferenceCategory>
   

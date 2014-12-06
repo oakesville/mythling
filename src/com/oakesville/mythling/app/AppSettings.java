@@ -442,7 +442,7 @@ public class AppSettings
   
   public String getHlsFileExtensions()
   {
-    return prefs.getString(HLS_FILE_EXTENSIONS, "mpg");
+    return prefs.getString(HLS_FILE_EXTENSIONS, "");
   }
   
   public boolean isPreferHls(String fileExtension)
@@ -469,7 +469,7 @@ public class AppSettings
   
   public String getStreamRawFileExtensions()
   {
-    return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "mkv,mov,mp4");
+    return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "");
   }
   
   public boolean isPreferStreamRaw(String fileExtension)
@@ -791,12 +791,6 @@ public class AppSettings
   public String getMythlingServicesAuthType()
   {
     return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
-  }
-  public boolean setMythlingServicesAuthType(String authType)
-  {
-    Editor ed = prefs.edit();
-    ed.putString(MYTHLING_SERVICES_AUTH_TYPE, authType);
-    return ed.commit();
   }
   public String getBackendWebUser()
   {
