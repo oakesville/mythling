@@ -19,3 +19,5 @@ http://54.187.163.194/oakesville/report
 imdb movie base url:
 http://www.imdb.com/title/
 
+# mythtv backend url
+http://192.168.0.69:6544

@@ -792,6 +792,12 @@ public class AppSettings
   {
     return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
   }
+  public boolean setMythlingServicesAuthType(String authType)
+  {
+    Editor ed = prefs.edit();
+    ed.putString(MYTHLING_SERVICES_AUTH_TYPE, authType);
+    return ed.commit();
+  }
   public String getBackendWebUser()
   {
     if (AUTH_TYPE_SAME.equals(getMythlingServicesAuthType()))

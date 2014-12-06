@@ -236,13 +236,34 @@ public class TvShow extends Item
       buf.append(" ").append(getRatingString(getRating()));
     if (getSubTitle() != null)
       buf.append("\n\"").append(getSubTitle()).append("\"");
+    if (!isShowMovie() && isRepeat())
+      buf.append(getAirDateInfo());    
     return buf.toString();
   }
   
   @Override
   public String getDialogText()
   {
-    StringBuffer info = new StringBuffer(getTitle());
+    StringBuffer buf = new StringBuffer(getTitle());
+    buf.append(getSummary());
+    return buf.toString();
+  }
+
+  public String getSummary()
+  {
+    StringBuffer summary = new StringBuffer();
+    summary.append(getCommonInfo());
+    if (getDescription() != null)
+      summary.append("\n").append(getDescription());
+    return summary.toString();
+  }
+    
+  /**
+   * Overridden for recordings.
+   */
+  protected String getCommonInfo()
+  {
+    StringBuffer info = new StringBuffer();
     if (isShowMovie() && getYear() > 0)
       info.append(" (").append(getYear()).append(")");    
     if (getRating() > 0)
@@ -252,10 +273,8 @@ public class TvShow extends Item
       info.append("\n\"").append(getSubTitle()).append("\"");
     if (!isShowMovie() && isRepeat())
       info.append(getAirDateInfo());
-    if (getDescription() != null)
-      info.append("\n").append(getDescription());
     return info.toString();
-  }  
+  }
   
   @Override
   public String getSearchResultText()
@@ -276,16 +295,6 @@ public class TvShow extends Item
         Log.e(TAG, ex.getMessage(), ex);
     }
     return buf.toString();
-  }
-  
-  public String getSummary()
-  {
-    StringBuffer summary = new StringBuffer();
-    summary.append(getShowDateTimeInfo());
-    summary.append(getChannelInfo());
-    if (getDescription() != null)
-      summary.append("\n").append(getDescription());
-    return summary.toString();
   }
   
   @Override

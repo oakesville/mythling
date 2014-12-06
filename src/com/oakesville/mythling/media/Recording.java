@@ -66,23 +66,14 @@ public class Recording extends TvShow
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX);
+    buf.append(getTitle());
     buf.append(getCommonInfo());
     return buf.toString();
   }
-  
-  @Override
-  public String getDialogText()
+    
+  protected String getCommonInfo()
   {
-    StringBuffer buf = new StringBuffer();
-    buf.append(getCommonInfo());
-    if (getDescription() != null)
-      buf.append("\n").append(getDescription());
-    return buf.toString();
-  }
-  
-  private String getCommonInfo()
-  {
-    StringBuffer info = new StringBuffer(getTitle());
+    StringBuffer info = new StringBuffer();
     if (isShowMovie() && getYear() > 0)
       info.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
