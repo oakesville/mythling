@@ -245,6 +245,10 @@ public class TvShow extends Item
   public String getDialogText()
   {
     StringBuffer buf = new StringBuffer(getTitle());
+    if (isShowMovie() && getYear() > 0)
+      buf.append(" (").append(getYear()).append(")");    
+    if (getRating() > 0)
+      buf.append(" ").append(getRatingString(getRating()));
     buf.append(getSummary());
     return buf.toString();
   }
@@ -252,30 +256,16 @@ public class TvShow extends Item
   public String getSummary()
   {
     StringBuffer summary = new StringBuffer();
-    summary.append(getCommonInfo());
+    summary.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
+    if (getSubTitle() != null)
+      summary.append("\n\"").append(getSubTitle()).append("\"");
+    if (!isShowMovie() && isRepeat())
+      summary.append(getAirDateInfo());
     if (getDescription() != null)
       summary.append("\n").append(getDescription());
     return summary.toString();
   }
     
-  /**
-   * Overridden for recordings.
-   */
-  protected String getCommonInfo()
-  {
-    StringBuffer info = new StringBuffer();
-    if (isShowMovie() && getYear() > 0)
-      info.append(" (").append(getYear()).append(")");    
-    if (getRating() > 0)
-      info.append(" ").append(getRatingString(getRating()));
-    info.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
-    if (getSubTitle() != null)
-      info.append("\n\"").append(getSubTitle()).append("\"");
-    if (!isShowMovie() && isRepeat())
-      info.append(getAirDateInfo());
-    return info.toString();
-  }
-  
   @Override
   public String getSearchResultText()
   {
