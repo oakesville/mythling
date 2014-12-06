@@ -569,6 +569,7 @@ public abstract class MediaActivity extends Activity
                 .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
                 .setPositiveButton("OK", null)
                 .show();
+                onResume();
                 return;
               }
               dialogMessage += "\n\nRecording will be scheduled if necessary.";
