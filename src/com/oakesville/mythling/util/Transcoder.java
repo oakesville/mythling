@@ -137,8 +137,8 @@ public class Transcoder
       // get the actual streamInfo versus requested
       try
       {
-        // occasionally the follow-up request comes too soon 
-        Thread.sleep(300);
+        // occasionally the follow-up request comes too soon, especially with multiple transcode running on slower systems
+        Thread.sleep(1000);
       }
       catch (InterruptedException ex) 
       {
@@ -147,7 +147,7 @@ public class Transcoder
       String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
       streamInfo = new MythTvParser(appSettings, getStreamJson).parseStreamInfo();
       if (streamInfo.getRelativeUrl().isEmpty())
-        throw new IOException("No live stream found.");
+        throw new IOException("No live stream found.  Please try again.");
     }    
     
     return preExist; 

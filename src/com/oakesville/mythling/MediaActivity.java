@@ -1140,7 +1140,7 @@ public abstract class MediaActivity extends Activity
           streamInfo = transcoder.getStreamInfo();
           
           if (!streamAvail)
-            transcoder.waitAvailable();
+            transcoder.waitAvailable(); // this is the long pole
         }
         
         return 0L;
