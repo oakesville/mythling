@@ -171,12 +171,7 @@ public class MediaPagerActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
-    showMoviesMenuItem(supportsMovies());
-    showTvSeriesMenuItem(supportsTvSeries());
-    showMusicMenuItem(supportsMusic());
-    showSortMenu(supportsSort());
-    showViewMenu(supportsViewMenu());
-    showSearchMenu(supportsSearch());
+    
     items = mediaList.getListables(path);
 
     pagerAdapter = new MediaPagerAdapter(getFragmentManager());
@@ -241,6 +236,8 @@ public class MediaPagerActivity extends MediaActivity
     
     TextView tv = (TextView) findViewById(R.id.lastItem);
     tv.setText(String.valueOf(items.size()));
+    
+    updateActionMenu();
     
     currentPosition = getAppSettings().getPagerCurrentPosition(mediaList.getMediaType(), path);
     if (items.size() > currentPosition)

@@ -146,12 +146,6 @@ public class MediaListActivity extends MediaActivity
     }
     mediaList = getAppData().getMediaList();
     setMediaType(mediaList.getMediaType());
-    showMoviesMenuItem(supportsMovies());
-    showTvSeriesMenuItem(supportsTvSeries());
-    showMusicMenuItem(supportsMusic());
-    showSortMenu(supportsSort());
-    showViewMenu(supportsViewMenu());
-    showSearchMenu(supportsSearch());
     listables = mediaList.getListables(path);
     
     if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
@@ -243,6 +237,7 @@ public class MediaListActivity extends MediaActivity
           return true;
         }
       });
+      updateActionMenu();      
       listView.setSelectionFromTop(currentTop, topOffset);
     }
   }

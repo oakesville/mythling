@@ -150,7 +150,10 @@ public abstract class MediaActivity extends Activity
     mediaMenuItem = menu.findItem(R.id.menu_media);
     if (mediaMenuItem != null)
     {
-      mediaMenuItem.setTitle(mediaSettings.getTitle());
+      if (mediaList != null)
+        mediaMenuItem.setTitle(mediaSettings.getTitle() + " (" + mediaList.getCount() + ")");
+      else
+        mediaMenuItem.setTitle(mediaSettings.getTitle());
       if (mediaSettings.isMusic())
         mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
       else if (mediaSettings.isLiveTv())
@@ -837,6 +840,19 @@ public abstract class MediaActivity extends Activity
       throw new RuntimeException(ex.getMessage(), ex);
     }
   }
+  
+  protected void updateActionMenu()
+  {
+    showMoviesMenuItem(supportsMovies());
+    showTvSeriesMenuItem(supportsTvSeries());
+    showMusicMenuItem(supportsMusic());
+    showSortMenu(supportsSort());
+    showViewMenu(supportsViewMenu());
+    showSearchMenu(supportsSearch());
+    
+    if (mediaMenuItem != null)
+      mediaMenuItem.setTitle(MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
+  }  
   
   protected void populate() throws IOException, JSONException, ParseException, BadSettingsException
   {

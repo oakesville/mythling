@@ -30,7 +30,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -44,7 +43,6 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
@@ -165,19 +163,6 @@ public class MainActivity extends MediaActivity
     }
     
     mediaList = getAppData().getMediaList();
-    showMoviesMenuItem(supportsMovies());
-    showTvSeriesMenuItem(supportsTvSeries());
-    showMusicMenuItem(supportsMusic());
-    showSortMenu(supportsSort());
-    showViewMenu(supportsViewMenu());
-    showSearchMenu(supportsSearch());
-    
-    MenuItem mediaMenuItem = getMediaMenuItem();
-    if (mediaMenuItem != null)
-    {
-      String title = MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType());
-      mediaMenuItem.setTitle(title + " (" + mediaList.getCount() + ")");
-    }
     
     adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
     listView.setAdapter(adapter);
@@ -207,6 +192,7 @@ public class MainActivity extends MediaActivity
         }
       }
     });
+    updateActionMenu();    
     stopProgress();
     listView.setSelectionFromTop(currentTop, topOffset);
   }
