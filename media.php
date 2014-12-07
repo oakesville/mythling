@@ -204,7 +204,7 @@ if (!$type->isSearch())
   }
   else if ($type->isRecordings())
   {
-    $where = "inner join channel c on (r.chanid = c.chanid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
+    $where = "inner join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
     if ($sort == "date")
     {
       $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
@@ -220,11 +220,11 @@ if (!$type->isSearch())
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = !$flatten;
     }
-    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, r.recordid, r.storagegroup, r.recgroup from recorded r " . $where . " " . $orderBy;
+    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup from recorded r " . $where . " " . $orderBy;
   }
 
-  if (isset($_REQUEST['showQuery']) && strtoupper($_REQUEST['showQuery']) == 'TRUE')
-    echo $query . "\n\n";
+  if (isShowQuery())
+    echo "query: " . $query . "\n\n";
 
   $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($result);
@@ -321,9 +321,17 @@ if (!$type->isSearch())
       $descrip = mysql_result($result, $i, "description");
       $oads = mysql_result($result, $i, "oad");
       if (strcmp("0000-00-00", $oads) != 0)
+      {
         $oad = $oads;
+      }
       else
-        $oad = null;
+      {
+        $oads = mysql_result($result, $i, "airdate");
+        if (strcmp("0000", $oads) != 0)
+          $oad = $oads;
+        else
+          $oad = null;
+      }
       $et = mysql_result($result, $i, "endtime");
       $rat = mysql_result($result, $i, "stars");
       if ($type->isRecordings())
@@ -394,7 +402,7 @@ if (!$type->isSearch())
       $basenames[$id] = $bn;
       $subtitles[$id] = $subtit;
       $descriptions[$id] = $descrip;
-      $airdates[$id] = $oad;
+      $airdates[$id] = $oad;      
       $endtimes[$id] = $et;
       $ratings[$id] = $rat;
       if ($type->isRecordings())
@@ -567,7 +575,8 @@ else
       $vWhere = $vWhere . " and (inetref is null or inetref = '00000000') and (season is null or season = '0') and (episode is null or episode = '0')";
     $vWhere = $vWhere . " and filename like '%" . $searchQuery . "%'"; 
     $vQuery = "select intid as id, filename from videometadata " . $vWhere . " order by filename";
-    // echo "\n vQuery:\n" . $vQuery . "\n";
+    if (isShowQuery())
+      echo "vQuery: " . $vQuery . "\n\n";
     $vRes = mysql_query($vQuery) or die(error("Query failed: " . mysql_error()));
     $vNum = mysql_numrows($vRes);
     echo '  "videos": ' . "\n  [\n";
@@ -599,7 +608,8 @@ else
         $mWhere = $mWhere . " and ((inetref is not null and inetref != '00000000') and (episode is null or episode = '0') and (season is null or season = '0'))"; 
       $mWhere = $mWhere . " and (filename like '%" . $searchQuery . "%' or year like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%')";
       $mQuery = "select intid as id, title, filename, inetref, homepage, year, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $mWhere . " order by filename";
-      // echo "\n mQuery:\n" . $mQuery . "\n";
+      if (isShowQuery())
+        echo "mQuery: " . $mQuery . "\n\n";
       $mRes = mysql_query($mQuery) or die(error("Query failed: " . mysql_error()));
       $mNum = mysql_numrows($mRes);
       echo '  "movies": ' . "\n  [\n";
@@ -644,7 +654,8 @@ else
         $tsWhere = $tsWhere . " and ((season is not null and season != '0') or (episode is not null and episode != '0'))";
       $tsWhere = $tsWhere . " and (filename like '%" . $searchQuery . "%' or subtitle like '%" . $searchQuery . "%' or director like '%" . $searchQuery . "%' or plot like '%" . $searchQuery . "%')";
       $tsQuery = "select intid as id, title, subtitle, season, episode, filename, inetref, homepage, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $tsWhere . " order by filename";
-      // echo "\n tsQuery:\n" . $tsQuery . "\n";
+      if (isShowQuery())
+        echo "tsQuery: " . $tsQuery . "\n\n";      
       $tsRes = mysql_query($tsQuery) or die(error("Query failed: " . mysql_error()));
       $tsNum = mysql_numrows($tsRes);
       echo '  "tvSeries": ' . "\n  [\n";
@@ -691,6 +702,8 @@ else
   if ($musicBase != null)
   {
     $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
+    if (isShowQuery())
+      echo "sQuery: " . $sQuery . "\n\n";    
     $sRes = mysql_query($sQuery) or die(error("Query failed: " . mysql_error()));
     $sNum = mysql_numrows($sRes);
     echo '  "songs": ' . "\n  [\n";
@@ -712,6 +725,8 @@ else
 
   // liveTv
   $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
+  if (isShowQuery())
+    echo "tQuery: " . $tQuery . "\n\n";  
   $tRes = mysql_query($tQuery) or die(error("Query failed: " . mysql_error()));
   $tNum = mysql_numrows($tRes);
   echo '  "liveTv": ' . "\n  [\n";
@@ -728,13 +743,15 @@ else
     if (strcmp($oads, "0000-00-00") != 0)
       $airdate = $oads;
     $endtime = mysql_result($tRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, $airdate, $endtime, $i < $tNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, null, $airdate, $endtime, $i < $tNum - 1);
     $i++;
   }
   echo "  ],\n";
 
   // recordings
-  $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))) as title, r.basename, r.subtitle, r.description, r.storagegroup, convert(r.originalairdate using utf8) as oad, r.endtime from recorded r, channel c where r.chanid = c.chanid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  if (isShowQuery())
+    echo "rQuery: " . $rQuery . "\n\n";  
   $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
   $rNum = mysql_numrows($rRes);
   echo '  "recordings": ' . "\n  [\n";
@@ -750,8 +767,18 @@ else
     $description = mysql_result($rRes, $i, "description");
     $storagegroup = mysql_result($rRes, $i, "storagegroup");
     $oads = mysql_result($rRes, $i, "oad");
-    if (strcmp($oads, "0000-00-00") != 0)
+    if (strcmp("0000-00-00", $oads) != 0)
+    {
       $airdate = $oads;
+    }
+    else
+    {
+      $oads = mysql_result($rRes, $i, "airdate");
+      if (strcmp("0000", $oads) != 0)
+        $airdate = $oads;
+      else
+        $airdate = null;
+    }
     $endtime = mysql_result($rRes, $i, "endtime");
     printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $storagegroup, $airdate, $endtime, $i < $rNum - 1);
     $i++;
@@ -759,6 +786,11 @@ else
   echo "  ]\n}";
 
   mysql_close();
+}
+
+function isShowQuery()
+{
+  return isset($_REQUEST['showQuery']) && strtoupper($_REQUEST['showQuery']) == 'TRUE';  
 }
 
 function printCatBegin($name, $depth)
@@ -968,7 +1000,7 @@ function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, 
   if ($description)
     echo ', "description": "' . $description . '"';
   if ($storagegroup)
-    echo ', "storageGroup": "' . $storageGroup . '"';
+    echo ', "storageGroup": "' . $storagegroup . '"';
   if ($airdate)
     echo ', "airdate": "' . $airdate . '"';
   if ($endtime)

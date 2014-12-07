@@ -290,7 +290,13 @@ public class MythlingParser implements MediaListParser
     if (jsonObj.has("description"))
       item.setDescription(jsonObj.getString("description"));
     if (jsonObj.has("airdate"))
-      item.setOriginallyAired(DateTimeFormats.SERVICE_DATE_FORMAT.parse(jsonObj.getString("airdate")));
+    {
+      String ad = jsonObj.getString("airdate");
+      if (ad.length() == 4) // year only (for movies)
+        item.setOriginallyAired(DateTimeFormats.YEAR_FORMAT.parse(ad));
+      else
+        item.setOriginallyAired(DateTimeFormats.SERVICE_DATE_FORMAT.parse(ad));
+    }
     if (jsonObj.has("endtime"))
       item.setEndTime(DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(jsonObj.getString("endtime")));
     if (jsonObj.has("programStart"))
