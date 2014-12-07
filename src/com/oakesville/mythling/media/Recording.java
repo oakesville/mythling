@@ -98,10 +98,10 @@ public class Recording extends TvShow
     StringBuffer summary = new StringBuffer();
     summary.append(getShowDateTimeInfo());
     summary.append(getChannelInfo());
-    if (getSubTitle() != null)
-      summary.append("\n\"").append(getSubTitle()).append("\"");
     if (!isShowMovie() && isRepeat())
       summary.append(getAirDateInfo());
+    if (getDescription() != null)
+      summary.append("\n").append(getDescription());
     return summary.toString();
   }
     
