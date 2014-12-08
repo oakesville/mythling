@@ -648,6 +648,8 @@ public abstract class MediaActivity extends Activity
     }
     catch (Exception ex)
     {
+      stopProgress();
+      onResume();
       if (BuildConfig.DEBUG)
         Log.e(TAG, ex.getMessage(), ex);
       if (getAppSettings().isErrorReportingEnabled())
