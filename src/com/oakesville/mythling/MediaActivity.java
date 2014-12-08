@@ -189,7 +189,7 @@ public abstract class MediaActivity extends Activity
     showMythwebMenu(supportsMythwebMenu());
     
     stopMenuItem = menu.findItem(R.id.menu_stop);
-      stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());
+    stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());
 
     return super.onPrepareOptionsMenu(menu);
   }

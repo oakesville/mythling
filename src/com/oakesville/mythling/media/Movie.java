@@ -48,25 +48,13 @@ public class Movie extends Video
   }
 
   @Override
-  public String getText()
+  protected String getExtraText()
   {
-    StringBuffer buf = new StringBuffer(PREFIX + getTitle());
+    StringBuffer buf = new StringBuffer();
     if (getYear() > 0)
       buf.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
-    return buf.toString();
-  }
-
-  public String getSearchResultText()
-  {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append("(").append(getTypeTitle()).append(") ");
-    if (getPath() != null && getPath().length() > 0)
-      buf.append(getPath()).append("/");
-    buf.append(getTitle());
-    if (getYear() > 0)
-      buf.append(" (").append(getYear()).append(")");
     return buf.toString();
   }
 

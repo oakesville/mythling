@@ -19,18 +19,12 @@
 package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
 
-import android.util.Log;
-
-import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Recording extends TvShow
 {
-  private static final String TAG = Recording.class.getSimpleName();
-
   private int recordId;
   public int getRecordId() { return recordId; }
   public void setRecordRuleId(int rid) { this.recordId = rid; }
@@ -67,6 +61,14 @@ public class Recording extends TvShow
   {
     StringBuffer buf = new StringBuffer(PREFIX);
     buf.append(getTitle());
+    buf.append(getExtraText());
+    return buf.toString();
+  }
+  
+  @Override 
+  protected String getExtraText()
+  {
+    StringBuffer buf = new StringBuffer();
     if (isShowMovie() && getYear() > 0)
       buf.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
@@ -103,27 +105,6 @@ public class Recording extends TvShow
     if (getDescription() != null)
       summary.append("\n").append(getDescription());
     return summary.toString();
-  }
-    
-  @Override
-  public String getSearchResultText()
-  {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append("(").append(getTypeTitle()).append(") ");
-    if (getPath() != null && getPath().length() > 0)
-      buf.append(getPath()).append("/");
-    buf.append(getTitle()).append(" ");
-    try
-    {
-      buf.append(getStartDateTimeFormatted()).append(" - ");
-      buf.append(getChannelInfo()).append(" ");
-    }
-    catch (ParseException ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-    }
-    return buf.toString();
   }
   
   @Override

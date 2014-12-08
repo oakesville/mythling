@@ -144,32 +144,16 @@ public abstract class Item implements Listable
   public String getText()
   {
     StringBuffer buf = new StringBuffer(PREFIX + getTitle());
-    if (getSubTitle() != null)
-      buf.append(" - \"").append(getSubTitle()).append("\"");
-    return buf.toString();
-  }
-
-  public String getSearchResultText()
-  {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append("(").append(getTypeTitle()).append(") ");
-    if (getSearchPath() != null && getSearchPath().length() > 0)
-      buf.append(getSearchPath()).append("/");
-    buf.append(getTitle());
-    if (getSubTitle() != null)
-      buf.append(" - \"").append(getSubTitle()).append("\"");
+    buf.append(getExtraText());
     return buf.toString();
   }
   
-  public String getDialogText()
+  protected String getExtraText()
   {
-    // default
-    return getText();
-  }
-  
-  public boolean isSearchResult()
-  {
-    return getSearchPath() != null;
+    StringBuffer buf = new StringBuffer();
+    if (getSubTitle() != null)
+      buf.append(" - \"").append(getSubTitle()).append("\"");
+    return buf.toString();
   }
 
   public String getLabel()
@@ -180,6 +164,25 @@ public abstract class Item implements Listable
     return label;
   }
   
+  public String getSearchResultText()
+  {
+    StringBuffer buf = new StringBuffer(PREFIX);
+    buf.append("(").append(getTypeTitle()).append(") ");
+    buf.append(getTitle());
+    buf.append(getExtraText());
+    return buf.toString();
+  }
+  
+  public String getDialogText()
+  {
+    return getText();
+  }
+  
+  public boolean isSearchResult()
+  {
+    return getSearchPath() != null;
+  }
+
   public String getRatingString(float stars)
   {
     String str = "";

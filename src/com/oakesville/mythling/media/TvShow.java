@@ -184,16 +184,6 @@ public class TvShow extends Item
       return super.getFormat();
   }
   
-  public String getLabel()
-  {
-    String label = getTitle();
-    if (isShowMovie() && getYear() > 0)
-      label += " (" + getYear() + ")";    
-    if (getSubTitle() != null)
-      label += "\n\"" + getSubTitle() + "\"";
-    return label;
-  }  
-  
   public boolean isShowMovie()
   {
     return getRating() > 0; // proxy for determining the show is a movie
@@ -230,6 +220,14 @@ public class TvShow extends Item
     buf.append(getChannelInfo());
     buf.append(" ").append(getShowTimeInfo());
     buf.append("\n").append(getTitle());
+    buf.append(getExtraText());
+    return buf.toString();
+  }
+  
+  @Override
+  protected String getExtraText()
+  {
+    StringBuffer buf = new StringBuffer();
     if (isShowMovie() && getYear() > 0)
       buf.append(" (").append(getYear()).append(")");    
     if (getRating() > 0)
@@ -237,10 +235,20 @@ public class TvShow extends Item
     if (getSubTitle() != null)
       buf.append("\n\"").append(getSubTitle()).append("\"");
     if (!isShowMovie() && isRepeat())
-      buf.append(getAirDateInfo());    
+      buf.append(getAirDateInfo());
     return buf.toString();
   }
   
+  public String getLabel()
+  {
+    String label = getTitle();
+    if (isShowMovie() && getYear() > 0)
+      label += " (" + getYear() + ")";    
+    if (getSubTitle() != null)
+      label += "\n\"" + getSubTitle() + "\"";
+    return label;
+  }  
+    
   @Override
   public String getDialogText()
   {
@@ -266,27 +274,6 @@ public class TvShow extends Item
     return summary.toString();
   }
     
-  @Override
-  public String getSearchResultText()
-  {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append("(").append(getTypeTitle()).append(") ");
-    if (getPath() != null && getPath().length() > 0)
-      buf.append(getPath()).append("/");
-    buf.append(getChannelNumber()).append(" (").append(getCallsign()).append(") ");
-    buf.append(getTitle());
-    try
-    {
-      buf.append(" (").append(getStartTimeFormatted()).append(" - ").append(getEndTimeFormatted()).append(")");
-    }
-    catch (ParseException ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-    }
-    return buf.toString();
-  }
-  
   @Override
   protected Comparator<Item> getDateComparator()
   {
