@@ -110,6 +110,7 @@ public abstract class MediaActivity extends Activity
   private MenuItem tvSeriesMenuItem;
   private MenuItem musicMenuItem;
   private MenuItem mythwebMenuItem;
+  private MenuItem stopMenuItem;
   
   private static MediaPlayer mediaPlayer;
   
@@ -187,6 +188,9 @@ public abstract class MediaActivity extends Activity
     mythwebMenuItem = menu.findItem(R.id.menu_mythweb);
     showMythwebMenu(supportsMythwebMenu());
     
+    stopMenuItem = menu.findItem(R.id.menu_stop);
+      stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());
+
     return super.onPrepareOptionsMenu(menu);
   }
   
@@ -223,6 +227,15 @@ public abstract class MediaActivity extends Activity
     {
       musicMenuItem.setEnabled(show);
       musicMenuItem.setVisible(show);
+    }
+  }
+  
+  protected void showStopMenuItem(boolean show)
+  {
+    if (stopMenuItem != null)
+    {
+      stopMenuItem.setEnabled(show);
+      stopMenuItem.setVisible(show);
     }
   }
   
@@ -471,6 +484,12 @@ public abstract class MediaActivity extends Activity
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
         return true;
       }
+      else if (item.getItemId() == R.id.menu_stop)
+      {
+        stopMediaPlayer();
+        onResume();
+        return true;
+      }
     }
     catch (BadSettingsException ex)
     {
@@ -518,6 +537,7 @@ public abstract class MediaActivity extends Activity
               public void onCompletion(MediaPlayer mp)
               {
                 mediaPlayer.reset();
+                showStopMenuItem(false);
                 onResume();
               }
             });
@@ -528,6 +548,7 @@ public abstract class MediaActivity extends Activity
           mediaPlayer.prepare();
           mediaPlayer.start();
           stopProgress();
+          showStopMenuItem(true);
         }
         else
         {
@@ -700,6 +721,8 @@ public abstract class MediaActivity extends Activity
       
       mediaPlayer.reset();
     }
+    
+    showStopMenuItem(false);
   }
   
   protected void goDetailView()
@@ -854,6 +877,9 @@ public abstract class MediaActivity extends Activity
     
     if (mediaMenuItem != null)
       mediaMenuItem.setTitle(MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
+    
+    if (stopMenuItem != null)
+      stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());    
   }  
   
   protected void populate() throws IOException, JSONException, ParseException, BadSettingsException

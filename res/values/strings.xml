@@ -36,6 +36,8 @@
   <string name="menu_byRating">By Rating</string>
   <string name="menu_help">Help</string>
   <string name="menu_mythweb">MythWeb</string>
+  <string name="menu_play">Play</string>
+  <string name="menu_stop">Stop</string>
   <string name="title_activity_categories">Mythling</string>
   <string name="title_activity_sub_cats">Mythling</string>
   <string name="title_activity_prefs">Mythling</string>

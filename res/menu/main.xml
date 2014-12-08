@@ -17,6 +17,15 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+  
+  <item
+    android:id="@+id/menu_stop"
+    android:title="@string/menu_stop"
+    android:orderInCategory="50" 
+    android:icon="@drawable/ic_action_stop"
+    android:showAsAction="always"
+    android:visible="false" />
+  
   <item
     android:id="@+id/menu_media"
     android:title="@string/menu_videos"
