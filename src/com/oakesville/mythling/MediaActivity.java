@@ -233,7 +233,7 @@ public abstract class MediaActivity extends Activity
       MediaSettings mediaSettings = appSettings.getMediaSettings();
       if (show)
       {
-        viewMenuItem.setTitle("");
+        // viewMenuItem.setTitle("");
         viewMenuItem.setIcon(mediaSettings.getViewIcon());
         if (mediaSettings.getViewType() == ViewType.detail)
           viewMenuItem.getSubMenu().findItem(R.id.view_detail).setChecked(true);

@@ -68,10 +68,10 @@
   
   <item
     android:id="@+id/menu_view"
-    android:title="@string/menu_list"
+    android:title="@string/menu_view"
     android:orderInCategory="175"
     android:icon="@drawable/ic_menu_list"
-    android:showAsAction="ifRoom|withText">
+    android:showAsAction="ifRoom">
     <menu>
       <group android:checkableBehavior="single">
         <item
