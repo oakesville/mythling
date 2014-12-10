@@ -73,10 +73,10 @@ public class Recording extends TvShow
       buf.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
-    buf.append(getShowDateTimeInfo());
-    buf.append(getChannelInfo());
     if (getSubTitle() != null)
       buf.append("\n\"").append(getSubTitle()).append("\"");
+    buf.append(getShowDateTimeInfo());
+    buf.append(getChannelInfo());
     if (!isShowMovie() && isRepeat())
       buf.append(getAirDateInfo());
     return buf.toString();
@@ -90,6 +90,8 @@ public class Recording extends TvShow
       buf.append(" (").append(getYear()).append(")");
     if (getRating() > 0)
       buf.append(" ").append(getRatingString(getRating()));
+    if (getSubTitle() != null)
+      buf.append("\n\"").append(getSubTitle()).append("\"");
     buf.append(getSummary());
     return buf.toString();
   }  
