@@ -298,6 +298,10 @@ public abstract class MediaActivity extends Activity
 
   protected boolean supportsSort()
   {
+    if (mediaList == null)
+      return false;
+    if (getAppSettings().isMythlingMediaServices() && mediaList.getMediaType() == MediaType.videos)
+      return false;  // temporarily until issue #29 is fixed
     return mediaList != null && mediaList.supportsSort();
   }
   

@@ -220,7 +220,7 @@ if (!$type->isSearch())
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = !$flatten;
     }
-    $query = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup from recorded r " . $where . " " . $orderBy;
+    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup from recorded r " . $where . " " . $orderBy;
   }
 
   if (isShowQuery())
@@ -760,7 +760,7 @@ else
   echo "  ],\n";
 
   // recordings
-  $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";  
   $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
