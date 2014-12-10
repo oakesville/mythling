@@ -52,6 +52,7 @@ public class StreamVideoDialog extends DialogFragment
   {
     this.settings = settings;
     this.item = item;
+    setRetainInstance(true);    
   }
   
   @Override
