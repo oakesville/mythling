@@ -67,7 +67,7 @@
       android:title="@string/title_audio_bitrate"
       android:entries="@array/audio_bitrate_entries"
       android:entryValues="@array/audio_bitrate_values"
-      android:defaultValue="32000"
+      android:defaultValue="64000"
       android:layout="@layout/pref" />
   </PreferenceCategory>
 </PreferenceScreen>

@@ -624,7 +624,7 @@ public class AppSettings
 
   public int getExternalAudioBitrate()
   {
-    return Integer.parseInt(prefs.getString(EXTERNAL_AUDIO_BITRATE, "32000"));
+    return Integer.parseInt(prefs.getString(EXTERNAL_AUDIO_BITRATE, "64000"));
   }
   
   public int[] getVideoResValues()
