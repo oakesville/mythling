@@ -59,6 +59,7 @@ public class SearchActivity extends MediaActivity
   public ListView getListView() { return listView; }
 
   private ArrayAdapter<Item> adapter;
+  private MenuItem resultsMenuItem;
   
   public String getCharSet()
   {
@@ -126,8 +127,16 @@ public class SearchActivity extends MediaActivity
   {
     getMenuInflater().inflate(R.menu.search, menu);    
     return true;
-  }  
+  }
   
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu)
+  {
+    resultsMenuItem = menu.findItem(R.id.menu_search_results);
+    updateResultsMenuItem();
+    return super.onPrepareOptionsMenu(menu);
+  }
+
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
@@ -188,7 +197,25 @@ public class SearchActivity extends MediaActivity
         item.setPath(item.getSearchPath());
         playItem(item);
       }
-    });    
+    });
+    updateResultsMenuItem();
+  }
+  
+  private void updateResultsMenuItem()
+  {
+    if (resultsMenuItem != null)
+    {
+      if (searchResults == null)
+      {
+        resultsMenuItem.setTitle("");
+        resultsMenuItem.setVisible(false);
+      }
+      else
+      {
+        resultsMenuItem.setTitle(getString(R.string.menu_search_results) + " (" + searchResults.getCount() + ")");
+        resultsMenuItem.setVisible(true);
+      }
+    }    
   }
   
   private class SearchTask extends AsyncTask<URL,Integer,Long>
@@ -229,6 +256,7 @@ public class SearchActivity extends MediaActivity
       {
         if (ex != null)
           Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+        updateResultsMenuItem();
       }
       else
       {

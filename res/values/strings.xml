@@ -25,6 +25,7 @@
   <string name="menu_tv">Live TV</string>
   <string name="menu_movies">Movies</string>
   <string name="menu_tv_series">TV Series</string>
+  <string name="menu_search_results">Results</string>
   <string name="menu_view">View</string>
   <string name="menu_list">List</string>
   <string name="menu_detail">Detail</string>

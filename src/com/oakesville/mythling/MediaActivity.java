@@ -102,7 +102,6 @@ public abstract class MediaActivity extends Activity
   public String getCharSet() { return "UTF-8"; }
   
   private MenuItem mediaMenuItem;
-  protected MenuItem getMediaMenuItem() { return mediaMenuItem; }
   private MenuItem searchMenuItem;
   private MenuItem viewMenuItem;
   private MenuItem sortMenuItem;

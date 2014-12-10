@@ -112,8 +112,12 @@ public class SearchResults
   {
     songs.add(song);
   }
-  
 
+  public int getCount()
+  { 
+    return videos.size() + recordings.size() + liveTvItems.size() + movies.size() + tvSeriesItems.size() + songs.size();
+  }
+  
   public List<Item> getAll()
   {
     List<Item> all = new ArrayList<Item>();
