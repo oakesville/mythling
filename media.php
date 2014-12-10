@@ -200,7 +200,7 @@ if (!$type->isSearch())
     $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
     $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
     $orderBy = "order by cast(c.channum as unsigned)";
-    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
+    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
   }
   else if ($type->isRecordings())
   {
@@ -320,7 +320,7 @@ if (!$type->isSearch())
       $subtit = mysql_result($result, $i, "subtitle");
       $descrip = mysql_result($result, $i, "description");
       $oads = mysql_result($result, $i, "oad");
-      if (strcmp("0000-00-00", $oads) != 0)
+      if ($oads != null && strcmp("0000-00-00", $oads) != 0)
       {
         $oad = $oads;
       }
@@ -724,7 +724,7 @@ else
   }
 
   // liveTv
-  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, convert(p.originalairdate using utf8) as oad from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
+  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
   if (isShowQuery())
     echo "tQuery: " . $tQuery . "\n\n";  
   $tRes = mysql_query($tQuery) or die(error("Query failed: " . mysql_error()));
@@ -739,17 +739,28 @@ else
     $title = mysql_result($tRes, $i, "title");
     $subtitle = mysql_result($tRes, $i, "subtitle");
     $description = mysql_result($tRes, $i, "description");
+    $rating = mysql_result($tRes, $i, "stars");
     $oads = mysql_result($tRes, $i, "oad");
-    if (strcmp($oads, "0000-00-00") != 0)
+    if ($oads != null && strcmp("0000-00-00", $oads) != 0)
+    {
       $airdate = $oads;
+    }
+    else
+    {
+      $oads = mysql_result($tRes, $i, "airdate");
+      if (strcmp("0000", $oads) != 0)
+        $airdate = $oads;
+      else
+        $airdate = null;
+    }
     $endtime = mysql_result($tRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, null, $airdate, $endtime, $i < $tNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, $endtime, $i < $tNum - 1);
     $i++;
   }
   echo "  ],\n";
 
   // recordings
-  $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  $rQuery = "select concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";  
   $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
@@ -765,9 +776,10 @@ else
     $basename = mysql_result($rRes, $i, "basename");
     $subtitle = mysql_result($rRes, $i, "subtitle");
     $description = mysql_result($rRes, $i, "description");
+    $rating = mysql_result($rRes, $i, "stars");
     $storagegroup = mysql_result($rRes, $i, "storagegroup");
     $oads = mysql_result($rRes, $i, "oad");
-    if (strcmp("0000-00-00", $oads) != 0)
+    if ($oads != null && strcmp("0000-00-00", $oads) != 0)
     {
       $airdate = $oads;
     }
@@ -780,7 +792,7 @@ else
         $airdate = null;
     }
     $endtime = mysql_result($rRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $storagegroup, $airdate, $endtime, $i < $rNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $i < $rNum - 1);
     $i++;
   }
   echo "  ]\n}";
@@ -979,7 +991,7 @@ function printSearchResult($id, $path, $file, $more)
   echo "\n";
 }
 
-function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $storagegroup, $airdate, $endtime, $more)
+function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $more)
 {
   echo "    { ";
   echo '"id": "' . $id . '"';
@@ -999,6 +1011,8 @@ function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, 
     echo ', "subtitle": "' . $subtitle . '"';
   if ($description)
     echo ', "description": "' . $description . '"';
+  if ($rating)
+    echo ', "rating": "' . $rating . '"';
   if ($storagegroup)
     echo ', "storageGroup": "' . $storagegroup . '"';
   if ($airdate)

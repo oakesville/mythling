@@ -56,15 +56,6 @@ public class Recording extends TvShow
     return "Recording";
   }
     
-  @Override
-  public String getText()
-  {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append(getTitle());
-    buf.append(getExtraText());
-    return buf.toString();
-  }
-  
   @Override 
   protected String getExtraText()
   {

@@ -68,5 +68,16 @@ public class Song extends Item
         return "GetAlbumArt?Id=" + getAlbumArtId();
       }
     };
-  }    
+  }
+  
+  public String getSearchResultText()
+  {
+    StringBuffer buf = new StringBuffer(PREFIX);
+    buf.append("(").append(getTypeTitle()).append(") ");
+    if (!getSearchPath().isEmpty())
+      buf.append(getSearchPath()).append("\n");
+    buf.append(getTitle());
+    return buf.toString();
+  }
+  
 }

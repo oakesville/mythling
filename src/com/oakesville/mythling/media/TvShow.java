@@ -211,17 +211,43 @@ public class TvShow extends Item
   }
 
   /**
-   * Overridden for Recordings, so this is for LiveTV.
+   * Special display for LiveTV.
    */
   @Override
   public String getText()
   {
-    StringBuffer buf = new StringBuffer(PREFIX);
-    buf.append(getChannelInfo());
-    buf.append(" ").append(getShowTimeInfo());
-    buf.append("\n").append(getTitle());
-    buf.append(getExtraText());
-    return buf.toString();
+    if (getType() == MediaType.liveTv)
+    {
+      StringBuffer buf = new StringBuffer(PREFIX);
+      buf.append(getChannelInfo());
+      buf.append(" ").append(getShowTimeInfo());
+      buf.append("\n").append(getTitle());
+      buf.append(getExtraText());
+      return buf.toString();
+    }
+    else
+    {
+      return super.getText();
+    }
+  }
+
+  @Override
+  public String getSearchResultText()
+  {
+    if (getType() == MediaType.liveTv)
+    {
+      StringBuffer buf = new StringBuffer(PREFIX);
+      buf.append("(").append(getTypeTitle()).append(") ");
+      buf.append(getTitle());
+      buf.append(getExtraText());
+      buf.append("\n").append(getChannelInfo());
+      buf.append(" ").append(getShowTimeInfo());
+      return buf.toString();
+    }
+    else
+    {
+      return super.getSearchResultText();
+    }
   }
   
   @Override
