@@ -18,8 +18,8 @@
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.oakesville.mythling"
-  android:versionCode="6"
-  android:versionName="1.0.05">
+  android:versionCode="10"
+  android:versionName="1.1.01">
 
   <uses-permission
     android:name="android.permission.INTERNET"/>
