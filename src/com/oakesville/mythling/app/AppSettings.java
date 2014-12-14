@@ -97,7 +97,6 @@ public class AppSettings {
     public static final String EXTERNAL_VIDEO_BITRATE = "external_video_bitrate";
     public static final String INTERNAL_AUDIO_BITRATE = "internal_audio_bitrate";
     public static final String EXTERNAL_AUDIO_BITRATE = "external_audio_bitrate";
-    public static final String BUILT_IN_PLAYER_BUFFER_SIZE = "built_in_player_buffer_size";
     public static final String CACHE_EXPIRE_MINUTES = "cache_expiry";
     public static final String LAST_LOAD = "last_load";
     public static final String RETRIEVE_IP = "retrieve_ip";
@@ -333,10 +332,6 @@ public class AppSettings {
 
     public boolean isErrorReportingEnabled() {
         return prefs.getBoolean(ERROR_REPORTING, false);
-    }
-
-    public int getBuiltInPlayerBufferSize() {
-        return Integer.parseInt(prefs.getString(BUILT_IN_PLAYER_BUFFER_SIZE, "8000"));
     }
 
     public boolean isExternalNetwork() {

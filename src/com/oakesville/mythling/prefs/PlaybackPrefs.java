@@ -47,23 +47,8 @@ public class PlaybackPrefs extends PreferenceFragment {
         });
         doCategoryEnablement(appSettings.isDevicePlayback());
 
-// XXX internal player
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
-        swPref.setEnabled(false);
-//    swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-//    {
-//      public boolean onPreferenceChange(Preference preference, Object newValue)
-//      {
-//        doBufferSizeEnablement(!Boolean.valueOf(newValue.toString()));
-//        return true;  
-//      }
-//    });
-
-//    Preference pref = getPreferenceScreen().findPreference(AppSettings.BUILT_IN_PLAYER_BUFFER_SIZE);
-//    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, " kb"));
-//    pref.setSummary(appSettings.getBuiltInPlayerBufferSize() + " kb");
-//
-//    doBufferSizeEnablement(!appSettings.isExternalPlayer());
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
@@ -81,19 +66,8 @@ public class PlaybackPrefs extends PreferenceFragment {
     private void doCategoryEnablement(boolean isDevice) {
         Preference deviceCat = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY);
         deviceCat.setEnabled(isDevice);
-        // XXX internal player
-        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
-        swPref.setEnabled(false);
 
         Preference frontendCat = getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK_CATEGORY);
         frontendCat.setEnabled(!isDevice);
     }
-
-// XXX internal player
-//  private void doBufferSizeEnablement(boolean isInternal)
-//  {
-//    Preference pref = getPreferenceScreen().findPreference(AppSettings.BUILT_IN_PLAYER_BUFFER_SIZE);
-//    pref.setEnabled(isInternal);
-//  }
-
 }

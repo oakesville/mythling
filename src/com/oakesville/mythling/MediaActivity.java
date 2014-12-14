@@ -88,7 +88,6 @@ public abstract class MediaActivity extends Activity {
     protected Map<String, StorageGroup> storageGroups;
 
     private static AppData appData;
-
     public static AppData getAppData() {
         return appData;
     }
@@ -96,19 +95,16 @@ public abstract class MediaActivity extends Activity {
     public static void setAppData(AppData data) {
         appData = data;
     }
-
     private AppSettings appSettings;
 
     public AppSettings getAppSettings() {
         return appSettings;
     }
-
     private MediaType mediaType;
 
     protected MediaType getMediaType() {
         return mediaType;
     }
-
     protected void setMediaType(MediaType mt) {
         this.mediaType = mt;
     }
@@ -607,10 +603,15 @@ public abstract class MediaActivity extends Activity {
                 fileUrl += "&StorageGroup=None";
             else
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
-            Intent toStart = new Intent(Intent.ACTION_VIEW);
-            toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
+
             stopProgress();
-            startActivity(toStart);
+            if (appSettings.isExternalPlayer()) {
+                Intent toStart = new Intent(Intent.ACTION_VIEW);
+                toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
+                startActivity(toStart);
+            } else {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VideoViewActivity.class));
+            }
         } catch (IOException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
@@ -1095,7 +1096,7 @@ public abstract class MediaActivity extends Activity {
             toStart.setDataAndType(Uri.parse(streamUrl), "video/*");
             startActivity(toStart);
         } else {
-            // XXX internal player
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(streamUrl), getApplicationContext(), VideoViewActivity.class));
         }
     }
 
