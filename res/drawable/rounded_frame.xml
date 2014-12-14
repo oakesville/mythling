@@ -17,25 +17,23 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-  android:shape="rectangle">
- 
-  <!-- view background color -->
-  <solid
-    android:color="#00000000" />
-  
-  <!-- view border color and width -->
-  <stroke
-    android:width="3dp"
-    android:color="#1c1b20" />
+    android:shape="rectangle">
 
-  <padding
-    android:left="4dp"
-    android:top="4dp"
-    android:right="4dp"
-    android:bottom="4dp" />
-   
-  <!-- corner radius -->
-  <corners
-    android:radius="10dp" />
-  
+    <!-- view background color -->
+    <solid android:color="#00000000" />
+
+    <!-- view border color and width -->
+    <stroke
+        android:width="3dp"
+        android:color="#1c1b20" />
+
+    <padding
+        android:left="4dp"
+        android:top="4dp"
+        android:right="4dp"
+        android:bottom="4dp" />
+
+    <!-- corner radius -->
+    <corners android:radius="10dp" />
+
 </shape>

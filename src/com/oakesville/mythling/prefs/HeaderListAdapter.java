@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -32,65 +32,54 @@ import android.widget.TextView;
 
 import com.oakesville.mythling.R;
 
-public class HeaderListAdapter extends ArrayAdapter<Header>
-{
-  private static class HeaderViewHolder
-  {
-    ImageView icon;    
-    TextView title;
-    TextView summary;
-  }
-
-  private LayoutInflater inflater;
-
-  public HeaderListAdapter(Context context, List<Header> objects)
-  {
-    super(context, 0, objects);
-    inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent)
-  {
-    HeaderViewHolder holder;
-    View view;
-
-    if (convertView == null)
-    {
-      view = inflater.inflate(R.layout.pref_header_item, parent, false);
-      holder = new HeaderViewHolder();
-      holder.icon = (ImageView) view.findViewById(android.R.id.icon);      
-      holder.title = (TextView) view.findViewById(android.R.id.title);
-      holder.summary = (TextView) view.findViewById(android.R.id.summary);
-      view.setTag(holder);
-    }
-    else
-    {
-      view = convertView;
-      holder = (HeaderViewHolder) view.getTag();
+public class HeaderListAdapter extends ArrayAdapter<Header> {
+    private static class HeaderViewHolder {
+        ImageView icon;
+        TextView title;
+        TextView summary;
     }
 
-    // all view fields must be updated every time, because the view may be recycled
-    Header header = getItem(position);
-    if (holder.icon != null)
-      holder.icon.setImageResource(header.iconRes);    
-    holder.title.setText(header.getTitle(getContext().getResources()));
-    if (holder.summary != null)
-    {
-      CharSequence summary = header.getSummary(getContext().getResources());
-      if (!TextUtils.isEmpty(summary))
-      {
-        holder.summary.setVisibility(View.VISIBLE);
-        holder.summary.setText(summary);
-      }
-      else
-      {
-        holder.summary.setVisibility(View.GONE);
-      }
+    private LayoutInflater inflater;
+
+    public HeaderListAdapter(Context context, List<Header> objects) {
+        super(context, 0, objects);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    if (parent.getPaddingTop() > 8)
-      parent.setPadding(parent.getPaddingLeft(), 8, parent.getPaddingRight(), parent.getPaddingBottom());
-    return view;
-  }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        HeaderViewHolder holder;
+        View view;
+
+        if (convertView == null) {
+            view = inflater.inflate(R.layout.pref_header_item, parent, false);
+            holder = new HeaderViewHolder();
+            holder.icon = (ImageView) view.findViewById(android.R.id.icon);
+            holder.title = (TextView) view.findViewById(android.R.id.title);
+            holder.summary = (TextView) view.findViewById(android.R.id.summary);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (HeaderViewHolder) view.getTag();
+        }
+
+        // all view fields must be updated every time, because the view may be recycled
+        Header header = getItem(position);
+        if (holder.icon != null)
+            holder.icon.setImageResource(header.iconRes);
+        holder.title.setText(header.getTitle(getContext().getResources()));
+        if (holder.summary != null) {
+            CharSequence summary = header.getSummary(getContext().getResources());
+            if (!TextUtils.isEmpty(summary)) {
+                holder.summary.setVisibility(View.VISIBLE);
+                holder.summary.setText(summary);
+            } else {
+                holder.summary.setVisibility(View.GONE);
+            }
+        }
+
+        if (parent.getPaddingTop() > 8)
+            parent.setPadding(parent.getPaddingLeft(), 8, parent.getPaddingRight(), parent.getPaddingBottom());
+        return view;
+    }
 }

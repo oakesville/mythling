@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
@@ -15,267 +15,284 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
- -->
+-->
 <resources>
 
-  <string name="app_name">Mythling</string>
-  <string name="menu_videos">Videos</string>
-  <string name="menu_music">Music</string>
-  <string name="menu_recordings">Recordings</string>
-  <string name="menu_tv">Live TV</string>
-  <string name="menu_movies">Movies</string>
-  <string name="menu_tv_series">TV Series</string>
-  <string name="menu_search_results">Search Results</string>
-  <string name="menu_view">View</string>
-  <string name="menu_list">List</string>
-  <string name="menu_detail">Detail</string>
-  <string name="menu_refresh">Refresh</string>
-  <string name="menu_settings">Settings</string>
-  <string name="menu_search">Search</string>
-  <string name="menu_byTitle">By Title</string>
-  <string name="menu_byDate">By Date</string>
-  <string name="menu_byRating">By Rating</string>
-  <string name="menu_help">Help</string>
-  <string name="menu_mythweb">MythWeb</string>
-  <string name="menu_play">Play</string>
-  <string name="menu_stop">Stop</string>
-  <string name="title_activity_categories">Mythling</string>
-  <string name="title_activity_sub_cats">Mythling</string>
-  <string name="title_activity_prefs">Mythling</string>
-  <string name="title_activity_search">Mythling</string>
-  <string name="title_activity_pager">Mythling</string>
-  <string name="title_activity_webview">Mythling</string>
-  <string name="title_prefs_playback">Playback</string>
-  <string name="summary_prefs_playback">Media player selection and settings</string>
-  <string name="title_prefs_network">Network</string>
-  <string name="summary_prefs_network">MythTV backend host settings</string>
-  <string name="title_prefs_connections">Connections</string>
-  <string name="summary_prefs_connections">Backend ports and paths</string>
-  <string name="title_prefs_credentials">Credentials</string>
-  <string name="summary_prefs_credentials">Authentication settings</string>
-  <string name="title_prefs_categories">Categories</string>
-  <string name="summary_prefs_categories">How media should be categorized</string>
-  <string name="title_prefs_artwork">Artwork</string>
-  <string name="summary_prefs_artwork">Detail view artwork options</string>
-  <string name="title_prefs_video_quality">Video Quality</string>
-  <string name="summary_prefs_video_quality">Stream settings for device playback</string>
-  <string name="title_prefs_caching">Data Caching</string>
-  <string name="summary_prefs_caching">Media list data cache</string>
-  <string name="title_prefs_timeouts">Timeouts &amp; Limits</string>
-  <string name="summary_prefs_timeouts">Allowable performance ranges</string>
-  <string name="title_playback_settings">Playback Settings</string>
-  <string name="title_network_settings">Network Settings</string>
-  <string name="title_connect_settings">Connections</string>
-  <string name="title_credentials_settings">Credentials</string>
-  <string name="title_categories_settings">Categorization</string>
-  <string name="title_quality_settings">Video Quality</string>
-  <string name="title_cache_settings">Data Settings</string>
-  <string name="title_timeout_settings">Timeouts</string>
-  <string name="title_frontend_host">Host</string>
-  <string name="title_frontend_host_dialog">Frontend Host</string>
-  <string name="message_frontend_host">Host name or IP address for frontend playback</string>
-  <string name="title_frontend_socket_port">Socket Port</string>
-  <string name="title_frontend_socket_port_dialog">Frontend Socket Control Port</string>
-  <string name="message_frontend_socket_port">TCP port for frontend control socket connection</string>
-  <string name="title_frontend_service_port">Service Port</string>
-  <string name="title_frontend_service_port_dialog">Frontend Service Port</string>
-  <string name="message_frontend_service_port">HTTP port for frontend service connection</string>
-  <string name="title_network_location">Network</string>
-  <string name="title_playback_mode">Playback</string>
-  <string name="title_video_categorization">Categorization</string>
-  <string name="title_video_categorization_dialog">Video Categorization</string>
-  <string name="title_categorize_videos">Videos</string>
-  <string name="title_categorize_transcoding">Transcoding</string>
-  <string name="title_categorize_internet">Internet</string>
-  <string name="title_movie_base_url">Movie Base URL</string>
-  <string name="message_movie_base_url">Base URL for Movie detail links</string>
-  <string name="title_tv_base_url">TV Base URL</string>
-  <string name="message_tv_base_url">Base URL for TV Series detail links</string>
-  <string name="title_custom_base_url">Custom Base URL</string>
-  <string name="message_custom_base_url">URL-encoded title is appended to this base</string>
-  <string name="title_artwork_settings">Artwork Settings</string>
-  <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
-  <string name="title_videos">Videos</string>
-  <string name="title_tvseries">TV Series</string>
-  <string name="title_movies">Movies</string>
-  <string name="title_recordings">Recordings</string>
-  <string-array name="artwork_sg_values">
-    <item>Coverart</item>
-    <item>Fanart</item>
-    <item>Banners</item>
-    <item>Screenshots</item>
-  </string-array>
-  <string-array name="artwork_sg_recording_entries">
-    <item>Coverart</item>
-    <item>Fanart</item>
-    <item>Banners</item>
-    <item>&lt;Use Preview Image&gt;</item>
-  </string-array>
-  <string name="artwork_sg_default">Coverart</string>
-  <string name="artwork_sg_default_recordings">Screenshots</string> <!-- really preview images -->
-  <string name="title_album_art_level">Album Art Level</string>
-  <string name="album_art_song">Song</string>
-  <string name="album_art_album">Album</string>
-  <string name="title_device_player">Device Player</string>
-  <string name="title_frontend_player">Frontend Player</string>
-  <string name="title_internal_backend">Internal Backend</string>
-  <string name="title_external_backend">External Backend</string>
-  <string name="title_built_in_player_buffer_size">Built-In Player Buffer Size</string>
-  <string name="title_content_services">Content Services</string>
-  <string name="title_timeouts">Timeouts</string>
-  <string name="title_operation_timeouts">Operations</string>
-  <string name="title_http_timeouts">HTTP</string>
-  <string name="title_tuner_timeout">Tuner Timeout</string>
-  <string name="title_tuner_timeout_dialog">Tuner Timeout (seconds)</string>
-  <string name="title_transcode_timeout">Transcode Timeout</string>
-  <string name="title_transcode_timeout_dialog">Transcode Timeout (seconds)</string>
-  <string name="title_transcode_job_limit">Transcode Job Limit</string>
-  <string name="message_transcode_job_limit">Maximum number of simultaneous HLS transcoding jobs Mythling will request</string>
-  <string name="title_connect_timeout">Connect Timeout</string>
-  <string name="title_connect_timeout_dialog">Connect Timeout (seconds)</string>
-  <string name="title_read_timeout">Read Timeout</string>
-  <string name="title_read_timeout_dialog">Read Timeout (seconds)</string>
-  <string name="title_internal_backend_host">Host</string>
-  <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
-  <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>
-  <string name="title_external_backend_host">Host</string>
-  <string name="title_external_backend_host_dialog">External Backend Host</string>
-  <string name="message_external_backend_host">Backend host name or IP address for external network</string>
-  <string name="title_web_server">Backend Web Server</string>
-  <string name="title_media_services">Media Services</string>
-  <string name="title_web_port">Web Port</string>
-  <string name="title_mythweb_access">MythWeb Access</string>
-  <string name="message_web_port">For Mythling media services and MythWeb access</string>
-  <string name="title_mythling_web_root">Mythling Web Root</string>
-  <string name="message_mythling_web_root">Path under Apache DocumentRoot directory where Mythling\'s media.php resides</string>
-  <string name="default_mythling_web_root">mythling</string>
-  <string name="title_mythweb_web_root">MythWeb Root</string>
-  <string name="message_mythweb_web_root">Path under Apache DocumentRoot directory where MythWeb resides</string>
-  <string name="default_mythweb_web_root">mythweb</string>
-  <string name="title_mythtv_service_port">MythTV Service Port</string>
-  <string name="title_app_cache">Media List Cache</string>
-  <string name="title_cache_expiry">Expiry Interval</string>
-  <string name="title_media_list_cache_refresh">Refresh Media Lists</string>
-  <string name="title_retrieve_ip">External Retrieve IP</string>
-  <string name="title_ip_retrieval_url">IP Retrieval URL</string>
-  <string name="message_ip_retrieval_url">For backend servers using DHCP, specify a URL where an HTTP GET request returns \'text/plain\' content with the external dynamic IP address.</string>
-  <string name="title_internal_network">Internal Network</string>
-  <string name="title_external_network">External Network</string>
-  <string name="title_video_res">Video Resolution</string>
-  <string name="title_directories_movies">Movie Directories</string>
-  <string name="title_directories_tv_series">TV Series Directories</string>
-  <string name="title_directories_exclude">Excluded Directories</string>
-  <string name="title_transcode_hls">Transcode to HLS</string>
-  <string name="title_stream_raw">Stream Raw File</string>
-  <string name="title_error_reporting">Error Reporting</string>
-  <string name="message_directories_movies">Comma-separated list of video directory paths (relative to storage dir) containing movies</string>
-  <string name="message_directories_tv_series">Comma-separated list of video directory paths (relative to storage dir) containing TV series\'</string>
-  <string name="message_directories_exclude">Comma-separated list of video directory paths (relative to storage dir) to exclude</string>
-  <string name="message_transcode_hls">Comma-separated list of filename extensions to always transcode to HTTP Live Streams for playback</string>
-  <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
-  <string-array name="video_res_entries">
-    <item>720p</item>
-    <item>600p</item>
-    <item>480p</item>
-    <item>240p</item>
-  </string-array>
-  <string-array name="video_res_values">
-    <item>720</item>
-    <item>600</item>
-    <item>480</item>
-    <item>240</item>
-  </string-array>
-  <string name="title_video_bitrate">Video BitRate</string>
-  <string-array name="video_bitrate_entries">
-    <item>2400k</item>
-    <item>1600k</item>
-    <item>1200k</item>
-    <item>800k</item>
-    <item>600k</item>
-    <item>400k</item>
-    <item>240k</item>
+    <string name="app_name">Mythling</string>
+    <string name="menu_videos">Videos</string>
+    <string name="menu_music">Music</string>
+    <string name="menu_recordings">Recordings</string>
+    <string name="menu_tv">Live TV</string>
+    <string name="menu_movies">Movies</string>
+    <string name="menu_tv_series">TV Series</string>
+    <string name="menu_search_results">Search Results</string>
+    <string name="menu_view">View</string>
+    <string name="menu_list">List</string>
+    <string name="menu_detail">Detail</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_byTitle">By Title</string>
+    <string name="menu_byDate">By Date</string>
+    <string name="menu_byRating">By Rating</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_mythweb">MythWeb</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_stop">Stop</string>
+    <string name="title_activity_categories">Mythling</string>
+    <string name="title_activity_sub_cats">Mythling</string>
+    <string name="title_activity_prefs">Mythling</string>
+    <string name="title_activity_search">Mythling</string>
+    <string name="title_activity_pager">Mythling</string>
+    <string name="title_activity_webview">Mythling</string>
+    <string name="title_prefs_playback">Playback</string>
+    <string name="summary_prefs_playback">Media player selection and settings</string>
+    <string name="title_prefs_network">Network</string>
+    <string name="summary_prefs_network">MythTV backend host settings</string>
+    <string name="title_prefs_connections">Connections</string>
+    <string name="summary_prefs_connections">Backend ports and paths</string>
+    <string name="title_prefs_credentials">Credentials</string>
+    <string name="summary_prefs_credentials">Authentication settings</string>
+    <string name="title_prefs_categories">Categories</string>
+    <string name="summary_prefs_categories">How media should be categorized</string>
+    <string name="title_prefs_artwork">Artwork</string>
+    <string name="summary_prefs_artwork">Detail view artwork options</string>
+    <string name="title_prefs_video_quality">Video Quality</string>
+    <string name="summary_prefs_video_quality">Stream settings for device playback</string>
+    <string name="title_prefs_caching">Data Caching</string>
+    <string name="summary_prefs_caching">Media list data cache</string>
+    <string name="title_prefs_timeouts">Timeouts &amp; Limits</string>
+    <string name="summary_prefs_timeouts">Allowable performance ranges</string>
+    <string name="title_playback_settings">Playback Settings</string>
+    <string name="title_network_settings">Network Settings</string>
+    <string name="title_connect_settings">Connections</string>
+    <string name="title_credentials_settings">Credentials</string>
+    <string name="title_categories_settings">Categorization</string>
+    <string name="title_quality_settings">Video Quality</string>
+    <string name="title_cache_settings">Data Settings</string>
+    <string name="title_timeout_settings">Timeouts</string>
+    <string name="title_frontend_host">Host</string>
+    <string name="title_frontend_host_dialog">Frontend Host</string>
+    <string name="message_frontend_host">Host name or IP address for frontend playback</string>
+    <string name="title_frontend_socket_port">Socket Port</string>
+    <string name="title_frontend_socket_port_dialog">Frontend Socket Control Port</string>
+    <string name="message_frontend_socket_port">TCP port for frontend control socket connection</string>
+    <string name="title_frontend_service_port">Service Port</string>
+    <string name="title_frontend_service_port_dialog">Frontend Service Port</string>
+    <string name="message_frontend_service_port">HTTP port for frontend service connection</string>
+    <string name="title_network_location">Network</string>
+    <string name="title_playback_mode">Playback</string>
+    <string name="title_video_categorization">Categorization</string>
+    <string name="title_video_categorization_dialog">Video Categorization</string>
+    <string name="title_categorize_videos">Videos</string>
+    <string name="title_categorize_transcoding">Transcoding</string>
+    <string name="title_categorize_internet">Internet</string>
+    <string name="title_movie_base_url">Movie Base URL</string>
+    <string name="message_movie_base_url">Base URL for Movie detail links</string>
+    <string name="title_tv_base_url">TV Base URL</string>
+    <string name="message_tv_base_url">Base URL for TV Series detail links</string>
+    <string name="title_custom_base_url">Custom Base URL</string>
+    <string name="message_custom_base_url">URL-encoded title is appended to this base</string>
+    <string name="title_artwork_settings">Artwork Settings</string>
+    <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
+    <string name="title_videos">Videos</string>
+    <string name="title_tvseries">TV Series</string>
+    <string name="title_movies">Movies</string>
+    <string name="title_recordings">Recordings</string>
+
+    <string-array name="artwork_sg_values">
+        <item>Coverart</item>
+        <item>Fanart</item>
+        <item>Banners</item>
+        <item>Screenshots</item>
     </string-array>
-  <string-array name="video_bitrate_values">
-    <item>2400000</item>
-    <item>1600000</item>
-    <item>1200000</item>
-    <item>800000</item>
-    <item>600000</item>
-    <item>400000</item>
-    <item>240000</item>
+    <string-array name="artwork_sg_recording_entries">
+        <item>Coverart</item>
+        <item>Fanart</item>
+        <item>Banners</item>
+        <item>&lt;Use Preview Image></item>
     </string-array>
-  <string name="title_audio_bitrate">Audio BitRate</string>
-  <string-array name="audio_bitrate_entries">
-    <item>64k</item>
-    <item>32k</item>
-  </string-array>
-  <string-array name="audio_bitrate_values">
-    <item>64000</item>
-    <item>32000</item>
-  </string-array>
-  <string-array name="buffer_size_entries">
-    <item>4000 kb</item>
-    <item>8000 kb</item>
-    <item>12000 kb</item>
-    <item>16000 kb</item>
-    <item>20000 kb</item>
-    <item>24000 kb</item>
-  </string-array>
-  <string-array name="buffer_size_values">
-    <item>4000</item>
-    <item>8000</item>
-    <item>12000</item>
-    <item>16000</item>
-    <item>20000</item>
-    <item>24000</item>
-  </string-array>
-  <string name="title_mythtv_service_access">MythTV Services</string>
-  <string name="title_backend_web_access">Backend Web (see Connections)</string>
-  <string name="title_mythtv_services_auth_type">Auth Type</string>
-  <string name="title_mythtv_services_auth_type_dialog">MythTV Authentication</string>
-  <string name="title_mythling_services_auth_type">Auth Type</string>
-  <string name="title_mythling_services_auth_type_dialog">Mythling Authentication</string>
-  <string-array name="auth_type_values">
-    <item>None</item>
-    <item>Basic</item>
-    <item>Digest</item>
-  </string-array>
-  <string-array name="backend_web_auth_types">
-    <item>None</item>
-    <item>(Same as MythTV Services)</item>
-    <item>Basic</item>
-    <item>Digest</item>
-  </string-array>
-  <string name="title_mythtv_services_user">MythTV Services User</string>
-  <string name="title_mythtv_services_password">MythTV Services Password</string>
-  <string name="title_web_user">Backend Web User</string>
-  <string name="title_web_password">Backend Web Password</string>
-  <string name="app_label">Mythling</string>
-  <string name="search_hint">Search Mythling</string>
-  <string name="icon">icon</string>
-  <string name="poster">poster</string>
-  <string name="first">First</string>
-  <string name="last">Last</string>
-  <string name="blank"></string>
-  <string name="one">1</string>
-  <string name="rating">Rating</string>
-  <string name="play"> Play </string>
-  <string-array name="video_categorization_entries">
-    <item>None</item>
-    <item>Metadata</item>
-    <item>Directories</item>
-  </string-array>
-  <string-array name="video_categorization_values">
-    <item>none</item>
-    <item>metadata</item>
-    <item>directories</item>
-  </string-array>
-  <string name="url_help">http://oakesville.github.io/mythling/help.html</string>
-  <string name="yes">Yes</string>
-  <string name="no">No</string>
-  <string name="enabled">Enabled</string>
-  <string name="disabled">Disabled</string>
-  <string name="mythling">Mythling</string>
-  <string name="mythtv">MythTV</string>
-  <string name="pref_header_icon">Pref Icon</string>
+
+    <string name="artwork_sg_default">Coverart</string>
+    <string name="artwork_sg_default_recordings">Screenshots</string>
+    <!-- really preview images -->
+    <string name="title_album_art_level">Album Art Level</string>
+    <string name="album_art_song">Song</string>
+    <string name="album_art_album">Album</string>
+    <string name="title_device_player">Device Player</string>
+    <string name="title_frontend_player">Frontend Player</string>
+    <string name="title_internal_backend">Internal Backend</string>
+    <string name="title_external_backend">External Backend</string>
+    <string name="title_built_in_player_buffer_size">Built-In Player Buffer Size</string>
+    <string name="title_content_services">Content Services</string>
+    <string name="title_timeouts">Timeouts</string>
+    <string name="title_operation_timeouts">Operations</string>
+    <string name="title_http_timeouts">HTTP</string>
+    <string name="title_tuner_timeout">Tuner Timeout</string>
+    <string name="title_tuner_timeout_dialog">Tuner Timeout (seconds)</string>
+    <string name="title_transcode_timeout">Transcode Timeout</string>
+    <string name="title_transcode_timeout_dialog">Transcode Timeout (seconds)</string>
+    <string name="title_transcode_job_limit">Transcode Job Limit</string>
+    <string name="message_transcode_job_limit">Maximum number of simultaneous HLS transcoding jobs Mythling will request</string>
+    <string name="title_connect_timeout">Connect Timeout</string>
+    <string name="title_connect_timeout_dialog">Connect Timeout (seconds)</string>
+    <string name="title_read_timeout">Read Timeout</string>
+    <string name="title_read_timeout_dialog">Read Timeout (seconds)</string>
+    <string name="title_internal_backend_host">Host</string>
+    <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
+    <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>
+    <string name="title_external_backend_host">Host</string>
+    <string name="title_external_backend_host_dialog">External Backend Host</string>
+    <string name="message_external_backend_host">Backend host name or IP address for external network</string>
+    <string name="title_web_server">Backend Web Server</string>
+    <string name="title_media_services">Media Services</string>
+    <string name="title_web_port">Web Port</string>
+    <string name="title_mythweb_access">MythWeb Access</string>
+    <string name="message_web_port">For Mythling media services and MythWeb access</string>
+    <string name="title_mythling_web_root">Mythling Web Root</string>
+    <string name="message_mythling_web_root">Path under Apache DocumentRoot directory where Mythling\'s media.php resides</string>
+    <string name="default_mythling_web_root">mythling</string>
+    <string name="title_mythweb_web_root">MythWeb Root</string>
+    <string name="message_mythweb_web_root">Path under Apache DocumentRoot directory where MythWeb resides</string>
+    <string name="default_mythweb_web_root">mythweb</string>
+    <string name="title_mythtv_service_port">MythTV Service Port</string>
+    <string name="title_app_cache">Media List Cache</string>
+    <string name="title_cache_expiry">Expiry Interval</string>
+    <string name="title_media_list_cache_refresh">Refresh Media Lists</string>
+    <string name="title_retrieve_ip">External Retrieve IP</string>
+    <string name="title_ip_retrieval_url">IP Retrieval URL</string>
+    <string name="message_ip_retrieval_url">For backend servers using DHCP, specify a URL where an HTTP GET request returns \'text/plain\' content with the external dynamic IP address.</string>
+    <string name="title_internal_network">Internal Network</string>
+    <string name="title_external_network">External Network</string>
+    <string name="title_video_res">Video Resolution</string>
+    <string name="title_directories_movies">Movie Directories</string>
+    <string name="title_directories_tv_series">TV Series Directories</string>
+    <string name="title_directories_exclude">Excluded Directories</string>
+    <string name="title_transcode_hls">Transcode to HLS</string>
+    <string name="title_stream_raw">Stream Raw File</string>
+    <string name="title_error_reporting">Error Reporting</string>
+    <string name="message_directories_movies">Comma-separated list of video directory paths (relative to storage dir) containing movies</string>
+    <string name="message_directories_tv_series">Comma-separated list of video directory paths (relative to storage dir) containing TV series\'</string>
+    <string name="message_directories_exclude">Comma-separated list of video directory paths (relative to storage dir) to exclude</string>
+    <string name="message_transcode_hls">Comma-separated list of filename extensions to always transcode to HTTP Live Streams for playback</string>
+    <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
+
+    <string-array name="video_res_entries">
+        <item>720p</item>
+        <item>600p</item>
+        <item>480p</item>
+        <item>240p</item>
+    </string-array>
+    <string-array name="video_res_values">
+        <item>720</item>
+        <item>600</item>
+        <item>480</item>
+        <item>240</item>
+    </string-array>
+
+    <string name="title_video_bitrate">Video BitRate</string>
+
+    <string-array name="video_bitrate_entries">
+        <item>2400k</item>
+        <item>1600k</item>
+        <item>1200k</item>
+        <item>800k</item>
+        <item>600k</item>
+        <item>400k</item>
+        <item>240k</item>
+    </string-array>
+    <string-array name="video_bitrate_values">
+        <item>2400000</item>
+        <item>1600000</item>
+        <item>1200000</item>
+        <item>800000</item>
+        <item>600000</item>
+        <item>400000</item>
+        <item>240000</item>
+    </string-array>
+
+    <string name="title_audio_bitrate">Audio BitRate</string>
+
+    <string-array name="audio_bitrate_entries">
+        <item>64k</item>
+        <item>32k</item>
+    </string-array>
+    <string-array name="audio_bitrate_values">
+        <item>64000</item>
+        <item>32000</item>
+    </string-array>
+    <string-array name="buffer_size_entries">
+        <item>4000 kb</item>
+        <item>8000 kb</item>
+        <item>12000 kb</item>
+        <item>16000 kb</item>
+        <item>20000 kb</item>
+        <item>24000 kb</item>
+    </string-array>
+    <string-array name="buffer_size_values">
+        <item>4000</item>
+        <item>8000</item>
+        <item>12000</item>
+        <item>16000</item>
+        <item>20000</item>
+        <item>24000</item>
+    </string-array>
+
+    <string name="title_mythtv_service_access">MythTV Services</string>
+    <string name="title_backend_web_access">Backend Web (see Connections)</string>
+    <string name="title_mythtv_services_auth_type">Auth Type</string>
+    <string name="title_mythtv_services_auth_type_dialog">MythTV Authentication</string>
+    <string name="title_mythling_services_auth_type">Auth Type</string>
+    <string name="title_mythling_services_auth_type_dialog">Mythling Authentication</string>
+
+    <string-array name="auth_type_values">
+        <item>None</item>
+        <item>Basic</item>
+        <item>Digest</item>
+    </string-array>
+    <string-array name="backend_web_auth_types">
+        <item>None</item>
+        <item>(Same as MythTV Services)</item>
+        <item>Basic</item>
+        <item>Digest</item>
+    </string-array>
+
+    <string name="title_mythtv_services_user">MythTV Services User</string>
+    <string name="title_mythtv_services_password">MythTV Services Password</string>
+    <string name="title_web_user">Backend Web User</string>
+    <string name="title_web_password">Backend Web Password</string>
+    <string name="app_label">Mythling</string>
+    <string name="search_hint">Search Mythling</string>
+    <string name="icon">icon</string>
+    <string name="poster">poster</string>
+    <string name="first">First</string>
+    <string name="last">Last</string>
+    <string name="blank"></string>
+    <string name="one">1</string>
+    <string name="rating">Rating</string>
+    <string name="play"> Play </string>
+
+    <string-array name="video_categorization_entries">
+        <item>None</item>
+        <item>Metadata</item>
+        <item>Directories</item>
+    </string-array>
+    <string-array name="video_categorization_values">
+        <item>none</item>
+        <item>metadata</item>
+        <item>directories</item>
+    </string-array>
+
+    <string name="url_help">http://oakesville.github.io/mythling/help.html</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="mythling">Mythling</string>
+    <string name="mythtv">MythTV</string>
+    <string name="pref_header_icon">Pref Icon</string>
+    <string name="title_activity_video_view">VideoViewActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 </resources>

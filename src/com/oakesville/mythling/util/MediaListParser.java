@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -27,8 +27,7 @@ import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.StorageGroup;
 
-public interface MediaListParser
-{
-  public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups)
-  throws JSONException, ParseException, ServiceException;
+public interface MediaListParser {
+    public MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups)
+            throws JSONException, ParseException, ServiceException;
 }

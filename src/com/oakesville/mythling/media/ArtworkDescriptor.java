@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -20,20 +20,21 @@ package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
 
-public abstract class ArtworkDescriptor
-{
-  private String storageGroup;
-  protected String getStorageGroup() { return storageGroup; }
-  
-  public ArtworkDescriptor(String storageGroup)
-  {
-    this.storageGroup = storageGroup;
-  }
-  
-  /**
-   * For local storage
-   */
-  public abstract String getArtworkPath();
-  
-  public abstract String getArtworkContentServicePath() throws UnsupportedEncodingException;
+public abstract class ArtworkDescriptor {
+    private String storageGroup;
+
+    protected String getStorageGroup() {
+        return storageGroup;
+    }
+
+    public ArtworkDescriptor(String storageGroup) {
+        this.storageGroup = storageGroup;
+    }
+
+    /**
+     * For local storage
+     */
+    public abstract String getArtworkPath();
+
+    public abstract String getArtworkContentServicePath() throws UnsupportedEncodingException;
 }

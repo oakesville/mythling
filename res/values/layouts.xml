@@ -17,5 +17,5 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <resources>
-  <bool name="isTablet">false</bool>
+    <bool name="isTablet">false</bool>
 </resources>

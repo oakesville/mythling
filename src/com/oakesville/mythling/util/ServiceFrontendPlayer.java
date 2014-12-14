@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -33,172 +33,142 @@ import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 
-public class ServiceFrontendPlayer implements FrontendPlayer
-{
-  private static final String TAG = ServiceFrontendPlayer.class.getSimpleName();
-  
-  private AppSettings appSettings;
-  private Item item;
-  
-  private String state;
-  
-  public ServiceFrontendPlayer(AppSettings appSettings, Item item)
-  {
-    this.appSettings = appSettings;
-    this.item = item;
-  }
+public class ServiceFrontendPlayer implements FrontendPlayer {
+    private static final String TAG = ServiceFrontendPlayer.class.getSimpleName();
 
-  public boolean checkIsPlaying() throws IOException, JSONException
-  {
-    int timeout = 5000;  // TODO: pref
-    
-    state = null;
-    new StatusTask().execute();
-    while (state == null && timeout > 0)
-    {
-      try
-      {
-        Thread.sleep(100);
-        timeout -= 100;
-      }
-      catch (InterruptedException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (appSettings.isErrorReportingEnabled())
-          new Reporter(ex).send();        
-      }
-    }
-    if (state == null)
-      throw new IOException("Error checking mythfrontend frontend status at " + appSettings.getFrontendServiceBaseUrl());
-    
-    return !state.equals("idle");
-  }
+    private AppSettings appSettings;
+    private Item item;
 
-  public void play()
-  {
-    new PlayItemTask().execute();
-  }
+    private String state;
 
-  public void stop()
-  {
-    new StopTask().execute();
-  }
-  
-  private class StatusTask extends AsyncTask<URL,Integer,Long>
-  {
-    private Exception ex;
-    
-    protected Long doInBackground(URL... urls)
-    {
-      try
-      {
-        URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/GetStatus");        
-        HttpHelper downloader = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-        String frontendStatusJson = new String(downloader.get(), "UTF-8");
-        state = new MythTvParser(appSettings, frontendStatusJson).parseFrontendStatus();
-        return 0L;
-      }
-      catch (Exception ex)
-      {
-        this.ex = ex;
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (appSettings.isErrorReportingEnabled())
-          new Reporter(ex).send();        
-        return -1L;
-      }
+    public ServiceFrontendPlayer(AppSettings appSettings, Item item) {
+        this.appSettings = appSettings;
+        this.item = item;
     }
 
-    protected void onPostExecute(Long result)
-    {
-      if (result != 0L)
-      {
-        if (ex != null)
-          Toast.makeText(appSettings.getAppContext(), ex.toString(), Toast.LENGTH_LONG).show();
-      }
-    }
-  }
-  
-  private class PlayItemTask extends AsyncTask<URL,Integer,Long>
-  {
-    private Exception ex;
-    
-    protected Long doInBackground(URL... urls)
-    {
-      try
-      {
-        URL url = appSettings.getFrontendServiceBaseUrl();
-        if (item.isRecording() || item.isLiveTv())
-          url = new URL(url + "/Frontend/PlayRecording?" + ((Recording)item).getChanIdStartTimeParams());
-        else if (item.isMusic())
-          throw new UnsupportedOperationException("Music playback not supported by ServiceFrontendPlayer");
-        else
-          url = new URL(url + "/Frontend/PlayVideo?Id=" + item.getId());
-              
-        HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-        String resJson = new String(poster.post(), "UTF-8");
-        boolean res = new MythTvParser(appSettings, resJson).parseBool();
-        if (!res)
-          throw new ServiceException("Frontend playback failed for url " + url);
-        return 0L;
-      }
-      catch (Exception ex)
-      {
-        this.ex = ex;
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (appSettings.isErrorReportingEnabled())
-          new Reporter(ex).send();        
-        return -1L;
-      }
+    public boolean checkIsPlaying() throws IOException, JSONException {
+        int timeout = 5000;  // TODO: pref
+
+        state = null;
+        new StatusTask().execute();
+        while (state == null && timeout > 0) {
+            try {
+                Thread.sleep(100);
+                timeout -= 100;
+            } catch (InterruptedException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+            }
+        }
+        if (state == null)
+            throw new IOException("Error checking mythfrontend frontend status at " + appSettings.getFrontendServiceBaseUrl());
+
+        return !state.equals("idle");
     }
 
-    protected void onPostExecute(Long result)
-    {
-      if (result != 0L)
-      {
-        if (ex != null)
-          Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
-      }
-    }
-  }
-
-  private class StopTask extends AsyncTask<URL,Integer,Long>
-  {
-    private Exception ex;
-    
-    protected Long doInBackground(URL... urls)
-    {
-      try
-      {
-        URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");              
-        HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-        String resJson = new String(poster.get(), "UTF-8");
-        boolean res = new MythTvParser(appSettings, resJson).parseBool();
-        if (!res)
-          throw new ServiceException("Error stopping frontend playback: " + url);
-        return 0L;
-      }
-      catch (Exception ex)
-      {
-        this.ex = ex;
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (appSettings.isErrorReportingEnabled())
-          new Reporter(ex).send();        
-        return -1L;
-      }
+    public void play() {
+        new PlayItemTask().execute();
     }
 
-    protected void onPostExecute(Long result)
-    {
-      if (result != 0L)
-      {
-        if (ex != null)
-          Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
-      }
+    public void stop() {
+        new StopTask().execute();
     }
-  }
-  
+
+    private class StatusTask extends AsyncTask<URL, Integer, Long> {
+        private Exception ex;
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/GetStatus");
+                HttpHelper downloader = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
+                String frontendStatusJson = new String(downloader.get(), "UTF-8");
+                state = new MythTvParser(appSettings, frontendStatusJson).parseFrontendStatus();
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            if (result != 0L) {
+                if (ex != null)
+                    Toast.makeText(appSettings.getAppContext(), ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class PlayItemTask extends AsyncTask<URL, Integer, Long> {
+        private Exception ex;
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                URL url = appSettings.getFrontendServiceBaseUrl();
+                if (item.isRecording() || item.isLiveTv())
+                    url = new URL(url + "/Frontend/PlayRecording?" + ((Recording) item).getChanIdStartTimeParams());
+                else if (item.isMusic())
+                    throw new UnsupportedOperationException("Music playback not supported by ServiceFrontendPlayer");
+                else
+                    url = new URL(url + "/Frontend/PlayVideo?Id=" + item.getId());
+
+                HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
+                String resJson = new String(poster.post(), "UTF-8");
+                boolean res = new MythTvParser(appSettings, resJson).parseBool();
+                if (!res)
+                    throw new ServiceException("Frontend playback failed for url " + url);
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            if (result != 0L) {
+                if (ex != null)
+                    Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class StopTask extends AsyncTask<URL, Integer, Long> {
+        private Exception ex;
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");
+                HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
+                String resJson = new String(poster.get(), "UTF-8");
+                boolean res = new MythTvParser(appSettings, resJson).parseBool();
+                if (!res)
+                    throw new ServiceException("Error stopping frontend playback: " + url);
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            if (result != 0L) {
+                if (ex != null)
+                    Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 }

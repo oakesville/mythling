@@ -17,55 +17,55 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  
-  <item
-    android:id="@+id/menu_stop"
-    android:title="@string/menu_stop"
-    android:orderInCategory="50" 
-    android:icon="@drawable/ic_action_stop"
-    android:showAsAction="always"
-    android:visible="false" />
-  
-  <item
-    android:id="@+id/menu_search_results"
-    android:title="@string/menu_search_results"
-    android:orderInCategory="75"
-    android:showAsAction="ifRoom|withText"
-    android:visible="false" />
+
+    <item
+        android:id="@+id/menu_stop"
+        android:title="@string/menu_stop"
+        android:orderInCategory="50"
+        android:icon="@drawable/ic_action_stop"
+        android:showAsAction="always"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_search_results"
+        android:title="@string/menu_search_results"
+        android:orderInCategory="75"
+        android:showAsAction="ifRoom|withText"
+        android:visible="false" />
     "
-  <item
-    android:id="@+id/menu_refresh"
-    android:title="@string/menu_refresh"
-    android:orderInCategory="100" 
-    android:icon="@drawable/ic_menu_refresh"
-    android:showAsAction="ifRoom" />
-  
-  <item
-    android:id="@+id/menu_search"
-    android:title="@string/menu_search"
-    android:orderInCategory="200"
-    android:icon="@drawable/ic_menu_search"
-    android:showAsAction="ifRoom" />
-  
-  <item
-    android:id="@+id/menu_settings"
-    android:title="@string/menu_settings"
-    android:orderInCategory="300"
-    android:icon="@drawable/ic_menu_settings"
-    android:showAsAction="never" />
-  
-  <item
-    android:id="@+id/menu_mythweb"
-    android:title="@string/menu_mythweb"
-    android:orderInCategory="500"
-    android:icon="@drawable/ic_menu_help"
-    android:showAsAction="never" />
-  
-  <item
-    android:id="@+id/menu_help"
-    android:title="@string/menu_help"
-    android:orderInCategory="600"
-    android:icon="@drawable/ic_menu_help"
-    android:showAsAction="never" />
-  
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/menu_refresh"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_menu_refresh"
+        android:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/menu_search"
+        android:orderInCategory="200"
+        android:icon="@drawable/ic_menu_search"
+        android:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
+        android:orderInCategory="300"
+        android:icon="@drawable/ic_menu_settings"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_mythweb"
+        android:title="@string/menu_mythweb"
+        android:orderInCategory="500"
+        android:icon="@drawable/ic_menu_help"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/menu_help"
+        android:orderInCategory="600"
+        android:icon="@drawable/ic_menu_help"
+        android:showAsAction="never" />
+
 </menu>

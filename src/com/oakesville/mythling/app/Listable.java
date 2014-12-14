@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 package com.oakesville.mythling.app;
 
-public interface Listable
-{
-  public String getLabel();
+public interface Listable {
+    public String getLabel();
 }

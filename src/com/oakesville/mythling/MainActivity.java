@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -48,166 +48,146 @@ import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.Reporter;
 
-public class MainActivity extends MediaActivity
-{
-  private static final String TAG = MainActivity.class.getSimpleName();
-  
-  private ListView listView;
-  public ListView getListView() { return listView; }
-  private int currentTop = 0;  // top item in the list
-  private int topOffset = 0;
-  private ArrayAdapter<Listable> adapter;
+public class MainActivity extends MediaActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-  public String getCharSet()
-  {
-    return mediaList.getCharSet();
-  }
+    private ListView listView;
 
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    
-    PreferenceManager.setDefaultValues(this, R.xml.cache_prefs, false);
-    PreferenceManager.setDefaultValues(this, R.xml.credentials_prefs, false);
-    PreferenceManager.setDefaultValues(this, R.xml.network_prefs, false);
-    PreferenceManager.setDefaultValues(this, R.xml.playback_prefs, false);
-    PreferenceManager.setDefaultValues(this, R.xml.quality_prefs, false);
-    
-    try
-    {
-      getAppSettings().initMythlingVersion();
-    }
-    catch (NameNotFoundException ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-      if (getAppSettings().isErrorReportingEnabled())
-        new Reporter(ex).send();      
+    public ListView getListView() {
+        return listView;
     }
 
-    setContentView(R.layout.categories);
-    
-    createProgressBar();
-    
-    listView = (ListView) findViewById(R.id.categories);
+    private int currentTop = 0;  // top item in the list
+    private int topOffset = 0;
+    private ArrayAdapter<Listable> adapter;
 
-    if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail)
-    {
-      Intent intent = new Intent(this, MediaPagerActivity.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-      startActivity(intent);
-      finish();
-      return;
+    public String getCharSet() {
+        return mediaList.getCharSet();
     }
-  }
-  
-  @Override
-  protected void onResume()
-  {
-    try
-    {
-      if (getAppData() == null || getAppData().isExpired())
-        refresh();
-      else
-        populate();
-    }
-    catch (BadSettingsException ex)
-    {
-      stopProgress();
-      Toast.makeText(getApplicationContext(), "Bad or missing setting:\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
-    }
-    catch (Exception ex)
-    {
-      if (BuildConfig.DEBUG)
-        Log.e(TAG, ex.getMessage(), ex);
-      if (getAppSettings().isErrorReportingEnabled())
-        new Reporter(ex).send();      
-      stopProgress();
-      Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-    }
-    
-    super.onResume();
-  }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-  public void refresh() throws BadSettingsException
-  {
-    currentTop = 0;
-    topOffset = 0;
-    mediaList = new MediaList();
-    adapter = new ArrayAdapter<Listable>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
-    listView.setAdapter(adapter);
-    
-    startProgress();
-    getAppSettings().validate();
-    
-    refreshMediaList();
-  }
-  
-  protected void populate() throws IOException, JSONException, ParseException, BadSettingsException
-  {
-    startProgress();
-    if (getAppData() == null)
-    {
-      AppData appData = new AppData(getApplicationContext());
-      appData.readMediaList(getMediaType());
-      setAppData(appData);
-    }
-    else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType())
-    {
-      // media type was changed, then back button was pressed
-      getAppSettings().setMediaType(getMediaType());
-      getAppSettings().setLastLoad(0);
-      onResume();
-    }
-    
-    mediaList = getAppData().getMediaList();
-    
-    adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
-    listView.setAdapter(adapter);
-    listView.setOnItemClickListener(new OnItemClickListener()
-    {
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-      {
-        currentTop = listView.getFirstVisiblePosition();
-        View topV = listView.getChildAt(0);
-        topOffset = (topV == null) ? 0 : topV.getTop();        
-        List<Listable> listables = mediaList.getTopCategoriesAndItems();
-        boolean isMediaItem = listables.get(position) instanceof Item;
-        if (isMediaItem)
-        {
-          Item item = (Item)listables.get(position);
-          item.setPath("");
-          playItem(item);
+        PreferenceManager.setDefaultValues(this, R.xml.cache_prefs, false);
+        PreferenceManager.setDefaultValues(this, R.xml.credentials_prefs, false);
+        PreferenceManager.setDefaultValues(this, R.xml.network_prefs, false);
+        PreferenceManager.setDefaultValues(this, R.xml.playback_prefs, false);
+        PreferenceManager.setDefaultValues(this, R.xml.quality_prefs, false);
+
+        try {
+            getAppSettings().initMythlingVersion();
+        } catch (NameNotFoundException ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
         }
-        else
-        {
-          // must be category
-          String cat = ((TextView)view).getText().toString();
-          Uri.Builder builder = new Uri.Builder();
-          builder.path(cat);
-          Uri uri = builder.build();
-          startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaListActivity.class));
-        }
-      }
-    });
-    updateActionMenu();    
-    stopProgress();
-    listView.setSelectionFromTop(currentTop, topOffset);
-  }
 
-  protected void goDetailView()
-  {
-    if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
-      getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
-    
-    Uri.Builder builder = new Uri.Builder();
-    builder.path("");
-    Uri uri = builder.build();
-    Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(),  MediaPagerActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-  
+        setContentView(R.layout.categories);
+
+        createProgressBar();
+
+        listView = (ListView) findViewById(R.id.categories);
+
+        if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail) {
+            Intent intent = new Intent(this, MediaPagerActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            if (getAppData() == null || getAppData().isExpired())
+                refresh();
+            else
+                populate();
+        } catch (BadSettingsException ex) {
+            stopProgress();
+            Toast.makeText(getApplicationContext(), "Bad or missing setting:\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            stopProgress();
+            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        super.onResume();
+    }
+
+
+    public void refresh() throws BadSettingsException {
+        currentTop = 0;
+        topOffset = 0;
+        mediaList = new MediaList();
+        adapter = new ArrayAdapter<Listable>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
+        listView.setAdapter(adapter);
+
+        startProgress();
+        getAppSettings().validate();
+
+        refreshMediaList();
+    }
+
+    protected void populate() throws IOException, JSONException, ParseException, BadSettingsException {
+        startProgress();
+        if (getAppData() == null) {
+            AppData appData = new AppData(getApplicationContext());
+            appData.readMediaList(getMediaType());
+            setAppData(appData);
+        } else if (getMediaType() != null && getMediaType() != getAppData().getMediaList().getMediaType()) {
+            // media type was changed, then back button was pressed
+            getAppSettings().setMediaType(getMediaType());
+            getAppSettings().setLastLoad(0);
+            onResume();
+        }
+
+        mediaList = getAppData().getMediaList();
+
+        adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                currentTop = listView.getFirstVisiblePosition();
+                View topV = listView.getChildAt(0);
+                topOffset = (topV == null) ? 0 : topV.getTop();
+                List<Listable> listables = mediaList.getTopCategoriesAndItems();
+                boolean isMediaItem = listables.get(position) instanceof Item;
+                if (isMediaItem) {
+                    Item item = (Item) listables.get(position);
+                    item.setPath("");
+                    playItem(item);
+                } else {
+                    // must be category
+                    String cat = ((TextView) view).getText().toString();
+                    Uri.Builder builder = new Uri.Builder();
+                    builder.path(cat);
+                    Uri uri = builder.build();
+                    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                }
+            }
+        });
+        updateActionMenu();
+        stopProgress();
+        listView.setSelectionFromTop(currentTop, topOffset);
+    }
+
+    protected void goDetailView() {
+        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+            getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.path("");
+        Uri uri = builder.build();
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
 }

@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -19,11 +19,13 @@
 package com.oakesville.mythling.util;
 
 import java.io.IOException;
+
 import org.json.JSONException;
 
-public interface FrontendPlayer
-{
-  public boolean checkIsPlaying() throws IOException, JSONException;
-  public void play();
-  public void stop();
+public interface FrontendPlayer {
+    public boolean checkIsPlaying() throws IOException, JSONException;
+
+    public void play();
+
+    public void stop();
 }

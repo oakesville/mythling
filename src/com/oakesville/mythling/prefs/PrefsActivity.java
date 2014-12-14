@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -34,68 +34,56 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.WebViewActivity;
 import com.oakesville.mythling.app.AppSettings;
 
-public class PrefsActivity extends PreferenceActivity
-{
-  private List<Header> headers;
-  
-  @Override
-  protected void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setTitle("Settings");
-  }
-  
-  @Override
-  public void onBuildHeaders(List<Header> target)
-  {
-    this.loadHeadersFromResource(R.xml.prefs_headers, target);
-  }
-  
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-  {
-    getMenuInflater().inflate(R.menu.settings, menu);
-    return true;
-  }
-  
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item)
-  {
-    if (item.getItemId() == android.R.id.home)
-    {
-      NavUtils.navigateUpFromSameTask(this);
-      return true;
-    }
-    else if (item.getItemId() == R.id.menu_mythweb)
-    {
-      AppSettings appSettings = new AppSettings(getApplicationContext());
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
-      return true;
-    }    
-    else if (item.getItemId() == R.id.menu_help)
-    {
-      String url = getResources().getString(R.string.url_help);
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
-      return true;
+public class PrefsActivity extends PreferenceActivity {
+    private List<Header> headers;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setTitle("Settings");
     }
 
-    return super.onOptionsItemSelected(item);
-  }
-  
-  @Override
-  public void setListAdapter(ListAdapter adapter)
-  {
-    if (headers == null)
-    {
-      headers = new ArrayList<Header>();
-      // when the saved state provides the list of headers, onBuildHeaders() is not called
-      // so we build it from the adapter proveded, then use our own adapter
-
-      for (int i = 0; i < adapter.getCount(); i++)
-        headers.add((Header)adapter.getItem(i));
+    @Override
+    public void onBuildHeaders(List<Header> target) {
+        this.loadHeadersFromResource(R.xml.prefs_headers, target);
     }
 
-    super.setListAdapter(new HeaderListAdapter(this, headers));
-  }  
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        } else if (item.getItemId() == R.id.menu_mythweb) {
+            AppSettings appSettings = new AppSettings(getApplicationContext());
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+            return true;
+        } else if (item.getItemId() == R.id.menu_help) {
+            String url = getResources().getString(R.string.url_help);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setListAdapter(ListAdapter adapter) {
+        if (headers == null) {
+            headers = new ArrayList<Header>();
+            // when the saved state provides the list of headers, onBuildHeaders() is not called
+            // so we build it from the adapter proveded, then use our own adapter
+
+            for (int i = 0; i < adapter.getCount(); i++)
+                headers.add((Header) adapter.getItem(i));
+        }
+
+        super.setListAdapter(new HeaderListAdapter(this, headers));
+    }
 }

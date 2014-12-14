@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -25,35 +25,29 @@ import android.util.AttributeSet;
 /**
  * Allow UI enablement (of the title).
  */
-public class DisableableCategory extends PreferenceCategory
-{
-  public DisableableCategory(Context context, AttributeSet attrs, int defStyle)
-  {
-    super(context, attrs, defStyle);
-  }
+public class DisableableCategory extends PreferenceCategory {
+    public DisableableCategory(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-  public DisableableCategory(Context context, AttributeSet attrs)
-  {
-    super(context, attrs);
-  }
+    public DisableableCategory(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-  public DisableableCategory(Context context)
-  {
-    this(context, null);
-  }
-  
-  private boolean enabled;
+    public DisableableCategory(Context context) {
+        this(context, null);
+    }
 
-  @Override
-  public boolean isEnabled()
-  {
-    return enabled;
-  }
+    private boolean enabled;
 
-  @Override
-  public void setEnabled(boolean enabled)
-  {
-    this.enabled = enabled;
-    super.setEnabled(enabled);
-  }
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        super.setEnabled(enabled);
+    }
 }

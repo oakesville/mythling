@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
-<selector
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:state_enabled="false" android:drawable="@drawable/sw_thumb_disabled_holo_light" />
-  <item android:state_pressed="true"  android:drawable="@drawable/sw_thumb_pressed_holo_light" />
-  <item android:state_checked="true"  android:drawable="@drawable/sw_thumb_activated_holo_light" />
-  <item                               android:drawable="@drawable/sw_thumb_activated_holo_light" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@drawable/sw_thumb_disabled_holo_light" />
+    <item android:state_pressed="true" android:drawable="@drawable/sw_thumb_pressed_holo_light" />
+    <item android:state_checked="true" android:drawable="@drawable/sw_thumb_activated_holo_light" />
+    <item android:drawable="@drawable/sw_thumb_activated_holo_light" />
 </selector>

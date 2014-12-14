@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -24,37 +24,34 @@ import android.content.SharedPreferences.Editor;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
-public class PrefChangeListener implements OnPreferenceChangeListener
-{
-  private boolean triggerCacheRefresh;
-  private boolean triggerSummaryUpdate;
-  private String units;
-  public void setUnits(String units) { this.units = units; }
-  
-  public PrefChangeListener(boolean triggerSummaryUpdate, boolean triggerCacheRefresh)
-  {
-    this.triggerSummaryUpdate = triggerSummaryUpdate;
-    this.triggerCacheRefresh = triggerCacheRefresh;
-  }
-  
-  public PrefChangeListener(boolean triggerSummaryUpdate, boolean triggerCacheRefresh, String units)
-  {
-    this(triggerSummaryUpdate, triggerCacheRefresh);
-    this.units = units;
-  }
+public class PrefChangeListener implements OnPreferenceChangeListener {
+    private boolean triggerCacheRefresh;
+    private boolean triggerSummaryUpdate;
+    private String units;
 
-  public boolean onPreferenceChange(Preference preference, Object newValue)
-  {
-    if (triggerSummaryUpdate)
-    {
-      preference.setSummary(newValue == null ? "" : (newValue.toString() + (units == null ? "" : " " + units)));
+    public void setUnits(String units) {
+        this.units = units;
     }
-    if (triggerCacheRefresh)
-    {
-      Editor ed = preference.getEditor();
-      ed.putLong(AppSettings.LAST_LOAD, 0);
-      ed.commit();
+
+    public PrefChangeListener(boolean triggerSummaryUpdate, boolean triggerCacheRefresh) {
+        this.triggerSummaryUpdate = triggerSummaryUpdate;
+        this.triggerCacheRefresh = triggerCacheRefresh;
     }
-    return true;
-  }
+
+    public PrefChangeListener(boolean triggerSummaryUpdate, boolean triggerCacheRefresh, String units) {
+        this(triggerSummaryUpdate, triggerCacheRefresh);
+        this.units = units;
+    }
+
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (triggerSummaryUpdate) {
+            preference.setSummary(newValue == null ? "" : (newValue.toString() + (units == null ? "" : " " + units)));
+        }
+        if (triggerCacheRefresh) {
+            Editor ed = preference.getEditor();
+            ed.putLong(AppSettings.LAST_LOAD, 0);
+            ed.commit();
+        }
+        return true;
+    }
 }

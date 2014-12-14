@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -60,393 +60,328 @@ import android.util.Log;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 
-public class HttpHelper
-{
-  private static final String TAG = HttpHelper.class.getSimpleName();
+public class HttpHelper {
+    private static final String TAG = HttpHelper.class.getSimpleName();
 
-  public enum AuthType
-  {
-    None,
-    Basic,
-    Digest
-  }
-  
-  public enum Method
-  {
-    Get,
-    Post
-  }
+    public enum AuthType {
+        None,
+        Basic,
+        Digest
+    }
 
-  private URL url;
-  private URL ipRetrieval;
-  private String user;
-  private String password;
-  private AuthType authType;
-  private Method method;
-  private SharedPreferences sharedPrefs;
-  private boolean binary;
-  private String charset = "UTF-8";
-  private byte[] postContent;
-  
-  public String getCharSet() { return charset; }
+    public enum Method {
+        Get,
+        Post
+    }
 
-  public HttpHelper(URL url)
-  {
-    this(new URL[]{url}, AuthType.None, null, false);
-  }
+    private URL url;
+    private URL ipRetrieval;
+    private String user;
+    private String password;
+    private AuthType authType;
+    private Method method;
+    private SharedPreferences sharedPrefs;
+    private boolean binary;
+    private String charset = "UTF-8";
+    private byte[] postContent;
 
-  public HttpHelper(URL[] urls, String authType, SharedPreferences prefs)
-  {
-    this(urls, AuthType.valueOf(authType), prefs, false);
-  }
+    public String getCharSet() {
+        return charset;
+    }
 
-  public HttpHelper(URL[] urls, String authType, SharedPreferences prefs, boolean binary)
-  {
-    this(urls, AuthType.valueOf(authType), prefs, binary);
-  }
+    public HttpHelper(URL url) {
+        this(new URL[]{url}, AuthType.None, null, false);
+    }
 
-  public HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs, boolean binary)
-  {
-    this.url = urls[0];
-    if (urls.length > 1)
-      this.ipRetrieval = urls[1];
-    this.authType = authType;
-    this.sharedPrefs = prefs;
-    this.binary = binary;
-  }
-  
-  public void setCredentials(String user, String password)
-  {
-    this.user = user;
-    this.password = password;
-  }
-  
-  public AuthType getAuthType() { return authType; }
-  public void setAuthType(AuthType authType) { this.authType = authType; }
-  
-  public byte[] get() throws IOException
-  {
-    method = Method.Get;
-    return request();
-  }
-  
-  public byte[] post() throws IOException
-  {
-    method = Method.Post;
-    return request();
-  }
-  
-  public byte[] post(byte[] content) throws IOException
-  {
-    postContent = content;
-    return post();
-  }
+    public HttpHelper(URL[] urls, String authType, SharedPreferences prefs) {
+        this(urls, AuthType.valueOf(authType), prefs, false);
+    }
 
-  private byte[] request() throws IOException
-  {
-    if (authType == AuthType.Basic)
-      return retrieveWithBasicAuth();
-    else if (authType == AuthType.Digest)
-      return retrieveWithDigestAuth();
-    else
-      return retrieveWithNoAuth();
-  }
-  
-  private byte[] retrieveWithNoAuth() throws IOException
-  {
-    Map<String,String> headers = new HashMap<String,String>();
-    headers.put("Accept", "application/json");
-    return retrieve(headers);
-  }
-  
-  private byte[] retrieveWithBasicAuth() throws IOException
-  {  
-    Map<String,String> headers = new HashMap<String,String>();
-    headers.put("Accept", "application/json");
-    String credentials = Base64.encodeToString((user + ":" + password).getBytes(), Base64.DEFAULT);
-    headers.put("Authorization", "Basic " + credentials);
-    return retrieve(headers);
-  }
-  
-  private byte[] retrieveWithDigestAuth() throws IOException
-  {
-    AndroidHttpClient httpClient = null;
-    InputStream is = null;
-    
-    try
-    {
-      long startTime = System.currentTimeMillis();
-      
-      httpClient = AndroidHttpClient.newInstance("Android");
-      HttpParams httpParams = httpClient.getParams();
-      HttpConnectionParams.setConnectionTimeout(httpParams, getConnectTimeout());
-      HttpConnectionParams.setSoTimeout(httpParams, getReadTimeout());
+    public HttpHelper(URL[] urls, String authType, SharedPreferences prefs, boolean binary) {
+        this(urls, AuthType.valueOf(authType), prefs, binary);
+    }
 
-      HttpHost host = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
+    public HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs, boolean binary) {
+        this.url = urls[0];
+        if (urls.length > 1)
+            this.ipRetrieval = urls[1];
+        this.authType = authType;
+        this.sharedPrefs = prefs;
+        this.binary = binary;
+    }
 
-      HttpRequestBase job;
-      if (method == Method.Get)
-        job = new HttpGet(url.toString());
-      else if (method == Method.Post)
-      {
-        job = new HttpPost(url.toString());
-        ((HttpPost)job).setEntity(new ByteArrayEntity("".getBytes()));
-      }
-      else
-        throw new IOException("Unsupported HTTP method: " + method);
-      
-      job.setHeader("Accept", "application/json");
-      HttpResponse response = null;
-      try
-      {
-        response = httpClient.execute(host, job, getDigestAuthContext(url.getHost(), url.getPort(), user, password));
-      }
-      catch (IOException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (ipRetrieval != null)
-        {
-          // try and retrieve the backend IP
-          String ip = retrieveBackendIp();
-          host = new HttpHost(ip, url.getPort(), url.getProtocol());
-          response = httpClient.execute(host, job, getDigestAuthContext(ip, url.getPort(), user, password));
-          // save the retrieved ip as the external static one
-          Editor ed = sharedPrefs.edit();
-          ed.putString(AppSettings.MYTH_BACKEND_EXTERNAL_HOST, ip);
-          ed.commit();
-        }
+    public void setCredentials(String user, String password) {
+        this.user = user;
+        this.password = password;
+    }
+
+    public AuthType getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(AuthType authType) {
+        this.authType = authType;
+    }
+
+    public byte[] get() throws IOException {
+        method = Method.Get;
+        return request();
+    }
+
+    public byte[] post() throws IOException {
+        method = Method.Post;
+        return request();
+    }
+
+    public byte[] post(byte[] content) throws IOException {
+        postContent = content;
+        return post();
+    }
+
+    private byte[] request() throws IOException {
+        if (authType == AuthType.Basic)
+            return retrieveWithBasicAuth();
+        else if (authType == AuthType.Digest)
+            return retrieveWithDigestAuth();
         else
-        {
-          throw ex;
-        }
-      }
-      is = response.getEntity().getContent();
-      
-      return extractResponseBytes(is, startTime);
+            return retrieveWithNoAuth();
     }
-    finally
-    {
-      try
-      {
-        if (is != null)
-          is.close();
-        if (httpClient != null)
-          httpClient.close();    
-      }
-      catch (IOException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
+
+    private byte[] retrieveWithNoAuth() throws IOException {
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Accept", "application/json");
+        return retrieve(headers);
     }
-  }
-  
-  private HttpContext getDigestAuthContext(String host, int port, String user, String password)
-  {
-    CredentialsProvider cp = new BasicCredentialsProvider();
-    AuthScope scope = new AuthScope(host, port);
-    UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
-    cp.setCredentials(scope, creds);
-    HttpContext credContext = new BasicHttpContext();
-    credContext.setAttribute(ClientContext.CREDS_PROVIDER, cp);
-    return credContext;
-  }
-  
-  private byte[] retrieve(Map<String,String> headers) throws IOException
-  {  
-    HttpURLConnection conn = null;
-    InputStream is = null;
-    
-    try
-    {
-      long startTime = System.currentTimeMillis();
-      conn = (HttpURLConnection) url.openConnection();
-      prepareConnection(conn, headers);
-      
-      try
-      {
-        if (postContent != null)
-          writeRequestBytes(conn.getOutputStream());
-        is = conn.getInputStream();
-      }
-      catch (IOException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-        if (ipRetrieval != null)
-        {
-          // try and retrieve the backend IP
-          String ip = retrieveBackendIp();
-          url = new URL(url.getProtocol(), ip, url.getPort(), url.getFile());
-          conn = (HttpURLConnection) url.openConnection();
-          prepareConnection(conn, headers);
-          try
-          {
-            is = conn.getInputStream();
-          }
-          catch (IOException ex2)
-          {
-            rethrow(ex2, conn.getResponseMessage());
-          }
+
+    private byte[] retrieveWithBasicAuth() throws IOException {
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Accept", "application/json");
+        String credentials = Base64.encodeToString((user + ":" + password).getBytes(), Base64.DEFAULT);
+        headers.put("Authorization", "Basic " + credentials);
+        return retrieve(headers);
+    }
+
+    private byte[] retrieveWithDigestAuth() throws IOException {
+        AndroidHttpClient httpClient = null;
+        InputStream is = null;
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            httpClient = AndroidHttpClient.newInstance("Android");
+            HttpParams httpParams = httpClient.getParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, getConnectTimeout());
+            HttpConnectionParams.setSoTimeout(httpParams, getReadTimeout());
+
+            HttpHost host = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
+
+            HttpRequestBase job;
+            if (method == Method.Get)
+                job = new HttpGet(url.toString());
+            else if (method == Method.Post) {
+                job = new HttpPost(url.toString());
+                ((HttpPost) job).setEntity(new ByteArrayEntity("".getBytes()));
+            } else
+                throw new IOException("Unsupported HTTP method: " + method);
+
+            job.setHeader("Accept", "application/json");
+            HttpResponse response = null;
+            try {
+                response = httpClient.execute(host, job, getDigestAuthContext(url.getHost(), url.getPort(), user, password));
+            } catch (IOException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (ipRetrieval != null) {
+                    // try and retrieve the backend IP
+                    String ip = retrieveBackendIp();
+                    host = new HttpHost(ip, url.getPort(), url.getProtocol());
+                    response = httpClient.execute(host, job, getDigestAuthContext(ip, url.getPort(), user, password));
+                    // save the retrieved ip as the external static one
+                    Editor ed = sharedPrefs.edit();
+                    ed.putString(AppSettings.MYTH_BACKEND_EXTERNAL_HOST, ip);
+                    ed.commit();
+                } else {
+                    throw ex;
+                }
+            }
+            is = response.getEntity().getContent();
+
+            return extractResponseBytes(is, startTime);
+        } finally {
+            try {
+                if (is != null)
+                    is.close();
+                if (httpClient != null)
+                    httpClient.close();
+            } catch (IOException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+            }
         }
+    }
+
+    private HttpContext getDigestAuthContext(String host, int port, String user, String password) {
+        CredentialsProvider cp = new BasicCredentialsProvider();
+        AuthScope scope = new AuthScope(host, port);
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
+        cp.setCredentials(scope, creds);
+        HttpContext credContext = new BasicHttpContext();
+        credContext.setAttribute(ClientContext.CREDS_PROVIDER, cp);
+        return credContext;
+    }
+
+    private byte[] retrieve(Map<String, String> headers) throws IOException {
+        HttpURLConnection conn = null;
+        InputStream is = null;
+
+        try {
+            long startTime = System.currentTimeMillis();
+            conn = (HttpURLConnection) url.openConnection();
+            prepareConnection(conn, headers);
+
+            try {
+                if (postContent != null)
+                    writeRequestBytes(conn.getOutputStream());
+                is = conn.getInputStream();
+            } catch (IOException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (ipRetrieval != null) {
+                    // try and retrieve the backend IP
+                    String ip = retrieveBackendIp();
+                    url = new URL(url.getProtocol(), ip, url.getPort(), url.getFile());
+                    conn = (HttpURLConnection) url.openConnection();
+                    prepareConnection(conn, headers);
+                    try {
+                        is = conn.getInputStream();
+                    } catch (IOException ex2) {
+                        rethrow(ex2, conn.getResponseMessage());
+                    }
+                } else {
+                    rethrow(ex, conn.getResponseMessage());
+                }
+            }
+
+            return extractResponseBytes(is, startTime);
+        } finally {
+            try {
+                if (is != null)
+                    is.close();
+            } catch (IOException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private void prepareConnection(URLConnection conn, Map<String, String> headers) throws IOException {
+        conn.setConnectTimeout(getConnectTimeout());
+        conn.setReadTimeout(getReadTimeout());
+        for (String key : headers.keySet())
+            conn.setRequestProperty(key, headers.get(key));
+
+        if (method == Method.Post) {
+            ((HttpURLConnection) conn).setRequestMethod("POST");
+            if (postContent != null)
+                conn.setDoOutput(true);
+        }
+    }
+
+    private void writeRequestBytes(OutputStream os) throws IOException {
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(os);
+            bos.write(postContent);
+        } finally {
+            if (bos != null)
+                bos.close();
+        }
+    }
+
+    private byte[] extractResponseBytes(InputStream is, long requestStartTime) throws IOException {
+        BufferedInputStream bis = null;
+        BufferedReader br = null;
+
+        try {
+            ByteArrayBuffer baf = new ByteArrayBuffer(1024);
+            bis = new BufferedInputStream(is);
+            int b = 0;
+            while ((b = bis.read()) != -1)
+                baf.append((byte) b);
+            long requestEndTime = System.currentTimeMillis();
+            byte[] bytes = baf.toByteArray();
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, " -> (" + url + ") http request time: " + (requestEndTime - requestStartTime) + " ms");
+                // how much memory are we using
+                Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
+                Debug.getMemoryInfo(memoryInfo);
+                Log.d(TAG, " -> response byte array size: " + bytes.length / 1024 + " kb (Pss = " + memoryInfo.getTotalPss() + " kb)");
+            }
+            if (!binary) {
+                // detect character set
+                UniversalDetector detector = new UniversalDetector(null);
+                detector.handleData(bytes, 0, bytes.length);
+                detector.dataEnd();
+                String detected = detector.getDetectedCharset();
+                if (BuildConfig.DEBUG)
+                    Log.d(TAG, " -> charset: " + detected + " - detect time: " + (System.currentTimeMillis() - requestEndTime) + " ms");
+                if (detected != null && !detected.equals(charset)) {
+                    try {
+                        Charset.forName(detected);
+                        charset = detected;
+                    } catch (UnsupportedCharsetException ex) {
+                        // not supported -- stick with UTF-8
+                    }
+                }
+            }
+
+            return bytes;
+
+        } finally {
+            try {
+                if (bis != null)
+                    bis.close();
+                if (br != null)
+                    br.close();
+            } catch (IOException ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private String retrieveBackendIp() throws IOException {
+        HttpHelper helper = new HttpHelper(new URL[]{ipRetrieval}, AuthType.None, sharedPrefs, false);
+        String backendIp = new String(helper.get());
+        if (!AppSettings.validateIp(backendIp))
+            throw new IOException("Bad IP Address: " + backendIp);
+        Editor ed = sharedPrefs.edit();
+        ed.putString("mythbe_external_ip", backendIp);
+        ed.commit();
+        return backendIp;
+    }
+
+    public int getConnectTimeout() {
+        if (sharedPrefs != null)
+            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "6").trim()) * 1000;
         else
-        {
-          rethrow(ex, conn.getResponseMessage());
+            return 6000;
+    }
+
+    public int getReadTimeout() {
+        if (sharedPrefs != null)
+            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "10").trim()) * 1000;
+        else
+            return 10000;
+    }
+
+    private void rethrow(IOException ex, String msgPrefix) throws IOException {
+        if (msgPrefix == null) {
+            throw ex;
+        } else {
+            IOException re = new IOException(msgPrefix + ": " + ex.getMessage());
+            re.setStackTrace(ex.getStackTrace());
+            throw re;
         }
-      }
-      
-      return extractResponseBytes(is, startTime);
     }
-    finally
-    {
-      try
-      {
-        if (is != null)
-          is.close();
-      }
-      catch (IOException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-    }
-  }
-
-  private void prepareConnection(URLConnection conn, Map<String,String> headers) throws IOException
-  {
-    conn.setConnectTimeout(getConnectTimeout());
-    conn.setReadTimeout(getReadTimeout());
-    for (String key : headers.keySet())
-      conn.setRequestProperty(key, headers.get(key));
-    
-    if (method == Method.Post)
-    {
-      ((HttpURLConnection)conn).setRequestMethod("POST");
-      if (postContent != null)
-        conn.setDoOutput(true);
-    }
-  }
-  
-  private void writeRequestBytes(OutputStream os) throws IOException
-  {
-    BufferedOutputStream bos = null;
-    try
-    {
-      bos = new BufferedOutputStream(os);
-      bos.write(postContent);
-    }
-    finally
-    {
-      if (bos != null)
-        bos.close();
-    }
-  }
-
-  private byte[] extractResponseBytes(InputStream is, long requestStartTime) throws IOException
-  {
-    BufferedInputStream bis = null;
-    BufferedReader br = null;
-
-    try
-    {
-      ByteArrayBuffer baf = new ByteArrayBuffer(1024);
-      bis = new BufferedInputStream(is);
-      int b = 0;
-      while ((b = bis.read()) != -1)
-        baf.append((byte)b);
-      long requestEndTime = System.currentTimeMillis();
-      byte[] bytes = baf.toByteArray();
-      if (BuildConfig.DEBUG)
-      {
-        Log.d(TAG, " -> (" + url + ") http request time: " + (requestEndTime - requestStartTime) + " ms");
-        // how much memory are we using
-        Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
-        Debug.getMemoryInfo(memoryInfo);
-        Log.d(TAG, " -> response byte array size: " + bytes.length / 1024 + " kb (Pss = " + memoryInfo.getTotalPss() + " kb)");
-      }
-      if (!binary)
-      {
-        // detect character set
-        UniversalDetector detector = new UniversalDetector(null);
-        detector.handleData(bytes, 0, bytes.length);
-        detector.dataEnd();
-        String detected = detector.getDetectedCharset();
-        if (BuildConfig.DEBUG)
-          Log.d(TAG, " -> charset: " + detected + " - detect time: " + (System.currentTimeMillis() - requestEndTime) + " ms");
-        if (detected != null  && !detected.equals(charset))
-        {
-          try
-          {
-            Charset.forName(detected);
-            charset = detected;
-          }
-          catch (UnsupportedCharsetException ex)
-          {
-            // not supported -- stick with UTF-8
-          }
-        }
-      }
-      
-      return bytes;
-
-    }
-    finally
-    {
-      try
-      {
-        if (bis != null)
-          bis.close();
-        if (br != null)
-          br.close();
-      }
-      catch (IOException ex)
-      {
-        if (BuildConfig.DEBUG)
-          Log.e(TAG, ex.getMessage(), ex);
-      }
-    }
-  }
-    
-  private String retrieveBackendIp() throws IOException
-  {
-    HttpHelper helper = new HttpHelper(new URL[]{ipRetrieval}, AuthType.None, sharedPrefs, false);
-    String backendIp = new String(helper.get());
-    if (!AppSettings.validateIp(backendIp))
-      throw new IOException("Bad IP Address: " + backendIp);
-    Editor ed = sharedPrefs.edit();
-    ed.putString("mythbe_external_ip", backendIp);
-    ed.commit();
-    return backendIp;
-  }
-  
-  public int getConnectTimeout()
-  {
-    if (sharedPrefs != null)
-      return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "6").trim()) * 1000;
-    else
-      return 6000;
-  }
-  
-  public int getReadTimeout()
-  {
-    if (sharedPrefs != null)
-      return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "10").trim()) * 1000;
-    else
-      return 10000;
-  }
-  
-  private void rethrow(IOException ex, String msgPrefix) throws IOException
-  {
-    if (msgPrefix == null)
-    {
-      throw ex;
-    }
-    else
-    {
-      IOException re = new IOException(msgPrefix + ": " + ex.getMessage());
-      re.setStackTrace(ex.getStackTrace());
-      throw re;
-    }
-  }
 }

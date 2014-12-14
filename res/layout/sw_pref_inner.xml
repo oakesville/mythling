@@ -16,39 +16,39 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:minHeight="?android:attr/listPreferredItemHeight"
-  android:gravity="center_vertical"
-  android:paddingLeft="4dip"
-  android:paddingRight="?android:attr/scrollbarSize">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:gravity="center_vertical"
+    android:paddingLeft="4dip"
+    android:paddingRight="?android:attr/scrollbarSize">
 
-  <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:minWidth="46dp"
-    android:orientation="horizontal">
-    <ImageView
-      android:id="@+android:id/icon"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:minWidth="48dp"
-      android:paddingRight="8dip"
-      android:contentDescription="@string/icon" />
-  </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:minWidth="46dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+android:id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minWidth="48dp"
+            android:paddingRight="8dip"
+            android:contentDescription="@string/icon" />
+    </LinearLayout>
 
 
-  <!-- Preference should place its actual preference widget here. -->
-  <LinearLayout
-    android:id="@+android:id/widget_frame"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:minWidth="48dp"
-    android:gravity="center"
-    android:orientation="vertical" />
+    <!-- Preference should place its actual preference widget here. -->
+    <LinearLayout
+        android:id="@+android:id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="48dp"
+        android:gravity="center"
+        android:orientation="vertical" />
 
 </LinearLayout>

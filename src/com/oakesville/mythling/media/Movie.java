@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -22,62 +22,50 @@ import java.util.Comparator;
 
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
-public class Movie extends Video
-{
-  public Movie(String id, String title)
-  {
-    super(id, title);
-  }
+public class Movie extends Video {
+    public Movie(String id, String title) {
+        super(id, title);
+    }
 
-  public MediaType getType()
-  {
-    return MediaType.movies;
-  }
-  
-  public String getTypeTitle()
-  {
-    return "Movie";
-  }
-  
-  public String getLabel()
-  {
-    String label = getTitle();
-    if (getYear() > 0)
-      label += " (" + getYear() + ")";
-    return label;
-  }
+    public MediaType getType() {
+        return MediaType.movies;
+    }
 
-  @Override
-  protected String getExtraText()
-  {
-    StringBuffer buf = new StringBuffer();
-    if (getYear() > 0)
-      buf.append(" (").append(getYear()).append(")");
-    if (getRating() > 0)
-      buf.append(" ").append(getRatingString(getRating()));
-    return buf.toString();
-  }
+    public String getTypeTitle() {
+        return "Movie";
+    }
 
-  @Override
-  protected Comparator<Item> getDateComparator()
-  {
-    return new Comparator<Item>()
-    {
-      public int compare(Item item1, Item item2)
-      {
-        Movie movie1 = (Movie) item1;
-        Movie movie2 = (Movie) item2;
-        if (movie1.getYear() == movie2.getYear())
-        {
-          String t1 = stripLeadingArticle(movie1.getTitle());
-          String t2 = stripLeadingArticle(movie2.getTitle());
-          return t1.compareToIgnoreCase(t2);
-        }
-        else
-        {
-          return movie1.getYear() - movie2.getYear();
-        }
-      }
-    };
-  }
+    public String getLabel() {
+        String label = getTitle();
+        if (getYear() > 0)
+            label += " (" + getYear() + ")";
+        return label;
+    }
+
+    @Override
+    protected String getExtraText() {
+        StringBuffer buf = new StringBuffer();
+        if (getYear() > 0)
+            buf.append(" (").append(getYear()).append(")");
+        if (getRating() > 0)
+            buf.append(" ").append(getRatingString(getRating()));
+        return buf.toString();
+    }
+
+    @Override
+    protected Comparator<Item> getDateComparator() {
+        return new Comparator<Item>() {
+            public int compare(Item item1, Item item2) {
+                Movie movie1 = (Movie) item1;
+                Movie movie2 = (Movie) item2;
+                if (movie1.getYear() == movie2.getYear()) {
+                    String t1 = stripLeadingArticle(movie1.getTitle());
+                    String t2 = stripLeadingArticle(movie2.getTitle());
+                    return t1.compareToIgnoreCase(t2);
+                } else {
+                    return movie1.getYear() - movie2.getYear();
+                }
+            }
+        };
+    }
 }

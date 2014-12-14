@@ -16,154 +16,161 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="horizontal"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:background="@android:drawable/gallery_thumb"
-  android:baselineAligned="false">
-  
-  <FrameLayout
-    android:layout_weight="1"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dip">
-    
-    <com.oakesville.mythling.ImageView
-      android:id="@+id/posterImage"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:contentDescription="@string/poster"
-      android:background="@drawable/rounded_frame"
-      android:adjustViewBounds="true"
-      android:scaleType="fitCenter"
-      android:padding="5dip"
-      android:layout_gravity="center" />
-  </FrameLayout>
+    android:background="@android:drawable/gallery_thumb"
+    android:baselineAligned="false">
 
-  <ScrollView
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:fillViewport="true">
-    <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingLeft="10dp"
-      android:paddingRight="20dp"
-      android:gravity="center_vertical|left">
-    
-      <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/blank"/>
-      
-      <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-          android:id="@+id/star_1"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_2"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_3"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_4"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
-        <ImageView
-          android:id="@+id/star_5"
-          android:src="@drawable/blank"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical|left"
-          android:contentDescription="@string/rating" />
+    <FrameLayout
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="5dip">
+
+        <com.oakesville.mythling.ImageView
+            android:id="@+id/posterImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/poster"
+            android:background="@drawable/rounded_frame"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:padding="5dip"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
         <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:gravity="right">
-          <Button
-            android:id="@+id/pagerPlay"
-            android:text="@string/play"
-            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="25dp"
-            android:visibility="gone" />
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:gravity="center_vertical|left">
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/blank" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/star_1"
+                    android:src="@drawable/blank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|left"
+                    android:contentDescription="@string/rating" />
+
+                <ImageView
+                    android:id="@+id/star_2"
+                    android:src="@drawable/blank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|left"
+                    android:contentDescription="@string/rating" />
+
+                <ImageView
+                    android:id="@+id/star_3"
+                    android:src="@drawable/blank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|left"
+                    android:contentDescription="@string/rating" />
+
+                <ImageView
+                    android:id="@+id/star_4"
+                    android:src="@drawable/blank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|left"
+                    android:contentDescription="@string/rating" />
+
+                <ImageView
+                    android:id="@+id/star_5"
+                    android:src="@drawable/blank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|left"
+                    android:contentDescription="@string/rating" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right">
+
+                    <Button
+                        android:id="@+id/pagerPlay"
+                        android:text="@string/play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="25dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/directorText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/blank" />
+
+            <TextView
+                android:id="@+id/actorsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/blank" />
+
+            <TextView
+                android:id="@+id/summaryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/blank" />
+
+            <TextView
+                android:id="@+id/customLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/blank" />
+
+            <TextView
+                android:id="@+id/pageLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/blank" />
+
         </LinearLayout>
-      </LinearLayout>
-  
-      <TextView
-        android:id="@+id/directorText"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-      
-      <TextView
-        android:id="@+id/actorsText"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-      
-      <TextView
-        android:id="@+id/summaryText"
-        android:layout_width="match_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank"/>
-  
-      <TextView
-        android:id="@+id/customLink"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-      
-      <TextView
-        android:id="@+id/pageLink"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-      
-    </LinearLayout>      
-      
-  </ScrollView>      
-    
+
+    </ScrollView>
+
 </LinearLayout>

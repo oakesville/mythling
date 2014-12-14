@@ -18,45 +18,45 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/title_operation_timeouts">
-    <EditTextPreference 
-      android:key="tuner_timeout"
-      android:title="@string/title_tuner_timeout"
-      android:dialogTitle="@string/title_tuner_timeout_dialog"
-      android:inputType="number"
-      android:defaultValue="30"
-      android:layout="@layout/pref" />
-    <EditTextPreference 
-      android:key="transcode_timeout"
-      android:title="@string/title_transcode_timeout"
-      android:dialogTitle="@string/title_transcode_timeout_dialog"
-      android:inputType="number"
-      android:defaultValue="30"
-      android:layout="@layout/pref" />
-    <EditTextPreference 
-      android:key="transcode_job_limit"
-      android:title="@string/title_transcode_job_limit"
-      android:inputType="number"
-      android:defaultValue="3"
-      android:dialogMessage="@string/message_transcode_job_limit"
-      android:layout="@layout/pref" />
+    <PreferenceCategory android:title="@string/title_operation_timeouts">
+        <EditTextPreference
+            android:key="tuner_timeout"
+            android:title="@string/title_tuner_timeout"
+            android:dialogTitle="@string/title_tuner_timeout_dialog"
+            android:inputType="number"
+            android:defaultValue="30"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="transcode_timeout"
+            android:title="@string/title_transcode_timeout"
+            android:dialogTitle="@string/title_transcode_timeout_dialog"
+            android:inputType="number"
+            android:defaultValue="30"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="transcode_job_limit"
+            android:title="@string/title_transcode_job_limit"
+            android:inputType="number"
+            android:defaultValue="3"
+            android:dialogMessage="@string/message_transcode_job_limit"
+            android:layout="@layout/pref" />
     </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/title_http_timeouts">
-    <EditTextPreference 
-      android:key="http_connect_timeout"
-      android:title="@string/title_connect_timeout"
-      android:dialogTitle="@string/title_connect_timeout_dialog"
-      android:inputType="number"
-      android:defaultValue="6"
-      android:layout="@layout/pref" />
-    <EditTextPreference 
-      android:key="http_read_timeout"
-      android:title="@string/title_read_timeout"
-      android:dialogTitle="@string/title_read_timeout_dialog"
-      android:inputType="number"
-      android:defaultValue="10"
-      android:layout="@layout/pref" />
-  </PreferenceCategory>
-  
+    <PreferenceCategory android:title="@string/title_http_timeouts">
+        <EditTextPreference
+            android:key="http_connect_timeout"
+            android:title="@string/title_connect_timeout"
+            android:dialogTitle="@string/title_connect_timeout_dialog"
+            android:inputType="number"
+            android:defaultValue="6"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="http_read_timeout"
+            android:title="@string/title_read_timeout"
+            android:dialogTitle="@string/title_read_timeout_dialog"
+            android:inputType="number"
+            android:defaultValue="10"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

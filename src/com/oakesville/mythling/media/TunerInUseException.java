@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -20,19 +20,22 @@ package com.oakesville.mythling.media;
 
 import java.io.IOException;
 
-public class TunerInUseException extends IOException
-{
-  public TunerInUseException(String msg)
-  {
-    super(msg);
-  }
-  
-  public TunerInUseException(String msg, Throwable cause)
-  {
-    super(msg, cause);
-  }
-  
-  private Recording recording;
-  public Recording getRecording() { return recording; }
-  public void setRecording(Recording rec) { this.recording = rec; }
+public class TunerInUseException extends IOException {
+    public TunerInUseException(String msg) {
+        super(msg);
+    }
+
+    public TunerInUseException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    private Recording recording;
+
+    public Recording getRecording() {
+        return recording;
+    }
+
+    public void setRecording(Recording rec) {
+        this.recording = rec;
+    }
 }

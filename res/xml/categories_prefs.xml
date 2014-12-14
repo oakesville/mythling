@@ -18,65 +18,65 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/title_categorize_videos">
-    <ListPreference 
-      android:key="categorize_videos"
-      android:title="@string/title_video_categorization"
-      android:dialogTitle="@string/title_video_categorization_dialog"
-      android:entries="@array/video_categorization_entries"
-      android:entryValues="@array/video_categorization_values"
-      android:defaultValue="metadata"
-      android:layout="@layout/pref" />
-    <EditTextPreference 
-      android:key="movie_directories"
-      android:title="@string/title_directories_movies"
-      android:dialogMessage="@string/message_directories_movies"
-      android:layout="@layout/pref" />
-    <EditTextPreference
-      android:key="tv_series_directories"
-      android:title="@string/title_directories_tv_series"
-      android:dialogMessage="@string/message_directories_tv_series"
-      android:layout="@layout/pref" />
-    <EditTextPreference
-      android:key="video_exclude_directories"
-      android:title="@string/title_directories_exclude"
-      android:dialogMessage="@string/message_directories_exclude"
-      android:layout="@layout/pref" />
-  </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_categorize_videos">
+        <ListPreference
+            android:key="categorize_videos"
+            android:title="@string/title_video_categorization"
+            android:dialogTitle="@string/title_video_categorization_dialog"
+            android:entries="@array/video_categorization_entries"
+            android:entryValues="@array/video_categorization_values"
+            android:defaultValue="metadata"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="movie_directories"
+            android:title="@string/title_directories_movies"
+            android:dialogMessage="@string/message_directories_movies"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="tv_series_directories"
+            android:title="@string/title_directories_tv_series"
+            android:dialogMessage="@string/message_directories_tv_series"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="video_exclude_directories"
+            android:title="@string/title_directories_exclude"
+            android:dialogMessage="@string/message_directories_exclude"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/title_categorize_transcoding">
-    <EditTextPreference 
-      android:key="hls_file_extensions"
-      android:title="@string/title_transcode_hls"
-      android:dialogMessage="@string/message_transcode_hls"
-      android:layout="@layout/pref" />
-    <EditTextPreference
-      android:key="stream_raw_file_extensions"
-      android:title="@string/title_stream_raw"
-      android:dialogMessage="@string/message_stream_raw"
-      android:layout="@layout/pref" />
-  </PreferenceCategory>
-  
-  <PreferenceCategory android:title="@string/title_categorize_internet">
-    <EditTextPreference 
-      android:key="movie_base_url"
-      android:title="@string/title_movie_base_url"
-      android:defaultValue="http://www.themoviedb.org/movie/"
-      android:dialogMessage="@string/message_movie_base_url"
-      android:layout="@layout/pref"
-      android:inputType="textUri" />
-    <EditTextPreference 
-      android:key="tv_base_url"
-      android:title="@string/title_tv_base_url"
-      android:defaultValue="http://www.thetvdb.com/"
-      android:dialogMessage="@string/message_tv_base_url"
-      android:layout="@layout/pref"
-      android:inputType="textUri" />
-    <EditTextPreference 
-      android:key="custom_base_url"
-      android:title="@string/title_custom_base_url"
-      android:dialogMessage="@string/message_custom_base_url"
-      android:layout="@layout/pref"
-      android:inputType="textUri" />
-  </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_categorize_transcoding">
+        <EditTextPreference
+            android:key="hls_file_extensions"
+            android:title="@string/title_transcode_hls"
+            android:dialogMessage="@string/message_transcode_hls"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="stream_raw_file_extensions"
+            android:title="@string/title_stream_raw"
+            android:dialogMessage="@string/message_stream_raw"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/title_categorize_internet">
+        <EditTextPreference
+            android:key="movie_base_url"
+            android:title="@string/title_movie_base_url"
+            android:defaultValue="http://www.themoviedb.org/movie/"
+            android:dialogMessage="@string/message_movie_base_url"
+            android:layout="@layout/pref"
+            android:inputType="textUri" />
+        <EditTextPreference
+            android:key="tv_base_url"
+            android:title="@string/title_tv_base_url"
+            android:defaultValue="http://www.thetvdb.com/"
+            android:dialogMessage="@string/message_tv_base_url"
+            android:layout="@layout/pref"
+            android:inputType="textUri" />
+        <EditTextPreference
+            android:key="custom_base_url"
+            android:title="@string/title_custom_base_url"
+            android:dialogMessage="@string/message_custom_base_url"
+            android:layout="@layout/pref"
+            android:inputType="textUri" />
+    </PreferenceCategory>
 </PreferenceScreen>

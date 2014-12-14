@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -18,50 +18,115 @@
  */
 package com.oakesville.mythling.media;
 
-public class LiveStreamInfo
-{
-  private long id;
-  public long getId() { return id; }
-  public void setId(long id) { this.id = id; }
-  
-  private int statusCode;
-  public int getStatusCode() { return statusCode; }
-  public void setStatusCode(int code) { this.statusCode = code; }
-  
-  private String status;
-  public String getStatus() { return status; }
-  public void setStatus(String status) { this.status = status; }
-  
-  private int percentComplete;
-  public int getPercentComplete() { return percentComplete; }
-  public void setPercentComplete(int pc) { this.percentComplete = pc; }
-  
-  public int width;
-  public int getWidth() { return width; }
-  public void setWidth(int w) { this.width = w; }
-  
-  public int height;
-  public int getHeight() { return height; }
-  public void setHeight(int h) { this.height = h; }
-  
-  public int videoBitrate;
-  public int getVideoBitrate() { return videoBitrate; }
-  public void setVideoBitrate(int br) { this.videoBitrate = br; }
-  
-  public int audioBitrate;
-  public int getAudioBitrate() { return audioBitrate; }
-  public void setAudioBitrate(int abr) { this.audioBitrate = abr; }
-  
-  private String message;
-  public String getMessage() { return message; }
-  public void setMessage(String msg) { this.message = msg; }
-  
-  private String relativeUrl;
-  public String getRelativeUrl() { return relativeUrl; }
-  public void setRelativeUrl(String relUrl) { this.relativeUrl = relUrl; }
-  
-  private String file;
-  public String getFile() { return file; }
-  public void setFile(String file) { this.file = file; }
-  
+public class LiveStreamInfo {
+    private long id;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    private int statusCode;
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int code) {
+        this.statusCode = code;
+    }
+
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private int percentComplete;
+
+    public int getPercentComplete() {
+        return percentComplete;
+    }
+
+    public void setPercentComplete(int pc) {
+        this.percentComplete = pc;
+    }
+
+    public int width;
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int w) {
+        this.width = w;
+    }
+
+    public int height;
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int h) {
+        this.height = h;
+    }
+
+    public int videoBitrate;
+
+    public int getVideoBitrate() {
+        return videoBitrate;
+    }
+
+    public void setVideoBitrate(int br) {
+        this.videoBitrate = br;
+    }
+
+    public int audioBitrate;
+
+    public int getAudioBitrate() {
+        return audioBitrate;
+    }
+
+    public void setAudioBitrate(int abr) {
+        this.audioBitrate = abr;
+    }
+
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String msg) {
+        this.message = msg;
+    }
+
+    private String relativeUrl;
+
+    public String getRelativeUrl() {
+        return relativeUrl;
+    }
+
+    public void setRelativeUrl(String relUrl) {
+        this.relativeUrl = relUrl;
+    }
+
+    private String file;
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
 }

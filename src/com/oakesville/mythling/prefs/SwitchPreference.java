@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -27,60 +27,53 @@ import android.widget.Switch;
 
 import com.oakesville.mythling.R;
 
-public class SwitchPreference extends android.preference.SwitchPreference
-{
+public class SwitchPreference extends android.preference.SwitchPreference {
 
-  private Listener listener = new Listener();
+    private Listener listener = new Listener();
 
-  private class Listener implements CompoundButton.OnCheckedChangeListener
-  {
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-    {
-      if (!callChangeListener(isChecked))
-      {
-        // Listener didn't like it, change it back.
-        // CompoundButton will make sure we don't recurse.
-        buttonView.setChecked(!isChecked);
-        return;
-      }
+    private class Listener implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (!callChangeListener(isChecked)) {
+                // Listener didn't like it, change it back.
+                // CompoundButton will make sure we don't recurse.
+                buttonView.setChecked(!isChecked);
+                return;
+            }
 
-      setChecked(isChecked);
+            setChecked(isChecked);
+        }
     }
-  }  
 
-  
-  public SwitchPreference(Context context)
-  {
-    super(context);
-  }
-  
-  public SwitchPreference(Context context, AttributeSet attrs)
-  {
-    super(context, attrs);
-  }
-  
-  public SwitchPreference(Context context, AttributeSet attrs, int defStyle)
-  {
-    super(context, attrs, defStyle);
-  }
-  
-  @Override
-  protected void onBindView(View view) {
 
-      View checkableView = view.findViewById(R.id.prefs_switch);
-      if (checkableView != null && checkableView instanceof Checkable) {
-          ((Checkable) checkableView).setChecked(isChecked());
+    public SwitchPreference(Context context) {
+        super(context);
+    }
 
-          if (checkableView instanceof Switch) {
-              final Switch switchView = (Switch) checkableView;
-              switchView.setTextOn(getSwitchTextOn());
-              switchView.setTextOff(getSwitchTextOff());
-              switchView.setOnCheckedChangeListener(listener);
-          }
-      }
+    public SwitchPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-      super.onBindView(view);
-  }
-  
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    @Override
+    protected void onBindView(View view) {
+
+        View checkableView = view.findViewById(R.id.prefs_switch);
+        if (checkableView != null && checkableView instanceof Checkable) {
+            ((Checkable) checkableView).setChecked(isChecked());
+
+            if (checkableView instanceof Switch) {
+                final Switch switchView = (Switch) checkableView;
+                switchView.setTextOn(getSwitchTextOn());
+                switchView.setTextOff(getSwitchTextOff());
+                switchView.setOnCheckedChangeListener(listener);
+            }
+        }
+
+        super.onBindView(view);
+    }
+
 }

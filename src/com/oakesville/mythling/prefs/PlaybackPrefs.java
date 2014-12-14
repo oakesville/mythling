@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -27,33 +27,29 @@ import android.preference.SwitchPreference;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 
-public class PlaybackPrefs extends PreferenceFragment
-{
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    getActivity().getActionBar().setTitle(R.string.title_playback_settings);
-    addPreferencesFromResource(R.xml.playback_prefs);
+public class PlaybackPrefs extends PreferenceFragment {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().getActionBar().setTitle(R.string.title_playback_settings);
+        addPreferencesFromResource(R.xml.playback_prefs);
 
-    // none of these prefs trigger cache refresh
-    
-    AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
-    
-    SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.PLAYBACK_MODE);
-    swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-    {
-      public boolean onPreferenceChange(Preference preference, Object newValue)
-      {
-        doCategoryEnablement(!Boolean.valueOf(newValue.toString()));
-        return true;  
-      }
-    });
-    doCategoryEnablement(appSettings.isDevicePlayback());
+        // none of these prefs trigger cache refresh
+
+        AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
+
+        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.PLAYBACK_MODE);
+        swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                doCategoryEnablement(!Boolean.valueOf(newValue.toString()));
+                return true;
+            }
+        });
+        doCategoryEnablement(appSettings.isDevicePlayback());
 
 // XXX internal player
-    swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
-    swPref.setEnabled(false);
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
+        swPref.setEnabled(false);
 //    swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 //    {
 //      public boolean onPreferenceChange(Preference preference, Object newValue)
@@ -62,37 +58,36 @@ public class PlaybackPrefs extends PreferenceFragment
 //        return true;  
 //      }
 //    });
-    
+
 //    Preference pref = getPreferenceScreen().findPreference(AppSettings.BUILT_IN_PLAYER_BUFFER_SIZE);
 //    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, " kb"));
 //    pref.setSummary(appSettings.getBuiltInPlayerBufferSize() + " kb");
 //
 //    doBufferSizeEnablement(!appSettings.isExternalPlayer());
-    
-    Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
-    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary(appSettings.getFrontendHost());
 
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SOCKET_PORT);
-    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary("" + appSettings.getFrontendSocketPort());
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary(appSettings.getFrontendHost());
 
-    pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SERVICE_PORT);
-    pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-    pref.setSummary("" + appSettings.getFrontendServicePort());
-  }
-  
-  private void doCategoryEnablement(boolean isDevice)
-  {
-    Preference deviceCat = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY);
-    deviceCat.setEnabled(isDevice);
-    // XXX internal player
-    SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
-    swPref.setEnabled(false);
-    
-    Preference frontendCat = getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK_CATEGORY);
-    frontendCat.setEnabled(!isDevice);
-  }
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SOCKET_PORT);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary("" + appSettings.getFrontendSocketPort());
+
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_SERVICE_PORT);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary("" + appSettings.getFrontendServicePort());
+    }
+
+    private void doCategoryEnablement(boolean isDevice) {
+        Preference deviceCat = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY);
+        deviceCat.setEnabled(isDevice);
+        // XXX internal player
+        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
+        swPref.setEnabled(false);
+
+        Preference frontendCat = getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK_CATEGORY);
+        frontendCat.setEnabled(!isDevice);
+    }
 
 // XXX internal player
 //  private void doBufferSizeEnablement(boolean isInternal)
@@ -100,5 +95,5 @@ public class PlaybackPrefs extends PreferenceFragment
 //    Preference pref = getPreferenceScreen().findPreference(AppSettings.BUILT_IN_PLAYER_BUFFER_SIZE);
 //    pref.setEnabled(isInternal);
 //  }
-  
+
 }

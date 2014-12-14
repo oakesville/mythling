@@ -1,6 +1,6 @@
 /**
  * Copyright 2014 Donald Oakes
- * 
+ *
  * This file is part of Mythling.
  *
  * Mythling is free software: you can redistribute it and/or modify
@@ -25,76 +25,75 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 /**
  * A TV episode from MythVideo.
  */
-public class TvEpisode extends Video
-{
-  private int season;
-  public int getSeason() { return season; }
-  public void setSeason(int season) { this.season = season; }
-  
-  private int episode;
-  public int getEpisode() { return episode; }
-  public void setEpisode(int episode) { this.episode = episode; }
-  
-  public TvEpisode(String id, String title)
-  {
-    super(id, title);
-  }
-  
-  public MediaType getType()
-  {
-    return MediaType.tvSeries;
-  }
-  
-  public String getTypeTitle()
-  {
-    return "TV Episode";
-  }
-  
-  @Override
-  protected String getExtraText()
-  {
-    StringBuffer buf = new StringBuffer();
-    buf.append(getSeasonEpisodeInfo());
-    if (getSubTitle() != null)
-      buf.append("\n\"").append(getSubTitle()).append("\"");
-    return buf.toString();
-  }
-  
-  public String getSummary()
-  {
-    if (getSeason() != 0)
-    {
-      StringBuffer sum = new StringBuffer();
-      sum.append("Season ").append(getSeason()).append(", Episode ").append(getEpisode());
-      if (super.getSummary() != null)
-        sum.append("\n").append(super.getSummary());
-      return sum.toString();
-    }
-    else
-    {
-      return super.getSummary();
-    }
-  }
+public class TvEpisode extends Video {
+    private int season;
 
-  private String getSeasonEpisodeInfo()
-  {
-    return " (" + (getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode() + ")";    
-  }
-  
-  @Override
-  protected Comparator<Item> getDateComparator()
-  {
-    return new Comparator<Item>()
-    {
-      public int compare(Item item1, Item item2)
-      {
-        TvEpisode episode1 = (TvEpisode) item1;
-        TvEpisode episode2 = (TvEpisode) item2;
-        if (episode1.getSeason() == episode2.getSeason())
-          return episode1.getEpisode() - episode2.getEpisode();
-        else
-          return episode1.getSeason() - episode2.getSeason();
-      }
-    };
-  }
+    public int getSeason() {
+        return season;
+    }
+
+    public void setSeason(int season) {
+        this.season = season;
+    }
+
+    private int episode;
+
+    public int getEpisode() {
+        return episode;
+    }
+
+    public void setEpisode(int episode) {
+        this.episode = episode;
+    }
+
+    public TvEpisode(String id, String title) {
+        super(id, title);
+    }
+
+    public MediaType getType() {
+        return MediaType.tvSeries;
+    }
+
+    public String getTypeTitle() {
+        return "TV Episode";
+    }
+
+    @Override
+    protected String getExtraText() {
+        StringBuffer buf = new StringBuffer();
+        buf.append(getSeasonEpisodeInfo());
+        if (getSubTitle() != null)
+            buf.append("\n\"").append(getSubTitle()).append("\"");
+        return buf.toString();
+    }
+
+    public String getSummary() {
+        if (getSeason() != 0) {
+            StringBuffer sum = new StringBuffer();
+            sum.append("Season ").append(getSeason()).append(", Episode ").append(getEpisode());
+            if (super.getSummary() != null)
+                sum.append("\n").append(super.getSummary());
+            return sum.toString();
+        } else {
+            return super.getSummary();
+        }
+    }
+
+    private String getSeasonEpisodeInfo() {
+        return " (" + (getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode() + ")";
+    }
+
+    @Override
+    protected Comparator<Item> getDateComparator() {
+        return new Comparator<Item>() {
+            public int compare(Item item1, Item item2) {
+                TvEpisode episode1 = (TvEpisode) item1;
+                TvEpisode episode2 = (TvEpisode) item2;
+                if (episode1.getSeason() == episode2.getSeason())
+                    return episode1.getEpisode() - episode2.getEpisode();
+                else
+                    return episode1.getSeason() - episode2.getSeason();
+            }
+        };
+    }
 }

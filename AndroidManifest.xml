@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright 2014 Donald Oakes
  * 
  * This file is part of Mythling.
@@ -15,86 +15,84 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
- -->
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.oakesville.mythling"
-  android:versionCode="10"
-  android:versionName="1.1.01">
+    package="com.oakesville.mythling"
+    android:versionCode="10"
+    android:versionName="1.1.01">
 
-  <uses-permission
-    android:name="android.permission.INTERNET"/>
+    <uses-permission
+        android:name="android.permission.INTERNET"/>
 
-  <uses-sdk
-    android:minSdkVersion="14"
-    android:targetSdkVersion="15"/>
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="15" />
 
-  <application
-    android:icon="@drawable/ic_launcher"
-    android:label="@string/app_name"
-    android:theme="@style/AppTheme"
-    android:largeHeap="true">
-    <activity
-      android:name="com.oakesville.mythling.MainActivity"
-      android:label="@string/title_activity_categories">
-      <meta-data
-        android:name="android.app.default_searchable"
-        android:value=".SearchActivity" />
-      <intent-filter>
-        <action
-          android:name="android.intent.action.MAIN"/>
-        <category
-          android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
-    <activity
-      android:name="com.oakesville.mythling.MediaListActivity"
-      android:label="@string/title_activity_sub_cats">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.MainActivity"/>
-      <meta-data
-        android:name="android.app.default_searchable"
-        android:value=".SearchActivity" />
-    </activity>
-    <activity
-      android:name="com.oakesville.mythling.prefs.PrefsActivity"
-      android:label="@string/title_activity_prefs">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.MainActivity"/>
-    </activity>
-    <activity 
-      android:name="com.oakesville.mythling.SearchActivity"
-      android:label="@string/title_activity_search"
-      android:exported="false"
-      android:launchMode="singleTask">
-      <meta-data
-        android:name="android.app.searchable"
-        android:resource="@xml/searchable" />
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.MainActivity"/>
-      <intent-filter>
-        <action android:name="android.intent.action.SEARCH" />
-      </intent-filter>
-    </activity>
-    <activity
-      android:name="com.oakesville.mythling.MediaPagerActivity"
-      android:label="@string/title_activity_pager" >
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.MainActivity"/>
-      <meta-data
-        android:name="android.app.default_searchable"
-        android:value=".SearchActivity" />
-    </activity>
-    <activity
-      android:name="com.oakesville.mythling.WebViewActivity"
-      android:label="@string/title_activity_webview">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.oakesville.mythling.MainActivity"/>
-    </activity>    
-  </application>
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_categories">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MediaListActivity"
+            android:label="@string/title_activity_sub_cats">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+        <activity
+            android:name=".prefs.PrefsActivity"
+            android:label="@string/title_activity_prefs">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:label="@string/title_activity_search"
+            android:launchMode="singleTask">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MediaPagerActivity"
+            android:label="@string/title_activity_pager">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+        <activity
+            android:name=".WebViewActivity"
+            android:label="@string/title_activity_webview">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+        </activity>
+    </application>
 
 </manifest>

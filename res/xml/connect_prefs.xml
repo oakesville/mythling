@@ -18,78 +18,78 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/title_content_services">
-    <EditTextPreference 
-      android:key="mythtv_service_port"
-      android:title="@string/title_mythtv_service_port"
-      android:inputType="number"
-      android:defaultValue="6544"
-      android:layout="@layout/pref" />
-  </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_content_services">
+        <EditTextPreference
+            android:key="mythtv_service_port"
+            android:title="@string/title_mythtv_service_port"
+            android:inputType="number"
+            android:defaultValue="6544"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/title_web_server">
-    <com.oakesville.mythling.prefs.SwitchPreference
-      android:key="backend_web"
-      android:switchTextOn="@string/yes"
-      android:switchTextOff="@string/no"
-      android:defaultValue="@string/no"
-      android:layout="@layout/sw_pref_inner"
-      android:widgetLayout="@layout/prefs_switch" />    
-    <EditTextPreference 
-      android:key="mythling_web_port"
-      android:title="@string/title_web_port"
-      android:dialogMessage="@string/message_web_port"
-      android:inputType="number"
-      android:defaultValue="80"
-      android:layout="@layout/pref" />
-  </PreferenceCategory>
+    <PreferenceCategory android:title="@string/title_web_server">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="backend_web"
+            android:switchTextOn="@string/yes"
+            android:switchTextOff="@string/no"
+            android:defaultValue="@string/no"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="mythling_web_port"
+            android:title="@string/title_web_port"
+            android:dialogMessage="@string/message_web_port"
+            android:inputType="number"
+            android:defaultValue="80"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
 
-  <com.oakesville.mythling.prefs.DisableableCategory
-    android:key="media_services_cat" 
-    android:title="@string/title_media_services"
-    android:shouldDisableView="true">
-    <com.oakesville.mythling.prefs.SwitchPreference
-      android:key="media_services"
-      android:switchTextOn="@string/mythling"
-      android:switchTextOff="@string/mythtv"
-      android:defaultValue="@string/mythtv"
-      android:layout="@layout/sw_pref_inner"
-      android:widgetLayout="@layout/prefs_switch" />    
-    <EditTextPreference 
-      android:key="mythling_web_root"
-      android:title="@string/title_mythling_web_root"
-      android:dialogMessage="@string/message_mythling_web_root"
-      android:defaultValue="@string/default_mythling_web_root"
-      android:layout="@layout/pref" />
-  </com.oakesville.mythling.prefs.DisableableCategory>
-  
-  <com.oakesville.mythling.prefs.DisableableCategory
-    android:key="mythweb_access_cat"
-    android:title="@string/title_mythweb_access"
-    android:shouldDisableView="true">  
-    <com.oakesville.mythling.prefs.SwitchPreference
-      android:key="mythweb_access"
-      android:switchTextOn="@string/enabled"
-      android:switchTextOff="@string/disabled"
-      android:defaultValue="@string/disabled"
-      android:layout="@layout/sw_pref_inner"
-      android:widgetLayout="@layout/prefs_switch" />    
-    <EditTextPreference 
-      android:key="mythweb_web_root"
-      android:title="@string/title_mythweb_web_root"
-      android:dialogMessage="@string/message_mythweb_web_root"
-      android:defaultValue="@string/default_mythweb_web_root"
-      android:layout="@layout/pref" />
-  </com.oakesville.mythling.prefs.DisableableCategory>
+    <com.oakesville.mythling.prefs.DisableableCategory
+        android:key="media_services_cat"
+        android:title="@string/title_media_services"
+        android:shouldDisableView="true">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="media_services"
+            android:switchTextOn="@string/mythling"
+            android:switchTextOff="@string/mythtv"
+            android:defaultValue="@string/mythtv"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="mythling_web_root"
+            android:title="@string/title_mythling_web_root"
+            android:dialogMessage="@string/message_mythling_web_root"
+            android:defaultValue="@string/default_mythling_web_root"
+            android:layout="@layout/pref" />
+    </com.oakesville.mythling.prefs.DisableableCategory>
 
-  <PreferenceCategory android:title="@string/title_error_reporting">
-    <com.oakesville.mythling.prefs.SwitchPreference
-      android:key="error_reporting"
-      android:switchTextOn="@string/enabled"
-      android:switchTextOff="@string/disabled"
-      android:defaultValue="@string/disabled"
-      android:layout="@layout/sw_pref_inner"
-      android:widgetLayout="@layout/prefs_switch" />    
-  </PreferenceCategory>
-  
+    <com.oakesville.mythling.prefs.DisableableCategory
+        android:key="mythweb_access_cat"
+        android:title="@string/title_mythweb_access"
+        android:shouldDisableView="true">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="mythweb_access"
+            android:switchTextOn="@string/enabled"
+            android:switchTextOff="@string/disabled"
+            android:defaultValue="@string/disabled"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="mythweb_web_root"
+            android:title="@string/title_mythweb_web_root"
+            android:dialogMessage="@string/message_mythweb_web_root"
+            android:defaultValue="@string/default_mythweb_web_root"
+            android:layout="@layout/pref" />
+    </com.oakesville.mythling.prefs.DisableableCategory>
+
+    <PreferenceCategory android:title="@string/title_error_reporting">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="error_reporting"
+            android:switchTextOn="@string/enabled"
+            android:switchTextOff="@string/disabled"
+            android:defaultValue="@string/disabled"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
