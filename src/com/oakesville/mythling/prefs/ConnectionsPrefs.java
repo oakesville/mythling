@@ -34,7 +34,7 @@ public class ConnectionsPrefs extends PreferenceFragment {
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICE_PORT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary("" + appSettings.getMythTvServicePort());
 
         pref = getPreferenceScreen().findPreference(AppSettings.BACKEND_WEB);

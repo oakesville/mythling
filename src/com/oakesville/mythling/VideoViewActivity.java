@@ -25,11 +25,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -40,15 +43,12 @@ import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.SystemUiHider;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 
 public class VideoViewActivity extends Activity {
 
     private static final String TAG = VideoViewActivity.class.getSimpleName();
-
-    private static final boolean AUTO_HIDE = true;
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-    private static final boolean TOGGLE_ON_CLICK = true; // toggle vs show on interaction
 
     private VideoView videoView;
     private int position;
@@ -56,6 +56,7 @@ public class VideoViewActivity extends Activity {
     private MediaController mediaController;
     private SystemUiHider systemUiHider;
     private AppSettings appSettings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,31 @@ public class VideoViewActivity extends Activity {
         startProgress();
 
         try {
+            try {
+                // try and get actual screen dimens, including system windows
+                Display display = getWindowManager().getDefaultDisplay();
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    display.getRealMetrics(metrics);
+                    int width = metrics.widthPixels;
+                    int height = metrics.heightPixels;
+                    videoView.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+                } else {
+                    Method getRawWidth = Display.class.getMethod("getRawWidth");
+                    Method getRawHeight = Display.class.getMethod("getRawHeight");
+                    int width = (Integer) getRawWidth.invoke(display);
+                    int height = (Integer) getRawHeight.invoke(display);
+                    videoView.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+                }
+            }
+            catch (Exception ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+            }
+
             if (mediaController == null)
                 mediaController = new MediaController(this);
 
@@ -99,14 +125,12 @@ public class VideoViewActivity extends Activity {
                 }
             });
 
-            videoView.setOnClickListener(new View.OnClickListener() {
+            videoView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    if (TOGGLE_ON_CLICK) {
-                        systemUiHider.toggle();
-                    } else {
-                        systemUiHider.show();
-                    }
+                public boolean onTouch(View view, MotionEvent event) {
+                    // systemUiHider.show();
+                    delayedHide(3500);
+                    return false;
                 }
             });
 
@@ -169,21 +193,6 @@ public class VideoViewActivity extends Activity {
     protected void stopProgress() {
         progressBar.setVisibility(View.GONE);
     }
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    View.OnTouchListener delayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
 
     Handler hideHandler = new Handler();
     Runnable hideRunnable = new Runnable() {
