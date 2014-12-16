@@ -18,20 +18,24 @@
  */
 package com.oakesville.mythling;
 
+import java.lang.reflect.Method;
+import java.net.URLDecoder;
+
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -40,11 +44,6 @@ import android.widget.VideoView;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.util.Reporter;
-import com.oakesville.mythling.util.SystemUiHider;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
-import java.net.URLDecoder;
 
 public class VideoViewActivity extends Activity {
 
@@ -54,7 +53,7 @@ public class VideoViewActivity extends Activity {
     private int position;
     private ProgressBar progressBar;
     private MediaController mediaController;
-    private SystemUiHider systemUiHider;
+    private boolean fullScreen;
     private AppSettings appSettings;
 
 
@@ -97,14 +96,15 @@ public class VideoViewActivity extends Activity {
                     new Reporter(ex).send();
             }
 
-            if (mediaController == null)
-                mediaController = new MediaController(this);
-
-            videoView.setMediaController(mediaController);
-            videoView.setVideoURI(Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8")));
-
-            systemUiHider = new SystemUiHider(this, videoView, SystemUiHider.FLAG_HIDE_NAVIGATION);
-            systemUiHider.setup();
+            if (mediaController == null) {
+                mediaController = new MediaController(this) {
+                    public boolean dispatchKeyEvent(KeyEvent event) {
+                        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK)
+                            ((Activity) getContext()).finish();
+                        return super.dispatchKeyEvent(event);
+                    }
+                };
+            }
 
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
@@ -121,19 +121,33 @@ public class VideoViewActivity extends Activity {
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
                     position = 0;
-                    systemUiHider.show();
+                    setFullScreen(false);
                 }
             });
 
-            videoView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent event) {
-                    // systemUiHider.show();
-                    delayedHide(3500);
-                    return false;
-                }
-            });
+//            videoView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View view, MotionEvent event) {
+//                    setFullScreen(false);
+//                    mediaController.show(3000);
+//                    delayedHide(3500);
+//                    return false;
+//                }
+//            });
+            
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {                    
+                videoView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                    public void onSystemUiVisibilityChange(int vis) {
+                            // video view may have redisplayed notification bar
+                            if (fullScreen && (vis != View.SYSTEM_UI_FLAG_FULLSCREEN))
+                                videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                    }
+                });
+            }
 
+            videoView.setMediaController(mediaController);
+            videoView.setVideoURI(Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8")));
             videoView.requestFocus();
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
@@ -149,9 +163,8 @@ public class VideoViewActivity extends Activity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls are available.
-        delayedHide(100);
+        // delayed hide - hint to the user that UI controls are available.
+        delayedHide(200);
     }
 
     @Override
@@ -198,7 +211,7 @@ public class VideoViewActivity extends Activity {
     Runnable hideRunnable = new Runnable() {
         @Override
         public void run() {
-            systemUiHider.hide();
+            setFullScreen(true);
         }
     };
 
@@ -209,5 +222,26 @@ public class VideoViewActivity extends Activity {
     private void delayedHide(int delayMillis) {
         hideHandler.removeCallbacks(hideRunnable);
         hideHandler.postDelayed(hideRunnable, delayMillis);
+    }
+    
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setFullScreen(boolean fullScreen) {
+        if (fullScreen) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+            else {
+                videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+            }
+            getActionBar().hide();
+        }
+        else {
+            videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+                getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getActionBar().show();
+        }
+        this.fullScreen = fullScreen;
     }
 }
