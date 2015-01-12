@@ -122,6 +122,7 @@
     <string name="album_art_album">Album</string>
     <string name="title_device_player">Device Player</string>
     <string name="title_frontend_player">Frontend Player</string>
+    <string name="title_mythtv_backend">MythTV Backend</string>
     <string name="title_internal_backend">Internal Backend</string>
     <string name="title_external_backend">External Backend</string>
     <string name="title_content_services">Content Services</string>

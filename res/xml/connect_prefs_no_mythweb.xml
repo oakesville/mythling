@@ -1,0 +1,76 @@
+<!--
+ * Copyright 2014 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/title_content_services">
+        <EditTextPreference
+            android:key="mythtv_service_port"
+            android:title="@string/title_mythtv_service_port"
+            android:inputType="number"
+            android:defaultValue="6544"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/title_web_server">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="backend_web"
+            android:switchTextOn="@string/yes"
+            android:switchTextOff="@string/no"
+            android:defaultValue="@string/no"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="mythling_web_port"
+            android:title="@string/title_web_port"
+            android:dialogMessage="@string/message_web_port"
+            android:inputType="number"
+            android:defaultValue="80"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+
+    <com.oakesville.mythling.prefs.DisableableCategory
+        android:key="media_services_cat"
+        android:title="@string/title_media_services"
+        android:shouldDisableView="true">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="media_services"
+            android:switchTextOn="@string/mythling"
+            android:switchTextOff="@string/mythtv"
+            android:defaultValue="@string/mythtv"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="mythling_web_root"
+            android:title="@string/title_mythling_web_root"
+            android:dialogMessage="@string/message_mythling_web_root"
+            android:defaultValue="@string/default_mythling_web_root"
+            android:layout="@layout/pref" />
+    </com.oakesville.mythling.prefs.DisableableCategory>
+
+    <PreferenceCategory android:title="@string/title_error_reporting">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="error_reporting"
+            android:switchTextOn="@string/enabled"
+            android:switchTextOff="@string/disabled"
+            android:defaultValue="@string/disabled"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

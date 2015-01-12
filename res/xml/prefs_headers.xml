@@ -20,46 +20,55 @@
     android:title="Settings">
 
     <header
-        android:fragment="com.oakesville.mythling.prefs.PlaybackPrefs"
-        android:title="@string/title_prefs_playback"
-        android:summary="@string/summary_prefs_playback" />
-
-    <header
+        android:id="@+id/prefs_header_network"
         android:fragment="com.oakesville.mythling.prefs.NetworkPrefs"
         android:title="@string/title_prefs_network"
         android:summary="@string/summary_prefs_network" />
 
     <header
+        android:id="@+id/prefs_header_playback"
+        android:fragment="com.oakesville.mythling.prefs.PlaybackPrefs"
+        android:title="@string/title_prefs_playback"
+        android:summary="@string/summary_prefs_playback" />
+
+    <header
+        android:id="@+id/prefs_header_connections"
         android:fragment="com.oakesville.mythling.prefs.ConnectionsPrefs"
         android:title="@string/title_prefs_connections"
         android:summary="@string/summary_prefs_connections" />
 
     <header
+        android:id="@+id/prefs_header_credentials"
         android:fragment="com.oakesville.mythling.prefs.CredentialsPrefs"
         android:title="@string/title_prefs_credentials"
         android:summary="@string/summary_prefs_credentials" />
 
     <header
+        android:id="@+id/prefs_header_categories"
         android:fragment="com.oakesville.mythling.prefs.CategoriesPrefs"
         android:title="@string/title_prefs_categories"
         android:summary="@string/summary_prefs_categories" />
 
     <header
+        android:id="@+id/prefs_header_artwork"
         android:fragment="com.oakesville.mythling.prefs.ArtworkPrefs"
         android:title="@string/title_prefs_artwork"
         android:summary="@string/summary_prefs_artwork" />
 
     <header
+        android:id="@+id/prefs_header_quality"
         android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
         android:title="@string/title_prefs_video_quality"
         android:summary="@string/summary_prefs_video_quality" />
 
     <header
+        android:id="@+id/prefs_header_caching"
         android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
         android:title="@string/title_prefs_caching"
         android:summary="@string/summary_prefs_caching" />
 
     <header
+        android:id="@+id/prefs_header_timeout"
         android:fragment="com.oakesville.mythling.prefs.TimeoutPrefs"
         android:title="@string/title_prefs_timeouts"
         android:summary="@string/summary_prefs_timeouts" />

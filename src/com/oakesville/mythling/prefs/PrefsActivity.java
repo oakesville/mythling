@@ -46,7 +46,16 @@ public class PrefsActivity extends PreferenceActivity {
 
     @Override
     public void onBuildHeaders(List<Header> target) {
-        this.loadHeadersFromResource(R.xml.prefs_headers, target);
+        loadHeadersFromResource(R.xml.prefs_headers, target);
+        DevicePrefsConstraints deviceConstraints = AppSettings.getDevicePrefsConstraints();
+        if (deviceConstraints != null && deviceConstraints.getOmittedHeaders() != null) {
+            List<Header> toRemove = new ArrayList<Header>();
+            for (Header header : target) {
+                if (deviceConstraints.getOmittedHeaders().contains(header.id))
+                    toRemove.add(header);
+            }
+            target.removeAll(toRemove);
+        }
     }
 
     @Override

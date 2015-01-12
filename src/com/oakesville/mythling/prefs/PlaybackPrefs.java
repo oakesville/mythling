@@ -38,7 +38,7 @@ public class PlaybackPrefs extends PreferenceFragment {
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
-        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.PLAYBACK_MODE);
+        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK);
         swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 doCategoryEnablement(!Boolean.valueOf(newValue.toString()));
@@ -47,7 +47,7 @@ public class PlaybackPrefs extends PreferenceFragment {
         });
         doCategoryEnablement(appSettings.isDevicePlayback());
 
-        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.VIDEO_PLAYER);
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_VIDEO_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);

@@ -62,7 +62,7 @@ public class ArtworkPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getArtworkStorageGroup(MediaType.tvSeries));
 
-        pref = getPreferenceScreen().findPreference(AppSettings.ALBUM_ART_LEVEL);
+        pref = getPreferenceScreen().findPreference(AppSettings.MUSIC_ART_LEVEL_SONG);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true));
     }
 }

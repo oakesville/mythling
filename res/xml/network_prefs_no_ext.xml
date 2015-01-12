@@ -1,0 +1,33 @@
+<!--
+ * Copyright 2014 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.oakesville.mythling.prefs.DisableableCategory
+        android:key="internal_backend_cat"
+        android:title="@string/title_mythtv_backend">
+        <EditTextPreference
+            android:key="mythbe_internal_host"
+            android:title="@string/title_internal_backend_host"
+            android:dialogTitle="@string/title_internal_backend_host_dialog"
+            android:dialogMessage="@string/message_internal_backend_host"
+            android:defaultValue="192.168.0.69"
+            android:layout="@layout/pref" />
+    </com.oakesville.mythling.prefs.DisableableCategory>
+
+</PreferenceScreen>

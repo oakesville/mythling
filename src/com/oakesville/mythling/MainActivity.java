@@ -28,7 +28,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
@@ -69,12 +69,8 @@ public class MainActivity extends MediaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(this, R.xml.cache_prefs, false);
-        PreferenceManager.setDefaultValues(this, R.xml.credentials_prefs, false);
-        PreferenceManager.setDefaultValues(this, R.xml.network_prefs, false);
-        PreferenceManager.setDefaultValues(this, R.xml.playback_prefs, false);
-        PreferenceManager.setDefaultValues(this, R.xml.quality_prefs, false);
-
+        AppSettings.loadDevicePrefsConstraints();
+        
         try {
             getAppSettings().initMythlingVersion();
         } catch (NameNotFoundException ex) {
@@ -83,7 +79,12 @@ public class MainActivity extends MediaActivity {
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
-
+        
+        if (!getAppSettings().isPrefsInitiallySet()) {
+            String msg = "Please access app settings to initialize connection info.";
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        }
+        
         setContentView(R.layout.categories);
 
         createProgressBar();
@@ -100,7 +101,7 @@ public class MainActivity extends MediaActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() {   
         try {
             if (getAppData() == null || getAppData().isExpired())
                 refresh();

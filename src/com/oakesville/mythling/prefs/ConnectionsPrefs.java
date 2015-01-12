@@ -44,7 +44,7 @@ public class ConnectionsPrefs extends PreferenceFragment {
                 getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT).setEnabled(hasBackendWeb);
 
                 if (!hasBackendWeb) {
-                    SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES);
+                    SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHLING_MEDIA_SERVICES);
                     if (swPref.isChecked())
                         swPref.setChecked(false);
                     swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
@@ -73,7 +73,7 @@ public class ConnectionsPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary("" + appSettings.getMythlingWebPort());
 
-        pref = getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES);
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_MEDIA_SERVICES);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean useMythlingSvcs = Boolean.valueOf(newValue.toString());
@@ -87,20 +87,22 @@ public class ConnectionsPrefs extends PreferenceFragment {
         pref.setSummary(appSettings.getMythlingWebRoot());
         pref.setEnabled(hasBackendWeb && appSettings.isMythlingMediaServices());
 
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean mythwebEnabled = Boolean.valueOf(newValue.toString());
-                getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT).setEnabled(mythwebEnabled);
-                return super.onPreferenceChange(preference, newValue);
-            }
-        });
-
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-        pref.setSummary(appSettings.getMythwebWebRoot());
-        pref.setEnabled(hasBackendWeb && appSettings.isMythWebAccessEnabled());
-
+        if (pref != null) {
+            pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
+            pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean mythwebEnabled = Boolean.valueOf(newValue.toString());
+                    getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT).setEnabled(mythwebEnabled);
+                    return super.onPreferenceChange(preference, newValue);
+                }
+            });
+    
+            pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT);
+            pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+            pref.setSummary(appSettings.getMythwebWebRoot());
+            pref.setEnabled(hasBackendWeb && appSettings.isMythWebAccessEnabled());
+        }
+        
         pref = getPreferenceScreen().findPreference(AppSettings.ERROR_REPORTING);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
     }
@@ -109,6 +111,7 @@ public class ConnectionsPrefs extends PreferenceFragment {
         Preference cat = getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES_CATEGORY);
         cat.setEnabled(hasBackendWeb);
         cat = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS_CATEGORY);
-        cat.setEnabled(hasBackendWeb);
+        if (cat != null)
+            cat.setEnabled(hasBackendWeb);
     }
 }

@@ -35,15 +35,18 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.preference.PreferenceManager;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.media.MediaSettings;
-import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.media.Song;
+import com.oakesville.mythling.prefs.DevicePrefsConstraints;
+import com.oakesville.mythling.prefs.FireTvPrefsConstraints;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
@@ -63,7 +66,7 @@ public class AppSettings {
     public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
     public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
     public static final String BACKEND_WEB = "backend_web";
-    public static final String MEDIA_SERVICES = "media_services";
+    public static final String MYTHLING_MEDIA_SERVICES = "media_services";
     public static final String MYTHLING_WEB_PORT = "mythling_web_port";
     public static final String MYTHLING_WEB_ROOT = "mythling_web_root";
     public static final String MYTHWEB_WEB_ROOT = "mythweb_web_root";
@@ -74,9 +77,9 @@ public class AppSettings {
     public static final String MEDIA_TYPE = "media_type";
     public static final String VIEW_TYPE = "view_type";
     public static final String SORT_TYPE = "sort_type";
-    public static final String PLAYBACK_MODE = "playback_mode";
-    public static final String VIDEO_PLAYER = "video_player";
-    public static final String NETWORK_LOCATION = "network_location";
+    public static final String FRONTEND_PLAYBACK = "playback_mode";
+    public static final String INTERNAL_VIDEO_PLAYER = "video_player";
+    public static final String EXTERNAL_NETWORK = "network_location";
     public static final String CATEGORIZE_VIDEOS = "categorize_videos";
     public static final String MOVIE_DIRECTORIES = "movie_directories";
     public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
@@ -90,7 +93,7 @@ public class AppSettings {
     public static final String DEFAULT_ARTWORK_SG = "Coverart";
     public static final String DEFAULT_ARTWORK_SG_RECORDINGS = "Screenshots";
     public static final String DEFAULT_ARTWORK_SG_RECORDINGS_LABEL = "<Use Preview Image>";
-    public static final String ALBUM_ART_LEVEL = "album_art_level";
+    public static final String MUSIC_ART_LEVEL_SONG = "album_art_level";
     public static final String INTERNAL_VIDEO_RES = "internal_video_res";
     public static final String EXTERNAL_VIDEO_RES = "external_video_res";
     public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
@@ -121,6 +124,7 @@ public class AppSettings {
     public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
     public static final String AUTH_TYPE_NONE = "None";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
+    public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
 
     private Context appContext;
 
@@ -270,7 +274,7 @@ public class AppSettings {
     }
 
     public int getMythTvServicePort() {
-        return Integer.parseInt(prefs.getString(MYTHTV_SERVICE_PORT, "6544").trim());
+        return Integer.parseInt(getStringPref(MYTHTV_SERVICE_PORT, "6544").trim());
     }
 
     public int getMythlingServicePort() {
@@ -281,27 +285,27 @@ public class AppSettings {
     }
 
     public int getMythlingWebPort() {
-        return Integer.parseInt(prefs.getString(MYTHLING_WEB_PORT, "80").trim());
+        return Integer.parseInt(getStringPref(MYTHLING_WEB_PORT, "80").trim());
     }
 
     public String getMythlingWebRoot() {
-        return prefs.getString(MYTHLING_WEB_ROOT, "mythling");
+        return getStringPref(MYTHLING_WEB_ROOT, "mythling");
     }
 
     public String getMythwebWebRoot() {
-        return prefs.getString(MYTHWEB_WEB_ROOT, "mythweb");
+        return getStringPref(MYTHWEB_WEB_ROOT, "mythweb");
     }
 
     public String getFrontendHost() {
-        return prefs.getString(MYTH_FRONTEND_HOST, "192.168.0.68").trim();
+        return getStringPref(MYTH_FRONTEND_HOST, "192.168.0.68").trim();
     }
 
     public int getFrontendSocketPort() {
-        return Integer.parseInt(prefs.getString(MYTH_FRONTEND_SOCKET_PORT, "6546").trim());
+        return Integer.parseInt(getStringPref(MYTH_FRONTEND_SOCKET_PORT, "6546").trim());
     }
 
     public int getFrontendServicePort() {
-        return Integer.parseInt(prefs.getString(MYTH_FRONTEND_SERVICE_PORT, "6547").trim());
+        return Integer.parseInt(getStringPref(MYTH_FRONTEND_SERVICE_PORT, "6547").trim());
     }
 
     public URL getFrontendServiceBaseUrl() throws MalformedURLException {
@@ -311,43 +315,43 @@ public class AppSettings {
     }
 
     public boolean isDevicePlayback() {
-        return !prefs.getBoolean(PLAYBACK_MODE, false);
+        return !getBooleanPref(FRONTEND_PLAYBACK, false);
     }
 
     public boolean isExternalPlayer() {
-        return !prefs.getBoolean(VIDEO_PLAYER, false);
+        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, false);
     }
 
     public boolean isMythlingMediaServices() {
-        return prefs.getBoolean(MEDIA_SERVICES, false);
+        return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
     }
 
     public boolean isHasBackendWeb() {
-        return prefs.getBoolean(BACKEND_WEB, false);
+        return getBooleanPref(BACKEND_WEB, false);
     }
 
     public boolean isMythWebAccessEnabled() {
-        return prefs.getBoolean(MYTHWEB_ACCESS, false);
+        return getBooleanPref(MYTHWEB_ACCESS, false);
     }
 
     public boolean isErrorReportingEnabled() {
-        return prefs.getBoolean(ERROR_REPORTING, false);
+        return getBooleanPref(ERROR_REPORTING, false);
     }
 
     public boolean isExternalNetwork() {
-        return prefs.getBoolean(NETWORK_LOCATION, false);
+        return getBooleanPref(EXTERNAL_NETWORK, false);
     }
 
     public String getInternalBackendHost() {
-        return prefs.getString(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.69").trim();
+        return getStringPref(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.69").trim();
     }
 
     public String getExternalBackendHost() {
-        return prefs.getString(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
+        return getStringPref(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
     }
 
     public String getMovieDirectories() {
-        return prefs.getString(MOVIE_DIRECTORIES, "");
+        return getStringPref(MOVIE_DIRECTORIES, "");
     }
 
     public String[] getMovieDirs() {
@@ -360,7 +364,7 @@ public class AppSettings {
     }
 
     public String getTvSeriesDirectories() {
-        return prefs.getString(TV_SERIES_DIRECTORIES, "");
+        return getStringPref(TV_SERIES_DIRECTORIES, "");
     }
 
     public String[] getTvSeriesDirs() {
@@ -373,7 +377,7 @@ public class AppSettings {
     }
 
     public String getVideoExcludeDirectories() {
-        return prefs.getString(VIDEO_EXCLUDE_DIRECTORIES, "");
+        return getStringPref(VIDEO_EXCLUDE_DIRECTORIES, "");
     }
 
     public String[] getVidExcludeDirs() {
@@ -386,7 +390,7 @@ public class AppSettings {
     }
 
     public String getHlsFileExtensions() {
-        return prefs.getString(HLS_FILE_EXTENSIONS, "");
+        return getStringPref(HLS_FILE_EXTENSIONS, "");
     }
 
     public boolean isPreferHls(String fileExtension) {
@@ -409,7 +413,7 @@ public class AppSettings {
     }
 
     public String getStreamRawFileExtensions() {
-        return prefs.getString(STREAM_RAW_FILE_EXTENSIONS, "");
+        return getStringPref(STREAM_RAW_FILE_EXTENSIONS, "");
     }
 
     public boolean isPreferStreamRaw(String fileExtension) {
@@ -432,15 +436,15 @@ public class AppSettings {
     }
 
     public String getMovieBaseUrl() {
-        return prefs.getString(MOVIE_BASE_URL, THEMOVIEDB_BASE_URL);
+        return getStringPref(MOVIE_BASE_URL, THEMOVIEDB_BASE_URL);
     }
 
     public String getTvBaseUrl() {
-        return prefs.getString(TV_BASE_URL, THETVDB_BASE_URL);
+        return getStringPref(TV_BASE_URL, THETVDB_BASE_URL);
     }
 
     public String getCustomBaseUrl() {
-        return prefs.getString(CUSTOM_BASE_URL, "");
+        return getStringPref(CUSTOM_BASE_URL, "");
     }
 
     public String getMythTvServiceHost() {
@@ -480,19 +484,19 @@ public class AppSettings {
         if (mediaType == MediaType.music)
             return isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
         else if (mediaType == MediaType.videos)
-            return prefs.getString(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG);
         else if (mediaType == MediaType.recordings)
-            return prefs.getString(ARTWORK_SG_RECORDINGS, DEFAULT_ARTWORK_SG_RECORDINGS);
+            return getStringPref(ARTWORK_SG_RECORDINGS, DEFAULT_ARTWORK_SG_RECORDINGS);
         else if (mediaType == MediaType.movies)
-            return prefs.getString(ARTWORK_SG_MOVIES, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_MOVIES, DEFAULT_ARTWORK_SG);
         else if (mediaType == MediaType.tvSeries)
-            return prefs.getString(ARTWORK_SG_TVSERIES, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_TVSERIES, DEFAULT_ARTWORK_SG);
         else
             return DEFAULT_ARTWORK_SG;
     }
 
     public boolean isAlbumArtAlbumLevel() {
-        return !prefs.getBoolean(ALBUM_ART_LEVEL, false);
+        return !getBooleanPref(MUSIC_ART_LEVEL_SONG, false);
     }
 
     public int getVideoRes() {
@@ -521,27 +525,27 @@ public class AppSettings {
     }
 
     public int getInternalVideoRes() {
-        return Integer.parseInt(prefs.getString(INTERNAL_VIDEO_RES, "720"));
+        return Integer.parseInt(getStringPref(INTERNAL_VIDEO_RES, "720"));
     }
 
     public int getExternalVideoRes() {
-        return Integer.parseInt(prefs.getString(EXTERNAL_VIDEO_RES, "240"));
+        return Integer.parseInt(getStringPref(EXTERNAL_VIDEO_RES, "240"));
     }
 
     public int getInternalVideoBitrate() {
-        return Integer.parseInt(prefs.getString(INTERNAL_VIDEO_BITRATE, "600000"));
+        return Integer.parseInt(getStringPref(INTERNAL_VIDEO_BITRATE, "600000"));
     }
 
     public int getExternalVideoBitrate() {
-        return Integer.parseInt(prefs.getString(EXTERNAL_VIDEO_BITRATE, "400000"));
+        return Integer.parseInt(getStringPref(EXTERNAL_VIDEO_BITRATE, "400000"));
     }
 
     public int getInternalAudioBitrate() {
-        return Integer.parseInt(prefs.getString(INTERNAL_AUDIO_BITRATE, "64000"));
+        return Integer.parseInt(getStringPref(INTERNAL_AUDIO_BITRATE, "64000"));
     }
 
     public int getExternalAudioBitrate() {
-        return Integer.parseInt(prefs.getString(EXTERNAL_AUDIO_BITRATE, "64000"));
+        return Integer.parseInt(getStringPref(EXTERNAL_AUDIO_BITRATE, "64000"));
     }
 
     public int[] getVideoResValues() {
@@ -567,13 +571,13 @@ public class AppSettings {
 
     public MediaSettings getMediaSettings() {
         if (mediaSettings == null) {
-            String mediaType = prefs.getString(MEDIA_TYPE, DEFAULT_MEDIA_TYPE);
+            String mediaType = getStringPref(MEDIA_TYPE, DEFAULT_MEDIA_TYPE);
             mediaSettings = new MediaSettings(mediaType);
-            String typeDeterminer = prefs.getString(CATEGORIZE_VIDEOS, MediaTypeDeterminer.metadata.toString());
+            String typeDeterminer = getStringPref(CATEGORIZE_VIDEOS, MediaTypeDeterminer.metadata.toString());
             mediaSettings.setTypeDeterminer(typeDeterminer);
-            String viewType = prefs.getString(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
+            String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
             mediaSettings.setViewType(viewType);
-            String sortType = prefs.getString(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
+            String sortType = getStringPref(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
             mediaSettings.setSortType(sortType);
         }
         return mediaSettings;
@@ -616,7 +620,7 @@ public class AppSettings {
     }
 
     public int getPagerCurrentPosition(MediaType mediaType, String category) {
-        return prefs.getInt(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, 0);
+        return getIntPref(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, 0);
     }
 
     public void setPagerCurrentPosition(MediaType mediaType, String category, int curPos) {
@@ -632,11 +636,11 @@ public class AppSettings {
     }
 
     public int getExpiryMinutes() {
-        return Integer.parseInt(prefs.getString(CACHE_EXPIRE_MINUTES, "30").trim());
+        return Integer.parseInt(getStringPref(CACHE_EXPIRE_MINUTES, "30").trim());
     }
 
     public long getLastLoad() {
-        return prefs.getLong(LAST_LOAD, 0l);
+        return getLongPref(LAST_LOAD, 0l);
     }
 
     public boolean setLastLoad(long ll) {
@@ -654,23 +658,23 @@ public class AppSettings {
     }
 
     public String getIpRetrievalUrlString() {
-        return prefs.getString(IP_RETRIEVAL_URL, "").trim();
+        return getStringPref(IP_RETRIEVAL_URL, "").trim();
     }
 
     public boolean isIpRetrieval() {
-        return prefs.getBoolean(RETRIEVE_IP, false);
+        return getBooleanPref(RETRIEVE_IP, false);
     }
 
     public String getMythTvServicesAuthType() {
-        return prefs.getString(MYTHTV_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
+        return getStringPref(MYTHTV_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
     }
 
     public String getMythTvServicesUser() {
-        return prefs.getString(MYTHTV_SERVICES_USER, "").trim();
+        return getStringPref(MYTHTV_SERVICES_USER, "").trim();
     }
 
     public String getMythTvServicesPassword() {
-        return prefs.getString(MYTHTV_SERVICES_PASSWORD, "").trim();
+        return getStringPref(MYTHTV_SERVICES_PASSWORD, "").trim();
     }
 
     public String getMythTvServicesPasswordMasked() {
@@ -688,7 +692,7 @@ public class AppSettings {
     }
 
     public String getMythlingServicesAuthType() {
-        return prefs.getString(MYTHLING_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
+        return getStringPref(MYTHLING_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
     }
 
     public String getBackendWebUser() {
@@ -699,7 +703,7 @@ public class AppSettings {
     }
 
     public String getMythlingServicesUser() {
-        return prefs.getString(MYTHLING_SERVICES_USER, "").trim();
+        return getStringPref(MYTHLING_SERVICES_USER, "").trim();
     }
 
     public boolean setMythlingServicesUser(String user) {
@@ -716,7 +720,7 @@ public class AppSettings {
     }
 
     public String getMythlingServicesPassword() {
-        return prefs.getString(MYTHLING_SERVICES_PASSWORD, "").trim();
+        return getStringPref(MYTHLING_SERVICES_PASSWORD, "").trim();
     }
 
     public boolean setMythlingServicesPassword(String password) {
@@ -742,23 +746,23 @@ public class AppSettings {
     }
 
     public int getTunerTimeout() {
-        return Integer.parseInt(prefs.getString(TUNER_TIMEOUT, "30").trim());
+        return Integer.parseInt(getStringPref(TUNER_TIMEOUT, "30").trim());
     }
 
     public int getTranscodeTimeout() {
-        return Integer.parseInt(prefs.getString(TRANSCODE_TIMEOUT, "30").trim());
+        return Integer.parseInt(getStringPref(TRANSCODE_TIMEOUT, "30").trim());
     }
 
     public int getTranscodeJobLimit() {
-        return Integer.parseInt(prefs.getString(TRANSCODE_JOB_LIMIT, "3").trim());
+        return Integer.parseInt(getStringPref(TRANSCODE_JOB_LIMIT, "3").trim());
     }
 
     public int getHttpConnectTimeout() {
-        return Integer.parseInt(prefs.getString(HTTP_CONNECT_TIMEOUT, "6").trim());
+        return Integer.parseInt(getStringPref(HTTP_CONNECT_TIMEOUT, "6").trim());
     }
 
     public int getHttpReadTimeout() {
-        return Integer.parseInt(prefs.getString(HTTP_READ_TIMEOUT, "10").trim());
+        return Integer.parseInt(getStringPref(HTTP_READ_TIMEOUT, "10").trim());
     }
 
     // change these values and recompile to route service calls through a dev-time reverse proxy
@@ -917,12 +921,75 @@ public class AppSettings {
     private static String mythlingVersion;
 
     public void initMythlingVersion() throws NameNotFoundException {
-        PackageManager manager = appContext.getPackageManager();
-        PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
-        mythlingVersion = info.versionName;
+        if (mythlingVersion == null) {
+            PackageManager manager = appContext.getPackageManager();
+            PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
+            mythlingVersion = info.versionName;
+        }
     }
 
     public static String getMythlingVersion() {
         return mythlingVersion;
+    }
+
+    private static DevicePrefsConstraints devicePrefsConstraints;
+    public static DevicePrefsConstraints getDevicePrefsConstraints() { return devicePrefsConstraints; }
+    private static boolean devicePrefsConstraintsLoaded;
+    public static void loadDevicePrefsConstraints() {
+        if (!devicePrefsConstraintsLoaded) {
+            devicePrefsConstraintsLoaded = true;
+            // perform this test for all devices that have prefs constraints
+            DevicePrefsConstraints test = new FireTvPrefsConstraints();
+            if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
+                devicePrefsConstraints = test;
+                return;
+            }
+        }
+    }
+    
+    public boolean getBooleanPref(String key, boolean defValue) {
+        if (devicePrefsConstraints != null) {
+            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            if (val != null)
+                return (Boolean)val;
+        }
+        return prefs.getBoolean(key, defValue);
+    }
+
+    public long getLongPref(String key, long defValue) {
+        if (devicePrefsConstraints != null) {
+            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            if (val != null)
+                return (Long)val;
+        }
+        return prefs.getLong(key, defValue);
+    }
+
+    public int getIntPref(String key, int defValue) {
+        if (devicePrefsConstraints != null) {
+            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            if (val != null)
+                return (Integer)val;
+        }
+        return prefs.getInt(key, defValue);
+    }
+    
+    public String getStringPref(String key, String defValue) {
+        if (devicePrefsConstraints != null) {
+            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            if (val != null)
+                return (String)val;
+        }
+        return prefs.getString(key, defValue);
+    }
+    
+    /**
+     * only returns true once (when newly installed)
+     */
+    public boolean isPrefsInitiallySet() {
+        boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
+        if (!set)
+            prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
+        return set;
     }
 }
