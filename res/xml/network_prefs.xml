@@ -33,7 +33,7 @@
         android:shouldDisableView="true">
         <EditTextPreference
             android:key="mythbe_internal_host"
-            android:title="@string/title_internal_backend_host"
+            android:title="@string/title_backend_host"
             android:dialogTitle="@string/title_internal_backend_host_dialog"
             android:dialogMessage="@string/message_internal_backend_host"
             android:defaultValue="192.168.0.69"

@@ -1,0 +1,70 @@
+<!--
+ * Copyright 2014 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Settings">
+
+    <header
+        android:id="@+id/prefs_header_network"
+        android:fragment="com.oakesville.mythling.prefs.FireTvNetworkPrefs"
+        android:title="@string/title_prefs_network"
+        android:summary="@string/summary_prefs_network" />
+
+    <header
+        android:id="@+id/prefs_header_connections"
+        android:fragment="com.oakesville.mythling.prefs.FireTvConnectPrefs"
+        android:title="@string/title_prefs_connections"
+        android:summary="@string/summary_prefs_connections" />
+
+    <header
+        android:id="@+id/prefs_header_credentials"
+        android:fragment="com.oakesville.mythling.prefs.CredentialsPrefs"
+        android:title="@string/title_prefs_credentials"
+        android:summary="@string/summary_prefs_credentials" />
+
+    <header
+        android:id="@+id/prefs_header_categories"
+        android:fragment="com.oakesville.mythling.prefs.CategoriesPrefs"
+        android:title="@string/title_prefs_categories"
+        android:summary="@string/summary_prefs_categories" />
+
+    <header
+        android:id="@+id/prefs_header_artwork"
+        android:fragment="com.oakesville.mythling.prefs.ArtworkPrefs"
+        android:title="@string/title_prefs_artwork"
+        android:summary="@string/summary_prefs_artwork" />
+
+    <header
+        android:id="@+id/prefs_header_quality"
+        android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
+        android:title="@string/title_prefs_video_quality"
+        android:summary="@string/summary_prefs_video_quality" />
+
+    <header
+        android:id="@+id/prefs_header_caching"
+        android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
+        android:title="@string/title_prefs_caching"
+        android:summary="@string/summary_prefs_caching" />
+
+    <header
+        android:id="@+id/prefs_header_timeout"
+        android:fragment="com.oakesville.mythling.prefs.TimeoutPrefs"
+        android:title="@string/title_prefs_timeouts"
+        android:summary="@string/summary_prefs_timeouts" />
+
+</preference-headers>

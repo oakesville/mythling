@@ -139,9 +139,11 @@
     <string name="title_connect_timeout_dialog">Connect Timeout (seconds)</string>
     <string name="title_read_timeout">Read Timeout</string>
     <string name="title_read_timeout_dialog">Read Timeout (seconds)</string>
-    <string name="title_internal_backend_host">Host</string>
+    <string name="title_backend_host">Host</string>
     <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
+    <string name="title_backend_host_dialog">Backend Host</string>
     <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>
+    <string name="message_backend_host">Backend host name or IP address</string>
     <string name="title_external_backend_host">Host</string>
     <string name="title_external_backend_host_dialog">External Backend Host</string>
     <string name="message_external_backend_host">Backend host name or IP address for external network</string>

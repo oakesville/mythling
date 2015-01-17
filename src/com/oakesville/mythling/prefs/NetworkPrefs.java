@@ -23,55 +23,47 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 
-import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.R;
 
 public class NetworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getActionBar().setTitle(R.string.title_network_settings);
-        int prefsResourceId = R.xml.network_prefs;
-        if (AppSettings.getDevicePrefsConstraints() != null) {
-            int devicePrefsResourceId = AppSettings.getDevicePrefsConstraints().getPrefsResource(this.getClass());
-            if (devicePrefsResourceId > 0)
-                prefsResourceId = devicePrefsResourceId;
-        }
-        addPreferencesFromResource(prefsResourceId);
+        addPreferencesFromResource(R.xml.network_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
+        // these prefs trigger cache refresh
         SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EXTERNAL_NETWORK);
-        if (swPref != null) {
-            swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    doCategoryEnablement(Boolean.valueOf(newValue.toString()));
-                    return super.onPreferenceChange(preference, newValue);
-                }
-            });
-        
-            doCategoryEnablement(appSettings.isExternalNetwork());
-    
-            Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
-            pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-            pref.setSummary(appSettings.getInternalBackendHost());
-    
-            pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_HOST);
-            pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-            pref.setSummary(appSettings.getExternalBackendHost());
-    
-            swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.RETRIEVE_IP);
-            swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL).setEnabled(Boolean.valueOf(newValue.toString()));
-                    return super.onPreferenceChange(preference, newValue);
-                }
-            });
-    
-            pref = getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL);
-            pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-            pref.setSummary(appSettings.getIpRetrievalUrlString());
-            pref.setEnabled(appSettings.isIpRetrieval());
-        }
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                doCategoryEnablement(Boolean.valueOf(newValue.toString()));
+                return super.onPreferenceChange(preference, newValue);
+            }
+        });
+        doCategoryEnablement(appSettings.isExternalNetwork());
+
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setSummary(appSettings.getInternalBackendHost());
+
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_HOST);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setSummary(appSettings.getExternalBackendHost());
+
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.RETRIEVE_IP);
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL).setEnabled(Boolean.valueOf(newValue.toString()));
+                return super.onPreferenceChange(preference, newValue);
+            }
+        });
+
+        pref = getPreferenceScreen().findPreference(AppSettings.IP_RETRIEVAL_URL);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setSummary(appSettings.getIpRetrievalUrlString());
+        pref.setEnabled(appSettings.isIpRetrieval());
     }
 
     private void doCategoryEnablement(boolean isExternalNet) {
@@ -80,4 +72,5 @@ public class NetworkPrefs extends PreferenceFragment {
         Preference externalCat = getPreferenceScreen().findPreference(AppSettings.EXTERNAL_BACKEND_CATEGORY);
         externalCat.setEnabled(isExternalNet);
     }
+
 }

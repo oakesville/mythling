@@ -18,15 +18,6 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/title_content_services">
-        <EditTextPreference
-            android:key="mythtv_service_port"
-            android:title="@string/title_mythtv_service_port"
-            android:inputType="number"
-            android:defaultValue="6544"
-            android:layout="@layout/pref" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/title_web_server">
         <com.oakesville.mythling.prefs.SwitchPreference
             android:key="backend_web"

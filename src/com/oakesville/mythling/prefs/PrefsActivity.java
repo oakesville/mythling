@@ -46,16 +46,11 @@ public class PrefsActivity extends PreferenceActivity {
 
     @Override
     public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.prefs_headers, target);
-        DevicePrefsConstraints deviceConstraints = AppSettings.getDevicePrefsConstraints();
-        if (deviceConstraints != null && deviceConstraints.getOmittedHeaders() != null) {
-            List<Header> toRemove = new ArrayList<Header>();
-            for (Header header : target) {
-                if (deviceConstraints.getOmittedHeaders().contains(header.id))
-                    toRemove.add(header);
-            }
-            target.removeAll(toRemove);
-        }
+        int headerResource = R.xml.prefs_headers;
+        DevicePrefsSpec deviceConstraints = AppSettings.getDevicePrefsConstraints();
+        if (deviceConstraints != null && deviceConstraints.getPrefsHeadersResource() != 0)
+            headerResource = deviceConstraints.getPrefsHeadersResource();
+        loadHeadersFromResource(headerResource, target);
     }
 
     @Override
@@ -87,7 +82,7 @@ public class PrefsActivity extends PreferenceActivity {
         if (headers == null) {
             headers = new ArrayList<Header>();
             // when the saved state provides the list of headers, onBuildHeaders() is not called
-            // so we build it from the adapter proveded, then use our own adapter
+            // so we build it from the adapter provided, then use our own adapter
 
             for (int i = 0; i < adapter.getCount(); i++)
                 headers.add((Header) adapter.getItem(i));

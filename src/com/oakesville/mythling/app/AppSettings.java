@@ -45,8 +45,8 @@ import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Song;
-import com.oakesville.mythling.prefs.DevicePrefsConstraints;
-import com.oakesville.mythling.prefs.FireTvPrefsConstraints;
+import com.oakesville.mythling.prefs.DevicePrefsSpec;
+import com.oakesville.mythling.prefs.FireTvPrefsSpec;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
@@ -932,14 +932,14 @@ public class AppSettings {
         return mythlingVersion;
     }
 
-    private static DevicePrefsConstraints devicePrefsConstraints;
-    public static DevicePrefsConstraints getDevicePrefsConstraints() { return devicePrefsConstraints; }
+    private static DevicePrefsSpec devicePrefsConstraints;
+    public static DevicePrefsSpec getDevicePrefsConstraints() { return devicePrefsConstraints; }
     private static boolean devicePrefsConstraintsLoaded;
     public static void loadDevicePrefsConstraints() {
         if (!devicePrefsConstraintsLoaded) {
             devicePrefsConstraintsLoaded = true;
             // perform this test for all devices that have prefs constraints
-            DevicePrefsConstraints test = new FireTvPrefsConstraints();
+            DevicePrefsSpec test = new FireTvPrefsSpec();
             if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
                 devicePrefsConstraints = test;
                 return;

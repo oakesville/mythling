@@ -33,7 +33,7 @@
 
     <header
         android:id="@+id/prefs_header_connections"
-        android:fragment="com.oakesville.mythling.prefs.ConnectionsPrefs"
+        android:fragment="com.oakesville.mythling.prefs.ConnectPrefs"
         android:title="@string/title_prefs_connections"
         android:summary="@string/summary_prefs_connections" />
 
