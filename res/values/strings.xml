@@ -279,6 +279,6 @@
     <string name="mythling">Mythling</string>
     <string name="mythtv">MythTV</string>
     <string name="pref_header_icon">Pref Icon</string>
-    <string name="title_activity_video_view">VideoViewActivity</string>
+    <string name="title_activity_video_view">Mythling Video View</string>
 
 </resources>
