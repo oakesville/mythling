@@ -441,7 +441,11 @@ public class MediaPagerActivity extends MediaActivity {
                                 String pageUrl = video.getPageUrl();
                                 if (pageUrl == null || pageUrl.isEmpty()) {
                                     String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
-                                    pageUrl = baseUrl + video.getInternetRef();
+                                    String ref = video.getInternetRef();
+                                    int lastUnderscore = ref.lastIndexOf('_');
+                                    if (lastUnderscore >= 0 && lastUnderscore < ref.length() - 1)
+                                        ref = ref.substring(lastUnderscore + 1);
+                                    pageUrl = baseUrl + ref;
                                 }
                                 URL url = new URL(pageUrl);
                                 TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
