@@ -70,6 +70,10 @@ public class CategoriesPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getStreamRawFileExtensions());
 
+        pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_BASE_URL);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary(appSettings.getMovieBaseUrl());
+
         pref = getPreferenceScreen().findPreference(AppSettings.TV_BASE_URL);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getTvBaseUrl());

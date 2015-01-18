@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling.prefs;
+package com.oakesville.mythling.prefs.firetv;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.prefs.DevicePrefsSpec;
 
 public class FireTvPrefsSpec implements DevicePrefsSpec {
 
@@ -38,5 +39,9 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
         Map<String,Object> hardwired = new HashMap<String,Object>();
         hardwired.put(AppSettings.INTERNAL_VIDEO_PLAYER, true);
         return hardwired;
+    }
+    
+    public boolean supportsWebLinks() {
+        return false;
     }
 }

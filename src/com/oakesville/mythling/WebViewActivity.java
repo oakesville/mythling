@@ -21,10 +21,6 @@ package com.oakesville.mythling;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.prefs.PrefsActivity;
-import com.oakesville.mythling.util.Reporter;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,28 +29,45 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.prefs.PrefsActivity;
+import com.oakesville.mythling.util.Reporter;
 
 public class WebViewActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
 
     private WebView webView;
+    private AppSettings appSettings;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        appSettings = new AppSettings(getApplicationContext());
 
         webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
+        
+        if (!appSettings.deviceSupportsWebLinks()) {
+            webView.setWebViewClient(new WebViewClient() {
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    view.loadUrl(url);
+                    return true;
+                }                
+            });
+        }
 
         try {
             webView.loadUrl(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
-            if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
+            if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }

@@ -411,53 +411,55 @@ public class MediaPagerActivity extends MediaActivity {
                         tv.setText(summary);
                     }
 
-                    // custom link (only for movies and tv series)
-                    if ((item.isMovie() || item.isTvSeries())
-                            && appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty()) {
-                        try {
-                            String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-                            URL url = new URL(appSettings.getCustomBaseUrl() + pagerActivity.path + "/" + encodedTitle);
-                            TextView tv = (TextView) detailView.findViewById(R.id.customLink);
-                            String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                            tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
-                            tv.setMovementMethod(LinkMovementMethod.getInstance());
-                            tv.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    ((TextView) v).setBackgroundColor(Color.GRAY);
-                                }
-                            });
-                        } catch (IOException ex) {
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
-                            if (appSettings.isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                        }
-                    }
-
-                    // page link
-                    if (video.getPageUrl() != null || video.getInternetRef() != null) {
-                        try {
-                            String pageUrl = video.getPageUrl();
-                            if (pageUrl == null || pageUrl.isEmpty()) {
-                                String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
-                                pageUrl = baseUrl + video.getInternetRef();
+                    if (appSettings.deviceSupportsWebLinks()) {
+                        // custom link (only for movies and tv series)
+                        if ((item.isMovie() || item.isTvSeries())
+                                && appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty()) {
+                            try {
+                                String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
+                                URL url = new URL(appSettings.getCustomBaseUrl() + pagerActivity.path + "/" + encodedTitle);
+                                TextView tv = (TextView) detailView.findViewById(R.id.customLink);
+                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+                                tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
+                                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                                tv.setOnClickListener(new OnClickListener() {
+                                    public void onClick(View v) {
+                                        ((TextView) v).setBackgroundColor(Color.GRAY);
+                                    }
+                                });
+                            } catch (IOException ex) {
+                                if (BuildConfig.DEBUG)
+                                    Log.e(TAG, ex.getMessage(), ex);
+                                if (appSettings.isErrorReportingEnabled())
+                                    new Reporter(ex).send();
                             }
-                            URL url = new URL(pageUrl);
-                            TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
-                            String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                            tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
-                            tv.setMovementMethod(LinkMovementMethod.getInstance());
-                            tv.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    ((TextView) v).setBackgroundColor(Color.GRAY);
+                        }
+    
+                        // page link
+                        if (video.getPageUrl() != null || video.getInternetRef() != null) {
+                            try {
+                                String pageUrl = video.getPageUrl();
+                                if (pageUrl == null || pageUrl.isEmpty()) {
+                                    String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
+                                    pageUrl = baseUrl + video.getInternetRef();
                                 }
-                            });
-                        } catch (MalformedURLException ex) {
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
-                            if (appSettings.isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                            Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
+                                URL url = new URL(pageUrl);
+                                TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
+                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+                                tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
+                                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                                tv.setOnClickListener(new OnClickListener() {
+                                    public void onClick(View v) {
+                                        ((TextView) v).setBackgroundColor(Color.GRAY);
+                                    }
+                                });
+                            } catch (MalformedURLException ex) {
+                                if (BuildConfig.DEBUG)
+                                    Log.e(TAG, ex.getMessage(), ex);
+                                if (appSettings.isErrorReportingEnabled())
+                                    new Reporter(ex).send();
+                                Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 } else {

@@ -46,7 +46,7 @@ import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.prefs.DevicePrefsSpec;
-import com.oakesville.mythling.prefs.FireTvPrefsSpec;
+import com.oakesville.mythling.prefs.firetv.FireTvPrefsSpec;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
@@ -945,6 +945,11 @@ public class AppSettings {
                 return;
             }
         }
+    }
+    
+    public boolean deviceSupportsWebLinks() {
+        DevicePrefsSpec deviceConstraints = getDevicePrefsConstraints();
+        return deviceConstraints == null || deviceConstraints.supportsWebLinks();
     }
     
     public boolean getBooleanPref(String key, boolean defValue) {

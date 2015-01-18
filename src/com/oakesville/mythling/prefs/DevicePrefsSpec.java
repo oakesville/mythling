@@ -37,4 +37,9 @@ public interface DevicePrefsSpec {
      */
     public Map<String,Object> getHardWiredPrefs();
     
+    /**
+     * whether web links can be opened in an external browser
+     */
+    public boolean supportsWebLinks();
+    
 }

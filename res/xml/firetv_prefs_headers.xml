@@ -21,13 +21,13 @@
 
     <header
         android:id="@+id/prefs_header_network"
-        android:fragment="com.oakesville.mythling.prefs.FireTvNetworkPrefs"
+        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvNetworkPrefs"
         android:title="@string/title_prefs_network"
         android:summary="@string/summary_prefs_network" />
 
     <header
         android:id="@+id/prefs_header_connections"
-        android:fragment="com.oakesville.mythling.prefs.FireTvConnectPrefs"
+        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvConnectPrefs"
         android:title="@string/title_prefs_connections"
         android:summary="@string/summary_prefs_connections" />
 
@@ -39,7 +39,7 @@
 
     <header
         android:id="@+id/prefs_header_categories"
-        android:fragment="com.oakesville.mythling.prefs.CategoriesPrefs"
+        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvCategoriesPrefs"
         android:title="@string/title_prefs_categories"
         android:summary="@string/summary_prefs_categories" />
 
@@ -51,7 +51,7 @@
 
     <header
         android:id="@+id/prefs_header_quality"
-        android:fragment="com.oakesville.mythling.prefs.VideoQualityPrefs"
+        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvVideoQualityPrefs"
         android:title="@string/title_prefs_video_quality"
         android:summary="@string/summary_prefs_video_quality" />
 

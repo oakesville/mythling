@@ -59,6 +59,7 @@
     <string name="title_prefs_artwork">Artwork</string>
     <string name="summary_prefs_artwork">Detail view artwork options</string>
     <string name="title_prefs_video_quality">Video Quality</string>
+    <string name="title_streaming_quality">Streaming Quality</string>
     <string name="summary_prefs_video_quality">Stream settings for device playback</string>
     <string name="title_prefs_caching">Data Caching</string>
     <string name="summary_prefs_caching">Media list data cache</string>
