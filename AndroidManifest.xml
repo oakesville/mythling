@@ -19,7 +19,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="10"
+    android:versionCode="11"
     android:versionName="1.1.01" >
 
     <uses-sdk
