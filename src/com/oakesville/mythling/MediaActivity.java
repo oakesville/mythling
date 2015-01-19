@@ -528,8 +528,8 @@ public abstract class MediaActivity extends Activity {
                         }
                         dialog.setMessage(dialogMessage);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
-                    } else // detail mode -- no dialog unless preferred stream mode is unknown
-                    {
+                    } else  {
+                        // detail mode -- no dialog unless preferred stream mode is unknown
                         if (appSettings.isPreferHls(item.getFormat())) {
                             startProgress();
                             new StreamHlsTask(item).execute((URL) null);
@@ -582,37 +582,6 @@ public abstract class MediaActivity extends Activity {
         } catch (Exception ex) {
             stopProgress();
             onResume();
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Requires MythTV content.cpp patch to work without storage groups (or maybe create
-     * a bogus SG called None that points to your backend videos base location).
-     */
-    private void playRawVideoStream(Item item) {
-        try {
-            final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
-            String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
-            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
-            if (item.getStorageGroup() == null)
-                fileUrl += "&StorageGroup=None";
-            else
-                fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
-
-            stopProgress();
-            if (appSettings.isExternalPlayer()) {
-                Intent toStart = new Intent(Intent.ACTION_VIEW);
-                toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
-                startActivity(toStart);
-            } else {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VideoViewActivity.class));
-            }
-        } catch (IOException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
@@ -1080,6 +1049,37 @@ public abstract class MediaActivity extends Activity {
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
                 }
             }
+        }
+    }
+
+    /**
+     * Requires MythTV content.cpp patch to work without storage groups (or maybe create
+     * a bogus SG called None that points to your backend videos base location).
+     */
+    private void playRawVideoStream(Item item) {
+        try {
+            final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
+            String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
+            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
+            if (item.getStorageGroup() == null)
+                fileUrl += "&StorageGroup=None";
+            else
+                fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
+
+            stopProgress();
+            if (appSettings.isExternalPlayer()) {
+                Intent toStart = new Intent(Intent.ACTION_VIEW);
+                toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
+                startActivity(toStart);
+            } else {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VideoViewActivity.class));
+            }
+        } catch (IOException ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
