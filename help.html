@@ -47,28 +47,27 @@
           Basic configuration can be accomplished through the first three screens:
         </p>
         <div class="help_item">
-          <img src="images/screenshots/network_settings.png"
-            class="help_shot"
-            alt="Network Settings" />
-          <div class="help_text">
-            <p>1. <span class="help_step">Network Settings</span></p>
-            <p>Definitely start with an internal network.  For that you'll need to specify your mythbackend machine's host name or IP address.</p>
-            <p>When you decide to set up external network access, then here you will also enter the externally-available host information.
-            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">Mythling GitHub Wiki</a>.
-          </div>
-        </div>
-        <div class="help_item">
           <img src="images/screenshots/playback_settings.png"
             class="help_shot"
             alt="Playback Settings" />
           <div class="help_text">
-            <p>2. <span class="help_step">Playback Settings</span></p>
-            <p>If you choose to play media on your Device, then no further configuration is required in Playback Settings
-            (and on certain devices like Amazon Fire TV this screen is not even accessible).</p>
+            <p>1. <span class="help_step">Playback Settings</span></p>
+            <p>If you choose to play media on your Device, then no further configuration is required in Playback Settings.</p>
             <p>For playback on a MythTV frontend, Mythling uses either the <a href="http://www.mythtv.org/wiki/Frontend_Service">MythTV Frontend Service</a> 
             or the <a href="http://www.mythtv.org/wiki/Frontend_control_socket">Frontend Control Socket</a> interface (depending on the selected media type).
             So for frontend playback you'll need to specify the mythfrontend host name or IP address, along with the service port and socket control port.
-            The frontend port and IP values are remembered, so you can readily switch back and forth between frontend and device playback.
+            These settings are remembered so you can readily switch back and forth between frontend and device playback.
+          </div>
+        </div>
+        <div class="help_item">
+          <img src="images/screenshots/network_settings.png"
+            class="help_shot"
+            alt="Network Settings" />
+          <div class="help_text">
+            <p>2. <span class="help_step">Network Settings</span></p>
+            <p>Definitely start with an internal network.  For that you'll need to specify your mythbackend machine's host name or IP address.</p>
+            <p>When you decide to set up external network access, then here you can also enter the externally-available host information.
+            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">Mythling GitHub Wiki</a>.
           </div>
         </div>
         <div class="help_item">
@@ -90,8 +89,7 @@
               <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-Services">More about Mythling media services.</a>
             </p>
             <p>
-              <span style="font-weight:bold;">Note:</span> To play the actual content of a video or music file, Mythling always uses the 
-              MythTV services API (there are no Mythling services for transcoding or serving media). 
+              <span style="font-weight:bold;">Note:</span> For streaming actual content, Mythling always uses the MythTV services API. 
             </p>
             <p>Lastly in Connections, using the MythWeb Access switch you can control whether <a href="http://www.mythtv.org/wiki/MythWeb">MythWeb</a> is available in the action menu.
             </p>
@@ -120,7 +118,7 @@
             </p>
             <p>
               Information about Movies, TV Series and Videos is retrieved from the data in MythTV's videometadata table.
-              To identify which videos are treated as Movies and TV Series, Mythling consults this video metadata.
+              To identify which videos are treated as Movies and TV Series, Mythling consults this video metadata 
               Alternatively, if your server's directory structure already segregates according to these media types, you can use the Categories preference screen to specify their root locations.
               See <a href="http://www.mythtv.org/wiki/MythVideo#Metadata_Lookup">MythVideo Metadata Lookup</a> for more about metadata.
             </p>
