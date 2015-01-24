@@ -35,10 +35,12 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
         return R.xml.firetv_prefs_headers;
     }
 
-    public Map<String,Object> getHardWiredPrefs() {
-        Map<String,Object> hardwired = new HashMap<String,Object>();
-        hardwired.put(AppSettings.INTERNAL_VIDEO_PLAYER, true);
-        return hardwired;
+    public Map<String,Object> getDefaultValues() {
+        Map<String,Object> defaults = new HashMap<String,Object>();
+        defaults.put(AppSettings.INTERNAL_VIDEO_PLAYER, true);
+        defaults.put(AppSettings.INTERNAL_VIDEO_RES, (Integer)720);
+        defaults.put(AppSettings.INTERNAL_VIDEO_BITRATE, (Integer)80000);
+        return defaults;
     }
     
     public boolean supportsWebLinks() {

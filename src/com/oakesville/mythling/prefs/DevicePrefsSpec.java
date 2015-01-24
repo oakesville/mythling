@@ -33,9 +33,9 @@ public interface DevicePrefsSpec {
     public int getPrefsHeadersResource();
     
     /**
-     * map of hardwired prefs values
+     * map of specialized default prefs values
      */
-    public Map<String,Object> getHardWiredPrefs();
+    public Map<String,Object> getDefaultValues();
     
     /**
      * whether web links can be opened in an external browser

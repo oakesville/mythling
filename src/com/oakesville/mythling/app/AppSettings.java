@@ -953,43 +953,47 @@ public class AppSettings {
     }
     
     public boolean getBooleanPref(String key, boolean defValue) {
+        boolean deviceDefault = defValue;
         if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            Object val = devicePrefsConstraints.getDefaultValues().get(key);
             if (val != null)
-                return (Boolean)val;
+                deviceDefault = (Boolean)val;
         }
-        return prefs.getBoolean(key, defValue);
+        return prefs.getBoolean(key, deviceDefault);
     }
 
     public long getLongPref(String key, long defValue) {
+        long deviceDefault = defValue;
         if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            Object val = devicePrefsConstraints.getDefaultValues().get(key);
             if (val != null)
-                return (Long)val;
+                deviceDefault = (Long)val;
         }
-        return prefs.getLong(key, defValue);
+        return prefs.getLong(key, deviceDefault);
     }
 
     public int getIntPref(String key, int defValue) {
+        int deviceDefault = defValue;
         if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            Object val = devicePrefsConstraints.getDefaultValues().get(key);
             if (val != null)
-                return (Integer)val;
+                deviceDefault = (Integer)val;
         }
-        return prefs.getInt(key, defValue);
+        return prefs.getInt(key, deviceDefault);
     }
     
     public String getStringPref(String key, String defValue) {
+        String deviceDefault = defValue;
         if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getHardWiredPrefs().get(key);
+            Object val = devicePrefsConstraints.getDefaultValues().get(key);
             if (val != null)
-                return (String)val;
+                deviceDefault = (String)val;
         }
-        return prefs.getString(key, defValue);
+        return prefs.getString(key, deviceDefault);
     }
     
     /**
-     * only returns true once (when newly installed)
+     * returns true only once (when newly installed)
      */
     public boolean isPrefsInitiallySet() {
         boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
