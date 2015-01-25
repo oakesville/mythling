@@ -21,25 +21,38 @@
     <com.oakesville.mythling.prefs.SwitchPreference
         android:key="playback_mode"
         android:title="@string/title_playback_mode"
-        android:switchTextOn="Frontend"
-        android:switchTextOff="Device"
-        android:defaultValue="Device"
+        android:switchTextOn="@string/switch_frontend"
+        android:switchTextOff="@string/switch_device"
+        android:defaultValue="@string/switch_device"
         android:layout="@layout/sw_pref"
         android:widgetLayout="@layout/prefs_switch" />
 
     <com.oakesville.mythling.prefs.DisableableCategory
-        android:key="device_playback_cat"
-        android:title="@string/title_device_player"
+        android:key="device_playback_cat_video"
+        android:title="@string/title_device_player_video"
         android:shouldDisableView="true">
         <com.oakesville.mythling.prefs.SwitchPreference
             android:key="video_player"
-            android:switchTextOn="Built-In"
-            android:switchTextOff="External App"
-            android:defaultValue="External App"
+            android:switchTextOn="@string/switch_built_in"
+            android:switchTextOff="@string/switch_external_app"
+            android:defaultValue="@string/switch_external_app"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
     </com.oakesville.mythling.prefs.DisableableCategory>
 
+    <com.oakesville.mythling.prefs.DisableableCategory
+        android:key="device_playback_cat_music"
+        android:title="@string/title_device_player_music"
+        android:shouldDisableView="true">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="music_player"
+            android:switchTextOn="@string/switch_built_in"
+            android:switchTextOff="@string/switch_external_app"
+            android:defaultValue="@string/switch_built_in"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+    </com.oakesville.mythling.prefs.DisableableCategory>
+    
     <com.oakesville.mythling.prefs.DisableableCategory
         android:key="frontend_playback_cat"
         android:title="@string/title_frontend_player"

@@ -50,6 +50,10 @@ public class PlaybackPrefs extends PreferenceFragment {
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_VIDEO_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_MUSIC_PLAYER);
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+        swPref.setChecked(!appSettings.isExternalMusicPlayer());
+        
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getFrontendHost());
@@ -64,8 +68,10 @@ public class PlaybackPrefs extends PreferenceFragment {
     }
 
     private void doCategoryEnablement(boolean isDevice) {
-        Preference deviceCat = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY);
-        deviceCat.setEnabled(isDevice);
+        Preference deviceCatVid = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY_VIDEO);
+        deviceCatVid.setEnabled(isDevice);
+        Preference deviceCatMus = getPreferenceScreen().findPreference(AppSettings.DEVICE_PLAYBACK_CATEGORY_MUSIC);
+        deviceCatMus.setEnabled(isDevice);
 
         Preference frontendCat = getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK_CATEGORY);
         frontendCat.setEnabled(!isDevice);

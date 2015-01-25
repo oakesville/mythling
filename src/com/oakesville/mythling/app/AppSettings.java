@@ -54,7 +54,8 @@ import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
 
 public class AppSettings {
-    public static final String DEVICE_PLAYBACK_CATEGORY = "device_playback_cat";
+    public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
+    public static final String DEVICE_PLAYBACK_CATEGORY_MUSIC = "device_playback_cat_music";
     public static final String FRONTEND_PLAYBACK_CATEGORY = "frontend_playback_cat";
     public static final String INTERNAL_BACKEND_CATEGORY = "internal_backend_cat";
     public static final String EXTERNAL_BACKEND_CATEGORY = "external_backend_cat";
@@ -79,6 +80,7 @@ public class AppSettings {
     public static final String SORT_TYPE = "sort_type";
     public static final String FRONTEND_PLAYBACK = "playback_mode";
     public static final String INTERNAL_VIDEO_PLAYER = "video_player";
+    public static final String INTERNAL_MUSIC_PLAYER = "music_player";
     public static final String EXTERNAL_NETWORK = "network_location";
     public static final String CATEGORIZE_VIDEOS = "categorize_videos";
     public static final String MOVIE_DIRECTORIES = "movie_directories";
@@ -318,10 +320,14 @@ public class AppSettings {
         return !getBooleanPref(FRONTEND_PLAYBACK, false);
     }
 
-    public boolean isExternalPlayer() {
+    public boolean isExternalVideoPlayer() {
         return !getBooleanPref(INTERNAL_VIDEO_PLAYER, false);
     }
 
+    public boolean isExternalMusicPlayer() {
+        return !getBooleanPref(INTERNAL_MUSIC_PLAYER, true);
+    }
+    
     public boolean isMythlingMediaServices() {
         return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
     }

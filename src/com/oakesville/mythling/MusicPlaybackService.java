@@ -81,32 +81,34 @@ public class MusicPlaybackService extends Service {
                     am.registerMediaButtonEventReceiver(new ComponentName(this, MusicPlaybackButtonReceiver.class));
                     if (mediaPlayer == null) {
                         mediaPlayer = new MediaPlayer();
-                        mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
-                            public void onPrepared(MediaPlayer mp) {
-                                mediaPlayer.start();
-                                if (playbackMessenger != null) {
-                                    try {
-                                        Message msg = Message.obtain();
-                                        msg.what = MESSAGE_PLAYER_PREPARED;
-                                        playbackMessenger.send(msg);
-                                    }
-                                    catch (RemoteException ex) {
-                                        if (BuildConfig.DEBUG)
-                                            Log.e(TAG, ex.getMessage(), ex);
-                                        if (appSettings.isErrorReportingEnabled())
-                                            new Reporter(ex).send();
-                                    }
-                                }
-                            }
-                        });
-                        mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-                            public void onCompletion(MediaPlayer mp) {
-                                stopPlayback(true);
-                            }
-                        });
                     } else if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
+                        mediaPlayer.reset();
                     }
+                    
+                    mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
+                        public void onPrepared(MediaPlayer mp) {
+                            mediaPlayer.start();
+                            if (playbackMessenger != null) {
+                                try {
+                                    Message msg = Message.obtain();
+                                    msg.what = MESSAGE_PLAYER_PREPARED;
+                                    playbackMessenger.send(msg);
+                                }
+                                catch (RemoteException ex) {
+                                    if (BuildConfig.DEBUG)
+                                        Log.e(TAG, ex.getMessage(), ex);
+                                    if (appSettings.isErrorReportingEnabled())
+                                        new Reporter(ex).send();
+                                }
+                            }
+                        }
+                    });
+                    mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+                        public void onCompletion(MediaPlayer mp) {
+                            stopPlayback();
+                        }
+                    });
                     
                     mediaPlayer.setDataSource(this, intent.getData());
                     mediaPlayer.prepareAsync();
@@ -116,7 +118,7 @@ public class MusicPlaybackService extends Service {
                 // TODO
             }
             else if (intent.getAction().equals(ACTION_STOP)) {
-                stopPlayback(true);
+                stopPlayback();
             }
         }
         catch (Exception ex) {
@@ -129,29 +131,28 @@ public class MusicPlaybackService extends Service {
         return START_NOT_STICKY;
     }
     
-    private void stopPlayback(boolean sendMessage) {
+    private void stopPlayback() {
         stopSelf();
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
-                if (playbackMessenger != null) {
-                    try {
-                        Message msg = Message.obtain();
-                        msg.what = MESSAGE_PLAYBACK_STOPPED;
-                        playbackMessenger.send(msg);
-                    }
-                    catch (RemoteException ex) {
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
-                        if (appSettings.isErrorReportingEnabled())
-                            new Reporter(ex).send();
-                    }
-                }
                 sendBroadcast(new Intent(ACTION_PLAYBACK_STOPPED));
                 releasePlayer();
             }
-        }
-        
+            if (playbackMessenger != null) {
+                try {
+                    Message msg = Message.obtain();
+                    msg.what = MESSAGE_PLAYBACK_STOPPED;
+                    playbackMessenger.send(msg);
+                }
+                catch (RemoteException ex) {
+                    if (BuildConfig.DEBUG)
+                        Log.e(TAG, ex.getMessage(), ex);
+                    if (appSettings.isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                }
+            }
+        }       
     }
     
     private void releasePlayer() {

@@ -163,7 +163,7 @@ public abstract class MediaActivity extends Activity {
     @Override
     public void onPause() {
         active = false;
-        registerPlaybackBroadcastReceiver(true);
+        registerPlaybackBroadcastReceiver(false);
         super.onPause();
     }    
 
@@ -504,24 +504,31 @@ public abstract class MediaActivity extends Activity {
                 }
 
                 if (item.isMusic()) {
-                    startProgress();
-                    Intent playMusic = new Intent(this, MusicPlaybackService.class);
                     String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
-                    playMusic.setData(Uri.parse(musicUrl));
-                    playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
-                        public void handleMessage(Message msg) {
-                            if (msg.what == MusicPlaybackService.MESSAGE_PLAYER_PREPARED) {
-                                stopProgress();
-                                showStopMenuItem(true);
+                    if (appSettings.isExternalMusicPlayer()) {
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW); 
+                        intent.setDataAndType(Uri.parse(musicUrl), "audio/*"); 
+                        startActivity(intent);
+                    }
+                    else {
+                        startProgress();
+                        Intent playMusic = new Intent(this, MusicPlaybackService.class);
+                        playMusic.setData(Uri.parse(musicUrl));
+                        playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
+                            public void handleMessage(Message msg) {
+                                if (msg.what == MusicPlaybackService.MESSAGE_PLAYER_PREPARED) {
+                                    stopProgress();
+                                    showStopMenuItem(true);
+                                }
+                                else if (msg.what == MusicPlaybackService.MESSAGE_PLAYBACK_STOPPED) {
+                                    if (active)
+                                        onResume();  // re-show the list
+                                }
                             }
-                            else if (msg.what == MusicPlaybackService.MESSAGE_PLAYBACK_STOPPED) {
-                                if (active)
-                                    onResume();  // re-show the list
-                            }
-                        }
-                    }));
-                    playMusic.setAction(MusicPlaybackService.ACTION_PLAY);
-                    startService(playMusic);
+                        }));
+                        playMusic.setAction(MusicPlaybackService.ACTION_PLAY);
+                        startService(playMusic);
+                    }
                 } else {
                     StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
                     dialog.setMessage(item.getTitle());
@@ -579,8 +586,8 @@ public abstract class MediaActivity extends Activity {
                         }
                     }
                 }
-            } else // frontend playback
-            {
+            } else { 
+                // frontend playback
                 final FrontendPlayer player;
                 if (item.isSearchResult()) {
                     SearchResults searchResults = ((SearchActivity) this).searchResults;
@@ -1100,7 +1107,7 @@ public abstract class MediaActivity extends Activity {
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
 
             stopProgress();
-            if (appSettings.isExternalPlayer()) {
+            if (appSettings.isExternalVideoPlayer()) {
                 Intent toStart = new Intent(Intent.ACTION_VIEW);
                 toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
                 startActivity(toStart);
@@ -1124,7 +1131,7 @@ public abstract class MediaActivity extends Activity {
         streamUrl = streamUrl.substring(0, lastDot) + ".av" + streamUrl.substring(lastDot);
 
         stopProgress();
-        if (appSettings.isExternalPlayer()) {
+        if (appSettings.isExternalVideoPlayer()) {
             Intent toStart = new Intent(Intent.ACTION_VIEW);
             toStart.setDataAndType(Uri.parse(streamUrl), "video/*");
             startActivity(toStart);

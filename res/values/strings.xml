@@ -84,6 +84,8 @@
     <string name="message_frontend_service_port">HTTP port for frontend service connection</string>
     <string name="title_network_location">Network</string>
     <string name="title_playback_mode">Playback</string>
+    <string name="switch_frontend">Frontend</string>
+    <string name="switch_device">Device</string>
     <string name="title_video_categorization">Categorization</string>
     <string name="title_video_categorization_dialog">Video Categorization</string>
     <string name="title_categorize_videos">Videos</string>
@@ -121,7 +123,10 @@
     <string name="title_album_art_level">Album Art Level</string>
     <string name="album_art_song">Song</string>
     <string name="album_art_album">Album</string>
-    <string name="title_device_player">Device Player</string>
+    <string name="title_device_player_video">Device Player (Video)</string>
+    <string name="switch_built_in">Built-In</string>
+    <string name="switch_external_app">External App</string>
+    <string name="title_device_player_music">Device Player (Music)</string>
     <string name="title_frontend_player">Frontend Player</string>
     <string name="title_mythtv_backend">MythTV Backend</string>
     <string name="title_internal_backend">Internal Backend</string>
