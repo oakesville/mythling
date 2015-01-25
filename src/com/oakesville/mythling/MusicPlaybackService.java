@@ -71,11 +71,15 @@ public class MusicPlaybackService extends Service {
                 if (audioFocusListener == null) {
                     audioFocusListener = new OnAudioFocusChangeListener() {
                         public void onAudioFocusChange(int focusChange) {
-                            // unregister focus listener, etc
+                            if (focusChange != AudioManager.AUDIOFOCUS_GAIN) {
+                                stopPlayback();
+                                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                                am.unregisterMediaButtonEventReceiver(new ComponentName(MusicPlaybackService.this, MusicPlaybackButtonReceiver.class));
+                            }
                         }
                     };
                 }
-                AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 int res = am.requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
                 if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     am.registerMediaButtonEventReceiver(new ComponentName(this, MusicPlaybackButtonReceiver.class));
@@ -139,6 +143,8 @@ public class MusicPlaybackService extends Service {
                 sendBroadcast(new Intent(ACTION_PLAYBACK_STOPPED));
                 releasePlayer();
             }
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            am.abandonAudioFocus(audioFocusListener);
             if (playbackMessenger != null) {
                 try {
                     Message msg = Message.obtain();
