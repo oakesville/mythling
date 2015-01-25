@@ -117,6 +117,12 @@
                 <data android:mimeType="application/vnd.apple.mpegurl"/>
             </intent-filter>
         </activity>
+        <receiver android:name=".MusicPlaybackButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".MusicPlaybackService" />
     </application>
 
 </manifest>

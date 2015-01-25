@@ -22,7 +22,7 @@
         android:id="@+id/menu_stop"
         android:title="@string/menu_stop"
         android:orderInCategory="50"
-        android:icon="@drawable/ic_action_stop"
+        android:icon="@drawable/ic_action_stop_red"
         android:showAsAction="always"
         android:visible="false" />
 

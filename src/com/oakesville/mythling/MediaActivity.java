@@ -31,16 +31,22 @@ import java.util.TimerTask;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -86,6 +92,8 @@ public abstract class MediaActivity extends Activity {
 
     protected MediaList mediaList;
     protected Map<String, StorageGroup> storageGroups;
+    
+    private BroadcastReceiver playbackBroadcastReceiver;
 
     private static AppData appData;
     public static AppData getAppData() {
@@ -123,8 +131,6 @@ public abstract class MediaActivity extends Activity {
     private MenuItem mythwebMenuItem;
     private MenuItem stopMenuItem;
 
-    private static MediaPlayer mediaPlayer;
-
     private ProgressBar progressBar;
 
     private ProgressDialog countdownDialog;
@@ -137,6 +143,8 @@ public abstract class MediaActivity extends Activity {
     public abstract void refresh() throws BadSettingsException;
 
     public abstract ListView getListView();
+    
+    private boolean active;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,6 +152,38 @@ public abstract class MediaActivity extends Activity {
         appSettings = new AppSettings(getApplicationContext());
     }
 
+    @Override
+    protected void onResume() {
+        active = true;
+        super.onResume();
+        if (supportsMusic())
+          registerPlaybackBroadcastReceiver(true);
+    }
+    
+    @Override
+    public void onPause() {
+        active = false;
+        registerPlaybackBroadcastReceiver(true);
+        super.onPause();
+    }    
+
+    private void registerPlaybackBroadcastReceiver(boolean register) {
+        if (register) {
+            if (playbackBroadcastReceiver == null) {
+                playbackBroadcastReceiver = new BroadcastReceiver() {
+                    public void onReceive(Context context, Intent intent) {
+                        showStopMenuItem(false);
+                    }
+                };
+            }
+            registerReceiver(playbackBroadcastReceiver, new IntentFilter(MusicPlaybackService.ACTION_PLAYBACK_STOPPED));
+        }
+        else {
+            if (playbackBroadcastReceiver != null)
+                unregisterReceiver(playbackBroadcastReceiver);
+        }
+    }
+    
     protected ProgressBar createProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar.setVisibility(View.GONE);
@@ -197,7 +237,7 @@ public abstract class MediaActivity extends Activity {
         showMythwebMenu(supportsMythwebMenu());
 
         stopMenuItem = menu.findItem(R.id.menu_stop);
-        stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());
+        showStopMenuItem(isPlayingMusic());
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -432,8 +472,9 @@ public abstract class MediaActivity extends Activity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
                 return true;
             } else if (item.getItemId() == R.id.menu_stop) {
-                stopMediaPlayer();
-                onResume();
+                Intent stopMusic = new Intent(this, MusicPlaybackService.class);
+                stopMusic.setAction(MusicPlaybackService.ACTION_STOP);
+                startService(stopMusic);
                 return true;
             }
         } catch (BadSettingsException ex) {
@@ -456,34 +497,31 @@ public abstract class MediaActivity extends Activity {
             AppSettings appSettings = getAppSettings();
 
             if (appSettings.isDevicePlayback()) {
-                if (getListView() != null)  // TODO what about pager activity?
-                {
+                if (getListView() != null) {
                     String msg = (item.isMusic() ? "Playing: '" : "Loading: '") + item.getTitle() + "'";
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{msg});
                     getListView().setAdapter(adapter);
                 }
 
-                stopMediaPlayer(); // music
-
                 if (item.isMusic()) {
                     startProgress();
-                    if (mediaPlayer == null) {
-                        mediaPlayer = new MediaPlayer();
-                        mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-                            public void onCompletion(MediaPlayer mp) {
-                                mediaPlayer.reset();
-                                showStopMenuItem(false);
-                                onResume();
-                            }
-                        });
-                    }
+                    Intent playMusic = new Intent(this, MusicPlaybackService.class);
                     String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
-                    mediaPlayer.setDataSource(appSettings.getAppContext(), Uri.parse(musicUrl));
-                    // TODO async?
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                    stopProgress();
-                    showStopMenuItem(true);
+                    playMusic.setData(Uri.parse(musicUrl));
+                    playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
+                        public void handleMessage(Message msg) {
+                            if (msg.what == MusicPlaybackService.MESSAGE_PLAYER_PREPARED) {
+                                stopProgress();
+                                showStopMenuItem(true);
+                            }
+                            else if (msg.what == MusicPlaybackService.MESSAGE_PLAYBACK_STOPPED) {
+                                if (active)
+                                    onResume();  // re-show the list
+                            }
+                        }
+                    }));
+                    playMusic.setAction(MusicPlaybackService.ACTION_PLAY);
+                    startService(playMusic);
                 } else {
                     StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
                     dialog.setMessage(item.getTitle());
@@ -588,19 +626,6 @@ public abstract class MediaActivity extends Activity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void stopMediaPlayer() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
-                // mediaPlayer.release();
-            }
-
-            mediaPlayer.reset();
-        }
-
-        showStopMenuItem(false);
     }
 
     protected void goDetailView() {
@@ -729,12 +754,20 @@ public abstract class MediaActivity extends Activity {
         if (mediaMenuItem != null)
             mediaMenuItem.setTitle(MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
 
-        if (stopMenuItem != null)
-            stopMenuItem.setVisible(mediaPlayer != null && mediaPlayer.isPlaying());
+        showStopMenuItem(isPlayingMusic());
     }
 
     protected void populate() throws IOException, JSONException, ParseException, BadSettingsException {
         // default does nothing
+    }
+    
+    private boolean isPlayingMusic() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MusicPlaybackService.class.getName().equals(service.service.getClassName()))
+                return true;
+        }
+        return false;        
     }
 
     protected Transcoder getTranscoder(Item item) {
