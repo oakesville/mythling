@@ -55,6 +55,8 @@ public class MusicPlaybackService extends Service {
     private MediaPlayer mediaPlayer;
     private Messenger playbackMessenger;
     private OnAudioFocusChangeListener audioFocusListener;
+    
+    private boolean isPaused;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -88,7 +90,10 @@ public class MusicPlaybackService extends Service {
                     } else if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
                         mediaPlayer.reset();
+                    } else if (isPaused) {
+                        mediaPlayer.reset();
                     }
+                    
                     
                     mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
                         public void onPrepared(MediaPlayer mp) {
@@ -120,10 +125,14 @@ public class MusicPlaybackService extends Service {
             }
             else if (intent.getAction().equals(ACTION_PLAY_PAUSE)) {
                 if (mediaPlayer != null) {
-                    if (mediaPlayer.isPlaying())
+                    if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
-                    else
+                        isPaused = true;
+                    }
+                    else {
                         mediaPlayer.start();
+                        isPaused = false;
+                    }
                 }
             }
             else if (intent.getAction().equals(ACTION_STOP)) {
@@ -167,6 +176,7 @@ public class MusicPlaybackService extends Service {
     }
     
     private void releasePlayer() {
+        isPaused = false;
         if (mediaPlayer != null) {
             mediaPlayer.reset();
             mediaPlayer.release();
