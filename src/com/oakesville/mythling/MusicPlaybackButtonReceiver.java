@@ -43,8 +43,7 @@ public class MusicPlaybackButtonReceiver extends BroadcastReceiver {
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
             KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (event != null) {
-                int action = event.getAction();
-                if (action == KeyEvent.ACTION_DOWN) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     try {
                         switch(event.getKeyCode()) {
                             case KeyEvent.KEYCODE_MEDIA_STOP :
