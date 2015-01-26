@@ -24,8 +24,7 @@
             android:switchTextOn="@string/yes"
             android:switchTextOff="@string/no"
             android:defaultValue="@string/no"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
+            android:layout="@layout/sw_pref_inner" />
         <EditTextPreference
             android:key="mythling_web_port"
             android:title="@string/title_web_port"
@@ -44,8 +43,7 @@
             android:switchTextOn="@string/mythling"
             android:switchTextOff="@string/mythtv"
             android:defaultValue="@string/mythtv"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
+            android:layout="@layout/sw_pref_inner" />
         <EditTextPreference
             android:key="mythling_web_root"
             android:title="@string/title_mythling_web_root"
@@ -60,8 +58,7 @@
             android:switchTextOn="@string/enabled"
             android:switchTextOff="@string/disabled"
             android:defaultValue="@string/disabled"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
+            android:layout="@layout/sw_pref_inner" />
     </PreferenceCategory>
 
 </PreferenceScreen>

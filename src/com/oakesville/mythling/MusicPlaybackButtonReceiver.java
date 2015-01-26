@@ -44,25 +44,27 @@ public class MusicPlaybackButtonReceiver extends BroadcastReceiver {
             KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (event != null) {
                 int action = event.getAction();
-                try {
-                    switch(action) {
-                        case KeyEvent.KEYCODE_MEDIA_STOP :
-                            Intent stopMusic = new Intent(context, MusicPlaybackService.class);
-                            stopMusic.setAction(MusicPlaybackService.ACTION_STOP);
-                            context.startService(stopMusic);
-                            break;
-                        case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE :
-                            Intent playPause = new Intent(context, MusicPlaybackService.class);
-                            playPause.setAction(MusicPlaybackService.ACTION_STOP);
-                            context.startService(playPause);
-                            break;
+                if (action == KeyEvent.ACTION_DOWN) {
+                    try {
+                        switch(event.getKeyCode()) {
+                            case KeyEvent.KEYCODE_MEDIA_STOP :
+                                Intent stopMusic = new Intent(context, MusicPlaybackService.class);
+                                stopMusic.setAction(MusicPlaybackService.ACTION_STOP);
+                                context.startService(stopMusic);
+                                break;
+                            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE :
+                                Intent playPause = new Intent(context, MusicPlaybackService.class);
+                                playPause.setAction(MusicPlaybackService.ACTION_PLAY_PAUSE);
+                                context.startService(playPause);
+                                break;
+                        }
                     }
-                }
-                catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
-                    if (new AppSettings(context).isErrorReportingEnabled())
-                        new Reporter(ex).send();
+                    catch (Exception ex) {
+                        if (BuildConfig.DEBUG)
+                            Log.e(TAG, ex.getMessage(), ex);
+                        if (new AppSettings(context).isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                    }
                 }
             }
         }

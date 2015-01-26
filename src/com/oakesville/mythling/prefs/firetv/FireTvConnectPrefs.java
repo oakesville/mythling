@@ -21,11 +21,11 @@ package com.oakesville.mythling.prefs.firetv;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
-import com.oakesville.mythling.prefs.SwitchPreference;
 
 public class FireTvConnectPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {

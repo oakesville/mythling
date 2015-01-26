@@ -119,7 +119,12 @@ public class MusicPlaybackService extends Service {
                 }
             }
             else if (intent.getAction().equals(ACTION_PLAY_PAUSE)) {
-                // TODO
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying())
+                        mediaPlayer.pause();
+                    else
+                        mediaPlayer.start();
+                }
             }
             else if (intent.getAction().equals(ACTION_STOP)) {
                 stopPlayback();
