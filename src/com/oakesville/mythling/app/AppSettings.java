@@ -938,16 +938,16 @@ public class AppSettings {
         return mythlingVersion;
     }
 
-    private static DevicePrefsSpec devicePrefsConstraints;
-    public static DevicePrefsSpec getDevicePrefsConstraints() { return devicePrefsConstraints; }
-    private static boolean devicePrefsConstraintsLoaded;
+    private static DevicePrefsSpec devicePrefsSpec;
+    public static DevicePrefsSpec getDevicePrefsConstraints() { return devicePrefsSpec; }
+    private static boolean devicePrefsSpecsLoaded;
     public static void loadDevicePrefsConstraints() {
-        if (!devicePrefsConstraintsLoaded) {
-            devicePrefsConstraintsLoaded = true;
+        if (!devicePrefsSpecsLoaded) {
+            devicePrefsSpecsLoaded = true;
             // perform this test for all devices that have prefs constraints
             DevicePrefsSpec test = new FireTvPrefsSpec();
             if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
-                devicePrefsConstraints = test;
+                devicePrefsSpec = test;
                 return;
             }
         }
@@ -960,8 +960,8 @@ public class AppSettings {
     
     public boolean getBooleanPref(String key, boolean defValue) {
         boolean deviceDefault = defValue;
-        if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getDefaultValues().get(key);
+        if (devicePrefsSpec != null) {
+            Object val = devicePrefsSpec.getDefaultValues().get(key);
             if (val != null)
                 deviceDefault = (Boolean)val;
         }
@@ -970,8 +970,8 @@ public class AppSettings {
 
     public long getLongPref(String key, long defValue) {
         long deviceDefault = defValue;
-        if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getDefaultValues().get(key);
+        if (devicePrefsSpec != null) {
+            Object val = devicePrefsSpec.getDefaultValues().get(key);
             if (val != null)
                 deviceDefault = (Long)val;
         }
@@ -980,8 +980,8 @@ public class AppSettings {
 
     public int getIntPref(String key, int defValue) {
         int deviceDefault = defValue;
-        if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getDefaultValues().get(key);
+        if (devicePrefsSpec != null) {
+            Object val = devicePrefsSpec.getDefaultValues().get(key);
             if (val != null)
                 deviceDefault = (Integer)val;
         }
@@ -990,12 +990,16 @@ public class AppSettings {
     
     public String getStringPref(String key, String defValue) {
         String deviceDefault = defValue;
-        if (devicePrefsConstraints != null) {
-            Object val = devicePrefsConstraints.getDefaultValues().get(key);
+        if (devicePrefsSpec != null) {
+            Object val = devicePrefsSpec.getDefaultValues().get(key);
             if (val != null)
                 deviceDefault = (String)val;
         }
         return prefs.getString(key, deviceDefault);
+    }
+    
+    public boolean isFireTv() {
+        return devicePrefsSpec instanceof FireTvPrefsSpec;
     }
     
     /**

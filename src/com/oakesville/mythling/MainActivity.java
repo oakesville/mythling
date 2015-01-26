@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.json.JSONException;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
@@ -46,6 +48,7 @@ import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
 public class MainActivity extends MediaActivity {
@@ -70,7 +73,7 @@ public class MainActivity extends MediaActivity {
         super.onCreate(savedInstanceState);
 
         AppSettings.loadDevicePrefsConstraints();
-        
+
         try {
             getAppSettings().initMythlingVersion();
         } catch (NameNotFoundException ex) {
@@ -79,12 +82,26 @@ public class MainActivity extends MediaActivity {
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
-        
+
         if (!getAppSettings().isPrefsInitiallySet()) {
             String msg = "Please access app settings to initialize connection info.";
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            if (getAppSettings().isFireTv()) {
+                new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Setup Required")
+                .setMessage(msg)
+                .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(MainActivity.this, PrefsActivity.class));
+                    }
+                })
+                .show();
+            }
+            else {
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            }
         }
-        
+
         setContentView(R.layout.categories);
 
         createProgressBar();
@@ -101,7 +118,7 @@ public class MainActivity extends MediaActivity {
     }
 
     @Override
-    protected void onResume() {   
+    protected void onResume() {
         try {
             if (getAppData() == null || getAppData().isExpired())
                 refresh();
