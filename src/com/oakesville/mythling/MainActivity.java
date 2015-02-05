@@ -84,22 +84,16 @@ public class MainActivity extends MediaActivity {
         }
 
         if (!getAppSettings().isPrefsInitiallySet()) {
-            String msg = "Please access app settings to initialize connection info.";
-            if (getAppSettings().isFireTv()) {
-                new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Setup Required")
-                .setMessage(msg)
-                .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(MainActivity.this, PrefsActivity.class));
-                    }
-                })
-                .show();
-            }
-            else {
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-            }
+            new AlertDialog.Builder(this)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setTitle("Setup Required")
+            .setMessage("Please access Network settings to initialize connection info.")
+            .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(MainActivity.this, PrefsActivity.class));
+                }
+            })
+            .show();
         }
 
         setContentView(R.layout.categories);

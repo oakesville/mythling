@@ -327,7 +327,7 @@ public class AppSettings {
     public boolean isExternalMusicPlayer() {
         return !getBooleanPref(INTERNAL_MUSIC_PLAYER, true);
     }
-    
+
     public boolean isMythlingMediaServices() {
         return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
     }
@@ -952,12 +952,12 @@ public class AppSettings {
             }
         }
     }
-    
+
     public boolean deviceSupportsWebLinks() {
         DevicePrefsSpec deviceConstraints = getDevicePrefsConstraints();
         return deviceConstraints == null || deviceConstraints.supportsWebLinks();
     }
-    
+
     public boolean getBooleanPref(String key, boolean defValue) {
         boolean deviceDefault = defValue;
         if (devicePrefsSpec != null) {
@@ -987,7 +987,7 @@ public class AppSettings {
         }
         return prefs.getInt(key, deviceDefault);
     }
-    
+
     public String getStringPref(String key, String defValue) {
         String deviceDefault = defValue;
         if (devicePrefsSpec != null) {
@@ -997,18 +997,18 @@ public class AppSettings {
         }
         return prefs.getString(key, deviceDefault);
     }
-    
-    public boolean isFireTv() {
-        return devicePrefsSpec instanceof FireTvPrefsSpec;
-    }
-    
+
     /**
      * returns true only once (when newly installed)
      */
     public boolean isPrefsInitiallySet() {
         boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
-        if (!set)
-            prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
+        if (!set) {
+            // for mythling 1.0 users who've set their prefs
+            set = !"192.168.0.69".equals(getMythlingServiceHost());
+            if (!set)
+                prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
+        }
         return set;
     }
 }
