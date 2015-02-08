@@ -179,6 +179,7 @@ public class MainActivity extends MediaActivity {
                 currentTop = listView.getFirstVisiblePosition();
                 View topV = listView.getChildAt(0);
                 topOffset = (topV == null) ? 0 : topV.getTop();
+                selItemIndex = position;
                 List<Listable> listables = mediaList.getTopCategoriesAndItems();
                 boolean isMediaItem = listables.get(position) instanceof Item;
                 if (isMediaItem) {
