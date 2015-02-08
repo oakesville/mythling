@@ -73,7 +73,7 @@
 
         <include
             android:id="@+id/metadata" 
-            layout="@layout/metadata_for_horizontal" />      
+            layout="@layout/metadata" />      
 
     </ScrollView>
 

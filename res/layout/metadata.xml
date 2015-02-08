@@ -84,15 +84,6 @@
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/pagerPlay"
-        android:src="@drawable/play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:visibility="gone"
-        android:contentDescription="@string/play" />
-
     <TextView
         android:id="@+id/directorText"
         android:layout_width="wrap_content"

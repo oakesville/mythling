@@ -25,7 +25,8 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:padding="5dip">
+        android:padding="5dip"
+        android:layout_marginTop="5dip">
 
         <com.oakesville.mythling.ImageView
             android:id="@+id/posterImage"
@@ -39,11 +40,24 @@
             android:layout_gravity="center" />
 
     </FrameLayout>
+    
+    <ImageButton
+        android:id="@+id/pagerPlay"
+        android:src="@drawable/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:visibility="gone"
+        android:contentDescription="@string/play"
+        android:layout_gravity="center|top" />    
 
     <ScrollView
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0px"
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp"
         android:fillViewport="true">
 
         <include
