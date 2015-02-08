@@ -19,7 +19,6 @@
 package com.oakesville.mythling;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,27 +27,16 @@ import com.oakesville.mythling.app.Listable;
 
 public class ListableListAdapter extends ArrayAdapter<Listable> {
 
-    private Context context;
-
     private int selection = -1;
-    public void setSelection(int position) {
-        this.selection = position;
-        notifyDataSetChanged();
-    }
+    public int getSelection() { return selection; }
+    public void setSelection(int sel) { this.selection = sel;  }
 
     public ListableListAdapter(Context context, Listable[] listables) {
-        super(context, android.R.layout.simple_list_item_1, android.R.id.text1, listables);
-        this.context = context;
+        super(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, listables);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = super.getView(position, convertView, parent);
-        if (selection == position)
-            view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-        else
-            view.setBackgroundColor(Color.TRANSPARENT);
-
-        return view;
+        return super.getView(position, convertView, parent);
     }
 }

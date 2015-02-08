@@ -171,7 +171,7 @@ public class SearchActivity extends MediaActivity {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Item item = (Item) items.get(position);
+                Item item = items.get(position);
                 item.setPath(item.getSearchPath());
                 playItem(item);
             }

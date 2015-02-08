@@ -85,7 +85,7 @@ public class Recording extends TvShow {
             buf.append(" ").append(getRatingString(getRating()));
         if (getSubTitle() != null)
             buf.append("\n\"").append(getSubTitle()).append("\"");
-        buf.append(getShowDateTimeInfo());
+        buf.append("\n").append(getShowDateTimeInfo());
         buf.append(getChannelInfo());
         if (!isShowMovie() && isRepeat())
             buf.append(getAirDateInfo());

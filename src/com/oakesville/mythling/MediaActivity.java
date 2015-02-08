@@ -151,7 +151,7 @@ public abstract class MediaActivity extends Activity {
     protected boolean modeSwitch; // tracking for back button
     protected boolean refreshing;
 
-    public abstract void refresh() throws BadSettingsException;
+    public abstract void refresh();
 
     public abstract ListView getListView();
 
@@ -396,52 +396,82 @@ public abstract class MediaActivity extends Activity {
                 viewMenuItem.setIcon(appSettings.getMediaSettings().getViewIcon());
 
             if (item.getItemId() == R.id.media_music) {
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.music);
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.music));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.media_videos) {
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.videos);
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.videos));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.media_recordings) {
-                appSettings.setMediaType(MediaType.recordings);
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
+                appSettings.setMediaType(MediaType.recordings);  // clears view type
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.recordings));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.media_tv) {
-                appSettings.setMediaType(MediaType.liveTv);
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
+                appSettings.setMediaType(MediaType.liveTv);  // clears view type
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.liveTv));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.media_movies) {
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.movies);
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.movies));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.media_tv_series) {
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.tvSeries);
                 item.setChecked(true);
                 mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.tvSeries));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
-                refresh();
+                ViewType newView = appSettings.getMediaSettings().getViewType();
+                if (oldView != newView)
+                    applyViewChange(oldView, newView);
+                else
+                    refresh();
                 return true;
             } else if (item.getItemId() == R.id.sort_byTitle) {
                 appSettings.setSortType(SortType.byTitle);
@@ -513,6 +543,25 @@ public abstract class MediaActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void applyViewChange(ViewType oldView, ViewType newView) {
+        if (newView == ViewType.detail && oldView != ViewType.detail) {
+            getAppSettings().clearCache();  // refresh after nav
+            goDetailView();
+        } else if (oldView == ViewType.detail && newView != ViewType.detail) {
+            getAppSettings().clearCache();  // refresh after nav
+            if (newView == ViewType.split)
+                goSplitView();
+            else
+                goListView();
+        } else if (oldView != newView) {
+            if (newView == ViewType.split)
+                goSplitView();
+            else
+                goListView();
+            refresh();
+        }
     }
 
     protected void showItemInDetailPane(int position) {
@@ -920,17 +969,8 @@ public abstract class MediaActivity extends Activity {
                 try {
                     appData.writeStorageGroups(storageGroupsJson);
                     appData.writeMediaList(mediaListJson);
-                    ViewType viewType = getAppSettings().getMediaSettings().getViewType();
-                    if (viewType == ViewType.list && (isDetailView() || isSplitView())) {
-                        goListView();
-                    } else if (viewType == ViewType.detail && (isListView() || isSplitView())) {
-                        goDetailView();
-                    } else if (viewType == ViewType.split && (isListView() || isDetailView())) {
-                        goSplitView();
-                    } else {
-                        stopProgress();
-                        populate();
-                    }
+                    stopProgress();
+                    populate();
                 } catch (Exception ex) {
                     stopProgress();
                     if (BuildConfig.DEBUG)

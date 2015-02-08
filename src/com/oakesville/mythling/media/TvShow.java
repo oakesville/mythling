@@ -154,7 +154,7 @@ public class TvShow extends Item {
     public String getShowDateTimeInfo() {
         StringBuffer buf = new StringBuffer();
         try {
-            buf.append("\n").append(getStartDateTimeFormatted()).append("-");
+            buf.append(getStartDateTimeFormatted()).append("-");
             buf.append(getEndTimeFormatted()).append(" ");
         } catch (ParseException ex) {
             if (BuildConfig.DEBUG)
@@ -279,7 +279,7 @@ public class TvShow extends Item {
             buf.append(" (").append(getYear()).append(")");
         if (getRating() > 0)
             buf.append(" ").append(getRatingString(getRating()));
-        buf.append(getSummary());
+        buf.append("\n").append(getSummary());
         return buf.toString();
     }
 

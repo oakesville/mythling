@@ -18,7 +18,7 @@
  */
 package com.oakesville.mythling.app;
 
-public class BadSettingsException extends Exception {
+public class BadSettingsException extends RuntimeException {
     public BadSettingsException(String msg) {
         super(msg);
     }

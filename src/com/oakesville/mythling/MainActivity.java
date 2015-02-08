@@ -186,6 +186,7 @@ public class MainActivity extends MediaActivity {
                     Item item = (Item) listables.get(position);
                     if (isSplitView()) {
                         adapter.setSelection(selItemIndex);
+                        listView.setItemChecked(selItemIndex, true);
                         showItemInDetailPane(position);
                     } else {
                         item.setPath("");
@@ -196,6 +197,7 @@ public class MainActivity extends MediaActivity {
                     String cat = ((TextView) view).getText().toString();
                     if (isSplitView()) {
                         adapter.setSelection(position);
+                        listView.setItemChecked(position, true);
                         showSubListPane(cat);
                     } else {
                         Uri.Builder builder = new Uri.Builder();
@@ -211,6 +213,7 @@ public class MainActivity extends MediaActivity {
         listView.setSelectionFromTop(currentTop, topOffset);
         if (isSplitView()) {
             adapter.setSelection(selItemIndex);
+            listView.setItemChecked(selItemIndex, true);
             if (selItemIndex != -1) {
                 Listable preSel = getItems().get(selItemIndex);
                 if (preSel instanceof Item)

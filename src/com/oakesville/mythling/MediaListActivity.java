@@ -237,6 +237,7 @@ public class MediaListActivity extends MediaActivity {
             listView.setSelectionFromTop(currentTop, topOffset);
             if (isSplitView()) {
                 adapter.setSelection(selItemIndex);
+                listView.setItemChecked(selItemIndex, true);
                 if (selItemIndex != -1) {
                     Listable preSel = getItems().get(selItemIndex);
                     if (preSel instanceof Item)
