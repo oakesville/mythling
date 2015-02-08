@@ -214,6 +214,8 @@ public class MainActivity extends MediaActivity {
                 Listable preSel = getItems().get(selItemIndex);
                 if (preSel instanceof Item)
                     showItemInDetailPane(selItemIndex);
+                else
+                    showSubListPane(getPath() + "/" + preSel.getLabel());
             }
         }
     }
