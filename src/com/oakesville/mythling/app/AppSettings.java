@@ -581,7 +581,7 @@ public class AppSettings {
             mediaSettings = new MediaSettings(mediaType);
             String typeDeterminer = getStringPref(CATEGORIZE_VIDEOS, MediaTypeDeterminer.metadata.toString());
             mediaSettings.setTypeDeterminer(typeDeterminer);
-            String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), "list");
+            String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), getDefaultViewType().toString());
             mediaSettings.setViewType(viewType);
             String sortType = getStringPref(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
             mediaSettings.setSortType(sortType);
@@ -922,6 +922,14 @@ public class AppSettings {
 
     public boolean isTablet() {
         return appContext.getResources().getBoolean(R.bool.isTablet);
+    }
+
+    public boolean isFireTv() {
+        return devicePrefsSpec instanceof FireTvPrefsSpec;
+    }
+
+    public ViewType getDefaultViewType() {
+        return isTablet() || isFireTv() ? ViewType.split : ViewType.list;
     }
 
     private static String mythlingVersion;

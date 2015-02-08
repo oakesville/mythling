@@ -301,7 +301,7 @@ public abstract class MediaActivity extends Activity {
                 else
                     viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
             } else {
-                mediaSettings.setViewType(ViewType.list);
+                mediaSettings.setViewType(appSettings.getDefaultViewType());
             }
 
             viewMenuItem.setEnabled(show);
