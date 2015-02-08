@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -61,6 +62,7 @@ import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
+import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
@@ -90,9 +92,18 @@ import com.oakesville.mythling.util.Transcoder;
 public abstract class MediaActivity extends Activity {
     private static final String TAG = MediaActivity.class.getSimpleName();
 
+    List<Listable> getItems() {
+        return mediaList.getListables(getPath());
+    }
+    List<Listable> getItems(String path) {
+        return mediaList.getListables(path);
+    }
+
+    String getPath() { return ""; }
+
     protected MediaList mediaList;
     protected Map<String, StorageGroup> storageGroups;
-    
+
     private BroadcastReceiver playbackBroadcastReceiver;
 
     private static AppData appData;
@@ -137,13 +148,13 @@ public abstract class MediaActivity extends Activity {
     private int count;
     private Timer timer;
 
-    protected boolean modeSwitch;
+    protected boolean modeSwitch; // tracking for back button
     protected boolean refreshing;
 
     public abstract void refresh() throws BadSettingsException;
 
     public abstract ListView getListView();
-    
+
     private boolean active;
 
     @Override
@@ -159,13 +170,13 @@ public abstract class MediaActivity extends Activity {
         if (supportsMusic())
           registerPlaybackBroadcastReceiver(true);
     }
-    
+
     @Override
     public void onPause() {
         active = false;
         registerPlaybackBroadcastReceiver(false);
         super.onPause();
-    }    
+    }
 
     private void registerPlaybackBroadcastReceiver(boolean register) {
         if (register) {
@@ -183,7 +194,7 @@ public abstract class MediaActivity extends Activity {
                 unregisterReceiver(playbackBroadcastReceiver);
         }
     }
-    
+
     protected ProgressBar createProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar.setVisibility(View.GONE);
@@ -285,6 +296,8 @@ public abstract class MediaActivity extends Activity {
                 viewMenuItem.setIcon(mediaSettings.getViewIcon());
                 if (mediaSettings.getViewType() == ViewType.detail)
                     viewMenuItem.getSubMenu().findItem(R.id.view_detail).setChecked(true);
+                else if (mediaSettings.getViewType() == ViewType.split)
+                    viewMenuItem.getSubMenu().findItem(R.id.view_split).setChecked(true);
                 else
                     viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
             } else {
@@ -353,11 +366,15 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected boolean isListView() {
-        return !isDetailView();
+        return appSettings.getMediaSettings().getViewType() == ViewType.list;
     }
 
     protected boolean isDetailView() {
-        return false;
+        return appSettings.getMediaSettings().getViewType() == ViewType.detail;
+    }
+
+    protected boolean isSplitView() {
+        return appSettings.getMediaSettings().getViewType() == ViewType.split;
     }
 
     @Override
@@ -456,6 +473,12 @@ public abstract class MediaActivity extends Activity {
                 viewMenuItem.setIcon(R.drawable.ic_menu_detail);
                 goDetailView();
                 return true;
+            } else if (item.getItemId() == R.id.view_split) {
+                appSettings.setViewType(ViewType.split);
+                item.setChecked(true);
+                viewMenuItem.setIcon(R.drawable.ic_menu_split);
+                goSplitView();
+                return true;
             } else if (item.getItemId() == R.id.menu_refresh) {
                 refresh();
                 return true;
@@ -492,6 +515,22 @@ public abstract class MediaActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    protected void showItemInDetailPane(int position) {
+        Bundle arguments = new Bundle();
+        arguments.putInt("idx", position);
+        ItemDetailFragment fragment = new ItemDetailFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
+    }
+
+    protected void showSubListPane(String path) {
+        Bundle arguments = new Bundle();
+        arguments.putString("path", path);
+        ItemListFragment fragment = new ItemListFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
+    }
+
     protected void playItem(final Item item) {
         try {
             AppSettings appSettings = getAppSettings();
@@ -506,8 +545,8 @@ public abstract class MediaActivity extends Activity {
                 if (item.isMusic()) {
                     String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
                     if (appSettings.isExternalMusicPlayer()) {
-                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW); 
-                        intent.setDataAndType(Uri.parse(musicUrl), "audio/*"); 
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.parse(musicUrl), "audio/*");
                         startActivity(intent);
                     }
                     else {
@@ -556,6 +595,7 @@ public abstract class MediaActivity extends Activity {
                     });
 
                     if (appSettings.getMediaSettings().getViewType() == ViewType.list) {
+                        // list mode - show info dialog
                         String dialogMessage = item.getDialogText();
                         if (item.isLiveTv()) {
                             TvShow tvShow = (TvShow) item;
@@ -574,7 +614,7 @@ public abstract class MediaActivity extends Activity {
                         dialog.setMessage(dialogMessage);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
                     } else  {
-                        // detail mode -- no dialog unless preferred stream mode is unknown
+                        // detail or split mode -- no dialog unless preferred stream mode is unknown
                         if (appSettings.isPreferHls(item.getFormat())) {
                             startProgress();
                             new StreamHlsTask(item).execute((URL) null);
@@ -586,7 +626,7 @@ public abstract class MediaActivity extends Activity {
                         }
                     }
                 }
-            } else { 
+            } else {
                 // frontend playback
                 final FrontendPlayer player;
                 if (item.isSearchResult()) {
@@ -635,12 +675,24 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
-    protected void goDetailView() {
-        // default does nothing
+    protected void goListView() {
+        findViewById(R.id.detail_container).setVisibility(View.GONE);
     }
 
-    protected void goListView() {
-        // default does nothing
+    protected void goDetailView() {
+        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+            getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.path(getPath());
+        Uri uri = builder.build();
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    protected void goSplitView() {
+        findViewById(R.id.detail_container).setVisibility(View.VISIBLE);
     }
 
     public void sort() throws IOException, JSONException, ParseException {
@@ -767,14 +819,14 @@ public abstract class MediaActivity extends Activity {
     protected void populate() throws IOException, JSONException, ParseException, BadSettingsException {
         // default does nothing
     }
-    
+
     private boolean isPlayingMusic() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (MusicPlaybackService.class.getName().equals(service.service.getClassName()))
                 return true;
         }
-        return false;        
+        return false;
     }
 
     protected Transcoder getTranscoder(Item item) {
@@ -869,10 +921,12 @@ public abstract class MediaActivity extends Activity {
                     appData.writeStorageGroups(storageGroupsJson);
                     appData.writeMediaList(mediaListJson);
                     ViewType viewType = getAppSettings().getMediaSettings().getViewType();
-                    if (viewType == ViewType.list && isDetailView()) {
+                    if (viewType == ViewType.list && (isDetailView() || isSplitView())) {
                         goListView();
-                    } else if (viewType == ViewType.detail && isListView()) {
+                    } else if (viewType == ViewType.detail && (isListView() || isSplitView())) {
                         goDetailView();
+                    } else if (viewType == ViewType.split && (isListView() || isDetailView())) {
+                        goSplitView();
                     } else {
                         stopProgress();
                         populate();

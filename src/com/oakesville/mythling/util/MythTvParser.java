@@ -156,7 +156,7 @@ public class MythTvParser implements MediaListParser {
                 JSONObject rec = (JSONObject) recs.get(i);
                 Item recItem = buildRecordingItem(rec, storageGroups);
                 ViewType viewType = appSettings.getMediaSettings().getViewType();
-                if (viewType == ViewType.list && (sortType == null || sortType == SortType.byTitle)) {
+                if ((viewType == ViewType.list || viewType == ViewType.split) && (sortType == null || sortType == SortType.byTitle)) {
                     // categorize by title
                     Category cat = mediaList.getCategory(recItem.getTitle());
                     if (cat == null) {

@@ -39,7 +39,8 @@ public class MediaSettings {
 
     public enum ViewType {
         list,
-        detail
+        detail,
+        split
     }
 
     public enum SortType {
@@ -139,6 +140,8 @@ public class MediaSettings {
     public String getViewTypeTitle() {
         if (viewType == ViewType.detail)
             return "Detail";
+        else if (viewType == ViewType.split)
+            return "Split";
         else
             return "List";
     }
@@ -176,6 +179,8 @@ public class MediaSettings {
     public int getViewIcon() {
         if (getViewType() == ViewType.detail)
             return R.drawable.ic_menu_detail;
+        else if (getViewType() == ViewType.split)
+            return R.drawable.ic_menu_split;
         else
             return R.drawable.ic_menu_list;
     }

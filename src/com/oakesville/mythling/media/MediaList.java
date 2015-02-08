@@ -186,6 +186,10 @@ public class MediaList {
     }
 
     public List<Listable> getListables(String path) {
+        return getListables(path, true);
+    }
+
+    public List<Listable> getListables(String path, boolean lenient) {
         if (path == null || "".equals(path))
             return getTopCategoriesAndItems();
         if (path.startsWith("/"))
@@ -197,8 +201,12 @@ public class MediaList {
                 curCat = cat;
         }
 
-        if (curCat == null)  // how?
-            return getTopCategoriesAndItems();
+        if (curCat == null) {
+            if (lenient)
+                return getTopCategoriesAndItems();
+            else
+                return null;
+        }
 
         StringTokenizer st = new StringTokenizer(path.substring(curCat.getName().length()), "/");
         while (st.hasMoreTokens()) {

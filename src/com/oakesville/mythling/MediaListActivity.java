@@ -37,7 +37,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +46,7 @@ import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.Reporter;
 
 /**
@@ -57,6 +56,7 @@ public class MediaListActivity extends MediaActivity {
     private static final String TAG = MediaListActivity.class.getSimpleName();
 
     private String path;
+    public String getPath() { return path; }
     private FragmentBreadCrumbs breadCrumbs;
     private ListView listView;
 
@@ -66,7 +66,9 @@ public class MediaListActivity extends MediaActivity {
 
     private int currentTop = 0;  // top item in the list
     private int topOffset = 0;
-    private ArrayAdapter<Listable> adapter;
+    protected int selItemIndex = 0;
+
+    private ListableListAdapter adapter;
     List<Listable> listables;
 
     public String getCharSet() {
@@ -76,17 +78,26 @@ public class MediaListActivity extends MediaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sub_cats);
+        setContentView(R.layout.split);
 
         createProgressBar();
 
-        listView = (ListView) findViewById(R.id.sub_cats);
+        listView = (ListView) findViewById(R.id.split_cats);
         try {
             String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
             if (newPath != null && !newPath.isEmpty())
-                path = newPath;
+              path = newPath;
 
-            modeSwitch = getIntent().getBooleanExtra("modeSwitch", false);
+            selItemIndex = getIntent().getIntExtra("idx", 0);
+
+            String mode = getIntent().getStringExtra("modeSwitch");
+            modeSwitch = mode != null;
+            if (mode == null)
+                mode = getAppSettings().getMediaSettings().getViewType().toString();
+            if (ViewType.list.toString().equals(mode))
+                goListView();
+            else if (ViewType.split.toString().equals(mode))
+                goSplitView();
 
             if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
                 getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -143,7 +154,7 @@ public class MediaListActivity extends MediaActivity {
             breadCrumbs.setTitle(title, title);
         }
 
-        adapter = new ArrayAdapter<Listable>(MediaListActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, listables.toArray(new Listable[0]));
+        adapter = new ListableListAdapter(MediaListActivity.this, listables.toArray(new Listable[0]));
         listView.setAdapter(adapter);
         if (listables.size() > 0) {
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -151,21 +162,34 @@ public class MediaListActivity extends MediaActivity {
                     currentTop = listView.getFirstVisiblePosition();
                     View topV = listView.getChildAt(0);
                     topOffset = (topV == null) ? 0 : topV.getTop();
+                    selItemIndex = position;
                     final String text = ((TextView) view).getText().toString();
                     boolean isItem = listables.get(position) instanceof Item;
                     if (isItem) {
                         Item item = (Item) listables.get(position);
-                        if (item.isRecording() || item.isLiveTv())
-                            item.setPath("");
-                        else
-                            item.setPath(path);
-                        playItem(item);
+                        if (isSplitView()) {
+                            adapter.setSelection(selItemIndex);
+                            showItemInDetailPane(position);
+                        }
+                        else {
+                            if (item.isRecording() || item.isLiveTv())
+                                item.setPath("");
+                            else
+                                item.setPath(path);
+                            playItem(item);
+                        }
                     } else {
                         // must be category
-                        Uri.Builder builder = new Uri.Builder();
-                        builder.path(path + "/" + text);
-                        Uri uri = builder.build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                        String catpath = path + "/" + text;
+                        if (isSplitView()) {
+                            adapter.setSelection(selItemIndex);
+                            showSubListPane(catpath);
+                        } else {
+                            Uri.Builder builder = new Uri.Builder();
+                            builder.path(catpath);
+                            Uri uri = builder.build();
+                            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                        }
                     }
                 }
             });
@@ -211,6 +235,14 @@ public class MediaListActivity extends MediaActivity {
             });
             updateActionMenu();
             listView.setSelectionFromTop(currentTop, topOffset);
+            if (isSplitView()) {
+                adapter.setSelection(selItemIndex);
+                if (selItemIndex != -1) {
+                    Listable preSel = getItems().get(selItemIndex);
+                    if (preSel instanceof Item)
+                        showItemInDetailPane(selItemIndex);
+                }
+            }
         }
     }
 
@@ -227,22 +259,11 @@ public class MediaListActivity extends MediaActivity {
     private void goMain() {
         currentTop = 0;
         topOffset = 0;
+        selItemIndex = 0;
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
-    }
-
-    protected void goDetailView() {
-        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
-            getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
-
-        Uri.Builder builder = new Uri.Builder();
-        builder.path(path);
-        Uri uri = builder.build();
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
-        intent.putExtra("modeSwitch", true);
-        startActivity(intent);
     }
 
     @Override

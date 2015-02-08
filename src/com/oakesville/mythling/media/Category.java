@@ -27,6 +27,7 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class Category implements Listable, Comparable<Category> {
+
     public Category(String name, MediaType type) {
         this.name = name;
         this.type = type;

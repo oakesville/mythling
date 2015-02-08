@@ -34,7 +34,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,8 +44,6 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
@@ -62,7 +59,9 @@ public class MainActivity extends MediaActivity {
 
     private int currentTop = 0;  // top item in the list
     private int topOffset = 0;
-    private ArrayAdapter<Listable> adapter;
+    protected int selItemIndex = 0;
+
+    private ListableListAdapter adapter;
 
     public String getCharSet() {
         return mediaList.getCharSet();
@@ -96,11 +95,22 @@ public class MainActivity extends MediaActivity {
             .show();
         }
 
-        setContentView(R.layout.categories);
+        setContentView(R.layout.split);
+
+        findViewById(R.id.breadcrumbs).setVisibility(View.GONE);
 
         createProgressBar();
 
-        listView = (ListView) findViewById(R.id.categories);
+        String mode = getIntent().getStringExtra("modeSwitch");
+        modeSwitch = mode != null;
+        if (mode == null)
+            mode = getAppSettings().getMediaSettings().getViewType().toString();
+        if (ViewType.list.toString().equals(mode))
+            goListView();
+        else if (ViewType.split.toString().equals(mode))
+            goSplitView();
+
+        listView = (ListView) findViewById(R.id.split_cats);
 
         if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail) {
             Intent intent = new Intent(this, MediaPagerActivity.class);
@@ -138,7 +148,7 @@ public class MainActivity extends MediaActivity {
         currentTop = 0;
         topOffset = 0;
         mediaList = new MediaList();
-        adapter = new ArrayAdapter<Listable>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
+        adapter = new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
         listView.setAdapter(adapter);
 
         startProgress();
@@ -162,7 +172,7 @@ public class MainActivity extends MediaActivity {
 
         mediaList = getAppData().getMediaList();
 
-        adapter = new ArrayAdapter<Listable>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
+        adapter = new ListableListAdapter(MainActivity.this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -173,33 +183,38 @@ public class MainActivity extends MediaActivity {
                 boolean isMediaItem = listables.get(position) instanceof Item;
                 if (isMediaItem) {
                     Item item = (Item) listables.get(position);
-                    item.setPath("");
-                    playItem(item);
+                    if (isSplitView()) {
+                        adapter.setSelection(selItemIndex);
+                        showItemInDetailPane(position);
+                    } else {
+                        item.setPath("");
+                        playItem(item);
+                    }
                 } else {
                     // must be category
                     String cat = ((TextView) view).getText().toString();
-                    Uri.Builder builder = new Uri.Builder();
-                    builder.path(cat);
-                    Uri uri = builder.build();
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                    if (isSplitView()) {
+                        adapter.setSelection(position);
+                        showSubListPane(cat);
+                    } else {
+                        Uri.Builder builder = new Uri.Builder();
+                        builder.path(cat);
+                        Uri uri = builder.build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                    }
                 }
             }
         });
         updateActionMenu();
         stopProgress();
         listView.setSelectionFromTop(currentTop, topOffset);
+        if (isSplitView()) {
+            adapter.setSelection(selItemIndex);
+            if (selItemIndex != -1) {
+                Listable preSel = getItems().get(selItemIndex);
+                if (preSel instanceof Item)
+                    showItemInDetailPane(selItemIndex);
+            }
+        }
     }
-
-    protected void goDetailView() {
-        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
-            getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
-
-        Uri.Builder builder = new Uri.Builder();
-        builder.path("");
-        Uri uri = builder.build();
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
 }

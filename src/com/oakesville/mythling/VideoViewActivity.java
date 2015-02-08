@@ -21,6 +21,7 @@ package com.oakesville.mythling;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.MediaPlayer;
@@ -57,6 +58,7 @@ public class VideoViewActivity extends Activity {
     private AppSettings appSettings;
 
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,8 +136,8 @@ public class VideoViewActivity extends Activity {
 //                    return false;
 //                }
 //            });
-            
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {                    
+
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 videoView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     public void onSystemUiVisibilityChange(int vis) {
@@ -223,7 +225,7 @@ public class VideoViewActivity extends Activity {
         hideHandler.removeCallbacks(hideRunnable);
         hideHandler.postDelayed(hideRunnable, delayMillis);
     }
-    
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setFullScreen(boolean fullScreen) {
         if (fullScreen) {

@@ -18,42 +18,25 @@
  */
 package com.oakesville.mythling;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.List;
 
 import org.json.JSONException;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -61,18 +44,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.media.ArtworkDescriptor;
-import com.oakesville.mythling.media.Category;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.Video;
-import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.Reporter;
 
 /**
@@ -82,13 +58,13 @@ public class MediaPagerActivity extends MediaActivity {
     private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
     private String path;
-
+    String getPath() { return path; }
     private ViewPager pager;
     private MediaPagerAdapter pagerAdapter;
     private List<Listable> items;
+    List<Listable> getItems() { return items; }
     private int currentPosition;
     private SeekBar positionBar;
-    private int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
 
     public String getCharSet() {
         return mediaList.getCharSet();
@@ -237,20 +213,28 @@ public class MediaPagerActivity extends MediaActivity {
     }
 
     protected void goListView() {
+        goListView("list");
+    }
+
+    protected void goSplitView() {
+        goListView("split");
+    }
+
+    protected void goListView(String mode) {
         if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
             getAppSettings().clearCache(); // refresh since we're switching from flattened hierarchy
 
         if (path == null || path.isEmpty()) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("modeSwitch", true);
+            intent.putExtra("modeSwitch", mode);
             startActivity(intent);
         } else {
             Uri.Builder builder = new Uri.Builder();
             builder.path(path);
             Uri uri = builder.build();
             Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class);
-            intent.putExtra("modeSwitch", true);
+            intent.putExtra("modeSwitch", mode);
             startActivity(intent);
         }
     }
@@ -282,309 +266,11 @@ public class MediaPagerActivity extends MediaActivity {
         }
 
         public Fragment getItem(int position) {
-            Fragment frag = new MediaPagerFragment();
+            Fragment frag = new ItemDetailFragment();
             Bundle args = new Bundle();
             args.putInt("idx", position);
             frag.setArguments(args);
             return frag;
-        }
-    }
-
-    public static class MediaPagerFragment extends Fragment {
-        private MediaPagerActivity pagerActivity;
-        private AppSettings appSettings;
-        private View detailView;
-        private ImageView artworkView;
-        private Listable listable;
-        private int idx;
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            idx = getArguments() != null ? getArguments().getInt("idx") : 1;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            pagerActivity = (MediaPagerActivity) activity;
-            appSettings = pagerActivity.getAppSettings();
-        }
-
-        @Override
-        public void onDetach() {
-            pagerActivity = null;
-            appSettings = null;
-            super.onDetach();
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            detailView = inflater.inflate(R.layout.detail, container, false);
-            return detailView;
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (pagerActivity.refreshing)
-                return;
-
-            listable = pagerActivity.items.get(idx);
-            appSettings = pagerActivity.getAppSettings();  // somehow this was set to null
-
-            TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
-
-            if (listable instanceof Category) {
-                Category category = (Category) listable;
-
-                titleView.setText(category.getName());
-                titleView.setMovementMethod(LinkMovementMethod.getInstance());
-                Spannable spans = (Spannable) titleView.getText();
-                ClickableSpan clickSpan = new ClickableSpan() {
-                    public void onClick(View v) {
-                        ((TextView) v).setBackgroundColor(Color.GRAY);
-                        Uri.Builder builder = new Uri.Builder();
-                        builder.path(pagerActivity.path.length() == 0 ? listable.toString() : pagerActivity.path + "/" + listable.toString());
-                        Uri uri = builder.build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(), MediaPagerActivity.class));
-                    }
-                };
-                spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-                Drawable folder = getResources().getDrawable(R.drawable.folder);
-                artworkView.setImageDrawable(folder);
-                artworkView.setClickable(true);
-                artworkView.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        ((ImageView) v).setBackgroundResource(R.drawable.rounded_frame_active);
-                        Uri.Builder builder = new Uri.Builder();
-                        builder.path(pagerActivity.path.length() == 0 ? listable.toString() : pagerActivity.path + "/" + listable.toString());
-                        Uri uri = builder.build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri, pagerActivity.getApplicationContext(), MediaPagerActivity.class));
-                    }
-                });
-            } else if (listable instanceof Item) {
-                Item item = (Item) listable;
-
-                titleView.setText(item.getLabel());
-
-                // rating
-                if (item.getRating() > 0) {
-                    for (int i = 0; i < 5; i++) {
-                        ImageView star = (ImageView) detailView.findViewById(pagerActivity.ratingViewIds[i]);
-                        if (i <= item.getRating() - 1)
-                            star.setImageResource(R.drawable.rating_full);
-                        else if (i < item.getRating())
-                            star.setImageResource(R.drawable.rating_half);
-                        else
-                            star.setImageResource(R.drawable.rating_empty);
-                    }
-                }
-
-                if (item instanceof Video) {
-                    Video video = (Video) item;
-                    // director
-                    TextView tvDir = (TextView) detailView.findViewById(R.id.directorText);
-                    if (video.getDirector() != null)
-                        tvDir.setText("Directed by: " + video.getDirector());
-                    else
-                        tvDir.setVisibility(View.GONE);
-
-                    TextView tvAct = (TextView) detailView.findViewById(R.id.actorsText);
-                    // actors
-                    if (video.getActors() != null)
-                        tvAct.setText("Starring: " + video.getActors());
-                    else
-                        tvAct.setVisibility(View.GONE);
-
-                    // summary
-                    if (video.getSummary() != null) {
-                        TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
-                        String summary = video.getSummary();
-                        tv.setText(summary);
-                    }
-
-                    if (appSettings.deviceSupportsWebLinks()) {
-                        // custom link (only for movies and tv series)
-                        if ((item.isMovie() || item.isTvSeries())
-                                && appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty()) {
-                            try {
-                                String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-                                URL url = new URL(appSettings.getCustomBaseUrl() + pagerActivity.path + "/" + encodedTitle);
-                                TextView tv = (TextView) detailView.findViewById(R.id.customLink);
-                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                                tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
-                                tv.setMovementMethod(LinkMovementMethod.getInstance());
-                                tv.setOnClickListener(new OnClickListener() {
-                                    public void onClick(View v) {
-                                        ((TextView) v).setBackgroundColor(Color.GRAY);
-                                    }
-                                });
-                            } catch (IOException ex) {
-                                if (BuildConfig.DEBUG)
-                                    Log.e(TAG, ex.getMessage(), ex);
-                                if (appSettings.isErrorReportingEnabled())
-                                    new Reporter(ex).send();
-                            }
-                        }
-    
-                        // page link
-                        if (video.getPageUrl() != null || video.getInternetRef() != null) {
-                            try {
-                                String pageUrl = video.getPageUrl();
-                                if (pageUrl == null || pageUrl.isEmpty()) {
-                                    String baseUrl = getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
-                                    String ref = video.getInternetRef();
-                                    int lastUnderscore = ref.lastIndexOf('_');
-                                    if (lastUnderscore >= 0 && lastUnderscore < ref.length() - 1)
-                                        ref = ref.substring(lastUnderscore + 1);
-                                    pageUrl = baseUrl + ref;
-                                }
-                                URL url = new URL(pageUrl);
-                                TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
-                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                                tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
-                                tv.setMovementMethod(LinkMovementMethod.getInstance());
-                                tv.setOnClickListener(new OnClickListener() {
-                                    public void onClick(View v) {
-                                        ((TextView) v).setBackgroundColor(Color.GRAY);
-                                    }
-                                });
-                            } catch (MalformedURLException ex) {
-                                if (BuildConfig.DEBUG)
-                                    Log.e(TAG, ex.getMessage(), ex);
-                                if (appSettings.isErrorReportingEnabled())
-                                    new Reporter(ex).send();
-                                Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                } else {
-                    if (item instanceof TvShow) {
-                        ((TextView) detailView.findViewById(R.id.directorText)).setVisibility(View.GONE);
-                        ((TextView) detailView.findViewById(R.id.actorsText)).setVisibility(View.GONE);
-
-                        TvShow tvShow = (TvShow) item;
-                        TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
-                        tv.setText(tvShow.getSummary());
-                    }
-                }
-
-                Button button = (Button) detailView.findViewById(R.id.pagerPlay);
-                button.setVisibility(android.view.View.VISIBLE);
-                button.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        Item item = (Item) listable;
-                        item.setPath(pagerActivity.path);
-                        pagerActivity.playItem(item);
-                    }
-                });
-
-                String artSg = appSettings.getArtworkStorageGroup(item.getType());
-                ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
-                if (art != null) {
-                    artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-                    try {
-                        String filePath = item.getType() + "/" + pagerActivity.path + "/" + art.getArtworkPath();
-                        Bitmap bitmap = getAppData().getImageBitMap(filePath);
-                        if (bitmap == null) {
-                            URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
-                            new ImageRetrievalTask(item, art).execute(url);
-                        } else {
-                            artworkView.setImageBitmap(bitmap);
-                        }
-                        artworkView.setClickable(true);
-                        artworkView.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                Item item = (Item) listable;
-                                item.setPath(pagerActivity.path);
-                                pagerActivity.playItem(item);
-                            }
-                        });
-                    } catch (Exception ex) {
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
-                        if (appSettings.isErrorReportingEnabled())
-                            new Reporter(ex).send();
-                        Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        }
-
-        public class ImageRetrievalTask extends AsyncTask<URL, Integer, Long> {
-            private Exception ex;
-            private String filePath;
-            private Bitmap bitmap;
-            private Item item;
-            private ArtworkDescriptor descriptor;
-
-            ImageRetrievalTask(Item item, ArtworkDescriptor descriptor) {
-                this.item = item;
-                this.descriptor = descriptor;
-            }
-
-            protected Long doInBackground(URL... urls) {
-                try {
-                    filePath = item.getType() + "/" + pagerActivity.path + "/" + descriptor.getArtworkPath();
-                    bitmap = getAppData().readImageBitmap(filePath);
-                    if (bitmap == null) {
-                        if (BuildConfig.DEBUG)
-                            Log.d(TAG, "Loading image from url: " + urls[0]);
-                        HttpHelper downloader = new HttpHelper(urls, appSettings.getMythTvServicesAuthType(), appSettings.getPrefs(), true);
-                        downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
-                        try {
-                            byte[] imageBytes = downloader.get();
-                            getAppData().writeImage(filePath, imageBytes);
-                        } catch (EOFException ex) {
-                            // try again
-                            byte[] imageBytes = downloader.get();
-                            getAppData().writeImage(filePath, imageBytes);
-                        } catch (IOException ex) {
-                            // fail silently
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
-                        }
-                    }
-
-                    return 0L;
-                } catch (Exception ex) {
-                    this.ex = ex;
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
-                    if (appSettings.isErrorReportingEnabled())
-                        new Reporter(ex).send();
-                    return -1L;
-                }
-            }
-
-            protected void onPostExecute(Long result) {
-                if (result != 0L) {
-                    if (ex != null) {
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
-                        if (appSettings.isErrorReportingEnabled())
-                            new Reporter(ex).send();
-                        Toast.makeText(pagerActivity, ex.toString(), Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    try {
-                        artworkView.setImageBitmap(getAppData().readImageBitmap(filePath));
-                    } catch (Exception ex) {
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
-                        if (appSettings.isErrorReportingEnabled())
-                            new Reporter(ex).send();
-                    }
-                }
-            }
         }
     }
 
@@ -593,11 +279,6 @@ public class MediaPagerActivity extends MediaActivity {
         super.sort();
         pager.setCurrentItem(0);
         positionBar.setProgress(1);
-    }
-
-    @Override
-    protected boolean isDetailView() {
-        return true;
     }
 
 }
