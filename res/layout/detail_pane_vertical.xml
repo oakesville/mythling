@@ -33,7 +33,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/poster"
-            android:background="@drawable/rounded_frame"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:padding="5dip"
@@ -58,7 +57,9 @@
         android:layout_gravity="center_horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="5dp"
-        android:fillViewport="true">
+        android:layout_marginTop="5dp"
+        android:fillViewport="true"
+        android:background="@drawable/textlines">
 
         <include
             android:id="@+id/metadata" 

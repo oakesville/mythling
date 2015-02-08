@@ -152,6 +152,7 @@ public class MainActivity extends MediaActivity {
     public void refresh() throws BadSettingsException {
         currentTop = 0;
         topOffset = 0;
+        selItemIndex = 0;
         mediaList = new MediaList();
         adapter = new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
         listView.setAdapter(adapter);
