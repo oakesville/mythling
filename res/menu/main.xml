@@ -91,6 +91,10 @@
                     android:id="@+id/view_detail"
                     android:title="@string/menu_detail"
                     android:icon="@drawable/ic_menu_detail" />
+                <item
+                    android:id="@+id/view_split"
+                    android:title="@string/menu_split"
+                    android:icon="@drawable/ic_menu_split" />
             </group>
         </menu>
     </item>
