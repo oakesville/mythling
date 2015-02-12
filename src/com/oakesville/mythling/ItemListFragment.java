@@ -64,8 +64,12 @@ public class ItemListFragment extends ListFragment {
             builder.path(path + "/" + sel.getLabel());
         Uri uri = builder.build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
-        if (isItem)
-          intent.putExtra("idx", position);
+        if (isItem) {
+            intent.putExtra("curTop", listView.getFirstVisiblePosition());
+            View topV = listView.getChildAt(0);
+            intent.putExtra("topOff", (topV == null) ? 0 : topV.getTop());
+            intent.putExtra("idx", position);
+        }
 
         startActivity(intent);
     }

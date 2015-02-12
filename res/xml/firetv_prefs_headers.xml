@@ -54,17 +54,12 @@
         android:fragment="com.oakesville.mythling.prefs.firetv.FireTvVideoQualityPrefs"
         android:title="@string/title_prefs_video_quality"
         android:summary="@string/summary_prefs_video_quality" />
-
+    
     <header
-        android:id="@+id/prefs_header_caching"
-        android:fragment="com.oakesville.mythling.prefs.CachingPrefs"
-        android:title="@string/title_prefs_caching"
-        android:summary="@string/summary_prefs_caching" />
-
-    <header
-        android:id="@+id/prefs_header_timeout"
-        android:fragment="com.oakesville.mythling.prefs.TimeoutPrefs"
-        android:title="@string/title_prefs_timeouts"
-        android:summary="@string/summary_prefs_timeouts" />
+        android:id="@+id/prefs_header_system"
+        android:fragment="com.oakesville.mythling.prefs.SystemPrefs"
+        android:title="@string/title_prefs_system"
+        android:summary="@string/summary_prefs_system" />
+    
 
 </preference-headers>

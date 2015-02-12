@@ -112,6 +112,7 @@ public class AppSettings {
     public static final String MYTHLING_SERVICES_AUTH_TYPE = "mythling_services_auth_type";
     public static final String MYTHLING_SERVICES_USER = "mythling_services_user";
     public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
+    public static final String MYTHLING_VERSION = "mythling_version";
     public static final String TUNER_TIMEOUT = "tuner_timeout";
     public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
     public static final String TRANSCODE_JOB_LIMIT = "transcode_job_limit";

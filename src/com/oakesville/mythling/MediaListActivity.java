@@ -89,6 +89,8 @@ public class MediaListActivity extends MediaActivity {
               path = newPath;
 
             selItemIndex = getIntent().getIntExtra("idx", 0);
+            topOffset = getIntent().getIntExtra("topOff", 0);
+            currentTop = getIntent().getIntExtra("curTop", 0);
 
             String mode = getIntent().getStringExtra("modeSwitch");
             modeSwitch = mode != null;

@@ -25,15 +25,18 @@ import android.preference.PreferenceFragment;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 
-public class TimeoutPrefs extends PreferenceFragment {
+public class SystemPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_timeout_settings);
-        addPreferencesFromResource(R.xml.timeout_prefs);
+        getActivity().getActionBar().setTitle(R.string.title_system_settings);
+        addPreferencesFromResource(R.xml.system_prefs);
+
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
+        pref.setSummary(AppSettings.getMythlingVersion());
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
+        pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
         pref.setSummary("" + appSettings.getTunerTimeout() + " Seconds");
 
