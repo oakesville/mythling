@@ -16,36 +16,51 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
+ <!-- unfortunately this is duplicated in detail_pane_vertical.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:drawable/gallery_thumb">
+    android:layout_height="match_parent">
 
     <FrameLayout
-        android:layout_weight="7"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:padding="5dip">
+        android:padding="5dip"
+        android:layout_marginTop="5dip">
 
         <com.oakesville.mythling.ImageView
             android:id="@+id/posterImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/poster"
-            android:background="@drawable/rounded_frame"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:padding="5dip"
             android:layout_gravity="center" />
 
     </FrameLayout>
+    
+    <ImageButton
+        android:id="@+id/pagerPlay"
+        android:src="@drawable/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:visibility="gone"
+        android:contentDescription="@string/play"
+        android:layout_gravity="center|top" />    
 
     <ScrollView
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:fillViewport="true">
+        android:layout_height="0px"
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="5dp"
+        android:fillViewport="true"
+        android:background="@drawable/textlines">
 
         <include
             android:id="@+id/metadata" 

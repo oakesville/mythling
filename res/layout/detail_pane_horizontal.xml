@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
+<!-- unfortunately this is duplicated in layout-land/detail.xml --> 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"

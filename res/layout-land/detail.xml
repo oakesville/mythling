@@ -16,17 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
+<!-- unfortunately this is duplicated in detail_pane_horizontal.xml --> 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:drawable/gallery_thumb"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:layout_marginLeft="5dip">
 
+    <LinearLayout
+      android:layout_weight="2"
+      android:orientation="vertical"
+      android:layout_width="0px"
+      android:layout_height="match_parent">
+  
     <FrameLayout
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_weight="7"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
         android:padding="5dip">
 
         <com.oakesville.mythling.ImageView
@@ -34,17 +41,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/poster"
-            android:background="@drawable/rounded_frame"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:padding="5dip"
             android:layout_gravity="center" />
     </FrameLayout>
+    
+    <ImageButton
+        android:id="@+id/pagerPlay"
+        android:src="@drawable/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:visibility="gone"
+        android:contentDescription="@string/play"
+        android:layout_gravity="center|top" />
+    
+    <View
+        android:layout_weight="1" 
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />    
+
+    </LinearLayout>
+    
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_weight="3"
+        android:layout_width="0px"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:fillViewport="true">
 
         <include
