@@ -582,7 +582,7 @@ public class AppSettings {
             mediaSettings = new MediaSettings(mediaType);
             String typeDeterminer = getStringPref(CATEGORIZE_VIDEOS, MediaTypeDeterminer.metadata.toString());
             mediaSettings.setTypeDeterminer(typeDeterminer);
-            String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), getDefaultViewType().toString());
+            String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), getDefaultViewType(mediaSettings.getType()).toString());
             mediaSettings.setViewType(viewType);
             String sortType = getStringPref(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
             mediaSettings.setSortType(sortType);
@@ -929,7 +929,9 @@ public class AppSettings {
         return devicePrefsSpec instanceof FireTvPrefsSpec;
     }
 
-    public ViewType getDefaultViewType() {
+    public ViewType getDefaultViewType(MediaType mediaType) {
+        if (mediaType == MediaType.videos || mediaType == MediaType.liveTv || mediaType == MediaType.music)
+            return ViewType.list; // regardless of device
         return isTablet() || isFireTv() ? ViewType.split : ViewType.list;
     }
 
