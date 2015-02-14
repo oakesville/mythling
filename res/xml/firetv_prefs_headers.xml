@@ -55,11 +55,4 @@
         android:title="@string/title_prefs_video_quality"
         android:summary="@string/summary_prefs_video_quality" />
     
-    <header
-        android:id="@+id/prefs_header_system"
-        android:fragment="com.oakesville.mythling.prefs.SystemPrefs"
-        android:title="@string/title_prefs_system"
-        android:summary="@string/summary_prefs_system" />
-    
-
 </preference-headers>
