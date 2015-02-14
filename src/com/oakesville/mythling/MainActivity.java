@@ -229,4 +229,20 @@ public class MainActivity extends MediaActivity {
             }
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("curTop", currentTop);
+        savedInstanceState.putInt("topOff", topOffset);
+        savedInstanceState.putInt("selItem", selItemIndex);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentTop = savedInstanceState.getInt("curTop", 0);
+        topOffset = savedInstanceState.getInt("topOff", 0);
+        selItemIndex = savedInstanceState.getInt("selItem", 0);
+    }
 }
