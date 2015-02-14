@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -87,15 +88,20 @@ import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
 
 /**
- * Base class for the two different ways to view collections of MythTV media.
+ * Base class for the different ways to view collections of MythTV media.
  */
 public abstract class MediaActivity extends Activity {
     private static final String TAG = MediaActivity.class.getSimpleName();
+
+    protected static final String DETAIL_FRAGMENT_TAG = "detailFragmentTag";
+    protected static final String LIST_FRAGMENT_TAG = "listFragmentTag";
 
     List<Listable> getItems() {
         return mediaList.getListables(getPath());
     }
     List<Listable> getItems(String path) {
+        if (mediaList == null)
+            return new ArrayList<Listable>();  // TODO prevents NPE; address root cause
         return mediaList.getListables(path);
     }
 
@@ -188,10 +194,11 @@ public abstract class MediaActivity extends Activity {
                 };
             }
             registerReceiver(playbackBroadcastReceiver, new IntentFilter(MusicPlaybackService.ACTION_PLAYBACK_STOPPED));
-        }
-        else {
-            if (playbackBroadcastReceiver != null)
+        } else {
+            if (playbackBroadcastReceiver != null) {
                 unregisterReceiver(playbackBroadcastReceiver);
+                playbackBroadcastReceiver = null;
+            }
         }
     }
 
@@ -292,7 +299,6 @@ public abstract class MediaActivity extends Activity {
         if (viewMenuItem != null) {
             MediaSettings mediaSettings = appSettings.getMediaSettings();
             if (show) {
-                // viewMenuItem.setTitle("");
                 viewMenuItem.setIcon(mediaSettings.getViewIcon());
                 if (mediaSettings.getViewType() == ViewType.detail)
                     viewMenuItem.getSubMenu().findItem(R.id.view_detail).setChecked(true);
@@ -300,8 +306,6 @@ public abstract class MediaActivity extends Activity {
                     viewMenuItem.getSubMenu().findItem(R.id.view_split).setChecked(true);
                 else
                     viewMenuItem.getSubMenu().findItem(R.id.view_list).setChecked(true);
-            } else {
-                mediaSettings.setViewType(appSettings.getDefaultViewType());
             }
 
             viewMenuItem.setEnabled(show);
@@ -565,19 +569,19 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected void showItemInDetailPane(int position) {
+        ItemDetailFragment detailFragment = new ItemDetailFragment();
         Bundle arguments = new Bundle();
         arguments.putInt("idx", position);
-        ItemDetailFragment fragment = new ItemDetailFragment();
-        fragment.setArguments(arguments);
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
+        detailFragment.setArguments(arguments);
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT_TAG).commit();
     }
 
     protected void showSubListPane(String path) {
+        ItemListFragment listFragment = new ItemListFragment();
         Bundle arguments = new Bundle();
         arguments.putString("path", path);
-        ItemListFragment fragment = new ItemListFragment();
-        fragment.setArguments(arguments);
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, fragment).commit();
+        listFragment.setArguments(arguments);
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT_TAG).commit();
     }
 
     protected void playItem(final Item item) {

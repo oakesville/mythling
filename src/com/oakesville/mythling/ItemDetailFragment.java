@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -63,7 +64,6 @@ public class ItemDetailFragment extends Fragment {
     private static final String TAG = ItemDetailFragment.class.getSimpleName();
 
     private MediaActivity mediaActivity;
-    private AppSettings appSettings;
     private View detailView;
     private ImageView artworkView;
     private Listable listable;
@@ -81,14 +81,16 @@ public class ItemDetailFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mediaActivity = (MediaActivity) activity;
-        appSettings = mediaActivity.getAppSettings();
     }
 
     @Override
     public void onDetach() {
         mediaActivity = null;
-        appSettings = null;
         super.onDetach();
+    }
+
+    private AppSettings getAppSettings() {
+        return mediaActivity.getAppSettings();
     }
 
     @Override
@@ -96,10 +98,16 @@ public class ItemDetailFragment extends Fragment {
         if (getActivity() instanceof MediaPagerActivity) {
             detailView = inflater.inflate(R.layout.detail, container, false);
         } else {
-            if (AppSettings.DEFAULT_ARTWORK_SG.equals(appSettings.getArtworkStorageGroup(mediaActivity.getMediaType())))
-                detailView = inflater.inflate(R.layout.detail_pane_horizontal, container, false);
-            else
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                // always vertical
                 detailView = inflater.inflate(R.layout.detail_pane_vertical, container, false);
+            } else {
+                // poster-type artwork goes horizontal
+                if (AppSettings.DEFAULT_ARTWORK_SG.equals(getAppSettings().getArtworkStorageGroup(mediaActivity.getMediaType())))
+                    detailView = inflater.inflate(R.layout.detail_pane_horizontal, container, false);
+                else
+                    detailView = inflater.inflate(R.layout.detail_pane_vertical, container, false);
+            }
         }
         return detailView;
     }
@@ -115,8 +123,12 @@ public class ItemDetailFragment extends Fragment {
         if (mediaActivity.refreshing)
             return;
 
+        populate();
+    }
+
+    private void populate() {
+
         listable = mediaActivity.getItems().get(idx);
-        appSettings = mediaActivity.getAppSettings();  // somehow this was set to null
 
         TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
 
@@ -192,13 +204,13 @@ public class ItemDetailFragment extends Fragment {
                     tv.setText(summary);
                 }
 
-                if (appSettings.deviceSupportsWebLinks()) {
+                if (getAppSettings().deviceSupportsWebLinks()) {
                     // custom link (only for movies and tv series)
                     if ((item.isMovie() || item.isTvSeries())
-                            && appSettings.getCustomBaseUrl() != null && !appSettings.getCustomBaseUrl().isEmpty()) {
+                            && getAppSettings().getCustomBaseUrl() != null && !getAppSettings().getCustomBaseUrl().isEmpty()) {
                         try {
                             String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-                            URL url = new URL(appSettings.getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
+                            URL url = new URL(getAppSettings().getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
                             TextView tv = (TextView) detailView.findViewById(R.id.customLink);
                             String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
                             tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
@@ -211,7 +223,7 @@ public class ItemDetailFragment extends Fragment {
                         } catch (IOException ex) {
                             if (BuildConfig.DEBUG)
                                 Log.e(TAG, ex.getMessage(), ex);
-                            if (appSettings.isErrorReportingEnabled())
+                            if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                         }
                     }
@@ -221,7 +233,7 @@ public class ItemDetailFragment extends Fragment {
                         try {
                             String pageUrl = video.getPageUrl();
                             if (pageUrl == null || pageUrl.isEmpty()) {
-                                String baseUrl = MediaActivity.getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? appSettings.getTvBaseUrl() : appSettings.getMovieBaseUrl();
+                                String baseUrl = MediaActivity.getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? getAppSettings().getTvBaseUrl() : getAppSettings().getMovieBaseUrl();
                                 String ref = video.getInternetRef();
                                 int lastUnderscore = ref.lastIndexOf('_');
                                 if (lastUnderscore >= 0 && lastUnderscore < ref.length() - 1)
@@ -241,7 +253,7 @@ public class ItemDetailFragment extends Fragment {
                         } catch (MalformedURLException ex) {
                             if (BuildConfig.DEBUG)
                                 Log.e(TAG, ex.getMessage(), ex);
-                            if (appSettings.isErrorReportingEnabled())
+                            if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                             Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                         }
@@ -268,7 +280,7 @@ public class ItemDetailFragment extends Fragment {
                 }
             });
 
-            String artSg = appSettings.getArtworkStorageGroup(item.getType());
+            String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
             ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
             if (art != null) {
                 artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
@@ -276,7 +288,7 @@ public class ItemDetailFragment extends Fragment {
                     String filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
                     Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
                     if (bitmap == null) {
-                        URL url = new URL(appSettings.getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
+                        URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
                         new ImageRetrievalTask(item, art).execute(url);
                     } else {
                         artworkView.setImageBitmap(bitmap);
@@ -292,7 +304,7 @@ public class ItemDetailFragment extends Fragment {
                 } catch (Exception ex) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
-                    if (appSettings.isErrorReportingEnabled())
+                    if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                 }
@@ -319,8 +331,8 @@ public class ItemDetailFragment extends Fragment {
                 if (bitmap == null) {
                     if (BuildConfig.DEBUG)
                         Log.d(TAG, "Loading image from url: " + urls[0]);
-                    HttpHelper downloader = new HttpHelper(urls, appSettings.getMythTvServicesAuthType(), appSettings.getPrefs(), true);
-                    downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
+                    HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs(), true);
+                    downloader.setCredentials(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
                     try {
                         byte[] imageBytes = downloader.get();
                         MediaActivity.getAppData().writeImage(filePath, imageBytes);
@@ -340,7 +352,7 @@ public class ItemDetailFragment extends Fragment {
                 this.ex = ex;
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
+                if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
             }
@@ -351,7 +363,7 @@ public class ItemDetailFragment extends Fragment {
                 if (ex != null) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
-                    if (appSettings.isErrorReportingEnabled())
+                    if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                 }
@@ -361,7 +373,7 @@ public class ItemDetailFragment extends Fragment {
                 } catch (Exception ex) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
-                    if (appSettings.isErrorReportingEnabled())
+                    if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }
             }

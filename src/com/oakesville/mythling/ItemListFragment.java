@@ -36,7 +36,6 @@ public class ItemListFragment extends ListFragment {
     private ArrayAdapter<Listable> adapter;
     private String path;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +46,11 @@ public class ItemListFragment extends ListFragment {
         super.onAttach(activity);
         path = getArguments().getString("path");
         mediaActivity = (MediaActivity) activity;
-        adapter = new ArrayAdapter<Listable>(activity, android.R.layout.simple_list_item_1, android.R.id.text1, mediaActivity.getItems(path).toArray(new Listable[0]));
+        populate();
+    }
+
+    private void populate() {
+        adapter = new ArrayAdapter<Listable>(mediaActivity, android.R.layout.simple_list_item_1, android.R.id.text1, mediaActivity.getItems(path).toArray(new Listable[0]));
         setListAdapter(adapter);
     }
 
