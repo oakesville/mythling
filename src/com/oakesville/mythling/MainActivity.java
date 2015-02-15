@@ -204,7 +204,7 @@ public class MainActivity extends MediaActivity {
                     if (isSplitView()) {
                         adapter.setSelection(position);
                         listView.setItemChecked(position, true);
-                        showSubListPane(cat);
+                        showSubListPane(cat, 0);
                     } else {
                         Uri.Builder builder = new Uri.Builder();
                         builder.path(cat);

@@ -577,9 +577,14 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected void showSubListPane(String path) {
+        showSubListPane(path, -1);
+    }
+
+    protected void showSubListPane(String path, int selIdx) {
         ItemListFragment listFragment = new ItemListFragment();
         Bundle arguments = new Bundle();
         arguments.putString("path", path);
+        arguments.putInt("idx", selIdx);
         listFragment.setArguments(arguments);
         getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT_TAG).commit();
     }

@@ -40,9 +40,10 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
         defaults.put(AppSettings.INTERNAL_VIDEO_PLAYER, true);
         defaults.put(AppSettings.INTERNAL_VIDEO_RES, "720");
         defaults.put(AppSettings.INTERNAL_VIDEO_BITRATE, "80000");
+        defaults.put(AppSettings.TRANSCODE_TIMEOUT, "45");
         return defaults;
     }
-    
+
     public boolean supportsWebLinks() {
         return false;
     }

@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.oakesville.mythling.app.Listable;
@@ -35,8 +34,9 @@ import com.oakesville.mythling.media.Item;
 public class ItemListFragment extends ListFragment {
 
     private MediaActivity mediaActivity;
-    private ArrayAdapter<Listable> adapter;
+    private ListableListAdapter adapter;
     private String path;
+    private int preSelIdx = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,18 +47,25 @@ public class ItemListFragment extends ListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         path = getArguments().getString("path");
+        preSelIdx = getArguments().getInt("idx");
         mediaActivity = (MediaActivity) activity;
         populate();
     }
 
     private void populate() {
-        adapter = new ArrayAdapter<Listable>(mediaActivity, android.R.layout.simple_list_item_1, android.R.id.text1, mediaActivity.getItems(path).toArray(new Listable[0]));
+        adapter = new ListableListAdapter(mediaActivity, mediaActivity.getItems(path).toArray(new Listable[0]));
         setListAdapter(adapter);
     }
 
     @Override
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
+
+        if (preSelIdx >= 0) {
+            adapter.setSelection(preSelIdx);
+            getListView().setItemChecked(preSelIdx, true);
+            getListView().requestFocus();
+        }
 
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

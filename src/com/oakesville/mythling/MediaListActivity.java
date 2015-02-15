@@ -185,7 +185,7 @@ public class MediaListActivity extends MediaActivity {
                         String catpath = path + "/" + text;
                         if (isSplitView()) {
                             adapter.setSelection(selItemIndex);
-                            showSubListPane(catpath);
+                            showSubListPane(catpath, 0);
                         } else {
                             Uri.Builder builder = new Uri.Builder();
                             builder.path(catpath);
