@@ -247,6 +247,7 @@ public class MediaListActivity extends MediaActivity {
                     else
                         showSubListPane(getPath() + "/" + preSel.getLabel());
                 }
+                listView.requestFocus();
             }
         }
     }

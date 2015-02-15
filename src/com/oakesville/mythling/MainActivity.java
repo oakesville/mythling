@@ -227,6 +227,7 @@ public class MainActivity extends MediaActivity {
                 else
                     showSubListPane(getPath() + "/" + preSel.getLabel());
             }
+            listView.requestFocus();
         }
     }
 

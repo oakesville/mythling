@@ -271,6 +271,8 @@ public class ItemDetailFragment extends Fragment {
             }
 
             ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
+            if (!getAppSettings().isFireTv())
+                button.setBackground(null);
             button.setVisibility(android.view.View.VISIBLE);
             button.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
@@ -279,6 +281,10 @@ public class ItemDetailFragment extends Fragment {
                     mediaActivity.playItem(item);
                 }
             });
+            button.requestFocus();
+
+            if (getAppSettings().isFireTv())
+                detailView.findViewById(R.id.detailScroll).setFocusable(false);;
 
             String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
             ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
@@ -293,14 +299,18 @@ public class ItemDetailFragment extends Fragment {
                     } else {
                         artworkView.setImageBitmap(bitmap);
                     }
-                    artworkView.setClickable(true);
-                    artworkView.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Item item = (Item) listable;
-                            item.setPath(mediaActivity.getPath());
-                            mediaActivity.playItem(item);
-                        }
-                    });
+                    if (!getAppSettings().isFireTv()) {
+                        artworkView.setClickable(true);
+                        artworkView.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Item item = (Item) listable;
+                                item.setPath(mediaActivity.getPath());
+                                mediaActivity.playItem(item);
+                            }
+                        });
+                    } else {
+                        artworkView.setFocusable(false);
+                    }
                 } catch (Exception ex) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
