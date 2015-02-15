@@ -193,7 +193,7 @@ public class MainActivity extends MediaActivity {
                     if (isSplitView()) {
                         adapter.setSelection(selItemIndex);
                         listView.setItemChecked(selItemIndex, true);
-                        showItemInDetailPane(position);
+                        showItemInDetailPane(position, true);
                     } else {
                         item.setPath("");
                         playItem(item);
@@ -227,8 +227,8 @@ public class MainActivity extends MediaActivity {
                 else
                     showSubListPane(getPath() + "/" + preSel.getLabel());
             }
-            listView.requestFocus();
         }
+        listView.requestFocus();
     }
 
     @Override

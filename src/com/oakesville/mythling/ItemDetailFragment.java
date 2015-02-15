@@ -68,13 +68,15 @@ public class ItemDetailFragment extends Fragment {
     private ImageView artworkView;
     private Listable listable;
     private int idx;
+    private boolean grabFocus;
 
     private int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        idx = getArguments() != null ? getArguments().getInt("idx") : 1;
+        idx = getArguments() == null ? 1 : getArguments().getInt("idx");
+        grabFocus = getArguments() == null ? false : getArguments().getBoolean("grab");
     }
 
     @Override
@@ -281,7 +283,8 @@ public class ItemDetailFragment extends Fragment {
                     mediaActivity.playItem(item);
                 }
             });
-            button.requestFocus();
+            if (grabFocus)
+                button.requestFocus();
 
             if (getAppSettings().isFireTv())
                 detailView.findViewById(R.id.detailScroll).setFocusable(false);;

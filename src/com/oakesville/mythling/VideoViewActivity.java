@@ -124,6 +124,7 @@ public class VideoViewActivity extends Activity {
                 public void onCompletion(MediaPlayer mp) {
                     position = 0;
                     setFullScreen(false);
+                    onBackPressed();
                 }
             });
 

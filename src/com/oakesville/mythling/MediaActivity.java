@@ -569,9 +569,14 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected void showItemInDetailPane(int position) {
+        showItemInDetailPane(position, false);
+    }
+
+    protected void showItemInDetailPane(int position, boolean grabFocus) {
         ItemDetailFragment detailFragment = new ItemDetailFragment();
         Bundle arguments = new Bundle();
         arguments.putInt("idx", position);
+        arguments.putBoolean("grab", grabFocus);
         detailFragment.setArguments(arguments);
         getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT_TAG).commit();
     }

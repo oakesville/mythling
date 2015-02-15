@@ -171,7 +171,7 @@ public class MediaListActivity extends MediaActivity {
                         Item item = (Item) listables.get(position);
                         if (isSplitView()) {
                             adapter.setSelection(selItemIndex);
-                            showItemInDetailPane(position);
+                            showItemInDetailPane(position, true);
                         }
                         else {
                             if (item.isRecording() || item.isLiveTv())
@@ -247,8 +247,8 @@ public class MediaListActivity extends MediaActivity {
                     else
                         showSubListPane(getPath() + "/" + preSel.getLabel());
                 }
-                listView.requestFocus();
             }
+            listView.requestFocus();
         }
     }
 
