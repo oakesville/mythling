@@ -100,7 +100,7 @@ public class Recording extends TvShow {
         if (getRating() > 0)
             buf.append(" ").append(getRatingString(getRating()));
         if (getSubTitle() != null)
-            buf.append("\n\"").append(getSubTitle()).append("\"");
+            buf.append("\n\"").append(getSubTitle()).append("\" ");
         buf.append(getSummary());
         return buf.toString();
     }

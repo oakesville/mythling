@@ -95,8 +95,8 @@ public class StreamVideoDialog extends DialogFragment {
                     listener.onClickStream();
                 }
             });
-        } else // no pref
-        {
+        } else {
+            // no pref
             builder
                     .setPositiveButton("Transcode to HLS", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
