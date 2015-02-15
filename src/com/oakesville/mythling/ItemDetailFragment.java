@@ -272,7 +272,7 @@ public class ItemDetailFragment extends Fragment {
 
             ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
             if (!getAppSettings().isFireTv())
-                button.setBackground(null);
+                button.setBackgroundColor(Color.TRANSPARENT);
             button.setVisibility(android.view.View.VISIBLE);
             button.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
