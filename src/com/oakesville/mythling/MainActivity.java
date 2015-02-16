@@ -32,8 +32,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -180,6 +182,7 @@ public class MainActivity extends MediaActivity {
 
         adapter = new ListableListAdapter(MainActivity.this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 currentTop = listView.getFirstVisiblePosition();
@@ -192,6 +195,7 @@ public class MainActivity extends MediaActivity {
                     Item item = (Item) listables.get(position);
                     if (isSplitView()) {
                         adapter.setSelection(selItemIndex);
+//                        listView.setSelection(selItemIndex);
                         listView.setItemChecked(selItemIndex, true);
                         showItemInDetailPane(position, true);
                     } else {
@@ -203,6 +207,7 @@ public class MainActivity extends MediaActivity {
                     String cat = ((TextView) view).getText().toString();
                     if (isSplitView()) {
                         adapter.setSelection(position);
+                        //listView.setSelection(position);
                         listView.setItemChecked(position, true);
                         showSubListPane(cat, 0);
                     } else {
@@ -214,11 +219,34 @@ public class MainActivity extends MediaActivity {
                 }
             }
         });
+        if (getAppSettings().isFireTv()) {
+            listView.setOnItemSelectedListener(new OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (isSplitView()) {
+                        Listable sel = getItems().get(position);
+                        listView.setItemChecked(selItemIndex, false);
+                        selItemIndex = position;
+                        if (sel instanceof Item)
+                            showItemInDetailPane(position);
+                        else
+                            showSubListPane(getPath() + "/" + sel.getLabel());
+                    }
+                }
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+            listView.setOnFocusChangeListener(new OnFocusChangeListener() {
+                public void onFocusChange(View v, boolean hasFocus) {
+                    listView.setItemChecked(selItemIndex, !hasFocus);
+                }
+            });
+        }
         updateActionMenu();
         stopProgress();
         listView.setSelectionFromTop(currentTop, topOffset);
         if (isSplitView()) {
             adapter.setSelection(selItemIndex);
+//            listView.setSelection(selItemIndex);
             listView.setItemChecked(selItemIndex, true);
             if (selItemIndex != -1) {
                 Listable preSel = getItems().get(selItemIndex);

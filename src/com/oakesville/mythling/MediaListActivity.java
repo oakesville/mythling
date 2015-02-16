@@ -34,9 +34,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +69,7 @@ public class MediaListActivity extends MediaActivity {
     private int currentTop = 0;  // top item in the list
     private int topOffset = 0;
     protected int selItemIndex = 0;
+    private boolean selInit;
 
     private ListableListAdapter adapter;
     List<Listable> listables;
@@ -158,6 +161,8 @@ public class MediaListActivity extends MediaActivity {
 
         adapter = new ListableListAdapter(MediaListActivity.this, listables.toArray(new Listable[0]));
         listView.setAdapter(adapter);
+        this.selInit = true;
+
         if (listables.size() > 0) {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -235,10 +240,35 @@ public class MediaListActivity extends MediaActivity {
                     return true;
                 }
             });
+
+            if (getAppSettings().isFireTv()) {
+                listView.setOnItemSelectedListener(new OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (isSplitView()) {
+                            Listable sel = getItems().get(position);
+                            listView.setItemChecked(selItemIndex, false);
+                            selItemIndex = position;
+                            if (sel instanceof Item)
+                                showItemInDetailPane(position);
+                            else
+                                showSubListPane(getPath() + "/" + sel.getLabel());
+                        }
+                    }
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+                listView.setOnFocusChangeListener(new OnFocusChangeListener() {
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        listView.setItemChecked(selItemIndex, !hasFocus);
+                    }
+                });
+            }
+
             updateActionMenu();
             listView.setSelectionFromTop(currentTop, topOffset);
             if (isSplitView()) {
-                adapter.setSelection(selItemIndex);
+//                adapter.setSelection(selItemIndex);
+//                listView.setSelection(selItemIndex);
                 listView.setItemChecked(selItemIndex, true);
                 if (selItemIndex != -1) {
                     Listable preSel = getItems().get(selItemIndex);
@@ -249,6 +279,7 @@ public class MediaListActivity extends MediaActivity {
                 }
             }
             listView.requestFocus();
+
         }
     }
 
