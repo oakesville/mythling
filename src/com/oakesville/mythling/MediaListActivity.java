@@ -69,7 +69,6 @@ public class MediaListActivity extends MediaActivity {
     private int currentTop = 0;  // top item in the list
     private int topOffset = 0;
     protected int selItemIndex = 0;
-    private boolean selInit;
 
     private ListableListAdapter adapter;
     List<Listable> listables;
@@ -161,7 +160,6 @@ public class MediaListActivity extends MediaActivity {
 
         adapter = new ListableListAdapter(MediaListActivity.this, listables.toArray(new Listable[0]));
         listView.setAdapter(adapter);
-        this.selInit = true;
 
         if (listables.size() > 0) {
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -267,8 +265,8 @@ public class MediaListActivity extends MediaActivity {
             updateActionMenu();
             listView.setSelectionFromTop(currentTop, topOffset);
             if (isSplitView()) {
-//                adapter.setSelection(selItemIndex);
-//                listView.setSelection(selItemIndex);
+                adapter.setSelection(selItemIndex);
+                listView.setSelection(selItemIndex);
                 listView.setItemChecked(selItemIndex, true);
                 if (selItemIndex != -1) {
                     Listable preSel = getItems().get(selItemIndex);

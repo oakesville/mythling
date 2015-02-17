@@ -64,7 +64,7 @@ public class ItemListFragment extends ListFragment {
         if (preSelIdx >= 0) {
             // only has effect for Fire TV (due to choice mode?), which is fine
             adapter.setSelection(preSelIdx);
-//            getListView().setSelection(preSelIdx);
+            getListView().setSelection(preSelIdx);
             getListView().setItemChecked(preSelIdx, true);
             getListView().requestFocus();
         }
