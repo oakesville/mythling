@@ -61,6 +61,12 @@ public class ItemListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
 
+        if (mediaActivity.getAppSettings().isFireTv()) {
+            getListView().setSelector(R.drawable.firetv_list_selector);
+            getListView().setDivider(getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+            getListView().setDividerHeight(1);
+        }
+
         if (preSelIdx >= 0) {
             // only has effect for Fire TV (due to choice mode?), which is fine
             adapter.setSelection(preSelIdx);

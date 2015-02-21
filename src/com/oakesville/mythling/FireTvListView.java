@@ -28,11 +28,10 @@ public class FireTvListView extends android.widget.ListView {
     }
 
     public FireTvListView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0 /*android.R.attr.listViewStyle*/);
+        this(context, attrs, 0 /* android.R.attr.listViewStyle */);
     }
 
     public FireTvListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        // test
     }
 }

@@ -44,7 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
-            android:listSelector="@color/blue_light" />
+            android:listSelector="@drawable/firetv_list_selector"
+            android:divider="@android:drawable/divider_horizontal_bright"
+            android:dividerHeight="1px" />
     </LinearLayout>  
    
     <FrameLayout
