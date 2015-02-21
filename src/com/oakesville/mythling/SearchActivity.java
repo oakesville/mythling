@@ -38,7 +38,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
@@ -247,7 +246,8 @@ public class SearchActivity extends MediaActivity {
         return false;
     }
 
-    public void refresh() throws BadSettingsException {
+    public void refresh() {
+        super.refresh();
         search();
     }
 

@@ -46,14 +46,14 @@ public class ItemListFragment extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        path = getArguments().getString("path");
-        preSelIdx = getArguments().getInt("idx");
+        path = getArguments().getString(MediaActivity.PATH);
+        preSelIdx = getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
         mediaActivity = (MediaActivity) activity;
         populate();
     }
 
     private void populate() {
-        adapter = new ListableListAdapter(mediaActivity, mediaActivity.getItems(path).toArray(new Listable[0]));
+        adapter = new ListableListAdapter(mediaActivity, mediaActivity.getListables(path).toArray(new Listable[0]));
         setListAdapter(adapter);
     }
 
@@ -71,7 +71,7 @@ public class ItemListFragment extends ListFragment {
 
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Listable sel = mediaActivity.getItems(path).get(position);
+                Listable sel = mediaActivity.getListables(path).get(position);
                 if (sel instanceof Item) {
                     mediaActivity.playItem((Item)sel);
                     return true;
@@ -86,7 +86,7 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        Listable sel = mediaActivity.getItems(path).get(position);
+        Listable sel = mediaActivity.getListables(path).get(position);
         boolean isItem = sel instanceof Item;
         Uri.Builder builder = new Uri.Builder();
         if (isItem)
@@ -96,14 +96,12 @@ public class ItemListFragment extends ListFragment {
         Uri uri = builder.build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
         if (isItem) {
-            intent.putExtra("curTop", listView.getFirstVisiblePosition());
+            intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());
             View topV = listView.getChildAt(0);
-            intent.putExtra("topOff", (topV == null) ? 0 : topV.getTop());
-            intent.putExtra("idx", position);
+            intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
+            intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
         }
 
         startActivity(intent);
     }
-
-
  }

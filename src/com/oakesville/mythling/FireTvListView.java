@@ -1,4 +1,4 @@
-<!--
+/**
  * Copyright 2014 Donald Oakes
  *
  * This file is part of Mythling.
@@ -15,10 +15,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
- -->
-<resources>
+ */
+package com.oakesville.mythling;
 
-    <color name="black_overlay">#66000000</color>
-    <color name="blue_light">#bfe7f500</color>
+import android.content.Context;
+import android.util.AttributeSet;
 
-</resources>
+public class FireTvListView extends android.widget.ListView {
+
+    public FireTvListView(Context context) {
+        this(context, null);
+    }
+
+    public FireTvListView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0 /*android.R.attr.listViewStyle*/);
+    }
+
+    public FireTvListView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        // test
+    }
+}

@@ -21,7 +21,6 @@ package com.oakesville.mythling;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.text.ParseException;
-import java.util.List;
 
 import org.json.JSONException;
 
@@ -44,8 +43,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
@@ -58,11 +55,11 @@ public class MediaPagerActivity extends MediaActivity {
     private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
     private String path;
-    String getPath() { return path; }
+    protected String getPath() { return path; }
+
     private ViewPager pager;
     private MediaPagerAdapter pagerAdapter;
-    private List<Listable> items;
-    List<Listable> getItems() { return items; }
+
     private int currentPosition;
     private SeekBar positionBar;
 
@@ -117,7 +114,7 @@ public class MediaPagerActivity extends MediaActivity {
         super.onResume();
     }
 
-    public void populate() throws IOException, JSONException, ParseException, BadSettingsException {
+    public void populate() throws IOException, JSONException, ParseException {
         if (getAppData() == null) {
             startProgress();
             AppData appData = new AppData(getApplicationContext());
@@ -132,8 +129,6 @@ public class MediaPagerActivity extends MediaActivity {
         }
         mediaList = getAppData().getMediaList();
         setMediaType(mediaList.getMediaType());
-
-        items = mediaList.getListables(path);
 
         pagerAdapter = new MediaPagerAdapter(getFragmentManager());
         pager.setAdapter(pagerAdapter);
@@ -154,7 +149,7 @@ public class MediaPagerActivity extends MediaActivity {
         });
 
         positionBar = (SeekBar) findViewById(R.id.pagerPosition);
-        positionBar.setMax(items.size());
+        positionBar.setMax(getListables().size());
         positionBar.setProgress(1);
         positionBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -180,18 +175,18 @@ public class MediaPagerActivity extends MediaActivity {
         button = (ImageButton) findViewById(R.id.gotoLast);
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                pager.setCurrentItem(items.size() - 1);
-                positionBar.setProgress(items.size());
+                pager.setCurrentItem(getListables().size() - 1);
+                positionBar.setProgress(getListables().size());
             }
         });
 
         TextView tv = (TextView) findViewById(R.id.lastItem);
-        tv.setText(String.valueOf(items.size()));
+        tv.setText(String.valueOf(getListables().size()));
 
         updateActionMenu();
 
         currentPosition = getAppSettings().getPagerCurrentPosition(mediaList.getMediaType(), path);
-        if (items.size() > currentPosition) {
+        if (getListables().size() > currentPosition) {
             pager.setCurrentItem(currentPosition);
             positionBar.setProgress(currentPosition);
             TextView curItemView = (TextView) findViewById(R.id.currentItem);
@@ -202,7 +197,8 @@ public class MediaPagerActivity extends MediaActivity {
         }
     }
 
-    public void refresh() throws BadSettingsException {
+    public void refresh() {
+        super.refresh();
         path = "";
         mediaList = new MediaList();
 
@@ -262,13 +258,13 @@ public class MediaPagerActivity extends MediaActivity {
         }
 
         public int getCount() {
-            return items.size();
+            return getListables().size();
         }
 
         public Fragment getItem(int position) {
             Fragment frag = new ItemDetailFragment();
             Bundle args = new Bundle();
-            args.putInt("idx", position);
+            args.putInt(SEL_ITEM_INDEX, position);
             frag.setArguments(args);
             return frag;
         }

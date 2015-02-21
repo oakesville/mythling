@@ -20,7 +20,6 @@ package com.oakesville.mythling;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
 
 import org.json.JSONException;
 
@@ -28,23 +27,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
@@ -54,19 +46,8 @@ public class MainActivity extends MediaActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ListView listView;
-
     public ListView getListView() {
         return listView;
-    }
-
-    private int currentTop = 0;  // top item in the list
-    private int topOffset = 0;
-    protected int selItemIndex = 0;
-
-    private ListableListAdapter adapter;
-
-    public String getCharSet() {
-        return mediaList.getCharSet();
     }
 
     @Override
@@ -102,7 +83,7 @@ public class MainActivity extends MediaActivity {
             }
         }
 
-        setContentView(R.layout.split);
+        setContentView(getAppSettings().isFireTv() ? R.layout.firetv_split : R.layout.split);
 
         findViewById(R.id.breadcrumbs).setVisibility(View.GONE);
 
@@ -151,13 +132,10 @@ public class MainActivity extends MediaActivity {
     }
 
 
-    public void refresh() throws BadSettingsException {
-        currentTop = 0;
-        topOffset = 0;
-        selItemIndex = 0;
+    public void refresh() {
+        super.refresh();
         mediaList = new MediaList();
-        adapter = new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
-        listView.setAdapter(adapter);
+        setListAdapter(new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0])));
 
         startProgress();
         getAppSettings().validate();
@@ -165,7 +143,7 @@ public class MainActivity extends MediaActivity {
         refreshMediaList();
     }
 
-    protected void populate() throws IOException, JSONException, ParseException, BadSettingsException {
+    protected void populate() throws IOException, JSONException, ParseException {
         startProgress();
         if (getAppData() == null) {
             AppData appData = new AppData(getApplicationContext());
@@ -180,98 +158,18 @@ public class MainActivity extends MediaActivity {
 
         mediaList = getAppData().getMediaList();
 
-        adapter = new ListableListAdapter(MainActivity.this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]));
-        listView.setAdapter(adapter);
+        setListAdapter(new ListableListAdapter(MainActivity.this, getListables().toArray(new Listable[0])));
 
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                currentTop = listView.getFirstVisiblePosition();
-                View topV = listView.getChildAt(0);
-                topOffset = (topV == null) ? 0 : topV.getTop();
-                selItemIndex = position;
-                List<Listable> listables = mediaList.getTopCategoriesAndItems();
-                boolean isMediaItem = listables.get(position) instanceof Item;
-                if (isMediaItem) {
-                    Item item = (Item) listables.get(position);
-                    if (isSplitView()) {
-                        adapter.setSelection(selItemIndex);
-//                        listView.setSelection(selItemIndex);
-                        listView.setItemChecked(selItemIndex, true);
-                        showItemInDetailPane(position, true);
-                    } else {
-                        item.setPath("");
-                        playItem(item);
-                    }
-                } else {
-                    // must be category
-                    String cat = ((TextView) view).getText().toString();
-                    if (isSplitView()) {
-                        adapter.setSelection(position);
-                        //listView.setSelection(position);
-                        listView.setItemChecked(position, true);
-                        showSubListPane(cat, 0);
-                    } else {
-                        Uri.Builder builder = new Uri.Builder();
-                        builder.path(cat);
-                        Uri uri = builder.build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
-                    }
-                }
-            }
-        });
-        if (getAppSettings().isFireTv()) {
-            listView.setOnItemSelectedListener(new OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (isSplitView()) {
-                        Listable sel = getItems().get(position);
-                        listView.setItemChecked(selItemIndex, false);
-                        selItemIndex = position;
-                        if (sel instanceof Item)
-                            showItemInDetailPane(position);
-                        else
-                            showSubListPane(getPath() + "/" + sel.getLabel());
-                    }
-                }
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
-            listView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    listView.setItemChecked(selItemIndex, !hasFocus);
-                }
-            });
-        }
+        initListViewOnItemClickListener();
+        initListViewOnItemSelectedListener();
+
         updateActionMenu();
         stopProgress();
-        listView.setSelectionFromTop(currentTop, topOffset);
-        if (isSplitView()) {
-            adapter.setSelection(selItemIndex);
-//            listView.setSelection(selItemIndex);
-            listView.setItemChecked(selItemIndex, true);
-            if (selItemIndex != -1) {
-                Listable preSel = getItems().get(selItemIndex);
-                if (preSel instanceof Item)
-                    showItemInDetailPane(selItemIndex);
-                else
-                    showSubListPane(getPath() + "/" + preSel.getLabel());
-            }
-        }
+        listView.setSelectionFromTop(getCurrentTop(), getTopOffset());
+
+        if (isSplitView())
+            initSplitView();
+
         listView.requestFocus();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("curTop", currentTop);
-        savedInstanceState.putInt("topOff", topOffset);
-        savedInstanceState.putInt("selItem", selItemIndex);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        currentTop = savedInstanceState.getInt("curTop", 0);
-        topOffset = savedInstanceState.getInt("topOff", 0);
-        selItemIndex = savedInstanceState.getInt("selItem", 0);
     }
 }

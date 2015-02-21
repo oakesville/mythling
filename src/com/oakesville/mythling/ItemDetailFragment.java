@@ -75,8 +75,8 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        idx = getArguments() == null ? 1 : getArguments().getInt("idx");
-        grabFocus = getArguments() == null ? false : getArguments().getBoolean("grab");
+        idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
+        grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.DETAIL_GRAB);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class ItemDetailFragment extends Fragment {
 
     private void populate() {
 
-        listable = mediaActivity.getItems().get(idx);
+        listable = mediaActivity.getListables().get(idx);
 
         TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
 

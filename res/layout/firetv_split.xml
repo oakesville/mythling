@@ -39,11 +39,12 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
 
-        <ListView
+        <com.oakesville.mythling.FireTvListView
             android:id="@+id/split_cats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:choiceMode="singleChoice" />
+            android:choiceMode="singleChoice"
+            android:listSelector="@color/blue_light" />
     </LinearLayout>  
    
     <FrameLayout

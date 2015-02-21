@@ -19,10 +19,10 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +54,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
@@ -93,19 +98,42 @@ import com.oakesville.mythling.util.Transcoder;
 public abstract class MediaActivity extends Activity {
     private static final String TAG = MediaActivity.class.getSimpleName();
 
-    protected static final String DETAIL_FRAGMENT_TAG = "detailFragmentTag";
-    protected static final String LIST_FRAGMENT_TAG = "listFragmentTag";
+    static final String DETAIL_FRAGMENT = "detailFragment";
+    static final String LIST_FRAGMENT = "listFragment";
 
-    List<Listable> getItems() {
+    static final String PATH = "path";
+    static final String SEL_ITEM_INDEX = "idx";
+    static final String CURRENT_TOP = "curTop";
+    static final String TOP_OFFSET = "topOff";
+    static final String DETAIL_GRAB = "grab";
+
+    private ListableListAdapter listAdapter;
+    ListableListAdapter getListAdapter() { return listAdapter; }
+    void setListAdapter(ListableListAdapter listAdapter) {
+        this.listAdapter = listAdapter;
+        getListView().setAdapter(listAdapter);
+    }
+
+    protected String getPath() { return ""; }
+
+    protected List<Listable> getListables() {
         return mediaList.getListables(getPath());
     }
-    List<Listable> getItems(String path) {
-        if (mediaList == null)
-            return new ArrayList<Listable>();  // TODO prevents NPE; address root cause
+    protected List<Listable> getListables(String path) {
         return mediaList.getListables(path);
     }
 
-    String getPath() { return ""; }
+    private int currentTop = 0;  // top item in the list
+    int getCurrentTop() { return currentTop; }
+    void setCurrentTop(int currentTop) { this.currentTop = currentTop; }
+
+    private int topOffset = 0;
+    int getTopOffset() { return topOffset; }
+    void setTopOffset(int topOffset) { this.topOffset = topOffset; }
+
+    private int selItemIndex = 0;
+    int getSelItemIndex() { return selItemIndex; }
+    void setSelItemIndex(int selItemIndex) { this.selItemIndex = selItemIndex; }
 
     protected MediaList mediaList;
     protected Map<String, StorageGroup> storageGroups;
@@ -157,7 +185,11 @@ public abstract class MediaActivity extends Activity {
     protected boolean modeSwitch; // tracking for back button
     protected boolean refreshing;
 
-    public abstract void refresh();
+    public void refresh() {
+        currentTop = 0;
+        topOffset = 0;
+        selItemIndex = 0;
+    }
 
     public abstract ListView getListView();
 
@@ -575,10 +607,10 @@ public abstract class MediaActivity extends Activity {
     protected void showItemInDetailPane(int position, boolean grabFocus) {
         ItemDetailFragment detailFragment = new ItemDetailFragment();
         Bundle arguments = new Bundle();
-        arguments.putInt("idx", position);
-        arguments.putBoolean("grab", grabFocus);
+        arguments.putInt(SEL_ITEM_INDEX, position);
+        arguments.putBoolean(DETAIL_GRAB, grabFocus);
         detailFragment.setArguments(arguments);
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT_TAG).commit();
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT).commit();
     }
 
     protected void showSubListPane(String path) {
@@ -588,10 +620,10 @@ public abstract class MediaActivity extends Activity {
     protected void showSubListPane(String path, int selIdx) {
         ItemListFragment listFragment = new ItemListFragment();
         Bundle arguments = new Bundle();
-        arguments.putString("path", path);
-        arguments.putInt("idx", selIdx);
+        arguments.putString(PATH, path);
+        arguments.putInt(SEL_ITEM_INDEX, selIdx);
         listFragment.setArguments(arguments);
-        getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT_TAG).commit();
+        getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT).commit();
     }
 
     protected void playItem(final Item item) {
@@ -738,6 +770,41 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    /**
+     * Starts a transcode without immediately watching.
+     * TODO: how should this be called?
+     */
+    protected void transcodeItem(final Item item) {
+        item.setPath("");
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setTitle("Transcode")
+                .setMessage("Begin transcoding " + item.getTitle() + "?")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            // TODO: if TV, schedule recording and start transcode
+                            if (item.isRecording())
+                                new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                        } catch (MalformedURLException ex) {
+                            stopProgress();
+                            if (BuildConfig.DEBUG)
+                                Log.e(TAG, ex.getMessage(), ex);
+                            if (getAppSettings().isErrorReportingEnabled())
+                                new Reporter(ex).send();
+                            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        stopProgress();
+                        onResume();
+                    }
+                })
+                .show();
+    }
+
     protected void goListView() {
         findViewById(R.id.detail_container).setVisibility(View.GONE);
     }
@@ -879,7 +946,7 @@ public abstract class MediaActivity extends Activity {
         showStopMenuItem(isPlayingMusic());
     }
 
-    protected void populate() throws IOException, JSONException, ParseException, BadSettingsException {
+    protected void populate() throws IOException, JSONException, ParseException {
         // default does nothing
     }
 
@@ -1246,6 +1313,99 @@ public abstract class MediaActivity extends Activity {
         } else {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(streamUrl), getApplicationContext(), VideoViewActivity.class));
         }
+    }
+
+    void initListViewOnItemClickListener() {
+        if (getListables().size() > 0) {
+            getListView().setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    currentTop = getListView().getFirstVisiblePosition();
+                    View topV = getListView().getChildAt(0);
+                    topOffset = (topV == null) ? 0 : topV.getTop();
+                    selItemIndex = position;
+                    boolean isItem = getListables().get(position) instanceof Item;
+                    if (isItem) {
+                        Item item = (Item) getListables().get(position);
+                        if (isSplitView()) {
+                            getListAdapter().setSelection(selItemIndex);
+                            getListView().setItemChecked(selItemIndex, true);  // TODO?
+                            showItemInDetailPane(position, true);
+                        } else {
+                            item.setPath(getPath());
+                            playItem(item);
+                        }
+                    } else {
+                        // must be category
+                        String cat = ((TextView)view).getText().toString();
+                        String catpath = "".equals(getPath()) ? cat : getPath() + "/" + cat;
+                        if (isSplitView()) {
+                            getListAdapter().setSelection(selItemIndex);
+                            getListView().setItemChecked(position, true);  // TODO?
+                            showSubListPane(catpath, 0);
+                        } else {
+                            Uri.Builder builder = new Uri.Builder();
+                            builder.path(catpath);
+                            Uri uri = builder.build();
+                            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    void initListViewOnItemSelectedListener() {
+        if (getListables().size() > 0 && getAppSettings().isFireTv()) {
+            getListView().setOnItemSelectedListener(new OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (isSplitView()) {
+                        Listable sel = getListables().get(position);
+                        getListView().setItemChecked(selItemIndex, false);
+                        selItemIndex = position;
+                        if (sel instanceof Item)
+                            showItemInDetailPane(position);
+                        else
+                            showSubListPane(getPath() + "/" + sel.getLabel());
+                    }
+                }
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+            getListView().setOnFocusChangeListener(new OnFocusChangeListener() {
+                public void onFocusChange(View v, boolean hasFocus) {
+                    getListView().setItemChecked(selItemIndex, !hasFocus);
+                }
+            });
+        }
+    }
+
+    void initSplitView() {
+        getListAdapter().setSelection(selItemIndex);
+        getListView().setSelection(selItemIndex);
+        getListView().setItemChecked(selItemIndex, true);
+        if (selItemIndex != -1) {
+            Listable preSel = getListables().get(selItemIndex);
+            if (preSel instanceof Item)
+                showItemInDetailPane(selItemIndex);
+            else
+                showSubListPane(getPath() + "/" + preSel.getLabel());
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt(SEL_ITEM_INDEX, selItemIndex);
+        savedInstanceState.putInt(CURRENT_TOP, currentTop);
+        savedInstanceState.putInt(TOP_OFFSET, topOffset);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selItemIndex = savedInstanceState.getInt(SEL_ITEM_INDEX, 0);
+        currentTop = savedInstanceState.getInt(CURRENT_TOP, 0);
+        topOffset = savedInstanceState.getInt(TOP_OFFSET, 0);
     }
 
     protected void startProgress() {
