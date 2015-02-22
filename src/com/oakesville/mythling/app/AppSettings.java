@@ -626,22 +626,6 @@ public class AppSettings {
         return res;
     }
 
-    public int getPagerCurrentPosition(MediaType mediaType, String category) {
-        return getIntPref(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, 0);
-    }
-
-    public void setPagerCurrentPosition(MediaType mediaType, String category, int curPos) {
-        Editor ed = prefs.edit();
-        ed.putInt(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category, curPos);
-        ed.apply();
-    }
-
-    public void clearPagerCurrentPosition(MediaType mediaType, String category) {
-        Editor ed = prefs.edit();
-        ed.remove(PAGER_CURRENT_POSITION + ":" + mediaType + ":" + category);
-        ed.apply();
-    }
-
     public int getExpiryMinutes() {
         return Integer.parseInt(getStringPref(CACHE_EXPIRE_MINUTES, "30").trim());
     }

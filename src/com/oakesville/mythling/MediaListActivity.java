@@ -81,7 +81,7 @@ public class MediaListActivity extends MediaActivity {
             setTopOffset(getIntent().getIntExtra(TOP_OFFSET, 0));
             setCurrentTop(getIntent().getIntExtra(CURRENT_TOP, 0));
 
-            String mode = getIntent().getStringExtra("modeSwitch");
+            String mode = getIntent().getStringExtra(MODE_SWITCH);
             modeSwitch = mode != null;
             if (mode == null)
                 mode = getAppSettings().getMediaSettings().getViewType().toString();

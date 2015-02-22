@@ -89,7 +89,11 @@ public class MainActivity extends MediaActivity {
 
         createProgressBar();
 
-        String mode = getIntent().getStringExtra("modeSwitch");
+        setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
+        setTopOffset(getIntent().getIntExtra(TOP_OFFSET, 0));
+        setCurrentTop(getIntent().getIntExtra(CURRENT_TOP, 0));
+
+        String mode = getIntent().getStringExtra(MODE_SWITCH);
         modeSwitch = mode != null;
         if (mode == null)
             mode = getAppSettings().getMediaSettings().getViewType().toString();

@@ -60,7 +60,6 @@ public class MediaPagerActivity extends MediaActivity {
     private ViewPager pager;
     private MediaPagerAdapter pagerAdapter;
 
-    private int currentPosition;
     private SeekBar positionBar;
 
     public String getCharSet() {
@@ -83,7 +82,8 @@ public class MediaPagerActivity extends MediaActivity {
             else
                 path = URLDecoder.decode(newPath, "UTF-8");
 
-            modeSwitch = getIntent().getBooleanExtra("modeSwitch", false);
+            modeSwitch = getIntent().getBooleanExtra(MODE_SWITCH, false);
+            setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
 
             getActionBar().setDisplayHomeAsUpEnabled(!path.isEmpty());
         } catch (Exception ex) {
@@ -134,11 +134,10 @@ public class MediaPagerActivity extends MediaActivity {
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             public void onPageSelected(int position) {
-                currentPosition = position;
-                getAppSettings().setPagerCurrentPosition(mediaList.getMediaType(), path, currentPosition);
-                positionBar.setProgress(currentPosition + 1);
+                setSelItemIndex(position);
+                positionBar.setProgress(getSelItemIndex() + 1);
                 TextView curItemView = (TextView) findViewById(R.id.currentItem);
-                curItemView.setText(String.valueOf(currentPosition + 1));
+                curItemView.setText(String.valueOf(getSelItemIndex() + 1));
             }
 
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -154,14 +153,14 @@ public class MediaPagerActivity extends MediaActivity {
         positionBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
-                    currentPosition = progress;
+                    setSelItemIndex(progress);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-                pager.setCurrentItem(currentPosition);
+                pager.setCurrentItem(getSelItemIndex());
             }
         });
 
@@ -185,16 +184,14 @@ public class MediaPagerActivity extends MediaActivity {
 
         updateActionMenu();
 
-        currentPosition = getAppSettings().getPagerCurrentPosition(mediaList.getMediaType(), path);
-        if (getListables().size() > currentPosition) {
-            pager.setCurrentItem(currentPosition);
-            positionBar.setProgress(currentPosition);
-            TextView curItemView = (TextView) findViewById(R.id.currentItem);
-            if (curItemView != null)
-                curItemView.setText(String.valueOf(currentPosition + 1));
-        } else {
-            getAppSettings().setPagerCurrentPosition(mediaList.getMediaType(), path, 0);
-        }
+        if (getListables().size() <= getSelItemIndex())
+            setSelItemIndex(0);
+
+        pager.setCurrentItem(getSelItemIndex());
+        positionBar.setProgress(getSelItemIndex());
+        TextView curItemView = (TextView) findViewById(R.id.currentItem);
+        if (curItemView != null)
+            curItemView.setText(String.valueOf(getSelItemIndex() + 1));
     }
 
     public void refresh() {
@@ -223,14 +220,16 @@ public class MediaPagerActivity extends MediaActivity {
         if (path == null || path.isEmpty()) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("modeSwitch", mode);
+            intent.putExtra(MODE_SWITCH, mode);
+            intent.putExtra(SEL_ITEM_INDEX, getSelItemIndex());
             startActivity(intent);
         } else {
             Uri.Builder builder = new Uri.Builder();
             builder.path(path);
             Uri uri = builder.build();
             Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class);
-            intent.putExtra("modeSwitch", mode);
+            intent.putExtra(MODE_SWITCH, mode);
+            intent.putExtra(SEL_ITEM_INDEX, getSelItemIndex());
             startActivity(intent);
         }
     }

@@ -109,6 +109,7 @@ public abstract class MediaActivity extends Activity {
     static final String CURRENT_TOP = "curTop";
     static final String TOP_OFFSET = "topOff";
     static final String DETAIL_GRAB = "grab";
+    static final String MODE_SWITCH = "modeSwitch";
 
     private ListableListAdapter listAdapter;
     ListableListAdapter getListAdapter() { return listAdapter; }
@@ -815,14 +816,17 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected void goDetailView() {
-        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle) {
             getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
+            selItemIndex = 0;
+        }
 
         Uri.Builder builder = new Uri.Builder();
         builder.path(getPath());
         Uri uri = builder.build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(SEL_ITEM_INDEX, selItemIndex);
         startActivity(intent);
     }
 
@@ -922,6 +926,9 @@ public abstract class MediaActivity extends Activity {
 
     protected void refreshMediaList() {
         try {
+            selItemIndex = 0;
+            currentTop = 0;
+            topOffset = 0;
             getAppSettings().clearMediaSettings(); // in case prefs changed
             if (getAppSettings().getMediaSettings().getType() == MediaType.movies && !supportsMovies())
                 getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
@@ -1025,7 +1032,6 @@ public abstract class MediaActivity extends Activity {
                 }
 
                 mediaList.setCharSet(downloader.getCharSet());
-                getAppSettings().clearPagerCurrentPosition(mediaList.getMediaType(), "");
 
                 return 0L;
             } catch (Exception ex) {
