@@ -53,8 +53,8 @@
     <string name="summary_prefs_network">MythTV backend host settings</string>
     <string name="title_prefs_connections">Connections</string>
     <string name="summary_prefs_connections">Backend ports and paths</string>
-    <string name="title_prefs_credentials">Credentials</string>
-    <string name="summary_prefs_credentials">Authentication settings</string>
+    <string name="title_prefs_credentials">Authentication</string>
+    <string name="summary_prefs_credentials">HTTP auth modes and credentials</string>
     <string name="title_prefs_categories">Categories</string>
     <string name="summary_prefs_categories">How media should be categorized</string>
     <string name="title_prefs_artwork">Artwork</string>
