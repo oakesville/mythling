@@ -1333,7 +1333,7 @@ public abstract class MediaActivity extends Activity {
                         Item item = (Item) getListables().get(position);
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            //getListView().setItemChecked(selItemIndex, true);  // TODO?
+                            getListView().setItemChecked(selItemIndex, true);  // TODO?
                             showItemInDetailPane(position, true);
                         } else {
                             item.setPath(getPath());
@@ -1345,7 +1345,7 @@ public abstract class MediaActivity extends Activity {
                         String catpath = "".equals(getPath()) ? cat : getPath() + "/" + cat;
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            //getListView().setItemChecked(position, true);  // TODO?
+                            getListView().setItemChecked(position, true);  // TODO?
                             showSubListPane(catpath, 0);
                         } else {
                             Uri.Builder builder = new Uri.Builder();
@@ -1363,15 +1363,13 @@ public abstract class MediaActivity extends Activity {
         if (getListables().size() > 0 && getAppSettings().isFireTv()) {
             getListView().setOnItemSelectedListener(new OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (isSplitView()) {
-                        Listable sel = getListables().get(position);
-                        getListView().setItemChecked(selItemIndex, false);
-                        selItemIndex = position;
-                        if (sel instanceof Item)
-                            showItemInDetailPane(position);
-                        else
-                            showSubListPane(getPath() + "/" + sel.getLabel());
-                    }
+                    Listable sel = getListables().get(position);
+                    getListView().setItemChecked(selItemIndex, false);
+                    selItemIndex = position;
+                    if (sel instanceof Item)
+                        showItemInDetailPane(position);
+                    else
+                        showSubListPane(getPath() + "/" + sel.getLabel());
                 }
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -1389,12 +1387,12 @@ public abstract class MediaActivity extends Activity {
             getListView().setOnKeyListener(new OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT && isSplitView()) {
+                        if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                             getListView().performItemClick(getListAdapter().getView(getSelItemIndex(), null, null),
                                     getSelItemIndex(), getListAdapter().getItemId(getSelItemIndex()));
                             return true;
                         }
-                        else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && isSplitView() && !"".equals(getPath())) {
+                        else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && !"".equals(getPath())) {
                             onBackPressed();
                             return true;
                         }
