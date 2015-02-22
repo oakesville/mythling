@@ -112,11 +112,13 @@ public class TvShow extends Item {
     }
 
     public String getStartDateTimeFormatted() throws ParseException {
-        String startYear = DateTimeFormats.YEAR_FORMAT.format(getStartTime());
-        String sdtf = DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
-        if (!startYear.equals(DateTimeFormats.YEAR_FORMAT.format(new Date())))
-            sdtf += ", " + startYear;
-        return sdtf;
+        Calendar oneYearAgo = Calendar.getInstance();
+        oneYearAgo.add(Calendar.YEAR, -1);
+        boolean showYear = oneYearAgo.getTime().compareTo(getStartTime()) > 0;
+        if (showYear)
+            return DateTimeFormats.DATE_TIME_YEAR_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
+        else
+            return DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
     }
 
     public String getStartTimeFormatted() throws ParseException {

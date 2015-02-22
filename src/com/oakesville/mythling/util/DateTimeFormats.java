@@ -34,5 +34,6 @@ public class DateTimeFormats {
     public static DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d yyyy");
     public static DateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a");
     public static DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("MMM d  h:mm a");
+    public static DateFormat DATE_TIME_YEAR_FORMAT = new SimpleDateFormat("MMM d yyyy  h:mm a");
     public static DateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
 }
