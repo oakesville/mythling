@@ -23,7 +23,9 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -73,6 +75,25 @@ public class ItemListFragment extends ListFragment {
             getListView().setSelection(preSelIdx);
             getListView().setItemChecked(preSelIdx, true);
             getListView().requestFocus();
+        }
+
+        if (mediaActivity.getAppSettings().isFireTv()) {
+            getListView().setOnKeyListener(new OnKeyListener() {
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                            mediaActivity.getListView().requestFocus();
+                            return true;
+                        }
+                        else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                            int pos = getListView().getSelectedItemPosition();
+                            getListView().performItemClick(getListAdapter().getView(pos, null, null), pos, getListAdapter().getItemId(pos));
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
         }
 
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {

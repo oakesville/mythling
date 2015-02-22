@@ -20,8 +20,9 @@ package com.oakesville.mythling;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.ListView;
 
-public class FireTvListView extends android.widget.ListView {
+public class FireTvListView extends ListView {
 
     public FireTvListView(Context context) {
         this(context, null);

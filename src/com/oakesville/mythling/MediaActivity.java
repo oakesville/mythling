@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +52,12 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -120,6 +123,8 @@ public abstract class MediaActivity extends Activity {
         return mediaList.getListables(getPath());
     }
     protected List<Listable> getListables(String path) {
+        if (mediaList == null)  // TODO: how?
+            return new ArrayList<Listable>();
         return mediaList.getListables(path);
     }
 
@@ -1328,7 +1333,7 @@ public abstract class MediaActivity extends Activity {
                         Item item = (Item) getListables().get(position);
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            getListView().setItemChecked(selItemIndex, true);  // TODO?
+                            //getListView().setItemChecked(selItemIndex, true);  // TODO?
                             showItemInDetailPane(position, true);
                         } else {
                             item.setPath(getPath());
@@ -1340,7 +1345,7 @@ public abstract class MediaActivity extends Activity {
                         String catpath = "".equals(getPath()) ? cat : getPath() + "/" + cat;
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            getListView().setItemChecked(position, true);  // TODO?
+                            //getListView().setItemChecked(position, true);  // TODO?
                             showSubListPane(catpath, 0);
                         } else {
                             Uri.Builder builder = new Uri.Builder();
@@ -1374,6 +1379,27 @@ public abstract class MediaActivity extends Activity {
             getListView().setOnFocusChangeListener(new OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     getListView().setItemChecked(selItemIndex, !hasFocus);
+                }
+            });
+        }
+    }
+
+    void initListViewDpadHandler() {
+        if (getAppSettings().isFireTv()) {
+            getListView().setOnKeyListener(new OnKeyListener() {
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT && isSplitView()) {
+                            getListView().performItemClick(getListAdapter().getView(getSelItemIndex(), null, null),
+                                    getSelItemIndex(), getListAdapter().getItemId(getSelItemIndex()));
+                            return true;
+                        }
+                        else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && isSplitView() && !"".equals(getPath())) {
+                            onBackPressed();
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             });
         }

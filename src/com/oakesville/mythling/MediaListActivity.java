@@ -147,6 +147,7 @@ public class MediaListActivity extends MediaActivity {
 
         initListViewOnItemClickListener();
         initListViewOnItemSelectedListener();
+        initListViewDpadHandler();
 
         if (getListables().size() > 0) {
             listView.setOnItemLongClickListener(new OnItemLongClickListener() {

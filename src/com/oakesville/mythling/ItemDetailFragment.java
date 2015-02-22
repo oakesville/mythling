@@ -39,9 +39,11 @@ import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -273,8 +275,24 @@ public class ItemDetailFragment extends Fragment {
             }
 
             ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
-            if (!getAppSettings().isFireTv())
+            if (getAppSettings().isFireTv()) {
+                if (mediaActivity.getAppSettings().isFireTv()) {
+                    button.setOnKeyListener(new OnKeyListener() {
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                                if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                    mediaActivity.getListView().requestFocus();
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                }
+            }
+            else {
                 button.setBackgroundColor(Color.TRANSPARENT);
+            }
             button.setVisibility(android.view.View.VISIBLE);
             button.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
@@ -298,7 +316,8 @@ public class ItemDetailFragment extends Fragment {
                     Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
                     if (bitmap == null) {
                         URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
-                        new ImageRetrievalTask(item, art).execute(url);
+                        String filepath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
+                        new ImageRetrievalTask(filepath, getAppSettings().isErrorReportingEnabled()).execute(url);
                     } else {
                         artworkView.setImageBitmap(bitmap);
                     }
@@ -327,20 +346,19 @@ public class ItemDetailFragment extends Fragment {
 
     public class ImageRetrievalTask extends AsyncTask<URL, Integer, Long> {
         private Exception ex;
-        private String filePath;
         private Bitmap bitmap;
-        private Item item;
-        private ArtworkDescriptor descriptor;
+        private String filepath;
+        private boolean reportErrors;
 
-        ImageRetrievalTask(Item item, ArtworkDescriptor descriptor) {
-            this.item = item;
-            this.descriptor = descriptor;
+        ImageRetrievalTask(String filepath, boolean reportErrors) {
+            this.filepath = filepath;
+            this.reportErrors = reportErrors;
         }
 
         protected Long doInBackground(URL... urls) {
             try {
-                filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + descriptor.getArtworkPath();
-                bitmap = MediaActivity.getAppData().readImageBitmap(filePath);
+
+                bitmap = MediaActivity.getAppData().readImageBitmap(filepath);
                 if (bitmap == null) {
                     if (BuildConfig.DEBUG)
                         Log.d(TAG, "Loading image from url: " + urls[0]);
@@ -348,11 +366,11 @@ public class ItemDetailFragment extends Fragment {
                     downloader.setCredentials(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
                     try {
                         byte[] imageBytes = downloader.get();
-                        MediaActivity.getAppData().writeImage(filePath, imageBytes);
+                        MediaActivity.getAppData().writeImage(filepath, imageBytes);
                     } catch (EOFException ex) {
                         // try again
                         byte[] imageBytes = downloader.get();
-                        MediaActivity.getAppData().writeImage(filePath, imageBytes);
+                        MediaActivity.getAppData().writeImage(filepath, imageBytes);
                     } catch (IOException ex) {
                         // fail silently
                         if (BuildConfig.DEBUG)
@@ -365,7 +383,7 @@ public class ItemDetailFragment extends Fragment {
                 this.ex = ex;
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, ex.getMessage(), ex);
-                if (getAppSettings().isErrorReportingEnabled())
+                if (reportErrors)
                     new Reporter(ex).send();
                 return -1L;
             }
@@ -376,13 +394,13 @@ public class ItemDetailFragment extends Fragment {
                 if (ex != null) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
-                    if (getAppSettings().isErrorReportingEnabled())
+                    if (reportErrors)
                         new Reporter(ex).send();
-                    Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
                 }
             } else {
                 try {
-                    artworkView.setImageBitmap(MediaActivity.getAppData().readImageBitmap(filePath));
+                    artworkView.setImageBitmap(MediaActivity.getAppData().readImageBitmap(filepath));
                 } catch (Exception ex) {
                     if (BuildConfig.DEBUG)
                         Log.e(TAG, ex.getMessage(), ex);
