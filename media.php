@@ -138,7 +138,7 @@ if (!$type->isSearch())
       else if ($categorizeUsingMetadata)
         $where = "where (inetref is null or inetref = '00000000') and ((season is null or season = '0') and (episode is null or episode = '0'))";
       // one option
-      $orderBy = "order by filename";
+      $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
       $query = "select intid as id, filename from videometadata " . $where . " " . $orderBy;
     }
     else
@@ -165,20 +165,20 @@ if (!$type->isSearch())
       if ($sort == "date")
       {
         if ($type->isMovies())
-          $orderBy = "order by year, filename";
+          $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
         else if ($type->isTvSeries())
           $orderBy = "order by season, episode";
       }
       else if ($sort == "rating")
       {
         if ($type->isMovies())
-          $orderBy = "order by userrating desc, filename";
+          $orderBy = "order by userrating desc, replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
         else if ($type->isTvSeries())
-          $orderBy = "order by userrating desc, filename";
+          $orderBy = "order by userrating desc, replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
       }
       else
       {
-        $orderBy = "order by filename";
+        $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
       }
 
       $query = "select intid as id, title, subtitle, filename, inetref, homepage, season, episode, year, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner from videometadata " . $where . " " . $orderBy;
@@ -192,7 +192,7 @@ if (!$type->isSearch())
     $albumArtMap = getAlbumArtMap();
     $where = "where d.directory_id = s.directory_id";
     // one option
-    $orderBy = "order by filename";
+    $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
     $query = "select s.song_id as id, s.directory_id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
   }
   else if ($type->isLiveTv())
