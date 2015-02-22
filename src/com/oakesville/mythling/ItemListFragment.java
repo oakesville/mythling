@@ -115,12 +115,8 @@ public class ItemListFragment extends ListFragment {
 
         Listable sel = mediaActivity.getListables(path).get(position);
         boolean isItem = sel instanceof Item;
-        Uri.Builder builder = new Uri.Builder();
-        if (isItem)
-            builder.path(path);
-        else
-            builder.path(path + "/" + sel.getLabel());
-        Uri uri = builder.build();
+        String topath = isItem ? path : path + "/" + sel.getLabel();
+        Uri uri = new Uri.Builder().path(topath).build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
         if (isItem) {
             intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());

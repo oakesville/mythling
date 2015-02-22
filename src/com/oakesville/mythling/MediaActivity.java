@@ -19,8 +19,10 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -118,7 +120,9 @@ public abstract class MediaActivity extends Activity {
         getListView().setAdapter(listAdapter);
     }
 
-    protected String getPath() { return ""; }
+    private String path;
+    protected String getPath() { return path; }
+    protected void setPath(String path) { this.path = path; }
 
     protected List<Listable> getListables() {
         return mediaList.getListables(getPath());
@@ -821,9 +825,7 @@ public abstract class MediaActivity extends Activity {
             selItemIndex = 0;
         }
 
-        Uri.Builder builder = new Uri.Builder();
-        builder.path(getPath());
-        Uri uri = builder.build();
+        Uri uri = new Uri.Builder().path(getPath()).build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaPagerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(SEL_ITEM_INDEX, selItemIndex);
@@ -1354,9 +1356,7 @@ public abstract class MediaActivity extends Activity {
                             getListView().setItemChecked(position, true);  // TODO?
                             showSubListPane(catpath, 0);
                         } else {
-                            Uri.Builder builder = new Uri.Builder();
-                            builder.path(catpath);
-                            Uri uri = builder.build();
+                            Uri uri = new Uri.Builder().path(catpath).build();
                             startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
                         }
                     }
@@ -1419,6 +1419,21 @@ public abstract class MediaActivity extends Activity {
                 showItemInDetailPane(selItemIndex);
             else
                 showSubListPane(getPath() + "/" + preSel.getLabel());
+        }
+    }
+
+    protected void setPathFromIntent() {
+        try {
+            String newPath = getIntent().getDataString();
+            setPath(newPath == null ? "" : URLDecoder.decode(newPath, "UTF-8"));
+        }
+        catch (UnsupportedEncodingException ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            setPath(""); // TODO correct?
         }
     }
 

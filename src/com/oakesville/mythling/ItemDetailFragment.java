@@ -144,10 +144,9 @@ public class ItemDetailFragment extends Fragment {
             Spannable spans = (Spannable) titleView.getText();
             ClickableSpan clickSpan = new ClickableSpan() {
                 public void onClick(View v) {
-                    ((TextView) v).setBackgroundColor(Color.GRAY);
-                    Uri.Builder builder = new Uri.Builder();
-                    builder.path(mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString());
-                    Uri uri = builder.build();
+                    ((TextView)v).setBackgroundColor(Color.GRAY);
+                    String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
+                    Uri uri = new Uri.Builder().path(path).build();
                     startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
                 }
             };
@@ -159,10 +158,9 @@ public class ItemDetailFragment extends Fragment {
             artworkView.setClickable(true);
             artworkView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((ImageView) v).setBackgroundResource(R.drawable.rounded_frame_active);
-                    Uri.Builder builder = new Uri.Builder();
-                    builder.path(mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString());
-                    Uri uri = builder.build();
+                    ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
+                    String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
+                    Uri uri = new Uri.Builder().path(path).build();
                     startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
                 }
             });

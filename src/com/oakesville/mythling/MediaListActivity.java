@@ -19,13 +19,13 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.ParseException;
 
 import org.json.JSONException;
 
 import android.app.FragmentBreadCrumbs;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -56,9 +56,6 @@ public class MediaListActivity extends MediaActivity {
         return listView;
     }
 
-    private String path;
-    public String getPath() { return path; }
-
     public String getCharSet() {
         return mediaList.getCharSet();
     }
@@ -70,39 +67,29 @@ public class MediaListActivity extends MediaActivity {
 
         createProgressBar();
 
+        setPathFromIntent();
+
         listView = (ListView) findViewById(R.id.split_cats);
 
-        try {
-            String newPath = URLDecoder.decode(getIntent().getDataString(), "UTF-8");
-            if (newPath != null && !newPath.isEmpty())
-              path = newPath;
+        setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
+        setTopOffset(getIntent().getIntExtra(TOP_OFFSET, 0));
+        setCurrentTop(getIntent().getIntExtra(CURRENT_TOP, 0));
 
-            setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
-            setTopOffset(getIntent().getIntExtra(TOP_OFFSET, 0));
-            setCurrentTop(getIntent().getIntExtra(CURRENT_TOP, 0));
+        String mode = getIntent().getStringExtra(MODE_SWITCH);
+        modeSwitch = mode != null;
+        if (mode == null)
+            mode = getAppSettings().getMediaSettings().getViewType().toString();
+        if (ViewType.list.toString().equals(mode))
+            goListView();
+        else if (ViewType.split.toString().equals(mode))
+            goSplitView();
 
-            String mode = getIntent().getStringExtra(MODE_SWITCH);
-            modeSwitch = mode != null;
-            if (mode == null)
-                mode = getAppSettings().getMediaSettings().getViewType().toString();
-            if (ViewType.list.toString().equals(mode))
-                goListView();
-            else if (ViewType.split.toString().equals(mode))
-                goSplitView();
+        if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath()))
+            getActionBar().setDisplayHomeAsUpEnabled(true);
 
-            if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(path))
-                getActionBar().setDisplayHomeAsUpEnabled(true);
-
-            breadCrumbs = (FragmentBreadCrumbs) findViewById(R.id.breadcrumbs);
-            breadCrumbs.setActivity(this);
-            breadCrumbs.setTitle(path, path);
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-        }
+        breadCrumbs = (FragmentBreadCrumbs) findViewById(R.id.breadcrumbs);
+        breadCrumbs.setActivity(this);
+        breadCrumbs.setTitle(getPath(), getPath());
     }
 
     @Override
@@ -147,7 +134,7 @@ public class MediaListActivity extends MediaActivity {
         mediaList = getAppData().getMediaList();
         setMediaType(mediaList.getMediaType());
 
-        if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(path)) {
+        if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath())) {
             String title = "TV  (at " + mediaList.getRetrieveTimeDisplay() + " on " + mediaList.getRetrieveDateDisplay() + ")";
             breadCrumbs.setTitle(title, title);
         }
@@ -183,16 +170,18 @@ public class MediaListActivity extends MediaActivity {
     public void refresh() {
         super.refresh();
         getAppSettings().setLastLoad(0);
-        goMain();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void sort() throws IOException, JSONException, ParseException {
-        refresh();
-    }
-
-    private void goMain() {
-        Intent intent = new Intent(this, MainActivity.class);
+        super.refresh();
+        getAppSettings().setLastLoad(0);
+        Uri uri = new Uri.Builder().path(getPath()).build();
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri, this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

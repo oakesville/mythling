@@ -19,7 +19,6 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.ParseException;
 
 import org.json.JSONException;
@@ -54,9 +53,6 @@ import com.oakesville.mythling.util.Reporter;
 public class MediaPagerActivity extends MediaActivity {
     private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
-    private String path;
-    protected String getPath() { return path; }
-
     private ViewPager pager;
     private MediaPagerAdapter pagerAdapter;
 
@@ -73,26 +69,14 @@ public class MediaPagerActivity extends MediaActivity {
 
         createProgressBar();
 
+        setPathFromIntent();
+
         pager = (ViewPager) findViewById(R.id.pager);
 
-        try {
-            String newPath = getIntent().getDataString();
-            if (newPath == null)
-                path = "";
-            else
-                path = URLDecoder.decode(newPath, "UTF-8");
+        modeSwitch = getIntent().getBooleanExtra(MODE_SWITCH, false);
+        setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
 
-            modeSwitch = getIntent().getBooleanExtra(MODE_SWITCH, false);
-            setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
-
-            getActionBar().setDisplayHomeAsUpEnabled(!path.isEmpty());
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
-        }
+        getActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
     }
 
 
@@ -196,7 +180,7 @@ public class MediaPagerActivity extends MediaActivity {
 
     public void refresh() {
         super.refresh();
-        path = "";
+        setPath("");
         mediaList = new MediaList();
 
         startProgress();
@@ -217,16 +201,14 @@ public class MediaPagerActivity extends MediaActivity {
         if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
             getAppSettings().clearCache(); // refresh since we're switching from flattened hierarchy
 
-        if (path == null || path.isEmpty()) {
+        if (getPath() == null || getPath().isEmpty()) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(MODE_SWITCH, mode);
             intent.putExtra(SEL_ITEM_INDEX, getSelItemIndex());
             startActivity(intent);
         } else {
-            Uri.Builder builder = new Uri.Builder();
-            builder.path(path);
-            Uri uri = builder.build();
+            Uri uri = new Uri.Builder().path(getPath()).build();
             Intent intent = new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class);
             intent.putExtra(MODE_SWITCH, mode);
             intent.putExtra(SEL_ITEM_INDEX, getSelItemIndex());

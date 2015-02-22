@@ -27,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -89,6 +90,8 @@ public class MainActivity extends MediaActivity {
 
         createProgressBar();
 
+        setPathFromIntent();
+
         setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
         setTopOffset(getIntent().getIntExtra(TOP_OFFSET, 0));
         setCurrentTop(getIntent().getIntExtra(CURRENT_TOP, 0));
@@ -102,8 +105,6 @@ public class MainActivity extends MediaActivity {
         else if (ViewType.split.toString().equals(mode))
             goSplitView();
 
-        listView = (ListView) findViewById(R.id.split_cats);
-
         if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail) {
             Intent intent = new Intent(this, MediaPagerActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -111,6 +112,9 @@ public class MainActivity extends MediaActivity {
             finish();
             return;
         }
+
+        listView = (ListView) findViewById(R.id.split_cats);
+
     }
 
     @Override
@@ -161,6 +165,13 @@ public class MainActivity extends MediaActivity {
         }
 
         mediaList = getAppData().getMediaList();
+        if (getPath() != null && !getPath().isEmpty()) {
+            // proceed to MediaListActivity
+            Uri uri = new Uri.Builder().path(getPath()).build();
+            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), MediaListActivity.class));
+            finish();
+            return;
+        }
 
         setListAdapter(new ListableListAdapter(MainActivity.this, getListables().toArray(new Listable[0])));
 

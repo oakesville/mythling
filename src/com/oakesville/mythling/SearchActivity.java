@@ -75,6 +75,8 @@ public class SearchActivity extends MediaActivity {
 
         createProgressBar();
 
+        setPath("");
+
         listView = (ListView) findViewById(R.id.search_list);
 
         // Get the intent, verify the action and get the query
