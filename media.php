@@ -192,7 +192,7 @@ if (!$type->isSearch())
     $albumArtMap = getAlbumArtMap();
     $where = "where d.directory_id = s.directory_id";
     // one option
-    $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
+    $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from concat(concat(d.path,'/'),s.filename)))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
     $query = "select s.song_id as id, s.directory_id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s " . $where . " " . $orderBy;
   }
   else if ($type->isLiveTv())
