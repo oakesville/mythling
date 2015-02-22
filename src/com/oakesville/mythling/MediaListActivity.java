@@ -28,6 +28,7 @@ import android.app.FragmentBreadCrumbs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -120,6 +121,14 @@ public class MediaListActivity extends MediaActivity {
         }
 
         super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.view_list && getAppSettings().getMediaSettings().getViewType() == ViewType.split
+                || item.getItemId() == R.id.view_split && getAppSettings().getMediaSettings().getViewType() == ViewType.list)
+            modeSwitch = true;  // in case back button to MainActivity
+        return super.onOptionsItemSelected(item);
     }
 
     public void populate() throws IOException, JSONException, ParseException {
