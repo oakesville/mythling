@@ -550,10 +550,13 @@ public abstract class MediaActivity extends Activity {
                 goDetailView();
                 return true;
             } else if (item.getItemId() == R.id.view_split) {
+                ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setViewType(ViewType.split);
                 item.setChecked(true);
                 viewMenuItem.setIcon(R.drawable.ic_menu_split);
                 goSplitView();
+                if (oldView == ViewType.list)
+                    initSplitView();
                 return true;
             } else if (item.getItemId() == R.id.menu_refresh) {
                 refresh();
