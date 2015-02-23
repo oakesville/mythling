@@ -41,6 +41,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.oakesville.mythling.FireTvViewPager.DpadMediaKeyHandler;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -65,7 +66,10 @@ public class MediaPagerActivity extends MediaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pager);
+        if (getAppSettings().isFireTv())
+            setContentView(R.layout.firetv_pager);
+        else
+            setContentView(R.layout.pager);
 
         createProgressBar();
 
@@ -123,10 +127,8 @@ public class MediaPagerActivity extends MediaActivity {
                 TextView curItemView = (TextView) findViewById(R.id.currentItem);
                 curItemView.setText(String.valueOf(getSelItemIndex() + 1));
             }
-
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
-
             public void onPageScrollStateChanged(int state) {
             }
         });
@@ -139,14 +141,27 @@ public class MediaPagerActivity extends MediaActivity {
                 if (fromUser)
                     setSelItemIndex(progress);
             }
-
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
-
             public void onStopTrackingTouch(SeekBar seekBar) {
                 pager.setCurrentItem(getSelItemIndex());
             }
         });
+
+        if (getAppSettings().isFireTv()) {
+            ((FireTvViewPager)pager).setDpadMediaKeyHandler(new DpadMediaKeyHandler() {
+                public boolean handleFastForward() {
+                    pager.setCurrentItem(getListables().size() - 1);
+                    positionBar.setProgress(getListables().size());
+                    return true;
+                }
+                public boolean handleRewind() {
+                    pager.setCurrentItem(0);
+                    positionBar.setProgress(1);
+                    return true;
+                }
+            });
+        }
 
         ImageButton button = (ImageButton) findViewById(R.id.gotoFirst);
         button.setOnClickListener(new OnClickListener() {

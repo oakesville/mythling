@@ -73,6 +73,7 @@ import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
@@ -1388,9 +1389,11 @@ public abstract class MediaActivity extends Activity {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            getListView().performItemClick(getListAdapter().getView(getSelItemIndex(), null, null),
-                                    getSelItemIndex(), getListAdapter().getItemId(getSelItemIndex()));
-                            return true;
+                            if (isSplitView() || getListables().get(getSelItemIndex()) instanceof Category) {
+                                getListView().performItemClick(getListAdapter().getView(getSelItemIndex(), null, null),
+                                        getSelItemIndex(), getListAdapter().getItemId(getSelItemIndex()));
+                                return true;
+                            }
                         }
                         else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && !"".equals(getPath())) {
                             onBackPressed();

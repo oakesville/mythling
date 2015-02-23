@@ -274,7 +274,8 @@ public class ItemDetailFragment extends Fragment {
 
             ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
             if (getAppSettings().isFireTv()) {
-                if (mediaActivity.getAppSettings().isFireTv()) {
+                if (mediaActivity.getListView() != null) {
+                    // split view
                     button.setOnKeyListener(new OnKeyListener() {
                         public boolean onKey(View v, int keyCode, KeyEvent event) {
                             if (event.getAction() == KeyEvent.ACTION_DOWN) {
