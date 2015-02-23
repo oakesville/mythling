@@ -58,8 +58,8 @@ public class VideoViewActivity extends Activity {
     private AppSettings appSettings;
 
 
-    @SuppressLint("NewApi")
     @Override
+    @SuppressLint("NewApi")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video);

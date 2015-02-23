@@ -296,6 +296,7 @@ public class ItemDetailFragment extends Fragment {
                 public void onClick(View v) {
                     Item item = (Item) listable;
                     item.setPath(mediaActivity.getPath());
+                    grabFocus = false;
                     mediaActivity.playItem(item);
                 }
             });

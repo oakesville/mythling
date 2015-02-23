@@ -63,7 +63,6 @@ import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -203,8 +202,6 @@ public abstract class MediaActivity extends Activity {
 
     public abstract ListView getListView();
 
-    private boolean active;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,7 +210,6 @@ public abstract class MediaActivity extends Activity {
 
     @Override
     protected void onResume() {
-        active = true;
         super.onResume();
         if (supportsMusic())
           registerPlaybackBroadcastReceiver(true);
@@ -221,7 +217,6 @@ public abstract class MediaActivity extends Activity {
 
     @Override
     public void onPause() {
-        active = false;
         registerPlaybackBroadcastReceiver(false);
         super.onPause();
     }
@@ -644,11 +639,6 @@ public abstract class MediaActivity extends Activity {
             AppSettings appSettings = getAppSettings();
 
             if (appSettings.isDevicePlayback()) {
-                if (getListView() != null) {
-                    String msg = (item.isMusic() ? "Playing: '" : "Loading: '") + item.getTitle() + "'";
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, new String[]{msg});
-                    getListView().setAdapter(adapter);
-                }
 
                 if (item.isMusic()) {
                     String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
@@ -659,6 +649,7 @@ public abstract class MediaActivity extends Activity {
                     }
                     else {
                         startProgress();
+                        Toast.makeText(getApplicationContext(), "Playing '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                         Intent playMusic = new Intent(this, MusicPlaybackService.class);
                         playMusic.setData(Uri.parse(musicUrl));
                         playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
@@ -666,10 +657,6 @@ public abstract class MediaActivity extends Activity {
                                 if (msg.what == MusicPlaybackService.MESSAGE_PLAYER_PREPARED) {
                                     stopProgress();
                                     showStopMenuItem(true);
-                                }
-                                else if (msg.what == MusicPlaybackService.MESSAGE_PLAYBACK_STOPPED) {
-                                    if (active)
-                                        onResume();  // re-show the list
                                 }
                             }
                         }));
@@ -682,6 +669,7 @@ public abstract class MediaActivity extends Activity {
                     dialog.setListener(new StreamDialogListener() {
                         public void onClickHls() {
                             startProgress();
+                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             if (item.isLiveTv())
                                 new StreamTvTask((TvShow) item, false).execute();
                             else
@@ -690,6 +678,7 @@ public abstract class MediaActivity extends Activity {
 
                         public void onClickStream() {
                             startProgress();
+                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             if (item.isLiveTv())
                                 new StreamTvTask((TvShow) item, true).execute();
                             else
@@ -725,9 +714,11 @@ public abstract class MediaActivity extends Activity {
                         // detail or split mode -- no dialog unless preferred stream mode is unknown
                         if (appSettings.isPreferHls(item.getFormat())) {
                             startProgress();
+                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             new StreamHlsTask(item).execute((URL) null);
                         } else if (appSettings.isPreferStreamRaw(item.getFormat())) {
                             startProgress();
+                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             playRawVideoStream(item);
                         } else {
                             dialog.show(getFragmentManager(), "StreamVideoDialog");

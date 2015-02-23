@@ -189,12 +189,14 @@
     <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
 
     <string-array name="video_res_entries">
+        <item>1080p</item>
         <item>720p</item>
         <item>600p</item>
         <item>480p</item>
         <item>240p</item>
     </string-array>
     <string-array name="video_res_values">
+        <item>1080</item>
         <item>720</item>
         <item>600</item>
         <item>480</item>
@@ -204,6 +206,7 @@
     <string name="title_video_bitrate">Video BitRate</string>
 
     <string-array name="video_bitrate_entries">
+        <item>4000k</item>
         <item>2400k</item>
         <item>1600k</item>
         <item>1200k</item>
@@ -213,6 +216,7 @@
         <item>240k</item>
     </string-array>
     <string-array name="video_bitrate_values">
+        <item>4000000</item>
         <item>2400000</item>
         <item>1600000</item>
         <item>1200000</item>
