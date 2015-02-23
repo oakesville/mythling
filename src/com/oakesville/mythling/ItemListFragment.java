@@ -113,17 +113,12 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        Listable sel = mediaActivity.getListables(path).get(position);
-        boolean isItem = sel instanceof Item;
-        String topath = isItem ? path : path + "/" + sel.getLabel();
-        Uri uri = new Uri.Builder().path(topath).build();
+        Uri uri = new Uri.Builder().path(path).build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
-        if (isItem) {
-            intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());
-            View topV = listView.getChildAt(0);
-            intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
-            intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
-        }
+        intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());
+        View topV = listView.getChildAt(0);
+        intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
+        intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
 
         startActivity(intent);
     }
