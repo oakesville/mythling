@@ -29,15 +29,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.Listable;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
@@ -144,21 +140,9 @@ public class MediaListActivity extends MediaActivity {
         initListViewOnItemClickListener();
         initListViewOnItemSelectedListener();
         initListViewDpadHandler();
+        registerForContextMenu(listView);
 
         if (getListables().size() > 0) {
-            listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    boolean isItem = getListables().get(position) instanceof Item;
-                    if (isItem) {
-                        final Item item = (Item) getListables().get(position);
-                        if (item.isRecording() || item.isLiveTv()) {
-                            transcodeItem(item);
-                        }
-                    }
-                    return true;
-                }
-            });
-
             updateActionMenu();
             listView.setSelectionFromTop(getCurrentTop(), getTopOffset());
             if (isSplitView())

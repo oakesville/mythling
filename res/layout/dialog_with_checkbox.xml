@@ -22,7 +22,7 @@
     android:layout_height="wrap_content">
 
     <CheckBox
-        android:id="@+id/always_stream_selected_option"
+        android:id="@+id/dialog_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>

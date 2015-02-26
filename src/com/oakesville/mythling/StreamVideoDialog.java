@@ -33,20 +33,16 @@ import com.oakesville.mythling.media.Item;
 public class StreamVideoDialog extends DialogFragment {
     public interface StreamDialogListener {
         public void onClickHls();
-
         public void onClickStream();
-
         public void onClickCancel();
     }
 
     private StreamDialogListener listener;
-
     public void setListener(StreamDialogListener listener) {
         this.listener = listener;
     }
 
     private String message;
-
     public void setMessage(String message) {
         this.message = message;
     }
@@ -65,7 +61,7 @@ public class StreamVideoDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_stream, null);
+        View view = inflater.inflate(R.layout.dialog_with_checkbox, null);
         builder.setView(view);
         builder.setIcon(R.drawable.ic_action_play);
         builder.setTitle(settings.getMediaSettings().getLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " file"));
@@ -73,7 +69,7 @@ public class StreamVideoDialog extends DialogFragment {
         if (message != null)
             builder.setMessage(message);
 
-        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.always_stream_selected_option);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_check);
         checkBox.setText("Always do this for " + item.getFormat() + " files");
 
         // add the buttons
@@ -97,8 +93,7 @@ public class StreamVideoDialog extends DialogFragment {
             });
         } else {
             // no pref
-            builder
-                    .setPositiveButton("Transcode to HLS", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Transcode to HLS", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             if (checkBox.isChecked())
                                 settings.setPreferHls(item.getFormat());
@@ -114,8 +109,7 @@ public class StreamVideoDialog extends DialogFragment {
                     });
         }
 
-        builder
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onClickCancel();
                     }

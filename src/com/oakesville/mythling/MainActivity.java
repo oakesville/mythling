@@ -178,6 +178,7 @@ public class MainActivity extends MediaActivity {
         initListViewOnItemClickListener();
         initListViewOnItemSelectedListener();
         initListViewDpadHandler();
+        registerForContextMenu(listView);
 
         updateActionMenu();
         stopProgress();

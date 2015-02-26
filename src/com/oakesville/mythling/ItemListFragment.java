@@ -23,11 +23,14 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.oakesville.mythling.app.Listable;
@@ -77,6 +80,8 @@ public class ItemListFragment extends ListFragment {
             getListView().requestFocus();
         }
 
+        registerForContextMenu(getListView());
+
         if (mediaActivity.getAppSettings().isFireTv()) {
             getListView().setOnKeyListener(new OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -95,18 +100,6 @@ public class ItemListFragment extends ListFragment {
                 }
             });
         }
-
-        getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Listable sel = mediaActivity.getListables(path).get(position);
-                if (sel instanceof Item) {
-                    mediaActivity.playItem((Item)sel);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
     }
 
     @Override
@@ -121,5 +114,34 @@ public class ItemListFragment extends ListFragment {
         intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        if (v == getListView()) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            Listable listable = (Listable)getListView().getItemAtPosition(info.position);
+            if (listable instanceof Item) {
+                Item item = (Item)listable;
+                menu.setHeaderTitle(item.getTitle());
+                String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
+                for (int i = 0; i < menuItems.length; i++)
+                    menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == 0) {
+            mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
+            return true;
+        } else if (item.getItemId() == 1) {
+            mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
+            return true;
+        } else {
+            return false;
+        }
     }
  }

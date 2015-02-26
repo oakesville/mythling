@@ -54,6 +54,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1422,6 +1424,35 @@ public abstract class MediaActivity extends Activity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
             setPath(""); // TODO correct?
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        if (v == getListView()) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            Listable listable = (Listable)getListView().getItemAtPosition(info.position);
+            if (listable instanceof Item) {
+                Item item = (Item)listable;
+                menu.setHeaderTitle(item.getTitle());
+                String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
+                for (int i = 0; i < menuItems.length; i++)
+                    menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == 0) {
+            transcodeItem((Item)getListView().getItemAtPosition(info.position));
+            return true;
+        } else if (item.getItemId() == 1) {
+            playItem((Item)getListView().getItemAtPosition(info.position));
+            return true;
+        } else {
+            return false;
         }
     }
 
