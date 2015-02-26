@@ -136,7 +136,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), "Frontend playback error: " + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }
