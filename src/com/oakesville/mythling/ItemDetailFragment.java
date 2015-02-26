@@ -107,7 +107,7 @@ public class ItemDetailFragment extends Fragment {
                 detailView = inflater.inflate(R.layout.detail_pane_vertical, container, false);
             } else {
                 // poster-type artwork goes horizontal
-                if (AppSettings.DEFAULT_ARTWORK_SG.equals(getAppSettings().getArtworkStorageGroup(mediaActivity.getMediaType())))
+                if (AppSettings.DEFAULT_ARTWORK_SG.equals(getAppSettings().getArtworkStorageGroup(getAppSettings().getMediaSettings().getType())))
                     detailView = inflater.inflate(R.layout.detail_pane_horizontal, container, false);
                 else
                     detailView = inflater.inflate(R.layout.detail_pane_vertical, container, false);

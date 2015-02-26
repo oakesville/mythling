@@ -151,26 +151,17 @@ public abstract class MediaActivity extends Activity {
     private BroadcastReceiver playbackBroadcastReceiver;
 
     private static AppData appData;
-    public static AppData getAppData() {
-        return appData;
-    }
+    public static AppData getAppData() { return appData; }
+    public static void setAppData(AppData data) { appData = data;}
 
-    public static void setAppData(AppData data) {
-        appData = data;
-    }
     private AppSettings appSettings;
+    public AppSettings getAppSettings() { return appSettings; }
 
-    public AppSettings getAppSettings() {
-        return appSettings;
-    }
+    // it seems there's a reason we keep a ref separate from appSettings.getMediaSettings()
+    // (see MainActivity/MediaListActivity/MediaPagerActivity.populate())
     private MediaType mediaType;
-
-    protected MediaType getMediaType() {
-        return mediaType;
-    }
-    protected void setMediaType(MediaType mt) {
-        this.mediaType = mt;
-    }
+    protected MediaType getMediaType() { return mediaType; }
+    protected void setMediaType(MediaType mt) { this.mediaType = mt; }
 
     public String getCharSet() {
         return "UTF-8";
