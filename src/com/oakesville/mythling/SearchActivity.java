@@ -203,7 +203,7 @@ public class SearchActivity extends MediaActivity {
                 URL sgUrl = new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs");
                 HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
                 String storageGroupsJson = new String(sgDownloader.get());
-                Map<String, StorageGroup> storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();
+                Map<String,StorageGroup> storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();
                 searchResults = new MythlingParser(getAppSettings(), resultsJson).parseSearchResults(storageGroups);
                 searchResults.setCharSet(downloader.getCharSet());
                 searchResults.setStorageGroups(storageGroups);

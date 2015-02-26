@@ -70,7 +70,7 @@ public class MythTvParser implements MediaListParser {
      * @param mediaType
      * @param storageGroup media storage group
      */
-    public MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         return parseMediaList(mediaType, storageGroups, null);
     }
 
@@ -79,7 +79,7 @@ public class MythTvParser implements MediaListParser {
      * @param storageGroup media storage group
      * @param basePath     base path to trim from filename (when no storage group)
      */
-    public MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups, String basePath) throws JSONException, ParseException {
+    public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups, String basePath) throws JSONException, ParseException {
         MediaList mediaList = new MediaList();
         mediaList.setMediaType(mediaType);
         mediaList.setBasePath(basePath);
@@ -192,7 +192,7 @@ public class MythTvParser implements MediaListParser {
         return mediaList;
     }
 
-    private Video buildVideoItem(MediaType type, JSONObject vid, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    private Video buildVideoItem(MediaType type, JSONObject vid, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         Video item;
         if (type == MediaType.movies) {
             item = new Movie(vid.getString("Id"), vid.getString("Title"));
@@ -299,7 +299,7 @@ public class MythTvParser implements MediaListParser {
         return item;
     }
 
-    private Recording buildRecordingItem(JSONObject rec, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    private Recording buildRecordingItem(JSONObject rec, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         JSONObject channel = rec.getJSONObject("Channel");
         String chanId = channel.getString("ChanId");
         JSONObject recObj = rec.getJSONObject("Recording");
@@ -462,8 +462,8 @@ public class MythTvParser implements MediaListParser {
         return streamInfo;
     }
 
-    public Map<String, StorageGroup> parseStorageGroups() throws JSONException {
-        Map<String, StorageGroup> storageGroups = new HashMap<String, StorageGroup>();
+    public Map<String,StorageGroup> parseStorageGroups() throws JSONException {
+        Map<String,StorageGroup> storageGroups = new HashMap<String,StorageGroup>();
 
         JSONObject dirList = new JSONObject(json).getJSONObject("StorageGroupDirList");
         if (dirList.has("StorageGroupDirs")) {

@@ -165,6 +165,7 @@ public class MainActivity extends MediaActivity {
         }
 
         mediaList = getAppData().getMediaList();
+        storageGroups = getAppData().getStorageGroups();
         if (getPath() != null && !getPath().isEmpty()) {
             // proceed to MediaListActivity
             Uri uri = new Uri.Builder().path(getPath()).build();

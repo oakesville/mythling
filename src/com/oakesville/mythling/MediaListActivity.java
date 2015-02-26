@@ -128,6 +128,7 @@ public class MediaListActivity extends MediaActivity {
             return;
         }
         mediaList = getAppData().getMediaList();
+        storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
         if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath())) {

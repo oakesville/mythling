@@ -116,6 +116,7 @@ public class MediaPagerActivity extends MediaActivity {
             return;
         }
         mediaList = getAppData().getMediaList();
+        storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
         pagerAdapter = new MediaPagerAdapter(getFragmentManager());

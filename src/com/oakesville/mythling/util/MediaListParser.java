@@ -28,6 +28,6 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.StorageGroup;
 
 public interface MediaListParser {
-    public MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups)
+    public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups)
             throws JSONException, ParseException, ServiceException;
 }

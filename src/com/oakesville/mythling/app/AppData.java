@@ -70,41 +70,24 @@ public class AppData {
     }
 
     private MediaList mediaList;
+    public MediaList getMediaList() { return mediaList; }
+    public void setMediaList(MediaList mediaList) { this.mediaList = mediaList; }
 
-    public MediaList getMediaList() {
-        return mediaList;
-    }
-
-    public void setMediaList(MediaList wl) {
-        this.mediaList = wl;
-    }
-
-    private Map<String, StorageGroup> storageGroups;
-
-    public Map<String, StorageGroup> getStorageGroups() {
-        return storageGroups;
-    }
-
-    public void setStorageGroups(Map<String, StorageGroup> sgs) {
-        this.storageGroups = sgs;
-    }
+    private Map<String,StorageGroup> storageGroups;
+    public Map<String,StorageGroup> getStorageGroups() { return storageGroups; }
+    public void setStorageGroups(Map<String,StorageGroup> sgs) { this.storageGroups = sgs; }
 
     private SearchResults searchResults;
+    public SearchResults getSearchResults() { return searchResults; }
 
-    public SearchResults getSearchResults() {
-        return searchResults;
-    }
-
-    public void setSearchResults(SearchResults results) {
-        this.searchResults = results;
-    }
+    public void setSearchResults(SearchResults results) { this.searchResults = results; }
 
     private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
     private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
     private static final String QUEUE_FILE_SUFFIX = "Queue.json";
 
     public MediaList readMediaList(MediaType mediaType) throws IOException, JSONException, ParseException {
-        Map<String, StorageGroup> storageGroups = readStorageGroups();
+        Map<String,StorageGroup> storageGroups = readStorageGroups();
         if (storageGroups != null) {
             File cacheDir = appContext.getCacheDir();
             File mediaListJsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
@@ -118,7 +101,7 @@ public class AppData {
         return mediaList;
     }
 
-    public Map<String, StorageGroup> readStorageGroups() throws IOException, JSONException, ParseException {
+    public Map<String,StorageGroup> readStorageGroups() throws IOException, JSONException, ParseException {
         File cacheDir = appContext.getCacheDir();
         File storageGroupsJsonFile = new File(cacheDir.getPath() + "/" + STORAGE_GROUPS_JSON_FILE);
         if (storageGroupsJsonFile.exists()) {
@@ -221,7 +204,7 @@ public class AppData {
     };
 
     public Bitmap getImageBitMap(String path) {
-        Bitmap bitmap = (Bitmap) bitmapCache.get(path);
+        Bitmap bitmap = bitmapCache.get(path);
         if (bitmap == null) {
             bitmap = readImageBitmap(path);
             if (bitmap != null)

@@ -45,9 +45,9 @@ public class Recorder {
     private static final String TAG = Recorder.class.getSimpleName();
 
     private AppSettings appSettings;
-    private Map<String, StorageGroup> storageGroups;
+    private Map<String,StorageGroup> storageGroups;
 
-    public Recorder(AppSettings appSettings, Map<String, StorageGroup> storageGroups) {
+    public Recorder(AppSettings appSettings, Map<String,StorageGroup> storageGroups) {
         this.appSettings = appSettings;
         this.storageGroups = storageGroups;
     }

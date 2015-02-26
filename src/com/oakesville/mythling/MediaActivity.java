@@ -147,8 +147,9 @@ public abstract class MediaActivity extends Activity {
     int getSelItemIndex() { return selItemIndex; }
     void setSelItemIndex(int selItemIndex) { this.selItemIndex = selItemIndex; }
 
+    // these need to be retained after orientation change, so their kept with AppData
     protected MediaList mediaList;
-    protected Map<String, StorageGroup> storageGroups;
+    protected Map<String,StorageGroup> storageGroups;
 
     private BroadcastReceiver playbackBroadcastReceiver;
 
@@ -663,7 +664,6 @@ public abstract class MediaActivity extends Activity {
                     dialog.setListener(new StreamDialogListener() {
                         public void onClickHls() {
                             startProgress();
-                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             if (item.isLiveTv())
                                 new StreamTvTask((TvShow) item, false).execute();
                             else
@@ -672,7 +672,6 @@ public abstract class MediaActivity extends Activity {
 
                         public void onClickStream() {
                             startProgress();
-                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             if (item.isLiveTv())
                                 new StreamTvTask((TvShow) item, true).execute();
                             else
@@ -708,11 +707,9 @@ public abstract class MediaActivity extends Activity {
                         // detail or split mode -- no dialog unless preferred stream mode is unknown
                         if (appSettings.isPreferHls(item.getFormat())) {
                             startProgress();
-                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             new StreamHlsTask(item).execute((URL) null);
                         } else if (appSettings.isPreferStreamRaw(item.getFormat())) {
                             startProgress();
-                            Toast.makeText(getApplicationContext(), "Loading '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                             playRawVideoStream(item);
                         } else {
                             dialog.show(getFragmentManager(), "StreamVideoDialog");

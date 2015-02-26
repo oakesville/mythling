@@ -61,7 +61,7 @@ public class MythlingParser implements MediaListParser {
         this.json = json;
     }
 
-    public MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException {
+    public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException {
         MediaList mediaList = new MediaList();
         mediaList.setMediaType(mediaType);
 
@@ -104,7 +104,7 @@ public class MythlingParser implements MediaListParser {
         return mediaList;
     }
 
-    private Category buildCategory(MediaType type, JSONObject cat, Category parent, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    private Category buildCategory(MediaType type, JSONObject cat, Category parent, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         String name = cat.getString("name");
         Category category = parent == null ? new Category(name, type) : new Category(name, parent);
         if (cat.has("categories")) {
@@ -124,7 +124,7 @@ public class MythlingParser implements MediaListParser {
         return category;
     }
 
-    public SearchResults parseSearchResults(Map<String, StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException {
+    public SearchResults parseSearchResults(Map<String,StorageGroup> storageGroups) throws JSONException, ParseException, ServiceException {
         SearchResults searchResults = new SearchResults();
 
         long startTime = System.currentTimeMillis();
@@ -192,7 +192,7 @@ public class MythlingParser implements MediaListParser {
         return searchResults;
     }
 
-    private Item buildItem(MediaType type, JSONObject jsonObj, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    private Item buildItem(MediaType type, JSONObject jsonObj, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         Item item;
         if (type == MediaType.movies) {
             item = new Movie(jsonObj.getString("id"), jsonObj.getString("title"));
@@ -291,7 +291,7 @@ public class MythlingParser implements MediaListParser {
             item.setPageUrl(jsonObj.getString("pageUrl"));
     }
 
-    public List<Item> parseQueue(MediaType type, Map<String, StorageGroup> storageGroups) throws JSONException, ParseException {
+    public List<Item> parseQueue(MediaType type, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         List<Item> queue = new ArrayList<Item>();
         long startTime = System.currentTimeMillis();
         JSONObject list = new JSONObject(json);
