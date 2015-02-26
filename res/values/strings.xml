@@ -192,9 +192,9 @@
     <string name="title_transcode_hls">Transcode to HLS</string>
     <string name="title_stream_raw">Stream Raw File</string>
     <string name="title_error_reporting">Error Reporting</string>
-    <string name="message_directories_movies">Comma-separated list of video directory paths (relative to storage dir) containing movies</string>
-    <string name="message_directories_tv_series">Comma-separated list of video directory paths (relative to storage dir) containing TV series\'</string>
-    <string name="message_directories_exclude">Comma-separated list of video directory paths (relative to storage dir) to exclude</string>
+    <string name="message_directories_movies">Comma-separated list of video directory paths containing movies (relative to storage dir)</string>
+    <string name="message_directories_tv_series">Comma-separated list of video directory paths containing TV series\' (relative to storage dir)</string>
+    <string name="message_directories_exclude">Comma-separated list of video directory paths to exclude (relative to storage dir)</string>
     <string name="message_transcode_hls">Comma-separated list of filename extensions to always transcode to HTTP Live Streams for playback</string>
     <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
 
