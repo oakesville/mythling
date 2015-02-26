@@ -16,6 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
- <selector xmlns:android="http://schemas.android.com/apk/res/android">   
+<selector xmlns:android="http://schemas.android.com/apk/res/android">   
     <item android:state_focused="true" android:drawable="@drawable/bordered_selected" />
 </selector>
