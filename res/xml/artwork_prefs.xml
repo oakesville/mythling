@@ -30,9 +30,9 @@
         <ListPreference
             android:key="artwork_sg_videos"
             android:title="@string/title_videos"
-            android:entries="@array/artwork_sg_values"
+            android:entries="@array/artwork_sg_entries"
             android:entryValues="@array/artwork_sg_values"
-            android:defaultValue="@string/artwork_sg_default"
+            android:defaultValue="@string/artwork_sg_default_videos"
             android:layout="@layout/pref" />
 
         <ListPreference
@@ -40,7 +40,7 @@
             android:title="@string/title_movies"
             android:entries="@array/artwork_sg_values"
             android:entryValues="@array/artwork_sg_values"
-            android:defaultValue="@string/artwork_sg_default"
+            android:defaultValue="@string/artwork_sg_default_movies"
             android:layout="@layout/pref" />
 
         <ListPreference
@@ -48,7 +48,7 @@
             android:title="@string/title_tvseries"
             android:entries="@array/artwork_sg_values"
             android:entryValues="@array/artwork_sg_values"
-            android:defaultValue="@string/artwork_sg_default"
+            android:defaultValue="@string/artwork_sg_default_tvseries"
             android:layout="@layout/pref" />
     </PreferenceCategory>
 

@@ -37,7 +37,7 @@ public class ArtworkPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (AppSettings.DEFAULT_ARTWORK_SG_RECORDINGS.equals(newValue)) {
-                    preference.setSummary(AppSettings.DEFAULT_ARTWORK_SG_RECORDINGS_LABEL);
+                    preference.setSummary(getString(R.string.artwork_sg_use_preview));
                     return true;
                 } else {
                     return super.onPreferenceChange(preference, newValue);
@@ -46,7 +46,7 @@ public class ArtworkPrefs extends PreferenceFragment {
         });
         String sg = appSettings.getArtworkStorageGroup(MediaType.recordings);
         if ("Screenshots".equals(sg))
-            pref.setSummary(AppSettings.DEFAULT_ARTWORK_SG_RECORDINGS_LABEL);
+            pref.setSummary(getString(R.string.artwork_sg_use_preview));
         else
             pref.setSummary(sg);
 

@@ -92,9 +92,14 @@ public class AppSettings {
     public static final String ARTWORK_SG_RECORDINGS = "artwork_sg_recordings";
     public static final String ARTWORK_SG_MOVIES = "artwork_sg_movies";
     public static final String ARTWORK_SG_TVSERIES = "artwork_sg_tvseries";
-    public static final String DEFAULT_ARTWORK_SG = "Coverart";
-    public static final String DEFAULT_ARTWORK_SG_RECORDINGS = "Screenshots";
-    public static final String DEFAULT_ARTWORK_SG_RECORDINGS_LABEL = "<Use Preview Image>";
+    public static final String ARTWORK_SG_COVERART = "Coverart";
+    public static final String ARTWORK_SG_FANART = "Fanart";
+    public static final String ARTWORK_SG_BANNERS = "Banners";
+    public static final String ARTWORK_SG_SCREENSHOTS = "Screenshots";
+    public static final String DEFAULT_ARTWORK_SG_RECORDINGS = ARTWORK_SG_SCREENSHOTS;
+    public static final String DEFAULT_ARTWORK_SG_VIDEOS = ARTWORK_SG_BANNERS;
+    public static final String DEFAULT_ARTWORK_SG_MOVIES = ARTWORK_SG_COVERART;
+    public static final String DEFAULT_ARTWORK_SG_TV_SERIES = ARTWORK_SG_COVERART;
     public static final String MUSIC_ART_LEVEL_SONG = "album_art_level";
     public static final String INTERNAL_VIDEO_RES = "internal_video_res";
     public static final String EXTERNAL_VIDEO_RES = "external_video_res";
@@ -227,8 +232,7 @@ public class AppSettings {
     public String getArtworkParams(MediaType mediaType) throws UnsupportedEncodingException {
         String params = "";
         String prefStorageGroup = getArtworkStorageGroup(mediaType);
-        if (!DEFAULT_ARTWORK_SG.equals(prefStorageGroup))
-            params += "&artworkStorageGroup=" + prefStorageGroup;
+        params += "&artworkStorageGroup=" + prefStorageGroup;
         if (!isAlbumArtAlbumLevel())
             params += "&albumArtSongLevel=true";
         return params;
@@ -491,15 +495,15 @@ public class AppSettings {
         if (mediaType == MediaType.music)
             return isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
         else if (mediaType == MediaType.videos)
-            return getStringPref(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG_VIDEOS);
         else if (mediaType == MediaType.recordings)
             return getStringPref(ARTWORK_SG_RECORDINGS, DEFAULT_ARTWORK_SG_RECORDINGS);
         else if (mediaType == MediaType.movies)
-            return getStringPref(ARTWORK_SG_MOVIES, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_MOVIES, DEFAULT_ARTWORK_SG_MOVIES);
         else if (mediaType == MediaType.tvSeries)
-            return getStringPref(ARTWORK_SG_TVSERIES, DEFAULT_ARTWORK_SG);
+            return getStringPref(ARTWORK_SG_TVSERIES, DEFAULT_ARTWORK_SG_TV_SERIES);
         else
-            return DEFAULT_ARTWORK_SG;
+            return DEFAULT_ARTWORK_SG_VIDEOS;
     }
 
     public boolean isAlbumArtAlbumLevel() {

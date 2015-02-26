@@ -107,18 +107,28 @@
 
     <string-array name="artwork_sg_values">
         <item>Coverart</item>
-        <item>Fanart</item>
         <item>Banners</item>
+        <item>Fanart</item>
+        <item>Screenshots</item>
+    </string-array>
+    <string-array name="artwork_sg_entries">
+        <item>Coverart</item>
+        <item>Banners</item>
+        <item>Fanart</item>
         <item>Screenshots</item>
     </string-array>
     <string-array name="artwork_sg_recording_entries">
         <item>Coverart</item>
-        <item>Fanart</item>
         <item>Banners</item>
+        <item>Fanart</item>
         <item>&lt;Use Preview Image></item>
     </string-array>
+    <string name="artwork_sg_use_preview">&lt;Use Preview Image></string>
 
     <string name="artwork_sg_default">Coverart</string>
+    <string name="artwork_sg_default_videos">Banners</string>
+    <string name="artwork_sg_default_movies">Coverart</string>
+    <string name="artwork_sg_default_tvseries">Coverart</string>
     <string name="artwork_sg_default_recordings">Screenshots</string>
     <!-- really preview images -->
     <string name="title_album_art_level">Album Art Level</string>

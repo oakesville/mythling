@@ -774,7 +774,7 @@ public abstract class MediaActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle("Transcode")
-                .setMessage("Begin transcoding " + item.getTitle() + "?")
+                .setMessage("Begin transcoding '" + item.getTitle() + "'?")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
