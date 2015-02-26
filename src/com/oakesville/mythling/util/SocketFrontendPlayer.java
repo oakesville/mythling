@@ -37,6 +37,10 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.TvShow;
 
+/**
+ * Does not work with video storage groups.  Only used for features not supported by ServiceFrontendPlayer
+ * (music playback and video playback when no storage groups).
+ */
 public class SocketFrontendPlayer implements FrontendPlayer {
     private static final String TAG = SocketFrontendPlayer.class.getSimpleName();
 
