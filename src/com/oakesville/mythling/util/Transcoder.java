@@ -86,6 +86,7 @@ public class Transcoder {
             if (liveStreamMatchesItemAndQuality(liveStream, item)) {
                 streamInfo = liveStream;
                 preExist = true;
+                break;
             } else {
                 if ("Transcoding".equals(liveStream.getMessage())) {
                     if (liveStreamMatchesItem(liveStream, item)) {
@@ -202,32 +203,42 @@ public class Transcoder {
         return false;
     }
 
+    /**
+     * returns false if desired quality settings are closer to the nearest
+     * available option than this stream's quality
+     */
     private boolean liveStreamMatchesItemAndQuality(LiveStreamInfo liveStream, Item item) {
         if (!liveStreamMatchesItem(liveStream, item))
             return false;
 
+        int streamRes = liveStream.getHeight();
         int desiredRes = appSettings.getVideoRes();
-        int resDiff = Math.abs(liveStream.getHeight() - desiredRes);
-        int[] resValues = appSettings.getVideoResValues();
-        for (int i = 0; i < resValues.length; i++) {
-            if (resDiff > Math.abs(liveStream.getHeight() - resValues[i]))
-                return false;
+        if (streamRes != desiredRes) {
+            int[] resValues = appSettings.getVideoResValues();
+            for (int i = 0; i < resValues.length; i++) {
+                if (Math.abs(streamRes - resValues[i]) > Math.abs(desiredRes - resValues[i]))
+                    return false;
+            }
         }
 
+        int streamVidBr = liveStream.getVideoBitrate();
         int desiredVidBr = appSettings.getVideoBitrate();
-        int vidBrDiff = Math.abs(liveStream.getVideoBitrate() - desiredVidBr);
-        int[] vidBrValues = appSettings.getVideoBitrateValues();
-        for (int i = 0; i < vidBrValues.length; i++) {
-            if (vidBrDiff > Math.abs(liveStream.getVideoBitrate() - vidBrValues[i]))
-                return false;
+        if (streamVidBr != desiredVidBr) {
+            int[] vidBrValues = appSettings.getVideoBitrateValues();
+            for (int i = 0; i < vidBrValues.length; i++) {
+                if (Math.abs(streamVidBr - vidBrValues[i]) > Math.abs(desiredVidBr - vidBrValues[i]))
+                    return false;
+            }
         }
 
+        int streamAudBr = liveStream.getAudioBitrate();
         int desiredAudBr = appSettings.getAudioBitrate();
-        int audBrDiff = Math.abs(liveStream.getAudioBitrate() - desiredAudBr);
-        int[] audBrValues = appSettings.getAudioBitrateValues();
-        for (int i = 0; i < audBrValues.length; i++) {
-            if (audBrDiff > Math.abs(liveStream.getAudioBitrate() - audBrValues[i]))
-                return false;
+        if (streamAudBr != desiredAudBr) {
+            int[] audBrValues = appSettings.getAudioBitrateValues();
+            for (int i = 0; i < audBrValues.length; i++) {
+                if (Math.abs(streamAudBr - audBrValues[i]) > Math.abs(desiredAudBr - audBrValues[i]))
+                    return false;
+            }
         }
 
         return true;
