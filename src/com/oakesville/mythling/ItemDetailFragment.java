@@ -70,7 +70,6 @@ public class ItemDetailFragment extends Fragment {
     private ImageView artworkView;
     private Listable listable;
     private int idx;
-    private boolean grabFocus;
 
     private int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
 
@@ -78,7 +77,6 @@ public class ItemDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
-        grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.DETAIL_GRAB);
     }
 
     @Override
@@ -298,10 +296,11 @@ public class ItemDetailFragment extends Fragment {
                 public void onClick(View v) {
                     Item item = (Item) listable;
                     item.setPath(mediaActivity.getPath());
-                    grabFocus = false;
                     mediaActivity.playItem(item);
                 }
             });
+
+            boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
             if (grabFocus)
                 button.requestFocus();
 

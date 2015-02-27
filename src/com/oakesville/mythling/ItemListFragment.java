@@ -43,6 +43,7 @@ public class ItemListFragment extends ListFragment {
     private String path;
     private int preSelIdx = -1;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +100,10 @@ public class ItemListFragment extends ListFragment {
                     return false;
                 }
             });
+
+            boolean grab = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
+            if (grab)
+                getListView().requestFocus();
         }
     }
 
@@ -112,7 +117,7 @@ public class ItemListFragment extends ListFragment {
         View topV = listView.getChildAt(0);
         intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
         intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
-
+        intent.putExtra(MediaActivity.GRAB_FOCUS, true);
         startActivity(intent);
     }
 

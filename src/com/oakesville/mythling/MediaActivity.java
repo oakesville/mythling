@@ -112,7 +112,7 @@ public abstract class MediaActivity extends Activity {
     static final String SEL_ITEM_INDEX = "idx";
     static final String CURRENT_TOP = "curTop";
     static final String TOP_OFFSET = "topOff";
-    static final String DETAIL_GRAB = "grab";
+    static final String GRAB_FOCUS = "grab";
     static final String MODE_SWITCH = "modeSwitch";
 
     private ListableListAdapter listAdapter;
@@ -611,20 +611,29 @@ public abstract class MediaActivity extends Activity {
         ItemDetailFragment detailFragment = new ItemDetailFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(SEL_ITEM_INDEX, position);
-        arguments.putBoolean(DETAIL_GRAB, grabFocus);
+        arguments.putBoolean(GRAB_FOCUS, grabFocus);
         detailFragment.setArguments(arguments);
         getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT).commit();
     }
 
     protected void showSubListPane(String path) {
-        showSubListPane(path, -1);
+        showSubListPane(path, -1, false);
+    }
+
+    protected void showSubListPane(String path, boolean grabFocus) {
+        showSubListPane(path, -1, grabFocus);
     }
 
     protected void showSubListPane(String path, int selIdx) {
+        showSubListPane(path, selIdx, false);
+    }
+
+    protected void showSubListPane(String path, int selIdx, boolean grabFocus) {
         ItemListFragment listFragment = new ItemListFragment();
         Bundle arguments = new Bundle();
         arguments.putString(PATH, path);
         arguments.putInt(SEL_ITEM_INDEX, selIdx);
+        arguments.putBoolean(GRAB_FOCUS, grabFocus);
         listFragment.setArguments(arguments);
         getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT).commit();
     }
@@ -1326,7 +1335,7 @@ public abstract class MediaActivity extends Activity {
                         Item item = (Item) getListables().get(position);
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            getListView().setItemChecked(selItemIndex, true);  // TODO?
+                            getListView().setItemChecked(selItemIndex, true);
                             showItemInDetailPane(position, true);
                         } else {
                             item.setPath(getPath());
@@ -1338,7 +1347,7 @@ public abstract class MediaActivity extends Activity {
                         String catpath = "".equals(getPath()) ? cat : getPath() + "/" + cat;
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
-                            getListView().setItemChecked(position, true);  // TODO?
+                            getListView().setItemChecked(position, true);
                             showSubListPane(catpath, 0);
                         } else {
                             Uri uri = new Uri.Builder().path(catpath).build();
@@ -1357,10 +1366,12 @@ public abstract class MediaActivity extends Activity {
                     Listable sel = getListables().get(position);
                     getListView().setItemChecked(selItemIndex, false);
                     selItemIndex = position;
+                    boolean grab = isSplitView() && getIntent().getBooleanExtra(GRAB_FOCUS, false);
                     if (sel instanceof Item)
-                        showItemInDetailPane(position);
+                        showItemInDetailPane(position, grab);
                     else
-                        showSubListPane(getPath() + "/" + sel.getLabel());
+                        showSubListPane(getPath() + "/" + sel.getLabel(), grab);
+                    getIntent().putExtra(GRAB_FOCUS, false);
                 }
                 public void onNothingSelected(AdapterView<?> parent) {
                 }

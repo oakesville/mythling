@@ -262,6 +262,7 @@ public class MediaPagerActivity extends MediaActivity {
             Fragment frag = new ItemDetailFragment();
             Bundle args = new Bundle();
             args.putInt(SEL_ITEM_INDEX, position);
+            args.putBoolean(GRAB_FOCUS, true);
             frag.setArguments(args);
             return frag;
         }
