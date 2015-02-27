@@ -397,7 +397,8 @@ public class ItemDetailFragment extends Fragment {
                         Log.e(TAG, ex.getMessage(), ex);
                     if (reportErrors)
                         new Reporter(ex).send();
-                    Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
+                    if (getActivity() != null)
+                        Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
                 }
             } else {
                 try {
