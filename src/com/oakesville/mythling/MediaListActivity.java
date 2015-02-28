@@ -144,6 +144,9 @@ public class MediaListActivity extends MediaActivity {
         if (getListables().size() > 0) {
             updateActionMenu();
             listView.setSelectionFromTop(getCurrentTop(), getTopOffset());
+            getListAdapter().setSelection(getSelItemIndex());
+            getListView().setSelection(getSelItemIndex());
+
             if (isSplitView())
                 initSplitView();
             listView.requestFocus();

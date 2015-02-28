@@ -182,6 +182,8 @@ public class MainActivity extends MediaActivity {
         updateActionMenu();
         stopProgress();
         listView.setSelectionFromTop(getCurrentTop(), getTopOffset());
+        getListAdapter().setSelection(getSelItemIndex());
+        getListView().setSelection(getSelItemIndex());
 
         if (isSplitView())
             initSplitView();

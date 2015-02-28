@@ -776,7 +776,6 @@ public abstract class MediaActivity extends Activity {
 
     /**
      * Starts a transcode without immediately watching.
-     * TODO: how should this be called?
      */
     protected void transcodeItem(final Item item) {
         item.setPath("");
@@ -1408,8 +1407,6 @@ public abstract class MediaActivity extends Activity {
     }
 
     void initSplitView() {
-        getListAdapter().setSelection(selItemIndex);
-        getListView().setSelection(selItemIndex);
         getListView().setItemChecked(selItemIndex, true);
         if (selItemIndex != -1) {
             Listable preSel = getListables().get(selItemIndex);
