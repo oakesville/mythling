@@ -63,7 +63,6 @@ public class VideoViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         appSettings = new AppSettings(getApplicationContext());
 

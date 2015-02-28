@@ -52,7 +52,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -422,8 +421,13 @@ public abstract class MediaActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+            if (modeSwitch) {
+                onBackPressed();
+                return true;
+            }
+            else {
+                return super.onNavigateUp();
+            }
         }
         try {
             if (sortMenuItem != null)

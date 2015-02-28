@@ -40,7 +40,6 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle("Settings");
     }
 

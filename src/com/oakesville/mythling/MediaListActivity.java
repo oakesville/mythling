@@ -178,8 +178,8 @@ public class MediaListActivity extends MediaActivity {
         if (modeSwitch) {
             modeSwitch = false;
             Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         } else {
             super.onBackPressed();

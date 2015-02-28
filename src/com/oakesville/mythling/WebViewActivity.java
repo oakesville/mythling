@@ -45,20 +45,19 @@ public class WebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         appSettings = new AppSettings(getApplicationContext());
 
         webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
-        
+
         if (!appSettings.deviceSupportsWebLinks()) {
             webView.setWebViewClient(new WebViewClient() {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     view.loadUrl(url);
                     return true;
-                }                
+                }
             });
         }
 
