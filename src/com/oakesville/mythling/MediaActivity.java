@@ -814,7 +814,7 @@ public abstract class MediaActivity extends Activity {
 
     protected void goListView() {
         findViewById(R.id.detail_container).setVisibility(View.GONE);
-        if (!getAppSettings().isFireTv() && getListView().getCheckedItemPosition() >= 0) {
+        if (!getAppSettings().isFireTv() && getListView() != null && getListView().getCheckedItemPosition() >= 0) {
             getListView().setItemChecked(getListView().getCheckedItemPosition(), false);
         }
     }
