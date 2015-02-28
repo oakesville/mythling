@@ -361,7 +361,7 @@ public class ItemDetailFragment extends Fragment {
             try {
 
                 bitmap = MediaActivity.getAppData().readImageBitmap(filepath);
-                if (bitmap == null) {
+                if (bitmap == null && mediaActivity != null) { // media activity could be null in this thread
                     if (BuildConfig.DEBUG)
                         Log.d(TAG, "Loading image from url: " + urls[0]);
                     HttpHelper downloader = new HttpHelper(urls, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs(), true);
@@ -398,7 +398,7 @@ public class ItemDetailFragment extends Fragment {
                         Log.e(TAG, ex.getMessage(), ex);
                     if (reportErrors)
                         new Reporter(ex).send();
-                    if (getActivity() != null)
+                    if (getActivity() != null) // activity might be null in this thread
                         Toast.makeText(getActivity(), ex.toString(), Toast.LENGTH_LONG).show();
                 }
             } else {
