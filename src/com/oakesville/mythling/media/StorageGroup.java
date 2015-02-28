@@ -22,42 +22,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StorageGroup {
-    public StorageGroup(String name) {
-        this.name = name;
-        this.directories = new ArrayList<String>();
-    }
 
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     private String host;
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
+    public String getHost() { return host; }
+    public void setHost(String host) { this.host = host; }
 
     private List<String> directories;
-
-    public List<String> getDirectories() {
-        return directories;
-    }
-
-    public void setDirectories(List<String> dirs) {
-        this.directories = dirs;
-    }
+    public List<String> getDirectories() { return directories; }
+    public void setDirectories(List<String> dirs) { this.directories = dirs; }
 
     public void addDirectory(String dir) {
         directories.add(dir);
+    }
+
+    public StorageGroup(String name) {
+        this.name = name;
+        this.directories = new ArrayList<String>();
     }
 }

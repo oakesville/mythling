@@ -46,11 +46,9 @@ public class MediaListActivity extends MediaActivity {
     private static final String TAG = MediaListActivity.class.getSimpleName();
 
     private FragmentBreadCrumbs breadCrumbs;
-    private ListView listView;
 
-    public ListView getListView() {
-        return listView;
-    }
+    private ListView listView;
+    public ListView getListView() { return listView; }
 
     public String getCharSet() {
         return mediaList.getCharSet();

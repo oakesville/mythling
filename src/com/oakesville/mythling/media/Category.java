@@ -40,36 +40,21 @@ public class Category implements Listable, Comparable<Category> {
     }
 
     private String name;
-
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     private MediaType type;
-
-    public MediaType getType() {
-        return type;
-    }
+    public MediaType getType() { return type; }
 
     private Category parent;
-
-    public Category getParent() {
-        return parent;
-    }
+    public Category getParent() { return parent; }
 
     public boolean isTopLevel() {
         return parent == null;
     }
 
     private List<Category> children = new ArrayList<Category>();
-
-    public List<Category> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<Category> children) {
-        this.children = children;
-    }
+    public List<Category> getChildren() { return children; }
+    public void setChildren(List<Category> children) { this.children = children; }
 
     public void addChild(Category childCat) {
         children.add(childCat);
@@ -84,14 +69,8 @@ public class Category implements Listable, Comparable<Category> {
     }
 
     private List<Item> items = new ArrayList<Item>();
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
+    public List<Item> getItems() { return items; }
+    public void setItems(List<Item> items) { this.items = items; }
 
     public void addItem(Item item) {
         items.add(item);

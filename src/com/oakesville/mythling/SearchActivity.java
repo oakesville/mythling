@@ -54,10 +54,7 @@ public class SearchActivity extends MediaActivity {
     SearchResults searchResults;
 
     private ListView listView;
-
-    public ListView getListView() {
-        return listView;
-    }
+    public ListView getListView() { return listView; }
 
     private ArrayAdapter<Item> adapter;
     private MenuItem resultsMenuItem;

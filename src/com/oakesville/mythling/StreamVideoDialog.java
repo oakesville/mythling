@@ -43,9 +43,7 @@ public class StreamVideoDialog extends DialogFragment {
     }
 
     private String message;
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public void setMessage(String message) { this.message = message;  }
 
     private AppSettings settings;
     private Item item;

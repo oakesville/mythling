@@ -37,54 +37,27 @@ public abstract class Item implements Listable {
     public abstract String getTypeTitle();
 
     private String id;
-
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
     // searchPath is populated for search results
     private String searchPath;
-
-    public String getSearchPath() {
-        return searchPath;
-    }
-
-    public void setSearchPath(String searchPath) {
-        this.searchPath = searchPath;
-    }
+    public String getSearchPath() { return searchPath; }
+    public void setSearchPath(String searchPath) { this.searchPath = searchPath; }
 
     /**
      * Path for item playback (set when item is played)
      */
     private String path;
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
 
     private String title;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
     private StorageGroup storageGroup;
-
-    public StorageGroup getStorageGroup() {
-        return storageGroup;
-    }
-
-    public void setStorageGroup(StorageGroup storageGroup) {
-        this.storageGroup = storageGroup;
-    }
+    public StorageGroup getStorageGroup() { return storageGroup; }
+    public void setStorageGroup(StorageGroup storageGroup) { this.storageGroup = storageGroup; }
 
     public String getEncodedTitle() {
         try {
@@ -98,44 +71,20 @@ public abstract class Item implements Listable {
      * Just the base part of the filename.
      */
     private String fileBase;
-
-    public String getFileBase() {
-        return fileBase;
-    }
-
-    public void setFileBase(String file) {
-        this.fileBase = file;
-    }
+    public String getFileBase() { return fileBase; }
+    public void setFileBase(String file) { this.fileBase = file; }
 
     private String format;
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
+    public String getFormat() { return format; }
+    public void setFormat(String format) { this.format = format; }
 
     private String subTitle;
-
-    public String getSubTitle() {
-        return subTitle;
-    }
-
-    public void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-    }
+    public String getSubTitle() { return subTitle; }
+    public void setSubTitle(String subTitle) { this.subTitle = subTitle; }
 
     private float rating;
-
-    public float getRating() {
-        return rating;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
+    public float getRating() { return rating; }
+    public void setRating(float rating) { this.rating = rating; }
 
     public Item(String id, String title) {
         this.id = id;

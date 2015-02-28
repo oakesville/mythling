@@ -52,10 +52,7 @@ public class AppData {
     private static final String TAG = AppData.class.getSimpleName();
 
     private Context appContext;
-
-    public AppData(Context appContext) {
-        this.appContext = appContext;
-    }
+    public AppData(Context appContext) { this.appContext = appContext;  }
 
     public boolean isExpired() {
         AppSettings appSettings = new AppSettings(appContext);
@@ -79,7 +76,6 @@ public class AppData {
 
     private SearchResults searchResults;
     public SearchResults getSearchResults() { return searchResults; }
-
     public void setSearchResults(SearchResults results) { this.searchResults = results; }
 
     private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";

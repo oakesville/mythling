@@ -135,16 +135,10 @@ public class AppSettings {
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
 
     private Context appContext;
-
-    public Context getAppContext() {
-        return appContext;
-    }
+    public Context getAppContext() { return appContext; }
 
     private SharedPreferences prefs;
-
-    public SharedPreferences getPrefs() {
-        return prefs;
-    }
+    public SharedPreferences getPrefs() { return prefs; }
 
     private static DateFormat dateTimeFormat;
 

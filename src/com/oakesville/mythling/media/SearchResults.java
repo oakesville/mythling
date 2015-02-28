@@ -32,6 +32,7 @@ public class SearchResults {
     private Date retrieveDate;
     public Date getRetrieveDate() { return retrieveDate; }
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }
+
     public void setRetrieveDate(String d) throws ParseException {
         retrieveDate = dateFormat.parse(d);
     }

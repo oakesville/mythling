@@ -37,24 +37,12 @@ public class MediaList {
     private DateFormat timeDisplay = new SimpleDateFormat("h:mm aa");
 
     private MediaType mediaType;
-
-    public MediaType getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(MediaType mt) {
-        this.mediaType = mt;
-    }
+    public MediaType getMediaType() { return mediaType; }
+    public void setMediaType(MediaType mt) { this.mediaType = mt; }
 
     private Date retrieveDate;
-
-    public Date getRetrieveDate() {
-        return retrieveDate;
-    }
-
-    public void setRetrieveDate(Date d) {
-        this.retrieveDate = d;
-    }
+    public Date getRetrieveDate() { return retrieveDate; }
+    public void setRetrieveDate(Date d) { this.retrieveDate = d; }
 
     public void setRetrieveDate(String d) throws ParseException {
         retrieveDate = dateFormat.parse(d);
@@ -69,24 +57,12 @@ public class MediaList {
     }
 
     private String charSet;
-
-    public String getCharSet() {
-        return charSet;
-    }
-
-    public void setCharSet(String charSet) {
-        this.charSet = charSet;
-    }
+    public String getCharSet() { return charSet; }
+    public void setCharSet(String charSet) { this.charSet = charSet; }
 
     private int count;
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int ct) {
-        this.count = ct;
-    }
+    public int getCount() { return count; }
+    public void setCount(int ct) { this.count = ct; }
 
     public void setCount(String ct) {
         count = Integer.parseInt(ct);
@@ -97,38 +73,20 @@ public class MediaList {
      * (music and possibly videos)
      */
     private String basePath;
-
-    public String getBasePath() {
-        return basePath;
-    }
-
-    public void setBasePath(String bp) {
-        this.basePath = bp;
-    }
+    public String getBasePath() { return basePath; }
+    public void setBasePath(String bp) { this.basePath = bp;  }
 
     private List<Item> items = new ArrayList<Item>();
-
-    public List<Item> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
+    public List<Item> getItems() { return items; }
+    public void setItems(List<Item> items) { this.items = items; }
 
     public void addItem(Item item) {
         items.add(item);
     }
 
     private List<Category> categories = new ArrayList<Category>();
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> cats) {
-        this.categories = cats;
-    }
+    public List<Category> getCategories() { return categories; }
+    public void setCategories(List<Category> cats) { this.categories = cats; }
 
     public void addCategory(Category cat) {
         categories.add(cat);

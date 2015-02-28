@@ -50,20 +50,11 @@ public class MediaSettings {
     }
 
     private MediaType type = MediaType.videos;
-
-    public MediaType getType() {
-        return type;
-    }
+    public MediaType getType() { return type; }
 
     private MediaTypeDeterminer typeDeterminer = MediaTypeDeterminer.metadata;
-
-    public MediaTypeDeterminer getTypeDeterminer() {
-        return typeDeterminer;
-    }
-
-    public void setTypeDeterminer(MediaTypeDeterminer determiner) {
-        this.typeDeterminer = determiner;
-    }
+    public MediaTypeDeterminer getTypeDeterminer() {  return typeDeterminer; }
+    public void setTypeDeterminer(MediaTypeDeterminer determiner) { this.typeDeterminer = determiner; }
 
     public void setTypeDeterminer(String determiner) {
         this.typeDeterminer = MediaTypeDeterminer.valueOf(determiner);
@@ -81,28 +72,16 @@ public class MediaSettings {
     }
 
     private ViewType viewType = ViewType.list;
-
-    public ViewType getViewType() {
-        return viewType;
-    }
-
-    public void setViewType(ViewType vt) {
-        this.viewType = vt;
-    }
+    public ViewType getViewType() { return viewType; }
+    public void setViewType(ViewType vt) { this.viewType = vt;  }
 
     public void setViewType(String type) {
         this.viewType = ViewType.valueOf(type);
     }
 
     private SortType sortType = SortType.byTitle;
-
-    public SortType getSortType() {
-        return sortType;
-    }
-
-    public void setSortType(SortType st) {
-        this.sortType = st;
-    }
+    public SortType getSortType() { return sortType; }
+    public void setSortType(SortType st) { this.sortType = st; }
 
     public void setSortType(String type) {
         this.sortType = SortType.valueOf(type);

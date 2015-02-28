@@ -24,45 +24,22 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Recording extends TvShow {
+
     private int recordId;
-
-    public int getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordRuleId(int rid) {
-        this.recordId = rid;
-    }
+    public int getRecordId() { return recordId; }
+    public void setRecordRuleId(int rid) { this.recordId = rid; }
 
     private String internetRef;
-
-    public String getInternetRef() {
-        return internetRef;
-    }
-
-    public void setInternetRef(String inetRef) {
-        this.internetRef = inetRef;
-    }
+    public String getInternetRef() { return internetRef; }
+    public void setInternetRef(String inetRef) { this.internetRef = inetRef; }
 
     private int season;
-
-    public int getSeason() {
-        return season;
-    }
-
-    public void setSeason(int season) {
-        this.season = season;
-    }
+    public int getSeason() { return season; }
+    public void setSeason(int season) { this.season = season; }
 
     private String recordingGroup;
-
-    public String getRecordingGroup() {
-        return recordingGroup;
-    }
-
-    public void setRecordingGroup(String recGroup) {
-        this.recordingGroup = recGroup;
-    }
+    public String getRecordingGroup() { return recordingGroup; }
+    public void setRecordingGroup(String recGroup) { this.recordingGroup = recGroup; }
 
     public Recording(String id, String title) {
         super(id, title);

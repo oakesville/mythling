@@ -21,21 +21,16 @@ package com.oakesville.mythling.media;
 import java.io.IOException;
 
 public class TunerInUseException extends IOException {
+
+    private Recording recording;
+    public Recording getRecording() {  return recording; }
+    public void setRecording(Recording rec) { this.recording = rec; }
+
     public TunerInUseException(String msg) {
         super(msg);
     }
 
     public TunerInUseException(String msg, Throwable cause) {
         super(msg, cause);
-    }
-
-    private Recording recording;
-
-    public Recording getRecording() {
-        return recording;
-    }
-
-    public void setRecording(Recording rec) {
-        this.recording = rec;
     }
 }

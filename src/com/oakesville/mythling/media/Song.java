@@ -26,18 +26,12 @@ public class Song extends Item {
     public static final String ARTWORK_LEVEL_ALBUM = "albumArtwork";
     public static final String ARTWORK_LEVEL_SONG = "songArtwork";
 
+    private int albumArtId;
+    public int getAlbumArtId() { return albumArtId;  }
+    public void setAlbumArtId(int id) { this.albumArtId = id;  }
+
     public Song(String id, String title) {
         super(id, title);
-    }
-
-    private int albumArtId;
-
-    public int getAlbumArtId() {
-        return albumArtId;
-    }
-
-    public void setAlbumArtId(int id) {
-        this.albumArtId = id;
     }
 
     public MediaType getType() {

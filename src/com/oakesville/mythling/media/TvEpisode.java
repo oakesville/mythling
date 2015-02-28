@@ -26,25 +26,14 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
  * A TV episode from MythVideo.
  */
 public class TvEpisode extends Video {
+
     private int season;
-
-    public int getSeason() {
-        return season;
-    }
-
-    public void setSeason(int season) {
-        this.season = season;
-    }
+    public int getSeason() { return season; }
+    public void setSeason(int season) { this.season = season; }
 
     private int episode;
-
-    public int getEpisode() {
-        return episode;
-    }
-
-    public void setEpisode(int episode) {
-        this.episode = episode;
-    }
+    public int getEpisode() { return episode; }
+    public void setEpisode(int episode) { this.episode = episode; }
 
     public TvEpisode(String id, String title) {
         super(id, title);

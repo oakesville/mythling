@@ -47,9 +47,7 @@ public class MainActivity extends MediaActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ListView listView;
-    public ListView getListView() {
-        return listView;
-    }
+    public ListView getListView() { return listView; }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
