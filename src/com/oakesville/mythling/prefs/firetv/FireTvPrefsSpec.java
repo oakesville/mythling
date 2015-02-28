@@ -39,8 +39,7 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
         Map<String,Object> defaults = new HashMap<String,Object>();
         defaults.put(AppSettings.INTERNAL_VIDEO_PLAYER, true);
         defaults.put(AppSettings.INTERNAL_VIDEO_RES, "720");
-        defaults.put(AppSettings.INTERNAL_VIDEO_BITRATE, "800000");
-        defaults.put(AppSettings.TRANSCODE_TIMEOUT, "45");
+        defaults.put(AppSettings.TRANSCODE_TIMEOUT, "60");
         return defaults;
     }
 

@@ -134,6 +134,7 @@ public class ItemDetailFragment extends Fragment {
         listable = mediaActivity.getListables().get(idx);
 
         TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
+        boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
 
         if (listable instanceof Category) {
             Category category = (Category) listable;
@@ -154,15 +155,17 @@ public class ItemDetailFragment extends Fragment {
             artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
             Drawable folder = getResources().getDrawable(R.drawable.folder);
             artworkView.setImageDrawable(folder);
-            artworkView.setClickable(true);
-            artworkView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
-                    String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
-                    Uri uri = new Uri.Builder().path(path).build();
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
-                }
-            });
+            if (!getAppSettings().isFireTv()) {
+                artworkView.setClickable(true);
+                artworkView.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
+                        String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
+                        Uri uri = new Uri.Builder().path(path).build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
+                    }
+                });
+            }
         } else if (listable instanceof Item) {
             Item item = (Item) listable;
 
@@ -302,7 +305,6 @@ public class ItemDetailFragment extends Fragment {
                 }
             });
 
-            boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
             if (grabFocus)
                 button.requestFocus();
 
