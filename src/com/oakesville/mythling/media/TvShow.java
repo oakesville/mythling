@@ -36,64 +36,28 @@ public class TvShow extends Item {
     private static final String TAG = TvShow.class.getSimpleName();
 
     private String callsign;
-
-    public String getCallsign() {
-        return callsign;
-    }
-
-    public void setCallsign(String callsign) {
-        this.callsign = callsign;
-    }
+    public String getCallsign() { return callsign; }
+    public void setCallsign(String callsign) { this.callsign = callsign; }
 
     private String description;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     private Date originallyAired;
-
-    public Date getOriginallyAired() {
-        return originallyAired;
-    }
-
-    public void setOriginallyAired(Date aired) {
-        this.originallyAired = aired;
-    }
+    public Date getOriginallyAired() { return originallyAired; }
+    public void setOriginallyAired(Date aired) { this.originallyAired = aired; }
 
     private Date startTime;
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+    public Date getStartTime() { return startTime; }
+    public void setStartTime(Date startTime) { this.startTime = startTime; }
 
     private Date endTime;
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+    public Date getEndTime() { return endTime; }
+    public void setEndTime(Date endTime) { this.endTime = endTime; }
 
     private String programStart;
-
-    public String getProgramStart() {
-        return programStart;
-    }
-
-    public void setProgramStart(String programStart) {
-        this.programStart = programStart;
-    }
+    public String getProgramStart() { return programStart; }
+    public void setProgramStart(String programStart) { this.programStart = programStart; }
 
     public int getChannelId() {
         return Integer.parseInt(getId().substring(0, getId().indexOf('~')));
