@@ -83,7 +83,8 @@ public class Transcoder {
         List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
         int inProgress = 0;
         for (LiveStreamInfo liveStream : liveStreams) {
-            if (liveStreamMatchesItemAndQuality(liveStream, item)) {
+            if (liveStream.getStatusCode() != LiveStreamInfo.STATUS_CODE_STOPPED
+                    && liveStreamMatchesItemAndQuality(liveStream, item)) {
                 streamInfo = liveStream;
                 preExist = true;
                 break;
@@ -204,8 +205,11 @@ public class Transcoder {
     }
 
     /**
-     * returns false if desired quality settings are closer to the nearest
-     * available option than this stream's quality
+     * Returns false if the stream is closer to an available quality setting
+     * than it is to the desired quality.  This attempts to take into account if
+     * the transcoded stream is slightly off for some reason.  One scenario is
+     * that some external mechanism was used to do the HLS transcode to a quality
+     * that doesn't exactly match any available.
      */
     private boolean liveStreamMatchesItemAndQuality(LiveStreamInfo liveStream, Item item) {
         if (!liveStreamMatchesItem(liveStream, item))
@@ -215,7 +219,7 @@ public class Transcoder {
         int desiredRes = appSettings.getVideoRes();
         if (streamRes != desiredRes) {
             for (int resValue : appSettings.getVideoResValues()) {
-                if (Math.abs(streamRes - resValue) > Math.abs(desiredRes - resValue))
+                if (Math.abs(streamRes - desiredRes) > Math.abs(streamRes - resValue))
                     return false;
             }
         }
@@ -224,7 +228,7 @@ public class Transcoder {
         int desiredVidBr = appSettings.getVideoBitrate();
         if (streamVidBr != desiredVidBr) {
             for (int vidBrValue : appSettings.getVideoBitrateValues()) {
-                if (Math.abs(streamVidBr - vidBrValue) > Math.abs(desiredVidBr - vidBrValue))
+                if (Math.abs(streamVidBr - desiredVidBr) > Math.abs(streamVidBr - vidBrValue))
                     return false;
             }
         }
@@ -233,7 +237,7 @@ public class Transcoder {
         int desiredAudBr = appSettings.getAudioBitrate();
         if (streamAudBr != desiredAudBr) {
             for (int audBrValue : appSettings.getAudioBitrateValues()) {
-                if (Math.abs(streamAudBr - audBrValue) > Math.abs(desiredAudBr - audBrValue))
+                if (Math.abs(streamAudBr - desiredAudBr) > Math.abs(streamAudBr - audBrValue))
                     return false;
             }
         }

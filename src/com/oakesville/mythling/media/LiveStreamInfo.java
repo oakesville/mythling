@@ -19,6 +19,9 @@
 package com.oakesville.mythling.media;
 
 public class LiveStreamInfo {
+
+    public static final int STATUS_CODE_STOPPED = 6;
+
     private long id;
     public long getId() { return id; }
     public void setId(long id) { this.id = id;}
