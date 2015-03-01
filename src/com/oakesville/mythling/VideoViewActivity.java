@@ -18,26 +18,21 @@
  */
 package com.oakesville.mythling;
 
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -56,7 +51,8 @@ public class VideoViewActivity extends Activity {
     private MediaController mediaController;
     private boolean fullScreen;
     private AppSettings appSettings;
-
+    private Uri videoUri;
+    private boolean done;
 
     @Override
     @SuppressLint("NewApi")
@@ -70,33 +66,8 @@ public class VideoViewActivity extends Activity {
         videoView = (VideoView) findViewById(R.id.video_view);
 
         createProgressBar();
-        startProgress();
 
         try {
-            try {
-                // try and get actual screen dimens, including system windows
-                Display display = getWindowManager().getDefaultDisplay();
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    DisplayMetrics metrics = new DisplayMetrics();
-                    display.getRealMetrics(metrics);
-                    int width = metrics.widthPixels;
-                    int height = metrics.heightPixels;
-                    videoView.setLayoutParams(new FrameLayout.LayoutParams(width, height));
-                } else {
-                    Method getRawWidth = Display.class.getMethod("getRawWidth");
-                    Method getRawHeight = Display.class.getMethod("getRawHeight");
-                    int width = (Integer) getRawWidth.invoke(display);
-                    int height = (Integer) getRawHeight.invoke(display);
-                    videoView.setLayoutParams(new FrameLayout.LayoutParams(width, height));
-                }
-            }
-            catch (Exception ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
-                    new Reporter(ex).send();
-            }
 
             if (mediaController == null) {
                 mediaController = new MediaController(this) {
@@ -107,36 +78,41 @@ public class VideoViewActivity extends Activity {
                     }
                 };
             }
+            videoView.setMediaController(mediaController);
 
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mediaPlayer) {
-                    stopProgress();
-                    videoView.seekTo(position);
-                    if (position == 0)
+                    if (!isSeekable(videoUri))
+                        position = 0;
+                    if (position > 0) {
+                        mediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
+                            public void onSeekComplete(MediaPlayer mp) {
+                                stopProgress();
+                                videoView.start();
+                            }
+                        });
+                        videoView.seekTo(position);
+                    } else {
+                        stopProgress();
                         videoView.start();
-                    else
-                        videoView.pause(); //if we come from a resumed activity, video playback will be paused
+                    }
                 }
             });
-
 
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
                     position = 0;
-                    setFullScreen(false);
-                    onBackPressed();
+                    done = true;
+                    finish();
                 }
             });
 
-//            videoView.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View view, MotionEvent event) {
-//                    setFullScreen(false);
-//                    mediaController.show(3000);
-//                    delayedHide(3500);
-//                    return false;
-//                }
-//            });
+            videoUri = Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
+            videoView.setVideoURI(videoUri);
+            videoView.requestFocus();
+            videoView.start();
+            startProgress();
+
 
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 videoView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
@@ -148,10 +124,6 @@ public class VideoViewActivity extends Activity {
                     }
                 });
             }
-
-            videoView.setMediaController(mediaController);
-            videoView.setVideoURI(Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8")));
-            videoView.requestFocus();
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
@@ -165,32 +137,42 @@ public class VideoViewActivity extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         // delayed hide - hint to the user that UI controls are available.
-        delayedHide(200);
+        delayedHide(500);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onPause() {
+        super.onPause();
+        if (done)
+            appSettings.clearVideoPlaybackPosition(videoUri);
+        else
+            appSettings.setVideoPlaybackPosition(videoUri, videoView.getCurrentPosition());
+    }
+
+    @Override
+    protected void onResume() {
+        done = false;
+        super.onResume();
+        position = appSettings.getVideoPlaybackPosition(videoUri);
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("Position", videoView.getCurrentPosition());
+        savedInstanceState.putInt(AppSettings.VIDEO_PLAYBACK_POSITION, videoView.getCurrentPosition());
         videoView.pause();
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        position = savedInstanceState.getInt("Position");
-        videoView.seekTo(position);
+        position = savedInstanceState.getInt(AppSettings.VIDEO_PLAYBACK_POSITION);
+    }
+
+    private boolean isSeekable(Uri videoUri) {
+        // TODO: better logic to exclude HLS
+        return videoUri != null && videoUri.toString().indexOf(".m3u8") == -1;
     }
 
     protected ProgressBar createProgressBar() {

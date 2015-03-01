@@ -35,6 +35,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
@@ -133,6 +134,7 @@ public class AppSettings {
     public static final String AUTH_TYPE_NONE = "None";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
+    public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -563,6 +565,22 @@ public class AppSettings {
 
     public int[] getAudioBitrateValues() {
         return stringArrayToIntArray(appContext.getResources().getStringArray(R.array.audio_bitrate_values));
+    }
+
+    public int getVideoPlaybackPosition(Uri uri) {
+        return getIntPref(VIDEO_PLAYBACK_POSITION + "_" + uri, 0);
+    }
+
+    public boolean setVideoPlaybackPosition(Uri uri, int position) {
+        Editor ed = prefs.edit();
+        ed.putInt(VIDEO_PLAYBACK_POSITION + "_" + uri, position);
+        return ed.commit();
+    }
+
+    public boolean clearVideoPlaybackPosition(Uri uri) {
+        Editor ed = prefs.edit();
+        ed.remove(VIDEO_PLAYBACK_POSITION + "_" + uri);
+        return ed.commit();
     }
 
     private int[] stringArrayToIntArray(String[] stringVals) {
