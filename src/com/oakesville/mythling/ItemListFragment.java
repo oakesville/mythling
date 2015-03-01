@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -131,22 +130,23 @@ public class ItemListFragment extends ListFragment {
                 menu.setHeaderTitle(item.getTitle());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
-                    menu.add(Menu.NONE, i, i, menuItems[i]);
+                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
             }
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        if (item.getItemId() == 0) {
-            mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
-            return true;
-        } else if (item.getItemId() == 1) {
-            mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
-            return true;
-        } else {
-            return false;
+        if (item.getGroupId() == MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            if (item.getItemId() == 0) {
+                mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            } else if (item.getItemId() == 1) {
+                mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            }
         }
+        return false;
     }
  }

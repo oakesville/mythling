@@ -107,6 +107,8 @@ public abstract class MediaActivity extends Activity {
 
     static final String DETAIL_FRAGMENT = "detailFragment";
     static final String LIST_FRAGMENT = "listFragment";
+    static final int MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID = 1;
+    static final int LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID = 2;
 
     static final String PATH = "path";
     static final String SEL_ITEM_INDEX = "idx";
@@ -1456,23 +1458,24 @@ public abstract class MediaActivity extends Activity {
                 menu.setHeaderTitle(item.getTitle());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
-                    menu.add(Menu.NONE, i, i, menuItems[i]);
+                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
             }
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        if (item.getItemId() == 0) {
-            playItem((Item)getListView().getItemAtPosition(info.position));
-            return true;
-        } else if (item.getItemId() == 1) {
-            transcodeItem((Item)getListView().getItemAtPosition(info.position));
-            return true;
-        } else {
-            return false;
+        if (item.getGroupId() == MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            if (item.getItemId() == 0) {
+                playItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            } else if (item.getItemId() == 1) {
+                transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
