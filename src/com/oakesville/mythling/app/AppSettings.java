@@ -532,7 +532,7 @@ public class AppSettings {
     }
 
     public int getInternalVideoRes() {
-        return Integer.parseInt(getStringPref(INTERNAL_VIDEO_RES, "720"));
+        return Integer.parseInt(getStringPref(INTERNAL_VIDEO_RES, "480"));
     }
 
     public int getExternalVideoRes() {

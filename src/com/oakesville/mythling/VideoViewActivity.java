@@ -192,6 +192,7 @@ public class VideoViewActivity extends Activity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         position = savedInstanceState.getInt(AppSettings.VIDEO_PLAYBACK_POSITION);
+        videoView.seekTo(position);  // hopefully short term seek works for HLS
     }
 
     private boolean isSeekable(Uri videoUri) {
