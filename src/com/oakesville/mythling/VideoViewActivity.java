@@ -47,6 +47,7 @@ public class VideoViewActivity extends Activity {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
     private VideoView videoView;
+    private MediaPlayer mediaPlayer;
     private int position;
     private ProgressBar progressBar;
     private MediaController mediaController;
@@ -86,6 +87,7 @@ public class VideoViewActivity extends Activity {
                     if (!isSeekable(videoUri))
                         position = 0;
                     if (position > 0) {
+                        VideoViewActivity.this.mediaPlayer = mediaPlayer;
                         mediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
                             public void onSeekComplete(MediaPlayer mp) {
                                 progressBar.setVisibility(View.GONE);
@@ -167,6 +169,9 @@ public class VideoViewActivity extends Activity {
             appSettings.clearVideoPlaybackPosition(videoUri);
         else
             appSettings.setVideoPlaybackPosition(videoUri, videoView.getCurrentPosition());
+        if (mediaPlayer != null)
+            mediaPlayer.setOnSeekCompleteListener(null);
+        videoView.stopPlayback();  // release mediaPlayer
     }
 
     @Override
