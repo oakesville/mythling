@@ -303,7 +303,7 @@
     <string name="title_activity_video_view">Mythling Player</string>
 
     <string-array name="item_long_click_menu">
-        <item>Initiate Transcode</item>
         <item>Play Item</item>
+        <item>Initiate Transcode</item>
     </string-array>
 </resources>

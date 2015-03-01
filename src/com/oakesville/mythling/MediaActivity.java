@@ -1341,7 +1341,13 @@ public abstract class MediaActivity extends Activity {
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
                             getListView().setItemChecked(selItemIndex, true);
-                            showItemInDetailPane(position, true);
+                            if (appSettings.isFireTv()) {
+                            	// play the item since already selected
+                            	item.setPath(getPath());
+                            	playItem(item);
+                            } else {
+                                showItemInDetailPane(position, true);
+                            }
                         } else {
                             item.setPath(getPath());
                             playItem(item);
@@ -1371,13 +1377,13 @@ public abstract class MediaActivity extends Activity {
                     Listable sel = getListables().get(position);
                     getListView().setItemChecked(selItemIndex, false);
                     selItemIndex = position;
-                    // TODO: Should the decision about whether to grab focus on the right-hand panel be configurable?
-                    // Right now the most sensible approach seems to be list grabs and detail doesn't.
-                    boolean grab = isSplitView() && getIntent().getBooleanExtra(GRAB_FOCUS, false);
-                    if (sel instanceof Item)
+                    if (sel instanceof Item) {
                         showItemInDetailPane(position, false);
-                    else
+                    }
+                    else {
+                        boolean grab = isSplitView() && getIntent().getBooleanExtra(GRAB_FOCUS, false);
                         showSubListPane(getPath() + "/" + sel.getLabel(), grab);
+                    }
                     getIntent().putExtra(GRAB_FOCUS, false);
                 }
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -1459,10 +1465,10 @@ public abstract class MediaActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == 0) {
-            transcodeItem((Item)getListView().getItemAtPosition(info.position));
+            playItem((Item)getListView().getItemAtPosition(info.position));
             return true;
         } else if (item.getItemId() == 1) {
-            playItem((Item)getListView().getItemAtPosition(info.position));
+            transcodeItem((Item)getListView().getItemAtPosition(info.position));
             return true;
         } else {
             return false;

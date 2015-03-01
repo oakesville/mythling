@@ -140,10 +140,10 @@ public class ItemListFragment extends ListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == 0) {
-            mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
+            mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
             return true;
         } else if (item.getItemId() == 1) {
-            mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
+            mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
             return true;
         } else {
             return false;
