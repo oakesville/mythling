@@ -24,6 +24,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.net.Uri;
 import android.os.Build;
@@ -87,13 +88,11 @@ public class VideoViewActivity extends Activity {
                     if (position > 0) {
                         mediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
                             public void onSeekComplete(MediaPlayer mp) {
-                                stopProgress();
                                 videoView.start();
                             }
                         });
                         videoView.seekTo(position);
                     } else {
-                        stopProgress();
                         videoView.start();
                     }
                 }
@@ -107,29 +106,42 @@ public class VideoViewActivity extends Activity {
                 }
             });
 
-            videoUri = Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
-            videoView.setVideoURI(videoUri);
-            videoView.requestFocus();
-            videoView.start();
-            startProgress();
-
+            videoView.setOnInfoListener(new OnInfoListener() {
+                public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                    if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    return false;
+                }
+            });
 
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 videoView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     public void onSystemUiVisibilityChange(int vis) {
-                            // video view may have redisplayed notification bar
-                            if (fullScreen && (vis != View.SYSTEM_UI_FLAG_FULLSCREEN))
-                                videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        // video view may have redisplayed notification bar
+                        if (fullScreen && (vis != View.SYSTEM_UI_FLAG_FULLSCREEN))
+                            videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
                     }
                 });
             }
+
+            videoUri = Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
+            videoView.setVideoURI(videoUri);
+            videoView.requestFocus();
+            progressBar.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
+            progressBar.setVisibility(View.GONE);
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            stopProgress();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
@@ -177,19 +189,9 @@ public class VideoViewActivity extends Activity {
 
     protected ProgressBar createProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progress);
-        progressBar.setVisibility(View.GONE);
-        progressBar.setIndeterminate(true);
         progressBar.setScaleX(0.20f);
         progressBar.setScaleY(0.20f);
         return progressBar;
-    }
-
-    protected void startProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    protected void stopProgress() {
-        progressBar.setVisibility(View.GONE);
     }
 
     Handler hideHandler = new Handler();
