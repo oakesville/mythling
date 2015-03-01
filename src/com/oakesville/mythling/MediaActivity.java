@@ -947,6 +947,16 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    protected void handleEmptyMediaList() {
+        if (isSplitView())
+            showSubListPane(null);
+        if (getAppSettings().isFireTv()) {
+            // empty list - set focus on action bar
+            int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
+            getWindow().getDecorView().findViewById(actionBarResId).requestFocus();
+        }
+    }
+
     protected void updateActionMenu() {
         showMoviesMenuItem(supportsMovies());
         showTvSeriesMenuItem(supportsTvSeries());
@@ -1050,6 +1060,7 @@ public abstract class MediaActivity extends Activity {
         protected void onPostExecute(Long result) {
             refreshing = false;
             if (result != 0L) {
+                handleEmptyMediaList();
                 stopProgress();
                 if (ex != null)
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();

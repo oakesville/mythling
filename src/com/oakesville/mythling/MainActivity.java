@@ -191,13 +191,7 @@ public class MainActivity extends MediaActivity {
                 initSplitView();
             listView.requestFocus();
         } else {
-            if (isSplitView())
-                showSubListPane(null);
-            if (getAppSettings().isFireTv()) {
-            	// empty list - set focus on action bar
-                int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
-                getWindow().getDecorView().findViewById(actionBarResId).requestFocus();
-            }
+            handleEmptyMediaList();
         }
     }
 }
