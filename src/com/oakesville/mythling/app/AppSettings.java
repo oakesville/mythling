@@ -930,7 +930,7 @@ public class AppSettings {
     }
 
     public ViewType getDefaultViewType(MediaType mediaType) {
-        if (mediaType == MediaType.videos || mediaType == MediaType.liveTv || mediaType == MediaType.music)
+        if (mediaType == MediaType.liveTv)
             return ViewType.list; // regardless of device
         return isTablet() || isFireTv() ? ViewType.split : ViewType.list;
     }

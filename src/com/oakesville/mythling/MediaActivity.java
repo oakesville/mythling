@@ -1405,9 +1405,15 @@ public abstract class MediaActivity extends Activity {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            if (isSplitView() || getListables().get(getSelItemIndex()) instanceof Category) {
-                                getListView().performItemClick(getListAdapter().getView(getSelItemIndex(), null, null),
-                                        getSelItemIndex(), getListAdapter().getItemId(getSelItemIndex()));
+                            Listable listable = getListables().get(getSelItemIndex());
+                            if (listable instanceof Category) {
+                                getListView().performItemClick(getListAdapter().getView(selItemIndex, null, null),
+                                        selItemIndex, getListAdapter().getItemId(selItemIndex));
+                                return true;
+                            } else if (isSplitView()) {
+                                getListAdapter().setSelection(selItemIndex);
+                                getListView().setItemChecked(selItemIndex, true);
+                                showItemInDetailPane(selItemIndex, true);
                                 return true;
                             }
                         }
