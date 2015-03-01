@@ -60,7 +60,7 @@ public class VideoViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
 
@@ -88,11 +88,13 @@ public class VideoViewActivity extends Activity {
                     if (position > 0) {
                         mediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
                             public void onSeekComplete(MediaPlayer mp) {
+                                progressBar.setVisibility(View.GONE);
                                 videoView.start();
                             }
                         });
                         videoView.seekTo(position);
                     } else {
+                        progressBar.setVisibility(View.GONE);
                         videoView.start();
                     }
                 }
@@ -106,20 +108,25 @@ public class VideoViewActivity extends Activity {
                 }
             });
 
-            videoView.setOnInfoListener(new OnInfoListener() {
-                public boolean onInfo(MediaPlayer mp, int what, int extra) {
-                    if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        progressBar.setVisibility(View.GONE);
+            try {
+                videoView.setOnInfoListener(new OnInfoListener() {
+                    public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                        if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                        if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                        if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                        return false;
                     }
-                    if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                    if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                    return false;
-                }
-            });
+                });
+            }
+            catch (NoSuchMethodError err) {
+                // not supported in some versions
+            }
 
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                 videoView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
@@ -221,13 +228,11 @@ public class VideoViewActivity extends Activity {
             else {
                 videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
             }
-            getActionBar().hide();
         }
         else {
             videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
                 getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getActionBar().show();
         }
         this.fullScreen = fullScreen;
     }
