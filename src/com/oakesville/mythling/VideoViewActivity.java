@@ -70,7 +70,6 @@ public class VideoViewActivity extends Activity {
         createProgressBar();
 
         try {
-
             if (mediaController == null) {
                 mediaController = new MediaController(this) {
                     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -120,7 +119,7 @@ public class VideoViewActivity extends Activity {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                         if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-                            progressBar.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
                         }
                         return false;
                     }
