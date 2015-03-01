@@ -141,8 +141,9 @@ public class MediaListActivity extends MediaActivity {
         initListViewDpadHandler();
         registerForContextMenu(listView);
 
+        updateActionMenu();
+
         if (getListables().size() > 0) {
-            updateActionMenu();
             listView.setSelectionFromTop(getCurrentTop(), getTopOffset());
             getListAdapter().setSelection(getSelItemIndex());
             getListView().setSelection(getSelItemIndex());
@@ -150,6 +151,9 @@ public class MediaListActivity extends MediaActivity {
             if (isSplitView())
                 initSplitView();
             listView.requestFocus();
+        } else if (getAppSettings().isFireTv()) {
+            int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
+            getWindow().getDecorView().findViewById(actionBarResId).requestFocus();
         }
     }
 

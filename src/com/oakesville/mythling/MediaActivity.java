@@ -130,7 +130,7 @@ public abstract class MediaActivity extends Activity {
         return mediaList.getListables(getPath());
     }
     protected List<Listable> getListables(String path) {
-        if (mediaList == null)  // TODO: how?
+        if (mediaList == null)  // TODO: how can mediaList be null?
             return new ArrayList<Listable>();
         return mediaList.getListables(path);
     }
@@ -1371,9 +1371,11 @@ public abstract class MediaActivity extends Activity {
                     Listable sel = getListables().get(position);
                     getListView().setItemChecked(selItemIndex, false);
                     selItemIndex = position;
+                    // TODO: Should the decision about whether to grab focus on the right-hand panel be configurable?
+                    // Right now the most sensible approach seems to be list grabs and detail doesn't.
                     boolean grab = isSplitView() && getIntent().getBooleanExtra(GRAB_FOCUS, false);
                     if (sel instanceof Item)
-                        showItemInDetailPane(position, grab);
+                        showItemInDetailPane(position, false);
                     else
                         showSubListPane(getPath() + "/" + sel.getLabel(), grab);
                     getIntent().putExtra(GRAB_FOCUS, false);
@@ -1413,8 +1415,8 @@ public abstract class MediaActivity extends Activity {
     }
 
     void initSplitView() {
-        getListView().setItemChecked(selItemIndex, true);
         if (selItemIndex != -1) {
+            getListView().setItemChecked(selItemIndex, true);
             Listable preSel = getListables().get(selItemIndex);
             if (preSel instanceof Item)
                 showItemInDetailPane(selItemIndex);
