@@ -52,8 +52,7 @@ public class PlaybackPrefs extends PreferenceFragment {
 
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_MUSIC_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
-        swPref.setChecked(!appSettings.isExternalMusicPlayer());
-        
+
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getFrontendHost());
