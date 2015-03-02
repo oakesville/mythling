@@ -165,7 +165,7 @@ if (!$type->isSearch())
       if ($sort == "date")
       {
         if ($type->isMovies())
-          $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
+          $orderBy = "order by year, replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from filename))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
         else if ($type->isTvSeries())
           $orderBy = "order by season, episode";
       }
