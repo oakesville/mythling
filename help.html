@@ -15,8 +15,13 @@
   <body style="background:#f2f2f2;">
     <div id="main_content_wrap" class="outer" style="border-bottom:0;">
       <section id="main_content" class="inner" style="padding-top:0px;max-width:inherit;padding-left:20px;">
-        <h3 class="help_contents"><a id="MythlingHelp">Mythling Help</a></h3>
-        <div>
+        <div style="float:left;">
+          <h3 class="help_contents"><a id="MythlingHelp">Mythling Help</a></h3>
+        </div>
+        <div style="float:right;padding-right:10px;padding-top:15px;">
+          <a href="https://github.com/oakesville/mythling/wiki">Wiki Setup Guide</a>
+        </div>
+        <div style="clear:both;">
             <div class="help_link">
               <a href="#Prerequisites">Prerequisites</a>
             </div>
@@ -27,7 +32,7 @@
               <a href="#Navigation">Navigation</a>
             </div>
             <div class="help_link">
-              <a href="#Artwork">Artwork</a>
+              <a href="#ViewModes">View Modes</a>
             </div>
             <div class="help_link">
               <a href="#Playback">Playback</a>
@@ -47,27 +52,28 @@
           Basic configuration can be accomplished through the first three screens:
         </p>
         <div class="help_item">
-          <img src="images/screenshots/playback_settings.png"
-            class="help_shot"
-            alt="Playback Settings" />
-          <div class="help_text">
-            <p>1. <span class="help_step">Playback Settings</span></p>
-            <p>If you choose to play media on your Device, then no further configuration is required in Playback Settings.</p>
-            <p>For playback on a MythTV frontend, Mythling uses either the <a href="http://www.mythtv.org/wiki/Frontend_Service">MythTV Frontend Service</a> 
-            or the <a href="http://www.mythtv.org/wiki/Frontend_control_socket">Frontend Control Socket</a> interface (depending on the selected media type).
-            So for frontend playback you'll need to specify the mythfrontend host name or IP address, along with the service port and socket control port.
-            These settings are remembered so you can readily switch back and forth between frontend and device playback.
-          </div>
-        </div>
-        <div class="help_item">
           <img src="images/screenshots/network_settings.png"
             class="help_shot"
             alt="Network Settings" />
           <div class="help_text">
-            <p>2. <span class="help_step">Network Settings</span></p>
+            <p>1. <span class="help_step">Network Settings</span></p>
             <p>Definitely start with an internal network.  For that you'll need to specify your mythbackend machine's host name or IP address.</p>
-            <p>When you decide to set up external network access, then here you can also enter the externally-available host information.
-            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">Mythling GitHub Wiki</a>.
+            <p>When you decide to set up external network access, then here you will also enter the externally-available host information.
+            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">Mythling Wiki on GitHub</a>.
+          </div>
+        </div>
+        <div class="help_item">
+          <img src="images/screenshots/playback_settings.png"
+            class="help_shot"
+            alt="Playback Settings" />
+          <div class="help_text">
+            <p>2. <span class="help_step">Playback Settings</span></p>
+            <p>If you choose to play media on your Device, then no further configuration is required in Playback Settings
+            (and on certain devices like Amazon Fire TV this screen is not even accessible).</p>
+            <p>For playback on a MythTV frontend, Mythling uses either the <a href="http://www.mythtv.org/wiki/Frontend_Service">MythTV Frontend Service</a> 
+            or the <a href="http://www.mythtv.org/wiki/Frontend_control_socket">Frontend Control Socket</a> interface (depending on the selected media type).
+            So for frontend playback you'll need to specify the mythfrontend host name or IP address, along with the service port and socket control port.
+            The frontend port and IP values are remembered, so you can readily switch back and forth between frontend and device playback.
           </div>
         </div>
         <div class="help_item">
@@ -89,7 +95,8 @@
               <a href="https://github.com/oakesville/mythling/wiki/Mythling-Media-Services">More about Mythling media services.</a>
             </p>
             <p>
-              <span style="font-weight:bold;">Note:</span> For streaming actual content, Mythling always uses the MythTV services API. 
+              <span style="font-weight:bold;">Note:</span> To play the actual content of a video or music file, Mythling always uses the 
+              MythTV services API (there are no Mythling services for transcoding or serving media). 
             </p>
             <p>Lastly in Connections, using the MythWeb Access switch you can control whether <a href="http://www.mythtv.org/wiki/MythWeb">MythWeb</a> is available in the action menu.
             </p>
@@ -110,7 +117,7 @@
               To select a different type, touch the action menu labeled Recordings to show your other options as illustrated in this screenshot.  
             </p>
             <p>
-              Mythling in List Mode favors a hierarchical view of your media.
+              Mythling favors a hierarchical view of your media.
               Recordings are grouped by title so that when you touch a title you drill in to see the recordings for that title.
               When you select a media library type such as Videos or Movies, you'll notice that Mythling organizes your collection the same way it's arranged on your server's file system.
               This navigational approach is a key motivation behind Mythling.
@@ -118,12 +125,13 @@
             </p>
             <p>
               Information about Movies, TV Series and Videos is retrieved from the data in MythTV's videometadata table.
-              To identify which videos are treated as Movies and TV Series, Mythling consults this video metadata 
-              Alternatively, if your server's directory structure already segregates according to these media types, you can use the Categories preference screen to specify their root locations.
+              To identify which videos are treated as Movies and TV Series, Mythling consults this video metadata.
+              Optionally, if your server's directory structure already segregates according to these media types, you can use the Categories preference screen to specify their root locations.
               See <a href="http://www.mythtv.org/wiki/MythVideo#Metadata_Lookup">MythVideo Metadata Lookup</a> for more about metadata.
             </p>
           </div>
         </div>
+        
         <div class="help_item">
           <img src="images/screenshots/sorting.png"
             class="help_shot"
@@ -161,32 +169,41 @@
           </div>
         </div>
         
-        <p class="help_topic"><a id="Artwork">Artwork:</a></p>
+        <p class="help_topic"><a id="ViewModes">View Modes:</a></p>
         <div class="help_item">
-          <img src="images/screenshots/detail_view.png"
+          <img src="images/screenshots/view_modes.png"
             class="help_shot"
-            alt="Detail Mode" />
+            alt="View Modes" />
           <div class="help_text">
-            <p><span class="help_step">Detail Mode</span></p>
+            <p><span class="help_step">Layout</span></p>
             <p>
-              The complement to plain-text List Mode is Mythling's Detail Mode, which displays metadata particulars for each item (such as director, cast and description) along with artwork if available.
-              You can switch to Detail Mode by touching the list icon in the action menu.
+              Mythling offers three distinct viewing options: List, Detail and Split modes.  You can choose among these options by touching the layout action menu icon as illustrated in this
+              screenshot.  List mode (depicted here) features a plain-text layout, while Detail mode displays metadata particulars (such as director, cast and description) along with artwork if available.
+              Split mode shows a list on the left, and a sublist or detail view on the right.
             </p>
             <p>
-              Detail Mode offers a side-scrolling interface where you swipe from left-to-right or vice-versa to page forward and backward through the list.
+              Detail mode uses a side-scrolling interface where you swipe from left-to-right or vice-versa to page forward and backward through the list.
               You can also jump ahead and back using the scrollbar at the bottom of the page.    
             </p>
+            <p>
+              In Split mode if a sublist appears on the right, touching an item in this list moves it to the left and drills into the details for the right-hand pane.
+              If an item in the right-hand sublist represents a content file, you can bypass the detail view and play it directly using the long-touch gesture.    
+            </p>
+          </div>
+          <div class="help_text">
+            <p><span class="help_step">Artwork &amp; Internet</span></p>
             <p>
               Artwork can be Coverart, Fanart, Banners, Screenshots or Preview Images.
               The artwork to display for each media type is controlled through the Artwork preference screen in Mythling settings.
             </p>
             <p>
-              If your video metadata includes internet references to sites such as themoviedb.org, a link to the site info for your Movies and TV Series is displayed in Detail Mode.
+              If your video metadata includes internet references to sites such as themoviedb.org, a link to the site info for your Movies and TV Series is displayed in detail view.
               The internet reference base URL for these links is controlled through the Categories preference screen in the Internet section.    
             </p>
           </div>
         </div>
 
+        
         <p class="help_topic"><a id="Playback">Playback:</a></p>
         <div class="help_item">
           <img src="images/screenshots/playing_video.png"
@@ -195,7 +212,7 @@
           <div class="help_text">
             <p><span class="help_step">Playing Video</span></p>
             <p>
-              Depending on your device hardware and Android version, the built-in video player may not handle the <a href="http://en.wikipedia.org/wiki/HTTP_Live_Streaming">HTTP Live Stream</a> delivered by MythTV.
+              Depending on your device hardware and Android version, the built-in video player may not handle an <a href="http://en.wikipedia.org/wiki/HTTP_Live_Streaming">HTTP Live Stream</a> delivered by MythTV.
               In that case you'll likely get an error message on playback indicating that "The video cannot be played".
               There are a number of excellent video player apps with HLS support available in the Google Play store (including VLC, DicePlayer and MX Player). 
             </p>
@@ -204,16 +221,17 @@
               In Detail Mode directories and categories are represented by a folder image with a link to drill in.
             </p>
             <p>
-              Depending on the selected media type, a confirmation dialog as illustrated here may be presented when you touch a content file for playback.
-              When device playback is initiated Mythling submits a transcode request to MythTV and awaits availability of the stream before launching the video player.
-              For Live TV as an additional first step Mythling schedules a recording of the program through MythTV before the transcode and streaming requests.
-              For Music Mythling simply passes on the MythTV playback URL to the Android media player. 
+              Depending on the selected media type and view mode, a confirmation dialog as illustrated here may be presented when you touch a content file for playback.
+              You have the option of directly streaming the raw content file or transcoding to HLS.  Raw streaming can be selected if your device is cabable of decoding the video format of the file. 
+              When HLS playback is initiated Mythling first submits a transcode request to MythTV and awaits availability of the stream before launching the video player.
+              For Live TV as an additional first step Mythling schedules a recording of the program through MythTV before sending either the transcode or streaming requests.
+              For Music Mythling simply passes on the MythTV playback URL to the internal or Android media player, as designated in Playback settings.
             </p>
             <p>
-              If your bandwidth permits, you may want to configure higher resolutions and bitrates through the Video Quality preference screen. 
+              If your bandwidth permits, you'll want to configure higher resolutions and bitrates through the Video Quality preference screen. 
             </p>
             <p>
-              If video playback results in an error popup stating "no stream available", try increasing Transcode Timeout under the preference category Timeouts &amp; Limits. 
+              If video playback results in a "no stream available" error, try increasing the Transcode Timeout under System settings. 
             </p>
           </div>
         </div>
