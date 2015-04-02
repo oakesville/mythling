@@ -931,7 +931,7 @@ function printItem($path, $file, $depth, $more)
       if ($recordids[$id] != null)
         echo ', "recordId": ' . $recordids[$id];
       if ($storagegroups[$id] != null)
-        echo ', "storageGroup": ' . $storagegroups[$id];
+        echo ', "storageGroup": "' . $storagegroups[$id] . '"';
       if ($recgroups[$id] != null)
         echo ', "recGroup": "' . $recgroups[$id] . '"';
     }
