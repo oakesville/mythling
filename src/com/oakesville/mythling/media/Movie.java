@@ -20,6 +20,7 @@ package com.oakesville.mythling.media;
 
 import java.util.Comparator;
 
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Movie extends Video {
@@ -59,8 +60,8 @@ public class Movie extends Video {
                 Movie movie1 = (Movie) item1;
                 Movie movie2 = (Movie) item2;
                 if (movie1.getYear() == movie2.getYear()) {
-                    String t1 = stripLeadingArticle(movie1.getTitle());
-                    String t2 = stripLeadingArticle(movie2.getTitle());
+                    String t1 = Localizer.stripLeadingArticle(movie1.getTitle());
+                    String t2 = Localizer.stripLeadingArticle(movie2.getTitle());
                     return t1.compareToIgnoreCase(t2);
                 } else {
                     return movie1.getYear() - movie2.getYear();

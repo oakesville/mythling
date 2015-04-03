@@ -963,12 +963,14 @@ public class AppSettings {
 
     private static String mythlingVersion;
 
-    public void initMythlingVersion() throws NameNotFoundException {
+    public void initialize() throws NameNotFoundException {
+        loadDevicePrefsConstraints();
         if (mythlingVersion == null) {
             PackageManager manager = appContext.getPackageManager();
             PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
             mythlingVersion = info.versionName;
         }
+        Localizer.initialize(this);
     }
 
     public static String getMythlingVersion() {
@@ -1033,18 +1035,6 @@ public class AppSettings {
                 deviceDefault = (String)val;
         }
         return prefs.getString(key, deviceDefault);
-    }
-
-    public String getStringRes(int resId, String... substs) {
-        String str = appContext.getString(resId);
-        for (int i = 0; i < substs.length; i++) {
-            str = str.replaceAll("%" + i + "%", substs[i]);
-        }
-        return str;
-    }
-
-    public String getStringRes(int resId) {
-        return appContext.getString(resId);
     }
 
     /**

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 

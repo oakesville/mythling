@@ -51,10 +51,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.ArtworkDescriptor;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;

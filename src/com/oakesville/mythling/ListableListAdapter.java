@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.Listable;
 
 public class ListableListAdapter extends ArrayAdapter<Listable> {
 

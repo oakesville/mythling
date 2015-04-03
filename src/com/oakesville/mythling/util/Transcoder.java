@@ -29,6 +29,7 @@ import android.util.Log;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.Recording;
@@ -112,7 +113,7 @@ public class Transcoder {
 
         if (streamInfo == null) {
             if (inProgress >= maxTranscodes) {
-                throw new RuntimeException(appSettings.getStringRes(R.string.transcode_jobs_running, String.valueOf(inProgress)));
+                throw new RuntimeException(Localizer.getStringRes(R.string.transcode_jobs_running, String.valueOf(inProgress)));
             }
             // add the stream
             URL addStreamUrl;
@@ -133,7 +134,7 @@ public class Transcoder {
             String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");
             streamInfo = new MythTvParser(appSettings, getStreamJson).parseStreamInfo();
             if (streamInfo.getRelativeUrl().isEmpty())
-                throw new IOException(appSettings.getStringRes(R.string.no_live_stream_found));
+                throw new IOException(Localizer.getStringRes(R.string.no_live_stream_found));
         }
 
         return preExist;
@@ -179,7 +180,7 @@ public class Transcoder {
         }
 
         if (!hasTs)
-            throw new FileNotFoundException(appSettings.getStringRes(R.string.no_stream_available_) + "\n" + streamUrl);
+            throw new FileNotFoundException(Localizer.getStringRes(R.string.no_stream_available_) + "\n" + streamUrl);
 
         // wait one more second for good measure
         int lagSeconds = 1;  // TODO: prefs?

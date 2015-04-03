@@ -35,9 +35,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
@@ -53,10 +52,8 @@ public class MainActivity extends MediaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AppSettings.loadDevicePrefsConstraints();
-
         try {
-            getAppSettings().initMythlingVersion();
+            getAppSettings().initialize();
         } catch (NameNotFoundException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);

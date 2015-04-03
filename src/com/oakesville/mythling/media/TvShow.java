@@ -26,6 +26,7 @@ import java.util.Date;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.util.DateTimeFormats;
 
@@ -275,8 +276,8 @@ public class TvShow extends Item {
                     return -1;
                 } else {
                     if (show1.getStartTime().equals(show2.getStartTime())) {
-                        String t1 = stripLeadingArticle(show1.getTitle());
-                        String t2 = stripLeadingArticle(show2.getTitle());
+                        String t1 = Localizer.stripLeadingArticle(show1.getTitle());
+                        String t2 = Localizer.stripLeadingArticle(show2.getTitle());
                         return t1.compareToIgnoreCase(t2);
                     } else {
                         return show2.getStartTime().compareTo(show1.getStartTime());

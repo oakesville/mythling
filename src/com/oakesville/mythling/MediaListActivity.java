@@ -33,7 +33,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;

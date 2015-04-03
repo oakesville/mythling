@@ -32,8 +32,8 @@ import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.oakesville.mythling.app.Listable;
 import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
 
 public class ItemListFragment extends ListFragment {
 

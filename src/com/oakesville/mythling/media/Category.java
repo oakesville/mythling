@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
@@ -105,21 +105,8 @@ public class Category implements Listable, Comparable<Category> {
 
     @Override
     public int compareTo(Category another) {
-        String n1 = stripLeadingArticle(this.name);
-        String n2 = stripLeadingArticle(another.name);
+        String n1 = Localizer.stripLeadingArticle(this.name);
+        String n2 = Localizer.stripLeadingArticle(another.name);
         return n1.compareToIgnoreCase(n2);
-    }
-
-    /**
-     * TODO duplicated in Item.java
-     */
-    private String stripLeadingArticle(String inStr) {
-        if (inStr.startsWith("The "))
-            return inStr.substring(4);
-        if (inStr.startsWith("A "))
-            return inStr.substring(2);
-        if (inStr.startsWith("An "))
-            return inStr.substring(3);
-        return inStr;
     }
 }

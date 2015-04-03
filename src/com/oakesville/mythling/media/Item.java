@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Comparator;
 
-import com.oakesville.mythling.app.Listable;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
@@ -190,21 +190,11 @@ public abstract class Item implements Listable {
     protected Comparator<Item> getTitleComparator() {
         return new Comparator<Item>() {
             public int compare(Item item1, Item item2) {
-                String t1 = stripLeadingArticle(item1.getTitle());
-                String t2 = stripLeadingArticle(item2.getTitle());
+                String t1 = Localizer.stripLeadingArticle(item1.getTitle());
+                String t2 = Localizer.stripLeadingArticle(item2.getTitle());
                 return t1.compareToIgnoreCase(t2);
             }
         };
-    }
-
-    protected String stripLeadingArticle(String inStr) {
-        if (inStr.startsWith("The "))
-            return inStr.substring(4);
-        if (inStr.startsWith("A "))
-            return inStr.substring(2);
-        if (inStr.startsWith("An "))
-            return inStr.substring(3);
-        return inStr;
     }
 
     protected Comparator<Item> getRatingComparator() {
@@ -216,8 +206,8 @@ public abstract class Item implements Listable {
                 } else if (f < 0) {
                     return -1;
                 } else {
-                    String t1 = stripLeadingArticle(item1.getTitle());
-                    String t2 = stripLeadingArticle(item2.getTitle());
+                    String t1 = Localizer.stripLeadingArticle(item1.getTitle());
+                    String t2 = Localizer.stripLeadingArticle(item2.getTitle());
                     return t1.compareToIgnoreCase(t2);
                 }
             }

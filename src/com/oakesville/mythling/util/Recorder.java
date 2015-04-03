@@ -33,6 +33,7 @@ import android.util.Log;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
@@ -80,7 +81,7 @@ public class Recorder {
             String addRecJson = new String(getServiceHelper(addRecUrl).post());
             recRuleId = new MythTvParser(appSettings, addRecJson).parseUint();
             if (recRuleId <= 0)
-                throw new IOException(appSettings.getStringRes(R.string.problem_scheduling_recording_) + show.getTitle());
+                throw new IOException(Localizer.getStringRes(R.string.problem_scheduling_recording_) + show.getTitle());
         }
 
         return preExist;
@@ -112,7 +113,7 @@ public class Recorder {
                 URL remRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecordSchedule?RecordId=" + recRuleId);
                 getServiceHelper(remRecUrl).post();
             }
-            throw new FileNotFoundException(appSettings.getStringRes(R.string.no_recording_available));
+            throw new FileNotFoundException(Localizer.getStringRes(R.string.no_recording_available));
         }
 
         // wait a few seconds
@@ -129,7 +130,7 @@ public class Recorder {
 
         boolean deleteResult = new MythTvParser(appSettings, delRecRes).parseBool();
         if (!deleteResult)
-            throw new IOException(appSettings.getStringRes(R.string.problem_deleting_recording_) + recording.getTitle());
+            throw new IOException(Localizer.getStringRes(R.string.problem_deleting_recording_) + recording.getTitle());
 
         // wait for recording to be deleted
         int lagSeconds = 5; // TODO: prefs

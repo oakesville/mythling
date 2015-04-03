@@ -356,4 +356,10 @@
     <string name="transcode_jobs_running">Already %0% transcode jobs running</string>
     <string name="no_live_stream_found">No live stream found.\u0020Please try again.</string>
     <string name="no_stream_available_">No stream available (try increasing transcode timeout):\u0020</string>
+    <!-- these words are stripped from the beginning of titles when sorting -->
+    <string-array name="leading_articles">
+        <item>A</item>
+        <item>An</item>
+        <item>The</item>
+    </string-array>
 </resources>
