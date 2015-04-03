@@ -17,7 +17,7 @@ mythweb:
 http://192.168.0.69:80/mythweb
 
 error reports url on amazon ec2:
-http://54.187.163.194/oakesville/report
+http://54.187.163.194/mythling/report
 
 imdb movie base url:
 http://www.imdb.com/title/

@@ -33,7 +33,7 @@ import com.oakesville.mythling.app.AppSettings;
 
 public class Reporter {
     private static final String TAG = Reporter.class.getSimpleName();
-    public static final String ERROR_REPORTING_URL = "http://54.187.163.194/oakesville/report";
+    public static final String ERROR_REPORTING_URL = "http://54.187.163.194/mythling/report";
 
     private Throwable throwable;
     private String message;
