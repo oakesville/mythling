@@ -38,10 +38,6 @@ public class Song extends Item {
         return MediaType.music;
     }
 
-    public String getTypeTitle() {
-        return "Song";
-    }
-
     @Override
     public ArtworkDescriptor getArtworkDescriptor(String storageGroup) {
         if (albumArtId == 0)
@@ -64,7 +60,7 @@ public class Song extends Item {
 
     public String getSearchResultText() {
         StringBuffer buf = new StringBuffer(PREFIX);
-        buf.append("(").append(getTypeTitle()).append(") ");
+        buf.append("(").append(getTypeLabel()).append(") ");
         if (!getSearchPath().isEmpty())
             buf.append(getSearchPath()).append("\n");
         buf.append(getTitle());

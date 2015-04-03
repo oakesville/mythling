@@ -33,8 +33,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.Reporter;
@@ -78,7 +78,7 @@ public class MediaListActivity extends MediaActivity {
         else if (ViewType.split.toString().equals(mode))
             goSplitView();
 
-        if (!MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath()))
+        if (!Localizer.getMediaLabel(MediaType.liveTv).equals(getPath()))
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
         breadCrumbs = (FragmentBreadCrumbs) findViewById(R.id.breadcrumbs);
@@ -129,7 +129,7 @@ public class MediaListActivity extends MediaActivity {
         storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
-        if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath())) {
+        if (Localizer.getMediaLabel(MediaType.liveTv).equals(getPath())) {
             String title = getString(R.string.tv) + " (" + mediaList.getRetrieveDateDisplay() + " " + mediaList.getRetrieveTimeDisplay() + ")";
             breadCrumbs.setTitle(title, title);
         }

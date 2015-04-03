@@ -21,6 +21,8 @@ package com.oakesville.mythling.media;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 public class Video extends Item {
@@ -61,10 +63,6 @@ public class Video extends Item {
         return MediaType.videos;
     }
 
-    public String getTypeTitle() {
-        return "Video";
-    }
-
     @Override
     public String getDialogText() {
         StringBuffer buf = new StringBuffer(getTitle());
@@ -75,9 +73,9 @@ public class Video extends Item {
         if (getSubTitle() != null)
             buf.append("\n\"" + getSubTitle() + "\"");
         if (getDirector() != null)
-            buf.append("\nDirected by: ").append(getDirector());
+            buf.append("\n").append(Localizer.getStringRes(R.string.directed_by_)).append(getDirector());
         if (getActors() != null)
-            buf.append("\nStarring: ").append(getActors());
+            buf.append("\n").append(Localizer.getStringRes(R.string.starring_)).append(getActors());
         if (getSummary() != null)
             buf.append("\n\n").append(getSummary());
         return buf.toString();

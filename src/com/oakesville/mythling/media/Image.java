@@ -28,8 +28,4 @@ public class Image extends Item {
     public MediaType getType() {
         return MediaType.images;
     }
-
-    public String getTypeTitle() {
-        return "Image";
-    }
 }

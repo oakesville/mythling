@@ -20,6 +20,8 @@ package com.oakesville.mythling.media;
 
 import java.util.Comparator;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 /**
@@ -43,10 +45,6 @@ public class TvEpisode extends Video {
         return MediaType.tvSeries;
     }
 
-    public String getTypeTitle() {
-        return "TV Episode";
-    }
-
     @Override
     protected String getExtraText() {
         StringBuffer buf = new StringBuffer();
@@ -59,7 +57,8 @@ public class TvEpisode extends Video {
     public String getSummary() {
         if (getSeason() != 0) {
             StringBuffer sum = new StringBuffer();
-            sum.append("Season ").append(getSeason()).append(", Episode ").append(getEpisode());
+            sum.append(Localizer.getStringRes(R.string.season)).append(getSeason()).append(", ")
+                    .append(Localizer.getStringRes(R.string.episode)).append(" ").append(getEpisode());
             if (super.getSummary() != null)
                 sum.append("\n").append(super.getSummary());
             return sum.toString();

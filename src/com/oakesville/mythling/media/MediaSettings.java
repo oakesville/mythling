@@ -60,17 +60,6 @@ public class MediaSettings {
         this.typeDeterminer = MediaTypeDeterminer.valueOf(determiner);
     }
 
-    public String getTypeDeterminerLabel() {
-        if (MediaTypeDeterminer.metadata == typeDeterminer)
-            return "Metadata";
-        else if (MediaTypeDeterminer.directories == typeDeterminer)
-            return "Directories";
-        else if (MediaTypeDeterminer.none == typeDeterminer)
-            return "None";
-        else
-            return null;
-    }
-
     private ViewType viewType = ViewType.list;
     public ViewType getViewType() { return viewType; }
     public void setViewType(ViewType vt) { this.viewType = vt;  }
@@ -93,66 +82,6 @@ public class MediaSettings {
 
     public MediaSettings(String type) {
         this.type = MediaType.valueOf(type);
-    }
-
-    public static String getMediaTitle(MediaType type) {
-        if (type == MediaType.music)
-            return "Music";
-        else if (type == MediaType.videos)
-            return "Videos";
-        else if (type == MediaType.recordings)
-            return "Recordings";
-        else if (type == MediaType.liveTv)
-            return "Live TV";
-        else if (type == MediaType.movies)
-            return "Movies";
-        else if (type == MediaType.tvSeries)
-            return "TV Series";
-        else
-            return "";
-    }
-
-    public String getTitle() {
-        return getMediaTitle(type);
-    }
-
-    public String getViewTypeTitle() {
-        if (viewType == ViewType.detail)
-            return "Detail";
-        else if (viewType == ViewType.split)
-            return "Split";
-        else
-            return "List";
-    }
-
-    public String getSortTypeTitle() {
-        if (sortType == SortType.byDate)
-            return "By Date";
-        else if (sortType == SortType.byRating)
-            return "By Rating";
-        else
-            return "By Title";
-    }
-
-    public String getLabel() {
-        return getMediaLabel(type);
-    }
-
-    public static String getMediaLabel(MediaType type) {
-        if (type == MediaType.music)
-            return "Song";
-        else if (type == MediaType.videos)
-            return "Video";
-        else if (type == MediaType.recordings)
-            return "Recording";
-        else if (type == MediaType.liveTv)
-            return "Live TV";
-        else if (type == MediaType.movies)
-            return "Movie";
-        else if (type == MediaType.tvSeries)
-            return "TV Show";
-        else
-            return "";
     }
 
     public int getViewIcon() {

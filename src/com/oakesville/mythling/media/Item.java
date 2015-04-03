@@ -34,7 +34,9 @@ public abstract class Item implements Listable {
 
     public abstract MediaType getType();
 
-    public abstract String getTypeTitle();
+    public String getTypeLabel() {
+        return Localizer.getItemTypeLabel(getType());
+    }
 
     private String id;
     public String getId() { return id; }
@@ -148,7 +150,7 @@ public abstract class Item implements Listable {
 
     public String getSearchResultText() {
         StringBuffer buf = new StringBuffer(PREFIX);
-        buf.append("(").append(getTypeTitle()).append(") ");
+        buf.append("(").append(getTypeLabel()).append(") ");
         buf.append(getTitle());
         buf.append(getExtraText());
         return buf.toString();

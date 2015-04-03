@@ -32,10 +32,6 @@ public class Movie extends Video {
         return MediaType.movies;
     }
 
-    public String getTypeTitle() {
-        return "Movie";
-    }
-
     public String getLabel() {
         String label = getTitle();
         if (getYear() > 0)

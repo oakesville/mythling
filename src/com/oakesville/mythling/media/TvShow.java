@@ -26,6 +26,7 @@ import java.util.Date;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.util.DateTimeFormats;
@@ -114,10 +115,6 @@ public class TvShow extends Item {
         return MediaType.liveTv;
     }
 
-    public String getTypeTitle() {
-        return "Live TV";
-    }
-
     public String getShowDateTimeInfo() {
         StringBuffer buf = new StringBuffer();
         try {
@@ -154,7 +151,9 @@ public class TvShow extends Item {
             if (isShowMovie())
                 buf.append("(").append(DateTimeFormats.YEAR_FORMAT.format(originallyAired)).append(")");
             else
-                buf.append("\n(Originally Aired ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
+                buf.append("\n(")
+                        .append(Localizer.getStringRes(R.string.originally_aired))
+                        .append(" ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
         }
         return buf.toString();
     }
@@ -205,7 +204,7 @@ public class TvShow extends Item {
     public String getSearchResultText() {
         if (getType() == MediaType.liveTv) {
             StringBuffer buf = new StringBuffer(PREFIX);
-            buf.append("(").append(getTypeTitle()).append(") ");
+            buf.append("(").append(getTypeLabel()).append(") ");
             buf.append(getTitle());
             buf.append(getExtraText());
             buf.append("\n").append(getChannelInfo());

@@ -24,6 +24,7 @@ import android.preference.PreferenceFragment;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.prefs.PrefChangeListener;
@@ -44,11 +45,11 @@ public class FireTvCategoriesPrefs extends PreferenceFragment {
                 appSettings.setVideoCategorization((String) newValue);
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
                 doEnablement(mediaSettings.getTypeDeterminer());
-                String summary = mediaSettings.getTypeDeterminerLabel();
+                String summary = Localizer.getTypeDeterminerLabel(mediaSettings.getTypeDeterminer());
                 return super.onPreferenceChange(preference, summary);
             }
         });
-        pref.setSummary(mediaSettings.getTypeDeterminerLabel());
+        pref.setSummary(Localizer.getTypeDeterminerLabel(mediaSettings.getTypeDeterminer()));
         doEnablement(mediaSettings.getTypeDeterminer());
 
         pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_DIRECTORIES);

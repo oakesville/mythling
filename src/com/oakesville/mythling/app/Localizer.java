@@ -24,6 +24,9 @@ import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.util.Reporter;
 
 /**
@@ -71,5 +74,61 @@ public class Localizer {
 
     public static String getStringRes(int resId) {
         return getAppContext().getString(resId);
+    }
+
+    public static String getItemTypeLabel(MediaType mediaType) {
+        if (mediaType == MediaType.music)
+            return getStringRes(R.string.song);
+        else if (mediaType == MediaType.videos)
+            return getStringRes(R.string.video);
+        else if (mediaType == MediaType.recordings)
+            return getStringRes(R.string.recording);
+        else if (mediaType == MediaType.liveTv)
+            return getStringRes(R.string.tv_show);
+        else if (mediaType == MediaType.movies)
+            return getStringRes(R.string.movie);
+        else if (mediaType == MediaType.tvSeries)
+            return getStringRes(R.string.tv_episode);
+        else if (mediaType == MediaType.images)
+            return getStringRes(R.string.image);
+        else
+            return "";
+    }
+
+    public static String getSortLabel(SortType sortType) {
+        if (sortType == SortType.byDate)
+            return getStringRes(R.string.by_date);
+        else if (sortType == SortType.byRating)
+            return getStringRes(R.string.by_rating);
+        else
+            return getStringRes(R.string.by_title);
+    }
+
+    public static String getMediaLabel(MediaType mediaType) {
+        if (mediaType == MediaType.music)
+            return getStringRes(R.string.menu_music);
+        else if (mediaType == MediaType.videos)
+            return getStringRes(R.string.menu_videos);
+        else if (mediaType == MediaType.recordings)
+            return getStringRes(R.string.menu_recordings);
+        else if (mediaType == MediaType.liveTv)
+            return getStringRes(R.string.menu_tv);
+        else if (mediaType == MediaType.movies)
+            return getStringRes(R.string.menu_movies);
+        else if (mediaType == MediaType.tvSeries)
+            return getStringRes(R.string.menu_tv_series);
+        else
+            return "";
+    }
+
+    public static String getTypeDeterminerLabel(MediaTypeDeterminer typeDeterminer) {
+        if (MediaTypeDeterminer.metadata == typeDeterminer)
+            return getStringRes(R.string.cat_metadata);
+        else if (MediaTypeDeterminer.directories == typeDeterminer)
+            return getStringRes(R.string.cat_directories);
+        else if (MediaTypeDeterminer.none == typeDeterminer)
+            return getStringRes(R.string.cat_none);
+        else
+            return null;
     }
 }

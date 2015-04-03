@@ -62,7 +62,7 @@ public class StreamVideoDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_with_checkbox, null);
         builder.setView(view);
         builder.setIcon(R.drawable.ic_action_play);
-        builder.setTitle(settings.getMediaSettings().getLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " " + getString(R.string.file)));
+        builder.setTitle(item.getTypeLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " " + getString(R.string.file)));
 
         if (message != null)
             builder.setMessage(message);

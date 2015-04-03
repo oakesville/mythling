@@ -18,7 +18,6 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-
     <string name="app_name">Mythling</string>
     <string name="menu_videos">Videos</string>
     <string name="menu_music">Music</string>
@@ -104,7 +103,6 @@
     <string name="title_tvseries">TV Series</string>
     <string name="title_movies">Movies</string>
     <string name="title_recordings">Recordings</string>
-
     <string-array name="artwork_sg_values">
         <item>Coverart</item>
         <item>Banners</item>
@@ -124,7 +122,6 @@
         <item>&lt;Use Preview Image></item>
     </string-array>
     <string name="artwork_sg_use_preview">&lt;Use Preview Image></string>
-
     <string name="artwork_sg_default">Coverart</string>
     <string name="artwork_sg_default_videos">Banners</string>
     <string name="artwork_sg_default_movies">Coverart</string>
@@ -197,7 +194,6 @@
     <string name="message_directories_exclude">Comma-separated list of video directory paths to exclude (relative to storage dir)</string>
     <string name="message_transcode_hls">Comma-separated list of filename extensions to always transcode to HTTP Live Streams for playback</string>
     <string name="message_stream_raw">Comma-separated list of filename extensions to always stream raw without on-demand transcoding</string>
-
     <string-array name="video_res_entries">
         <item>1080p</item>
         <item>720p</item>
@@ -212,9 +208,7 @@
         <item>480</item>
         <item>240</item>
     </string-array>
-
     <string name="title_video_bitrate">Video BitRate</string>
-
     <string-array name="video_bitrate_entries">
         <item>4000k</item>
         <item>2400k</item>
@@ -235,9 +229,7 @@
         <item>400000</item>
         <item>240000</item>
     </string-array>
-
     <string name="title_audio_bitrate">Audio BitRate</string>
-
     <string-array name="audio_bitrate_entries">
         <item>64k</item>
         <item>32k</item>
@@ -246,14 +238,12 @@
         <item>64000</item>
         <item>32000</item>
     </string-array>
-
     <string name="title_mythtv_service_access">MythTV Services</string>
     <string name="title_backend_web_access">Backend Web (see Connections)</string>
     <string name="title_mythtv_services_auth_type">Auth Type</string>
     <string name="title_mythtv_services_auth_type_dialog">MythTV Authentication</string>
     <string name="title_mythling_services_auth_type">Auth Type</string>
     <string name="title_mythling_services_auth_type_dialog">Mythling Authentication</string>
-
     <string-array name="auth_type_values">
         <item>None</item>
         <item>Basic</item>
@@ -265,7 +255,6 @@
         <item>Basic</item>
         <item>Digest</item>
     </string-array>
-
     <string name="title_mythtv_services_user">MythTV Services User</string>
     <string name="title_mythtv_services_password">MythTV Services Password</string>
     <string name="title_web_user">Backend Web User</string>
@@ -281,7 +270,6 @@
     <string name="rating">Rating</string>
     <string name="play">Play</string>
     <string name="watch">Watch</string>
-
     <string-array name="video_categorization_entries">
         <item>None</item>
         <item>Metadata</item>
@@ -292,7 +280,9 @@
         <item>metadata</item>
         <item>directories</item>
     </string-array>
-
+    <string name="cat_metadata">Metadata</string>
+    <string name="cat_directories">Directories</string>
+    <string name="cat_none">None</string>
     <string name="url_help">http://oakesville.github.io/mythling/help.html</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -362,4 +352,17 @@
         <item>An</item>
         <item>The</item>
     </string-array>
+    <string name="song">Song</string>
+    <string name="video">Video</string>
+    <string name="recording">Recording</string>
+    <string name="tv_show">TV Show</string>
+    <string name="movie">Movie</string>
+    <string name="tv_episode">TV Episode</string>
+    <string name="image">Image</string>
+    <string name="by_date">By Date</string>
+    <string name="by_rating">By Rating</string>
+    <string name="by_title">By Title</string>
+    <string name="season">Season</string>
+    <string name="episode">Episode</string>
+    <string name="originally_aired">Originally Aired</string>
 </resources>

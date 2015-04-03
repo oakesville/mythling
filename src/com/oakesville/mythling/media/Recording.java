@@ -49,10 +49,6 @@ public class Recording extends TvShow {
         return MediaType.recordings;
     }
 
-    public String getTypeTitle() {
-        return "Recording";
-    }
-
     @Override
     protected String getExtraText() {
         StringBuffer buf = new StringBuffer();

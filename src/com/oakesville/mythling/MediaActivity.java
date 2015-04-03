@@ -74,6 +74,7 @@ import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
@@ -252,9 +253,9 @@ public abstract class MediaActivity extends Activity {
         mediaMenuItem = menu.findItem(R.id.menu_media);
         if (mediaMenuItem != null) {
             if (mediaList != null)
-                mediaMenuItem.setTitle(mediaSettings.getTitle() + " (" + mediaList.getCount() + ")");
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(mediaSettings.getType()) + " (" + mediaList.getCount() + ")");
             else
-                mediaMenuItem.setTitle(mediaSettings.getTitle());
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(mediaSettings.getType()));
             if (mediaSettings.isMusic())
                 mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
             else if (mediaSettings.isLiveTv())
@@ -358,7 +359,7 @@ public abstract class MediaActivity extends Activity {
         if (sortMenuItem != null) {
             if (show) {
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
-                sortMenuItem.setTitle(mediaSettings.getSortTypeTitle());
+                sortMenuItem.setTitle(Localizer.getSortLabel(mediaSettings.getSortType()));
                 if (mediaSettings.getSortType() == SortType.byDate)
                     sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setChecked(true);
                 else if (mediaSettings.getSortType() == SortType.byRating)
@@ -432,7 +433,7 @@ public abstract class MediaActivity extends Activity {
         }
         try {
             if (sortMenuItem != null)
-                sortMenuItem.setTitle(appSettings.getMediaSettings().getSortTypeTitle());
+                sortMenuItem.setTitle(Localizer.getSortLabel(appSettings.getMediaSettings().getSortType()));
             if (viewMenuItem != null)
                 viewMenuItem.setIcon(appSettings.getMediaSettings().getViewIcon());
 
@@ -440,7 +441,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.music);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.music));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.music));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -453,7 +454,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.videos);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.videos));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.videos));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -466,7 +467,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.recordings);  // clears view type
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.recordings));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.recordings));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -479,7 +480,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.liveTv);  // clears view type
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.liveTv));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.liveTv));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -492,7 +493,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.movies);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.movies));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.movies));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -505,7 +506,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.tvSeries);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(MediaSettings.getMediaTitle(MediaType.tvSeries));
+                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.tvSeries));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -859,7 +860,7 @@ public abstract class MediaActivity extends Activity {
                 // prepare for a progress bar dialog
                 countdownDialog = new ProgressDialog(this);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setMessage("Playing " + MediaSettings.getMediaLabel(item.getType()) + ": " + item.getLabel());
+                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ": " + item.getLabel());
                 countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 countdownDialog.setProgressPercentFormat(null);
                 countdownDialog.setProgressNumberFormat(null);
@@ -966,7 +967,7 @@ public abstract class MediaActivity extends Activity {
         showSearchMenu(supportsSearch());
 
         if (mediaMenuItem != null)
-            mediaMenuItem.setTitle(MediaSettings.getMediaTitle(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
+            mediaMenuItem.setTitle(Localizer.getMediaLabel(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
 
         showStopMenuItem(isPlayingMusic());
     }
