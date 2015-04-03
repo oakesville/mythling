@@ -62,13 +62,13 @@ public class StreamVideoDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_with_checkbox, null);
         builder.setView(view);
         builder.setIcon(R.drawable.ic_action_play);
-        builder.setTitle(settings.getMediaSettings().getLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " file"));
+        builder.setTitle(settings.getMediaSettings().getLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " " + getString(R.string.file)));
 
         if (message != null)
             builder.setMessage(message);
 
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_check);
-        checkBox.setText("Always do this for " + item.getFormat() + " files");
+        checkBox.setText(getString(R.string.always_do_this_for) + " " + item.getFormat() + " " + getString(R.string.files));
 
         // add the buttons
         // TODO file format for LiveTV?
@@ -77,28 +77,28 @@ public class StreamVideoDialog extends DialogFragment {
 
         if (prefHls) {
             checkBox.setVisibility(View.GONE);
-            builder.setPositiveButton(item.isLiveTv() ? "Watch" : "Play", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(item.isLiveTv() ? R.string.watch : R.string.play), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     listener.onClickHls();
                 }
             });
         } else if (prefRaw) {
             checkBox.setVisibility(View.GONE);
-            builder.setPositiveButton(item.isLiveTv() ? "Watch" : "Play", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(item.isLiveTv() ? R.string.watch : R.string.play), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     listener.onClickStream();
                 }
             });
         } else {
             // no pref
-            builder.setPositiveButton("Transcode to HLS", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(R.string.transcode_to_hls), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             if (checkBox.isChecked())
                                 settings.setPreferHls(item.getFormat());
                             listener.onClickHls();
                         }
                     })
-                    .setNeutralButton("Stream Raw File", new DialogInterface.OnClickListener() {
+                    .setNeutralButton(getString(R.string.stream_raw_file), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             listener.onClickStream();
                             if (checkBox.isChecked())
@@ -107,7 +107,7 @@ public class StreamVideoDialog extends DialogFragment {
                     });
         }
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onClickCancel();
                     }

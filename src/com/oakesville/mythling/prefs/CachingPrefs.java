@@ -25,8 +25,8 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
 
 public class CachingPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class CachingPrefs extends PreferenceFragment {
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
         Preference pref = getPreferenceScreen().findPreference(AppSettings.CACHE_EXPIRE_MINUTES);
         PrefChangeListener changeListener = new PrefChangeListener(true, true);
-        changeListener.setUnits("Minutes");
+        changeListener.setUnits(getString(R.string.minutes));
         pref.setOnPreferenceChangeListener(changeListener);
-        pref.setSummary(appSettings.getExpiryMinutes() + " Minutes");
+        pref.setSummary(appSettings.getExpiryMinutes() + " " + getString(R.string.minutes));
 
-        Preference refresh = (Preference) findPreference("cache_refresh");
+        Preference refresh = findPreference("cache_refresh");
         refresh.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference pref) {
                 Editor ed = pref.getEditor();
@@ -50,9 +50,9 @@ public class CachingPrefs extends PreferenceFragment {
 
                 new AlertDialog.Builder(getPreferenceScreen().getContext())
                         .setIcon(android.R.drawable.ic_dialog_info)
-                        .setTitle("Application Data")
-                        .setMessage("Cached data has been cleared.")
-                        .setPositiveButton("OK", null)
+                        .setTitle(getString(R.string.app_data))
+                        .setMessage(getString(R.string.cache_cleared))
+                        .setPositiveButton(getString(R.string.ok), null)
                         .show();
 
                 return true;

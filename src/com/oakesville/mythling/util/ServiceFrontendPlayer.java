@@ -28,6 +28,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Recording;
@@ -63,7 +64,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
             }
         }
         if (state == null)
-            throw new IOException("Error checking mythfrontend frontend status at " + appSettings.getFrontendServiceBaseUrl());
+            throw new IOException(appSettings.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendServiceBaseUrl());
 
         return !state.equals("idle");
     }
@@ -113,7 +114,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 if (item.isRecording() || item.isLiveTv())
                     url = new URL(url + "/Frontend/PlayRecording?" + ((Recording) item).getChanIdStartTimeParams());
                 else if (item.isMusic())
-                    throw new UnsupportedOperationException("Music playback not supported by ServiceFrontendPlayer");
+                    throw new UnsupportedOperationException(appSettings.getStringRes(R.string.music_not_supported_by_svc_fe_player));
                 else
                     url = new URL(url + "/Frontend/PlayVideo?Id=" + item.getId());
 
@@ -121,7 +122,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 String resJson = new String(poster.post(), "UTF-8");
                 boolean res = new MythTvParser(appSettings, resJson).parseBool();
                 if (!res)
-                    throw new ServiceException("Frontend playback failed for url " + url);
+                    throw new ServiceException(appSettings.getStringRes(R.string.frontend_playback_failed_) + url);
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
@@ -136,7 +137,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Frontend playback error: " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), appSettings.getStringRes(R.string.frontend_playback_error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -151,7 +152,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 String resJson = new String(poster.get(), "UTF-8");
                 boolean res = new MythTvParser(appSettings, resJson).parseBool();
                 if (!res)
-                    throw new ServiceException("Error stopping frontend playback: " + url);
+                    throw new ServiceException(appSettings.getStringRes(R.string.error_stopping_frontend_playback_) + url);
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
@@ -166,9 +167,8 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), appSettings.getStringRes(R.string.error_frontend_status_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }
-
 }

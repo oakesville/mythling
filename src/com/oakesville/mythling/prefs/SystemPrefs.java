@@ -37,24 +37,23 @@ public class SystemPrefs extends PreferenceFragment {
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getTunerTimeout() + " Seconds");
 
         pref = getPreferenceScreen().findPreference(AppSettings.TRANSCODE_TIMEOUT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
-        pref.setSummary("" + appSettings.getTranscodeTimeout() + " Seconds");
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getTranscodeTimeout() + " " + getString(R.string.seconds));
 
         pref = getPreferenceScreen().findPreference(AppSettings.TRANSCODE_JOB_LIMIT);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary("" + appSettings.getTranscodeJobLimit());
 
         pref = getPreferenceScreen().findPreference(AppSettings.HTTP_CONNECT_TIMEOUT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
-        pref.setSummary("" + appSettings.getHttpConnectTimeout() + " Seconds");
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getHttpConnectTimeout() + " " + getString(R.string.seconds));
 
         pref = getPreferenceScreen().findPreference(AppSettings.HTTP_READ_TIMEOUT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "Seconds"));
-        pref.setSummary("" + appSettings.getHttpReadTimeout() + " Seconds");
-
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getHttpReadTimeout() + " " + getString(R.string.seconds));
     }
 }

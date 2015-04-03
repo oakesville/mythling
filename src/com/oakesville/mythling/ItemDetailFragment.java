@@ -190,14 +190,14 @@ public class ItemDetailFragment extends Fragment {
                 // director
                 TextView tvDir = (TextView) detailView.findViewById(R.id.directorText);
                 if (video.getDirector() != null)
-                    tvDir.setText("Directed by: " + video.getDirector());
+                    tvDir.setText(getString(R.string.directed_by_) + video.getDirector());
                 else
                     tvDir.setVisibility(View.GONE);
 
                 TextView tvAct = (TextView) detailView.findViewById(R.id.actorsText);
                 // actors
                 if (video.getActors() != null)
-                    tvAct.setText("Starring: " + video.getActors());
+                    tvAct.setText(getString(R.string.starring_) + video.getActors());
                 else
                     tvAct.setVisibility(View.GONE);
 

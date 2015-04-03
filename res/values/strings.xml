@@ -280,6 +280,7 @@
     <string name="one">1</string>
     <string name="rating">Rating</string>
     <string name="play">Play</string>
+    <string name="watch">Watch</string>
 
     <string-array name="video_categorization_entries">
         <item>None</item>
@@ -295,15 +296,64 @@
     <string name="url_help">http://oakesville.github.io/mythling/help.html</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="ok">OK</string>
+    <string name="stop">Stop</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
     <string name="mythling">Mythling</string>
     <string name="mythtv">MythTV</string>
     <string name="pref_header_icon">Pref Icon</string>
     <string name="title_activity_video_view">Mythling Player</string>
-
     <string-array name="item_long_click_menu">
         <item>Play Item</item>
         <item>Initiate Transcode</item>
     </string-array>
+    <string name="setup_required">"Setup Required"</string>
+    <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="error_">Error:\u0020</string>
+    <string name="bad_setting_">Bad or missing setting:</string>
+    <string name="directed_by_">Directed By:\u0020</string>
+    <string name="starring_">Starring:\u0020</string>
+    <string name="playing">Playing</string>
+    <string name="live_tv">Live TV</string>
+    <string name="show_already_ended_">Show has already ended:\u0020</string>
+    <string name="recording_will_be_scheduled">Recording will be scheduled if necessary.</string>
+    <string name="interrupt">Interrupt</string>
+    <string name="stop_playback_">Stop current playback?</string>
+    <string name="transcode">Transcode</string>
+    <string name="begin_transcode">Begin Transcoding</string>
+    <string name="todo_frontend_live_tv">TODO: Frontend Live TV playback not yet supported.</string>
+    <string name="transcoding_not_started">Transcoding does not seem to have started.</string>
+    <string name="recording_conflict">Recording Conflict</string>
+    <string name="tuner_in_use_recording_">Tuner already in use recording:</string>
+    <string name="delete_recording_and_proceed_">Delete this recording and proceed?</string>
+    <string name="confirm_delete">Confirm Delete</string>
+    <string name="delete_in_progress_recording_">Delete in-progress recording?</string>
+    <string name="tv">TV</string>
+    <string name="file">File</string>
+    <string name="always_do_this_for">Always do this for</string>
+    <string name="files">files</string>
+    <string name="transcode_to_hls">Transcode to HLS</string>
+    <string name="stream_raw_file">Stream Raw File</string>
+    <string name="unable_to_create_directories_">Unable to create directories:</string>
+    <string name="needed_for_mythling_svcs">Needed for Mythling Media Services</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+    <string name="app_data">Application Data</string>
+    <string name="cache_cleared">Cached data has been cleared.</string>
+    <string name="mythling_service_error_">Mythling service error:\u0020</string>
+    <string name="problem_scheduling_recording_">Problem scheduling recording:\u0020</string>
+    <string name="problem_deleting_recording_">Problem deleting recording:\u0020</string>
+    <string name="no_recording_available">No recording available (there may be a scheduling conflict, or possibly a tuner timeout occurred).</string>
+    <string name="error_frontend_status_">Error checking mythfrontend status:\u0020</string>
+    <string name="music_not_supported_by_svc_fe_player">Music playback not supported by ServiceFrontendPlayer</string>
+    <string name="frontend_playback_failed_">Frontend playback failed for url:\u0020</string>
+    <string name="frontend_playback_error_">Frontend playback error:\u0020</string>
+    <string name="error_stopping_frontend_playback_">Error stopping frontend playback:\u0020</string>
+    <string name="transcode_jobs_running">Already %0% transcode jobs running</string>
+    <string name="no_live_stream_found">No live stream found.\u0020Please try again.</string>
+    <string name="no_stream_available_">No stream available (try increasing transcode timeout):\u0020</string>
 </resources>

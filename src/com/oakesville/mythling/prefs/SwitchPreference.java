@@ -75,5 +75,4 @@ public class SwitchPreference extends android.preference.SwitchPreference {
 
         super.onBindView(view);
     }
-
 }

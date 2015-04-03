@@ -565,7 +565,7 @@ public abstract class MediaActivity extends Activity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
                 return true;
             } else if (item.getItemId() == R.id.menu_help) {
-                String url = getResources().getString(R.string.url_help);
+                String url = getString(R.string.url_help);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
                 return true;
             } else if (item.getItemId() == R.id.menu_stop) {
@@ -576,14 +576,14 @@ public abstract class MediaActivity extends Activity {
             }
         } catch (BadSettingsException ex) {
             stopProgress();
-            Toast.makeText(getApplicationContext(), "Bad or missing setting:\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.bad_setting_) + "\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             stopProgress();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -658,7 +658,7 @@ public abstract class MediaActivity extends Activity {
                     }
                     else {
                         startProgress();
-                        Toast.makeText(getApplicationContext(), "Playing '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.playing) + " '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
                         Intent playMusic = new Intent(this, MusicPlaybackService.class);
                         playMusic.setData(Uri.parse(musicUrl));
                         playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
@@ -706,14 +706,14 @@ public abstract class MediaActivity extends Activity {
                             if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0) {
                                 new AlertDialog.Builder(this)
                                         .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle("Live TV")
-                                        .setMessage("Show has already ended: " + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
+                                        .setTitle(getString(R.string.live_tv))
+                                        .setMessage(getString(R.string.show_already_ended_) + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
                                         .setPositiveButton("OK", null)
                                         .show();
                                 onResume();
                                 return;
                             }
-                            dialogMessage += "\n\nRecording will be scheduled if necessary.";
+                            dialogMessage += "\n\n" + getString(R.string.recording_will_be_scheduled);
                         }
                         dialog.setMessage(dialogMessage);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
@@ -754,15 +754,15 @@ public abstract class MediaActivity extends Activity {
                 if (player.checkIsPlaying()) {
                     new AlertDialog.Builder(this)
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("Interrupt")
-                            .setMessage("Stop current playback?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            .setTitle(getString(R.string.interrupt))
+                            .setMessage(getString(R.string.stop_playback_))
+                            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     player.stop();
                                     startFrontendPlayback(item, player);
                                 }
                             })
-                            .setNegativeButton("No", null)
+                            .setNegativeButton(getString(R.string.no), null)
                             .show();
                 } else {
                     startFrontendPlayback(item, player);
@@ -775,7 +775,7 @@ public abstract class MediaActivity extends Activity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -786,8 +786,8 @@ public abstract class MediaActivity extends Activity {
         item.setPath("");
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle("Transcode")
-                .setMessage("Begin transcoding '" + item.getTitle() + "'?")
+                .setTitle(getString(R.string.transcode))
+                .setMessage(getString(R.string.begin_transcode) +  " '" + item.getTitle() + "'?")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -800,11 +800,11 @@ public abstract class MediaActivity extends Activity {
                                 Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
-                            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
                         }
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         stopProgress();
                         onResume();
@@ -847,8 +847,8 @@ public abstract class MediaActivity extends Activity {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(item.getTitle())
-                    .setMessage("TODO: Frontend Live TV playback not yet supported.")
-                    .setPositiveButton("OK", null)
+                    .setMessage(getString(R.string.todo_frontend_live_tv))
+                    .setPositiveButton(getString(R.string.ok), null)
                     .show();
         } else {
             try {
@@ -865,13 +865,13 @@ public abstract class MediaActivity extends Activity {
                 countdownDialog.setProgressNumberFormat(null);
                 countdownDialog.setMax(10);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                countdownDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         stopTimer();
                     }
                 });
-                countdownDialog.setButton(Dialog.BUTTON_NEGATIVE, "Stop", new DialogInterface.OnClickListener() {
+                countdownDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.stop), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         player.stop();
                         dialog.dismiss();
@@ -1113,7 +1113,7 @@ public abstract class MediaActivity extends Activity {
                 }
 
                 if (streamInfo == null || streamInfo.getRelativeUrl().isEmpty())
-                    throw new IOException("Transcoding does not seem to have started");
+                    throw new IOException(getString(R.string.transcoding_not_started));
 
                 transcoder.waitAvailable();
 
@@ -1239,22 +1239,22 @@ public abstract class MediaActivity extends Activity {
                 if (ex instanceof TunerInUseException) {
                     new AlertDialog.Builder(MediaActivity.this)
                             .setIcon(android.R.drawable.ic_dialog_info)
-                            .setTitle("Recording Conflict")
-                            .setMessage("Tuner already in use recording:\n" + ex.getMessage() + "\nDelete this recording and proceed?")
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            .setTitle(getString(R.string.recording_conflict))
+                            .setMessage(getString(R.string.tuner_in_use_recording_) + "\n" + ex.getMessage() + "\n" + getString(R.string.delete_recording_and_proceed_))
+                            .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     final Recording inProgressRecording = ((TunerInUseException) ex).getRecording();
                                     new AlertDialog.Builder(MediaActivity.this)
                                             .setIcon(android.R.drawable.ic_dialog_alert)
-                                            .setTitle("Confirm Delete")
-                                            .setMessage("Delete in-progress recording?\n" + inProgressRecording)
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            .setTitle(getString(R.string.confirm_delete))
+                                            .setMessage(getString(R.string.delete_in_progress_recording_) + "\n" + inProgressRecording)
+                                            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     startProgress();
                                                     new StreamTvTask(tvShow, raw, inProgressRecording).execute();
                                                 }
                                             })
-                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     stopProgress();
                                                     onResume();
@@ -1263,7 +1263,7 @@ public abstract class MediaActivity extends Activity {
                                             .show();
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     stopProgress();
                                     onResume();
@@ -1319,7 +1319,7 @@ public abstract class MediaActivity extends Activity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1460,7 +1460,7 @@ public abstract class MediaActivity extends Activity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             setPath(""); // TODO correct?
         }
     }

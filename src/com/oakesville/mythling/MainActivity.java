@@ -65,13 +65,13 @@ public class MainActivity extends MediaActivity {
         }
 
         if (!getAppSettings().isPrefsInitiallySet()) {
-            String msg = "Please access Network settings to initialize connection info.";
+            String msg = getString(R.string.access_network_settings);
             if (getAppSettings().isFireTv()) {
                 new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Setup Required")
+                .setTitle(getString(R.string.setup_required))
                 .setMessage(msg)
-                .setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.go_to_settings), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         startActivity(new Intent(MainActivity.this, PrefsActivity.class));
                     }
@@ -124,14 +124,14 @@ public class MainActivity extends MediaActivity {
                 populate();
         } catch (BadSettingsException ex) {
             stopProgress();
-            Toast.makeText(getApplicationContext(), "Bad or missing setting:\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.bad_setting_) + "\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             stopProgress();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
         super.onResume();

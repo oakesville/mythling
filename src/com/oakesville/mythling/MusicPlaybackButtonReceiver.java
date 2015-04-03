@@ -31,12 +31,12 @@ import com.oakesville.mythling.util.Reporter;
  * Only used for music.
  * TODO: Either implement a playback service as described here:
  * http://developer.android.com/guide/topics/media/mediaplayer.html,
- * or use android.content.Intent.CATEGORY_APP_MUSIC to launch the 
+ * or use android.content.Intent.CATEGORY_APP_MUSIC to launch the
  * standard music player app.
  */
 public class MusicPlaybackButtonReceiver extends BroadcastReceiver {
-    
-    private static final String TAG = MusicPlaybackButtonReceiver.class.getSimpleName();    
+
+    private static final String TAG = MusicPlaybackButtonReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -68,5 +68,4 @@ public class MusicPlaybackButtonReceiver extends BroadcastReceiver {
             }
         }
     }
-    
 }

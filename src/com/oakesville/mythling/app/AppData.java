@@ -38,6 +38,7 @@ import android.util.Log;
 import android.util.LruCache;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -226,12 +227,10 @@ public class AppData {
         String dirPath = path.substring(0, path.lastIndexOf('/'));
         File dir = new File(cacheDir + "/" + dirPath);
         if (!dir.exists() && !dir.mkdirs())
-            throw new IOException("Unable to create directories: " + dir);
+            throw new IOException(appContext.getString(R.string.unable_to_create_directories_) + dir);
         File imageFile = new File(cacheDir.getPath() + "/" + path);
         if (BuildConfig.DEBUG)
             Log.d(TAG, "writing image to file: " + imageFile);
         writeFile(imageFile, bytes);
     }
-
-
 }

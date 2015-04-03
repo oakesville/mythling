@@ -107,7 +107,7 @@ public class SearchActivity extends MediaActivity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
         super.onResume();

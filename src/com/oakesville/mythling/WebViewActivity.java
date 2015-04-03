@@ -69,7 +69,7 @@ public class WebViewActivity extends Activity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

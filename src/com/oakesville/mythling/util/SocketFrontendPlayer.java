@@ -33,6 +33,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.TvShow;
@@ -77,7 +78,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
             }
         }
         if (status == null)
-            throw new IOException("Unable to connect to mythfrontend: " + appSettings.getFrontendHost() + ":" + appSettings.getFrontendSocketPort());
+            throw new IOException(appSettings.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendHost() + ":" + appSettings.getFrontendSocketPort());
 
         return status.startsWith("Playback");
     }
@@ -132,7 +133,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Error playing file '" + item.getFileName() + "': " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), appSettings.getStringRes(R.string.frontend_playback_error_) + " '" + item.getFileName() + "': " + ex.toString(), Toast.LENGTH_LONG).show();
             } else {
             }
         }
@@ -173,7 +174,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Error stopping playback: " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), appSettings.getStringRes(R.string.error_stopping_frontend_playback_) + ex.toString(), Toast.LENGTH_LONG).show();
             } else {
             }
         }
@@ -209,7 +210,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null)
-                    Toast.makeText(appSettings.getAppContext(), "Error checking status: " + ex.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(appSettings.getAppContext(), appSettings.getStringRes(R.string.error_frontend_status_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -98,7 +98,7 @@ public class MediaListActivity extends MediaActivity {
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
         super.onResume();
@@ -130,7 +130,7 @@ public class MediaListActivity extends MediaActivity {
         setMediaType(mediaList.getMediaType());
 
         if (MediaSettings.getMediaTitle(MediaType.liveTv).equals(getPath())) {
-            String title = "TV  (at " + mediaList.getRetrieveTimeDisplay() + " on " + mediaList.getRetrieveDateDisplay() + ")";
+            String title = getString(R.string.tv) + " (" + mediaList.getRetrieveDateDisplay() + " " + mediaList.getRetrieveTimeDisplay() + ")";
             breadCrumbs.setTitle(title, title);
         }
 

@@ -68,7 +68,7 @@ public class MythlingParser implements MediaListParser {
         long startTime = System.currentTimeMillis();
         JSONObject list = new JSONObject(json);
         if (list.has("error"))
-            throw new ServiceException("Mythling service error: " + list.getString("error"));
+            throw new ServiceException(list.getString("error"));
         JSONObject summary = list.getJSONObject("summary");
         mediaList.setRetrieveDate(summary.getString("date"));
         mediaList.setCount(summary.getString("count"));
@@ -130,7 +130,7 @@ public class MythlingParser implements MediaListParser {
         long startTime = System.currentTimeMillis();
         JSONObject list = new JSONObject(json);
         if (list.has("error"))
-            throw new ServiceException("Mythling service error: " + list.getString("error"));
+            throw new ServiceException(list.getString("error"));
 
         JSONObject summary = list.getJSONObject("summary");
         searchResults.setRetrieveDate(summary.getString("date"));

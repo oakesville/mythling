@@ -385,9 +385,7 @@ public class MythTvParser implements MediaListParser {
                 if (!season.isEmpty() && !season.equals("0"))
                     ((Recording) tvShow).setSeason(Integer.parseInt(season));
             }
-
         }
-
     }
 
     public List<LiveStreamInfo> parseStreamInfoList() {
@@ -526,5 +524,4 @@ public class MythTvParser implements MediaListParser {
     public boolean parseBool() throws JSONException {
         return Boolean.parseBoolean(new JSONObject(json).getString("bool"));
     }
-
 }

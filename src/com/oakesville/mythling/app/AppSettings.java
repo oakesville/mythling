@@ -819,7 +819,7 @@ public class AppSettings {
                 if (isIpRetrieval()) {
                     try {
                         if (getIpRetrievalUrlString().isEmpty())
-                            throw new BadSettingsException("Network > External Backend > IP Retrieval URL");
+                            bse(R.string.title_prefs_network, R.string.title_ip_retrieval_url);
                         getIpRetrievalUrl();
                     } catch (MalformedURLException ex) {
                         try {
@@ -829,57 +829,57 @@ public class AppSettings {
                             ed.putString(IP_RETRIEVAL_URL, withProtocol);
                             ed.commit();
                         } catch (MalformedURLException ex2) {
-                            throw new BadSettingsException("Network > External Backend > IP Retrieval URL", ex2);
+                            bse(ex2, R.string.title_prefs_network, R.string.title_ip_retrieval_url);
                         }
                     }
                 } else {
                     if (!validateHost(getExternalBackendHost()))
-                        throw new BadSettingsException("Network > External Backend > Host");
+                        bse(R.string.title_prefs_network, R.string.title_external_backend, R.string.title_backend_host);
                 }
             } else {
                 if (!validateHost(getInternalBackendHost()))
-                    throw new BadSettingsException("Network > Internal Backend > Host");
+                    bse(R.string.title_prefs_network, R.string.title_internal_backend, R.string.title_backend_host);
             }
 
             // backend ports regardless of internal/external network
             try {
                 if (getMythTvServicePort() <= 0)
-                    throw new BadSettingsException("Connections > Content Services > MythTV Service Port");
+                    bse(R.string.title_prefs_connections, R.string.title_content_services, R.string.title_mythtv_service_port);
             } catch (NumberFormatException ex) {
-                throw new BadSettingsException("Connections > Content Services > MythTV Service Port", ex);
+                bse(ex, R.string.title_prefs_connections, R.string.title_content_services, R.string.title_mythtv_service_port);
             }
             if (isMythlingMediaServices()) {
                 if (!isHasBackendWeb())
-                    throw new BadSettingsException("Connections > Backend Web Server (Needed for Mythling Media Services)");
+                    bse(appContext.getString(R.string.needed_for_mythling_svcs), R.string.title_prefs_connections, R.string.title_web_server);
                 try {
                     if (getMythlingWebPort() <= 0)
-                        throw new BadSettingsException("Connections > Backend Web Server > Web Port");
+                        bse(R.string.title_prefs_connections, R.string.title_web_server, R.string.title_web_port);
                 } catch (NumberFormatException ex) {
-                    throw new BadSettingsException("Connections > Backend Web Server > Web Port", ex);
+                    bse(ex, R.string.title_prefs_connections, R.string.title_web_server, R.string.title_web_port);
                 }
             }
 
             // services only used for device playback
             if (!getMythTvServicesAuthType().equals(AUTH_TYPE_NONE)) {
                 if (getMythTvServicesUser().isEmpty())
-                    throw new BadSettingsException("Settings > Credentials > MythTV Services > User");
+                    bse(R.string.title_prefs_credentials, R.string.title_mythtv_services_user);
                 if (getMythTvServicesPassword().isEmpty())
-                    throw new BadSettingsException("Settings > Credentials > MythTV Services > Password");
+                    bse(R.string.title_prefs_credentials, R.string.title_mythtv_services_password);
             }
         } else {
             if (!validateHost(getFrontendHost()))
-                throw new BadSettingsException("Settings > Playback > Frontend Player > Host");
+                bse(R.string.title_prefs_playback, R.string.title_frontend_player, R.string.title_frontend_host);
             try {
                 if (getFrontendSocketPort() <= 0)
-                    throw new BadSettingsException("Settings > Playback > Frontend Player > Socket Port");
+                    bse(R.string.title_prefs_playback, R.string.title_frontend_player, R.string.title_frontend_socket_port);
             } catch (NumberFormatException ex) {
-                throw new BadSettingsException("Settings > Playback > Frontend Player > Socket Port", ex);
+                bse(ex, R.string.title_prefs_playback, R.string.title_frontend_player, R.string.title_frontend_socket_port);
             }
             try {
                 if (getFrontendServicePort() <= 0)
-                    throw new BadSettingsException("Settings > Playback > Frontend Player > Service Port");
+                    bse(R.string.title_prefs_playback, R.string.title_frontend_player, R.string.title_frontend_service_port);
             } catch (NumberFormatException ex) {
-                throw new BadSettingsException("Settings > Playback > Frontend Player > Service Port", ex);
+                bse(ex, R.string.title_prefs_playback, R.string.title_frontend_player, R.string.title_frontend_service_port);
             }
         }
 
@@ -887,19 +887,45 @@ public class AppSettings {
             String authType = getMythlingServicesAuthType();
             if (!authType.equals(AUTH_TYPE_NONE) && !authType.equals(AUTH_TYPE_SAME)) {
                 if (getMythlingServicesUser().isEmpty())
-                    throw new BadSettingsException("Settings > Credentials > Mythling Services > User");
+                    bse(R.string.title_prefs_credentials, R.string.title_web_user);
                 if (getMythlingServicesPassword().isEmpty())
-                    throw new BadSettingsException("Settings > Credentials > Mythling Services > Password");
+                    bse(R.string.title_prefs_credentials, R.string.title_web_password);
             }
         }
 
         try {
             if (getExpiryMinutes() < 0)
-                throw new BadSettingsException("Settings > Data Caching > Expiry Interval");
+                bse(R.string.title_prefs_caching, R.string.title_cache_expiry);
         } catch (NumberFormatException ex) {
-            throw new BadSettingsException("Settings > Data Caching > Expiry Interval", ex);
+            bse(ex, R.string.title_prefs_caching, R.string.title_cache_expiry);
         }
+    }
 
+    private void bse(String msg, Throwable th, int... resIds) throws BadSettingsException {
+        String m = "";
+        for (int i = 0; i < resIds.length; i++) {
+            m += appContext.getString(resIds[i]);
+            if (i < resIds.length - 1)
+                m += " > ";
+        }
+        if (msg != null)
+            m += " (" + msg + ")";
+        if (th == null)
+            throw new BadSettingsException(m);
+        else
+            throw new BadSettingsException(m, th);
+    }
+
+    private void bse(String msg, int... resIds) throws BadSettingsException {
+        bse(msg, null, resIds);
+    }
+
+    private void bse(Throwable th, int... resIds) throws BadSettingsException {
+        bse(null, th, resIds);
+    }
+
+    private void bse(int...resIds) throws BadSettingsException {
+        bse(null, null, resIds);
     }
 
     public HttpHelper getMediaListDownloader(URL[] urls) {
@@ -1007,6 +1033,18 @@ public class AppSettings {
                 deviceDefault = (String)val;
         }
         return prefs.getString(key, deviceDefault);
+    }
+
+    public String getStringRes(int resId, String... substs) {
+        String str = appContext.getString(resId);
+        for (int i = 0; i < substs.length; i++) {
+            str = str.replaceAll("%" + i + "%", substs[i]);
+        }
+        return str;
+    }
+
+    public String getStringRes(int resId) {
+        return appContext.getString(resId);
     }
 
     /**
