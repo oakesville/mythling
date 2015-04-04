@@ -888,7 +888,7 @@ function printItem($path, $file, $depth, $more)
   }
   else
   {
-    $lastdot = strpos($file, ".");
+    $lastdot = strrpos($file, ".");
     $title = substr($file, 0, $lastdot);
     $filetype = substr($file, $lastdot + 1);
     if (!($type->isVideos()))
@@ -909,7 +909,7 @@ function printItem($path, $file, $depth, $more)
     if ($basenames[$id] != null)
     {
       $basename = $basenames[$id];
-      $lastdot = strpos($basename, ".");
+      $lastdot = strrpos($basename, ".");
       $filename = substr($basename, 0, $lastdot);
       $format = substr($basename, $lastdot + 1);
       echo ', "file": "' . $filename . '", "format": "' . $format . '"';
@@ -938,7 +938,7 @@ function printItem($path, $file, $depth, $more)
   }
   else if ($type->isMovies() || $type->isTvSeries())
   {
-    echo ', "file": "' . substr($file, 0, strpos($file, ".")) . '"';
+    echo ', "file": "' . substr($file, 0, strrpos($file, ".")) . '"';
     if ($subtitles[$id] != null)
       echo ', "subtitle": "' . $subtitles[$id] . '"';
     if ($inetrefs[$id] != null && $inetrefs[$id] != '00000000')
