@@ -31,6 +31,7 @@ import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
@@ -248,7 +249,7 @@ public class MythlingParser implements MediaListParser {
     }
 
     private void addProgramInfo(TvShow item, JSONObject jsonObj) throws JSONException, ParseException {
-        item.setStartTime(DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(item.getId().substring(item.getId().indexOf('~') + 1)));
+        item.setStartTime(Localizer.SERVICE_DATE_TIME_RAW_FORMAT.parse(item.getId().substring(item.getId().indexOf('~') + 1)));
         if (jsonObj.has("callsign"))
             item.setCallsign(jsonObj.getString("callsign"));
         if (jsonObj.has("description"))
@@ -256,12 +257,12 @@ public class MythlingParser implements MediaListParser {
         if (jsonObj.has("airdate")) {
             String ad = jsonObj.getString("airdate");
             if (ad.length() == 4) // year only (for movies)
-                item.setOriginallyAired(DateTimeFormats.YEAR_FORMAT.parse(ad));
+                item.setOriginallyAired(Localizer.getYearFormat().parse(ad));
             else
-                item.setOriginallyAired(DateTimeFormats.SERVICE_DATE_FORMAT.parse(ad));
+                item.setOriginallyAired(Localizer.SERVICE_DATE_FORMAT.parse(ad));
         }
         if (jsonObj.has("endtime"))
-            item.setEndTime(DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(jsonObj.getString("endtime")));
+            item.setEndTime(Localizer.SERVICE_DATE_TIME_RAW_FORMAT.parse(jsonObj.getString("endtime")));
         if (jsonObj.has("programStart"))
             item.setProgramStart(jsonObj.getString("programStart"));
         if (jsonObj.has("rating")) {

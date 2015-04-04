@@ -22,8 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -142,13 +140,9 @@ public class AppSettings {
     private SharedPreferences prefs;
     public SharedPreferences getPrefs() { return prefs; }
 
-    private static DateFormat dateTimeFormat;
-
     public AppSettings(Context appContext) {
         this.appContext = appContext;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-        dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateTimeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     public URL getMythlingWebBaseUrl() throws MalformedURLException {
@@ -185,7 +179,7 @@ public class AppSettings {
                 url += "Dvr/GetRecordedList?Descending=true";
             else if (mediaType == MediaType.liveTv) {
                 Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                String nowUtc = dateTimeFormat.format(cal.getTime()).replace(' ', 'T');
+                String nowUtc = Localizer.SERVICE_DATE_TIME_RAW_FORMAT.format(cal.getTime()).replace(' ', 'T');
                 url += "Guide/GetProgramGuide?StartTime=" + nowUtc + "&EndTime=" + nowUtc;
             }
         }

@@ -18,8 +18,13 @@
  */
 package com.oakesville.mythling.app;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import android.content.Context;
-import android.content.res.Resources.NotFoundException;
 import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
@@ -36,7 +41,51 @@ public class Localizer {
 
     private static final String TAG = Localizer.class.getSimpleName();
 
+    public static final DateFormat SERVICE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat SERVICE_DATE_TIME_RAW_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static {
+        SERVICE_DATE_TIME_RAW_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+    public static final DateFormat SERVICE_DATE_TIME_ZONE_FORMAT = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss Z");
+
     private static String[] leadingArticles = new String[] { "A", "An", "The" };
+
+    private static DateFormat dateFormat = new SimpleDateFormat("MMM d yyyy");
+    public static DateFormat getDateFormat() { return dateFormat; }
+
+    private static DateFormat timeFormat = new SimpleDateFormat("h:mm a");
+    public static DateFormat getTimeFormat() { return timeFormat; }
+    public static String getTimeAbbrev(Date d) {
+        return abbrev(timeFormat.format(d));
+    }
+
+    private static DateFormat dateTimeFormat = new SimpleDateFormat("MMM d  h:mm a");
+    public static DateFormat getDateTimeFormat() { return dateTimeFormat; }
+    public static String getDateTimeAbbrev(Date d) {
+        return abbrev(dateTimeFormat.format(d));
+    }
+
+    private static DateFormat dateTimeYearFormat = new SimpleDateFormat("MMM d yyyy  h:mm a");
+    public static DateFormat getDateTimeYearFormat() { return dateTimeYearFormat; }
+    public static String getDateTimeYearAbbrev(Date d) {
+        return abbrev(dateTimeYearFormat.format(d));
+    }
+
+    private static DateFormat weekdayDateFormat = new SimpleDateFormat("EEE, MMM d");
+    public static DateFormat getWeekdayDateFormat() { return weekdayDateFormat; }
+
+    private static DateFormat AM_PM_FORMAT = new SimpleDateFormat("a");
+    private static DateFormat AM_PM_FORMAT_US = new SimpleDateFormat("kk", Locale.US);
+    private static String am = "AM";
+    private static String pm = "PM";
+    private static String abbrevAm = "a";
+    private static String abbrevPm = "p";
+    private static String abbrev(String in) {
+        return in.replace(" " + am, abbrevAm).replace(" " + pm, abbrevPm);
+    }
+
+    private static DateFormat yearFormat = new SimpleDateFormat("yyyy");
+    public static DateFormat getYearFormat() { return yearFormat; }
 
     private static AppSettings appSettings;
 
@@ -48,7 +97,17 @@ public class Localizer {
         Localizer.appSettings = appSettings;
         try {
             leadingArticles = getAppContext().getResources().getStringArray(R.array.leading_articles);
-        } catch (NotFoundException ex) {
+            dateFormat = new SimpleDateFormat(getStringRes(R.string.date_format));
+            timeFormat = new SimpleDateFormat(getStringRes(R.string.time_format));
+            dateTimeFormat = new SimpleDateFormat(getStringRes(R.string.date_time_format));
+            dateTimeYearFormat = new SimpleDateFormat(getStringRes(R.string.date_time_year_format));
+            yearFormat = new SimpleDateFormat(getStringRes(R.string.year_format));
+            weekdayDateFormat = new SimpleDateFormat(getStringRes(R.string.weekday_date_format));
+            am = AM_PM_FORMAT.format(AM_PM_FORMAT_US.parse("00"));
+            pm = AM_PM_FORMAT.format(AM_PM_FORMAT_US.parse("12"));
+            abbrevAm = getStringRes(R.string.abbrev_am);
+            abbrevPm = getStringRes(R.string.abbrev_pm);
+        } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())

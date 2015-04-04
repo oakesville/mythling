@@ -18,23 +18,18 @@
  */
 package com.oakesville.mythling.media;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class MediaList {
-    private DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss Z");
-    private DateFormat dateDisplay = new SimpleDateFormat("EEE, MMM d");
-    private DateFormat timeDisplay = new SimpleDateFormat("h:mm aa");
-
     private MediaType mediaType;
     public MediaType getMediaType() { return mediaType; }
     public void setMediaType(MediaType mt) { this.mediaType = mt; }
@@ -44,15 +39,15 @@ public class MediaList {
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }
 
     public void setRetrieveDate(String d) throws ParseException {
-        retrieveDate = dateFormat.parse(d);
+        retrieveDate = Localizer.SERVICE_DATE_TIME_ZONE_FORMAT.parse(d);
     }
 
     public String getRetrieveDateDisplay() {
-        return dateDisplay.format(retrieveDate);
+        return Localizer.getWeekdayDateFormat().format(retrieveDate);
     }
 
     public String getRetrieveTimeDisplay() {
-        return timeDisplay.format(retrieveDate);
+        return Localizer.getTimeFormat().format(retrieveDate);
     }
 
     private String charSet;

@@ -35,6 +35,7 @@ import android.util.Log;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
@@ -251,7 +252,7 @@ public class MythTvParser implements MediaListParser {
                 String dateStr = releaseDate.replace('T', ' ');
                 if (dateStr.endsWith("Z"))
                     dateStr = dateStr.substring(0, dateStr.length() - 1);
-                Date date = DateTimeFormats.SERVICE_DATE_FORMAT.parse(dateStr + " UTC");
+                Date date = Localizer.SERVICE_DATE_FORMAT.parse(dateStr + " UTC");
                 Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 cal.setTime(date);
                 item.setYear(cal.get(Calendar.YEAR));
@@ -356,7 +357,7 @@ public class MythTvParser implements MediaListParser {
         if (jsonObj.has("Airdate")) {
             String airdate = jsonObj.getString("Airdate");
             if (!airdate.isEmpty())
-                tvShow.setOriginallyAired(DateTimeFormats.SERVICE_DATE_FORMAT.parse(airdate));
+                tvShow.setOriginallyAired(Localizer.SERVICE_DATE_FORMAT.parse(airdate));
         }
         if (jsonObj.has("StartTime")) {
             String startTime = jsonObj.getString("StartTime");
@@ -500,7 +501,7 @@ public class MythTvParser implements MediaListParser {
         String str = dt.replace('T', ' ');
         if (str.endsWith("Z"))
             str = str.substring(0, str.length() - 1);
-        return DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.parse(str + " UTC");
+        return Localizer.SERVICE_DATE_TIME_RAW_FORMAT.parse(str + " UTC");
     }
 
     public String parseFrontendStatus() throws JSONException {

@@ -18,23 +18,22 @@
  */
 package com.oakesville.mythling.media;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.oakesville.mythling.app.Localizer;
+
 public class SearchResults {
-    private DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
     private Date retrieveDate;
     public Date getRetrieveDate() { return retrieveDate; }
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }
 
     public void setRetrieveDate(String d) throws ParseException {
-        retrieveDate = dateFormat.parse(d);
+        retrieveDate = Localizer.SERVICE_DATE_TIME_ZONE_FORMAT.parse(d);
     }
 
     private String charSet;

@@ -29,7 +29,6 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.util.DateTimeFormats;
 
 /**
  * A live or recorded TV show.
@@ -82,25 +81,25 @@ public class TvShow extends Item {
         oneYearAgo.add(Calendar.YEAR, -1);
         boolean showYear = oneYearAgo.getTime().compareTo(getStartTime()) > 0;
         if (showYear)
-            return DateTimeFormats.DATE_TIME_YEAR_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
+            return Localizer.getDateTimeYearAbbrev(getStartTime());
         else
-            return DateTimeFormats.DATE_TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
+            return Localizer.getDateTimeAbbrev(getStartTime());
     }
 
     public String getStartTimeFormatted() throws ParseException {
-        return DateTimeFormats.TIME_FORMAT.format(getStartTime()).replace(" AM", "a").replace(" PM", "p");
+        return Localizer.getTimeAbbrev(getStartTime());
     }
 
     public String getEndDateTimeFormatted() throws ParseException {
-        return DateTimeFormats.DATE_TIME_FORMAT.format(getEndTime()).replace(" AM", "a").replace(" PM", "p");
+        return Localizer.getDateTimeAbbrev(getEndTime());
     }
 
     public String getEndTimeFormatted() throws ParseException {
-        return DateTimeFormats.TIME_FORMAT.format(getEndTime()).replace(" AM", "a").replace(" PM", "p");
+        return Localizer.getTimeAbbrev(getEndTime());
     }
 
     public String getEndTimeParam() {
-        return DateTimeFormats.SERVICE_DATE_TIME_RAW_FORMAT.format(getEndTime()).replace(' ', 'T');
+        return Localizer.SERVICE_DATE_TIME_RAW_FORMAT.format(getEndTime()).replace(' ', 'T');
     }
 
     public String getChanIdStartTimeParams() {
@@ -149,11 +148,11 @@ public class TvShow extends Item {
         StringBuffer buf = new StringBuffer();
         if (isRepeat()) {
             if (isShowMovie())
-                buf.append("(").append(DateTimeFormats.YEAR_FORMAT.format(originallyAired)).append(")");
+                buf.append("(").append(Localizer.getYearFormat().format(originallyAired)).append(")");
             else
                 buf.append("\n(")
                         .append(Localizer.getStringRes(R.string.originally_aired))
-                        .append(" ").append(DateTimeFormats.DATE_FORMAT.format(originallyAired)).append(")");
+                        .append(" ").append(Localizer.getDateFormat().format(originallyAired)).append(")");
         }
         return buf.toString();
     }
@@ -172,7 +171,7 @@ public class TvShow extends Item {
     public int getYear() {
         if (originallyAired == null)
             return 0;
-        return Integer.parseInt(DateTimeFormats.YEAR_FORMAT.format(originallyAired));
+        return Integer.parseInt(Localizer.getYearFormat().format(originallyAired));
     }
 
     protected boolean isRepeat() {
