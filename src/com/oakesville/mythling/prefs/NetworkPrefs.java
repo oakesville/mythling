@@ -23,8 +23,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
 
 public class NetworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {

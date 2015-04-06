@@ -23,7 +23,7 @@
         android:title="@string/title_network_location"
         android:switchTextOn="External"
         android:switchTextOff="Internal"
-        android:defaultValue="Internal"
+        android:defaultValue="false"
         android:layout="@layout/sw_pref"
         android:widgetLayout="@layout/prefs_switch" />
 
@@ -56,7 +56,7 @@
             android:title="@string/title_retrieve_ip"
             android:switchTextOn="Dynamic"
             android:switchTextOff="Static"
-            android:defaultValue="Static"
+            android:defaultValue="false"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
         <EditTextPreference

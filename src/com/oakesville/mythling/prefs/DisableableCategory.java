@@ -50,4 +50,18 @@ public class DisableableCategory extends PreferenceCategory {
         this.enabled = enabled;
         super.setEnabled(enabled);
     }
+
+    private boolean selectable;
+
+    @Override
+    public boolean isSelectable() {
+        return selectable;
+    }
+
+    @Override
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+        super.setSelectable(selectable);
+    }
+
 }

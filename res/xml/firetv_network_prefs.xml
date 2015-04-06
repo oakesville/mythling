@@ -37,5 +37,12 @@
             android:layout="@layout/pref" />
     </PreferenceCategory>
     
-
+    <PreferenceCategory android:title="@string/title_video_player">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="video_player"
+            android:switchTextOn="@string/switch_built_in"
+            android:switchTextOff="@string/switch_external_app"
+            android:defaultValue="true"
+            android:layout="@layout/sw_pref_inner" />
+    </PreferenceCategory>
 </PreferenceScreen>

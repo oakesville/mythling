@@ -18,7 +18,7 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/title_internal_network">
+    <PreferenceCategory android:title="@string/title_internal_network_hls">
         <ListPreference
             android:key="internal_video_res"
             android:title="@string/title_video_res"
@@ -45,7 +45,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/title_external_network">
+    <PreferenceCategory android:title="@string/title_external_network_hls">
         <ListPreference
             android:key="external_video_res"
             android:title="@string/title_video_res"

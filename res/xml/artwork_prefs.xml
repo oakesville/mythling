@@ -57,7 +57,7 @@
             android:key="album_art_level"
             android:switchTextOn="@string/album_art_song"
             android:switchTextOff="@string/album_art_album"
-            android:defaultValue="@string/album_art_album"
+            android:defaultValue="false"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
     </PreferenceCategory>

@@ -22,8 +22,8 @@
     <header
         android:id="@+id/prefs_header_network"
         android:fragment="com.oakesville.mythling.prefs.firetv.FireTvNetworkPrefs"
-        android:title="@string/title_prefs_network"
-        android:summary="@string/summary_prefs_network" />
+        android:title="@string/title_prefs_network_playback"
+        android:summary="@string/summary_prefs_network_playback" />
 
     <header
         android:id="@+id/prefs_header_connections"

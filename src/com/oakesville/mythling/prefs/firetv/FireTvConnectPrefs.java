@@ -32,7 +32,7 @@ public class FireTvConnectPrefs extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         getActivity().getActionBar().setTitle(R.string.title_connect_settings);
         addPreferencesFromResource(R.xml.firetv_connect_prefs);
-        
+
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.BACKEND_WEB);

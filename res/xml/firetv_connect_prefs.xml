@@ -23,7 +23,7 @@
             android:key="backend_web"
             android:switchTextOn="@string/yes"
             android:switchTextOff="@string/no"
-            android:defaultValue="@string/no"
+            android:defaultValue="false"
             android:layout="@layout/sw_pref_inner" />
         <EditTextPreference
             android:key="mythling_web_port"
@@ -36,13 +36,12 @@
 
     <com.oakesville.mythling.prefs.DisableableCategory
         android:key="media_services_cat"
-        android:title="@string/title_media_services"
-        android:shouldDisableView="true">
+        android:title="@string/title_media_services">
         <com.oakesville.mythling.prefs.SwitchPreference
             android:key="media_services"
             android:switchTextOn="@string/mythling"
             android:switchTextOff="@string/mythtv"
-            android:defaultValue="@string/mythtv"
+            android:defaultValue="false"
             android:layout="@layout/sw_pref_inner" />
         <EditTextPreference
             android:key="mythling_web_root"
@@ -57,7 +56,7 @@
             android:key="error_reporting"
             android:switchTextOn="@string/enabled"
             android:switchTextOff="@string/disabled"
-            android:defaultValue="@string/disabled"
+            android:defaultValue="false"
             android:layout="@layout/sw_pref_inner" />
     </PreferenceCategory>
 

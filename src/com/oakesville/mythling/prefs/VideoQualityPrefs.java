@@ -22,8 +22,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
 
 public class VideoQualityPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {

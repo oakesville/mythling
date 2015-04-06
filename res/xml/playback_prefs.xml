@@ -23,7 +23,7 @@
         android:title="@string/title_playback_mode"
         android:switchTextOn="@string/switch_frontend"
         android:switchTextOff="@string/switch_device"
-        android:defaultValue="@string/switch_device"
+        android:defaultValue="false"
         android:layout="@layout/sw_pref"
         android:widgetLayout="@layout/prefs_switch" />
 
