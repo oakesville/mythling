@@ -7,6 +7,12 @@ https://play.google.com/apps/testing/com.oakesville.mythling
 mythling issues:
 https://github.com/oakesville/mythling/issues
 
+mythling git repo:
+https://github.com/oakesville/mythling.git
+
+mythling wiki repo:
+https://github.com/oakesville/mythling.wiki.git
+
 mythtv pull requests:
 https://github.com/MythTV/mythtv/pull/84
 

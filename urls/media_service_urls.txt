@@ -21,6 +21,8 @@ http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
 
 # MythTV LiveTV Listings
 http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2014-06-14T22:28:29&EndTime=2014-06-18T22:28:29
+# MythTV Guide Service
+http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2015-04-13T00:00:00&EndTime=2015-04-13T01:00:00&ChannelGroupId=1
 
 # MythTV Song
 http://192.168.0.69:6544/Content/GetMusic?Id=53938

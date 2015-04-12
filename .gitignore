@@ -3,4 +3,3 @@ build/
 gen/
 .gradle/
 .idea/
-*.apk
