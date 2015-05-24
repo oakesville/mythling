@@ -13,6 +13,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Toast;
+
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
@@ -27,9 +28,12 @@ public class EpgActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
-        getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
+        if (appSettings.isPhone())
+            getActionBar().hide();
+        else
+            getActionBar().setDisplayHomeAsUpEnabled(true);
 
         webView = (WebView) findViewById(R.id.webview);
 
@@ -56,7 +60,6 @@ public class EpgActivity extends Activity {
             });
         }
 
-
         try {
             webView.loadUrl(url);
         } catch (Exception ex) {
@@ -68,10 +71,12 @@ public class EpgActivity extends Activity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.webview, menu);
+        if (appSettings.isPhone())
+            getMenuInflater().inflate(R.menu.guide_fs, menu);
+        else
+            getMenuInflater().inflate(R.menu.guide, menu);
         return true;
     }
 
@@ -86,20 +91,12 @@ public class EpgActivity extends Activity {
         } else if (item.getItemId() == R.id.menu_settings) {
             startActivity(new Intent(this, PrefsActivity.class));
             return true;
-        } else if (item.getItemId() == R.id.menu_mythweb) {
-            AppSettings appSettings = new AppSettings(getApplicationContext());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+        } else if (item.getItemId() == R.id.menu_help) {
+            String url = getString(R.string.url_help);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack() == true)
-            webView.goBack();
-        else
-            super.onBackPressed();
     }
 }

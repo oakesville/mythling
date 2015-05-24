@@ -30,7 +30,7 @@ public class ConnectPrefs extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         getActivity().getActionBar().setTitle(R.string.title_connect_settings);
         addPreferencesFromResource(R.xml.connect_prefs);
-        
+
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICE_PORT);
@@ -47,9 +47,6 @@ public class ConnectPrefs extends PreferenceFragment {
                     SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHLING_MEDIA_SERVICES);
                     if (swPref.isChecked())
                         swPref.setChecked(false);
-                    swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
-                    if (swPref.isChecked())
-                        swPref.setChecked(false);
                 }
 
                 doCategoryEnablement(hasBackendWeb);
@@ -58,8 +55,6 @@ public class ConnectPrefs extends PreferenceFragment {
                     AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
                     if (!appSettings.isMythlingMediaServices())
                         getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT).setEnabled(false);
-                    if (!appSettings.isMythWebAccessEnabled())
-                        getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT).setEnabled(false);
                 }
 
                 return super.onPreferenceChange(preference, newValue);
@@ -87,28 +82,12 @@ public class ConnectPrefs extends PreferenceFragment {
         pref.setSummary(appSettings.getMythlingWebRoot());
         pref.setEnabled(hasBackendWeb && appSettings.isMythlingMediaServices());
 
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean mythwebEnabled = Boolean.valueOf(newValue.toString());
-                getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT).setEnabled(mythwebEnabled);
-                return super.onPreferenceChange(preference, newValue);
-            }
-        });
-
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_WEB_ROOT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-        pref.setSummary(appSettings.getMythwebWebRoot());
-        pref.setEnabled(hasBackendWeb && appSettings.isMythWebAccessEnabled());
-        
         pref = getPreferenceScreen().findPreference(AppSettings.ERROR_REPORTING);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
     }
 
     private void doCategoryEnablement(boolean hasBackendWeb) {
         Preference cat = getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES_CATEGORY);
-        cat.setEnabled(hasBackendWeb);
-        cat = getPreferenceScreen().findPreference(AppSettings.MYTHWEB_ACCESS_CATEGORY);
         cat.setEnabled(hasBackendWeb);
     }
 }

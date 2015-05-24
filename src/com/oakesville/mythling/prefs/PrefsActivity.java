@@ -64,10 +64,6 @@ public class PrefsActivity extends PreferenceActivity {
         if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
-        } else if (item.getItemId() == R.id.menu_mythweb) {
-            AppSettings appSettings = new AppSettings(getApplicationContext());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
-            return true;
         } else if (item.getItemId() == R.id.menu_help) {
             String url = getResources().getString(R.string.url_help);
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));

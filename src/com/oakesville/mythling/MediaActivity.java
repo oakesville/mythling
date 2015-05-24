@@ -286,9 +286,6 @@ public abstract class MediaActivity extends Activity {
         viewMenuItem = menu.findItem(R.id.menu_view);
         showViewMenu(supportsViewMenu());
 
-        mythwebMenuItem = menu.findItem(R.id.menu_mythweb);
-        showMythwebMenu(supportsMythwebMenu());
-
         stopMenuItem = menu.findItem(R.id.menu_stop);
         showStopMenuItem(isPlayingMusic());
 

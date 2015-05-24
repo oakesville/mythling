@@ -37,7 +37,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
@@ -131,9 +130,8 @@ public class SearchActivity extends MediaActivity {
         if (item.getItemId() == android.R.id.home) {
             startActivity(new Intent(this, MainActivity.class));
             return true;
-        } else if (item.getItemId() == R.id.menu_mythweb) {
-            AppSettings appSettings = new AppSettings(getApplicationContext());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+        } else if (item.getItemId() == R.id.menu_guide) {
+            startActivity(new Intent(this, EpgActivity.class));
             return true;
         } else if (item.getItemId() == R.id.menu_help) {
             String url = getResources().getString(R.string.url_help);

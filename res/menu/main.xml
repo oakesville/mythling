@@ -107,12 +107,12 @@
         android:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
+        android:id="@+id/menu_guide"
+        android:title="@string/menu_guide"
         android:orderInCategory="300"
-        android:icon="@drawable/ic_menu_settings"
-        android:showAsAction="never" />
-
+        android:icon="@drawable/ic_menu_guide"
+        android:showAsAction="ifRoom" />
+    
     <item
         android:id="@+id/menu_search"
         android:title="@string/menu_search"
@@ -121,17 +121,17 @@
         android:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_guide"
-        android:title="@string/menu_guide"
+        android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
         android:orderInCategory="500"
-        android:icon="@drawable/ic_menu_help"
-        android:showAsAction="never" />
+        android:icon="@drawable/ic_menu_settings"
+        android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_help"
         android:title="@string/menu_help"
         android:orderInCategory="600"
         android:icon="@drawable/ic_menu_help"
-        android:showAsAction="never" />
+        android:showAsAction="ifRoom" />
 
 </menu>

@@ -63,25 +63,6 @@
             android:layout="@layout/pref" />
     </com.oakesville.mythling.prefs.DisableableCategory>
 
-    <com.oakesville.mythling.prefs.DisableableCategory
-        android:key="mythweb_access_cat"
-        android:title="@string/title_mythweb_access"
-        android:shouldDisableView="true">
-        <com.oakesville.mythling.prefs.SwitchPreference
-            android:key="mythweb_access"
-            android:switchTextOn="@string/enabled"
-            android:switchTextOff="@string/disabled"
-            android:defaultValue="false"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
-        <EditTextPreference
-            android:key="mythweb_web_root"
-            android:title="@string/title_mythweb_web_root"
-            android:dialogMessage="@string/message_mythweb_web_root"
-            android:defaultValue="@string/default_mythweb_web_root"
-            android:layout="@layout/pref" />
-    </com.oakesville.mythling.prefs.DisableableCategory>
-
     <PreferenceCategory android:title="@string/title_error_reporting">
         <com.oakesville.mythling.prefs.SwitchPreference
             android:key="error_reporting"

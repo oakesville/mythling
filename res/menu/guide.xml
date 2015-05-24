@@ -19,41 +19,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_stop"
-        android:title="@string/menu_stop"
-        android:orderInCategory="50"
-        android:icon="@drawable/ic_action_stop_red"
-        android:showAsAction="always"
-        android:visible="false" />
-
-    <item
-        android:id="@+id/menu_search_results"
-        android:title="@string/menu_search_results"
-        android:orderInCategory="75"
-        android:showAsAction="ifRoom|withText"
-        android:visible="false" />
-    
-    <item
         android:id="@+id/menu_refresh"
         android:title="@string/menu_refresh"
         android:orderInCategory="100"
         android:icon="@drawable/ic_menu_refresh"
         android:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/menu_search"
-        android:title="@string/menu_search"
-        android:orderInCategory="200"
-        android:icon="@drawable/ic_menu_search"
-        android:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_guide"
-        android:title="@string/menu_guide"
-        android:orderInCategory="300"
-        android:icon="@drawable/ic_menu_guide"
-        android:showAsAction="ifRoom" />
-    
     <item
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings"

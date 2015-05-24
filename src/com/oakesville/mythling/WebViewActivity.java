@@ -23,7 +23,6 @@ import java.net.URLDecoder;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -88,12 +87,11 @@ public class WebViewActivity extends Activity {
         } else if (item.getItemId() == R.id.menu_refresh) {
             webView.reload();
             return true;
+        } else if (item.getItemId() == R.id.menu_guide) {
+            startActivity(new Intent(this, EpgActivity.class));
+            return true;
         } else if (item.getItemId() == R.id.menu_settings) {
             startActivity(new Intent(this, PrefsActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.menu_mythweb) {
-            AppSettings appSettings = new AppSettings(getApplicationContext());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
             return true;
         }
 
