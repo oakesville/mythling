@@ -22,58 +22,71 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.ConsoleMessage;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.amazon.android.webkit.AmazonConsoleMessage;
+import com.amazon.android.webkit.AmazonWebChromeClient;
+import com.amazon.android.webkit.AmazonWebKitFactories;
+import com.amazon.android.webkit.AmazonWebKitFactory;
+import com.amazon.android.webkit.AmazonWebView;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class EpgActivity extends Activity {
-    private static final String TAG = EpgActivity.class.getSimpleName();
+public class FireTvEpgActivity extends Activity {
+    private static final String TAG = FireTvEpgActivity.class.getSimpleName();
 
-    private WebView webView;
+    private static boolean factoryInited = false;
+
+    private AmazonWebKitFactory factory;
+    private AmazonWebView webView;
     private AppSettings appSettings;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.webview);
+        setContentView(R.layout.firetv_webview);
+
+        if (!factoryInited) {
+            factory = AmazonWebKitFactories.getDefaultFactory();
+            if (factory.isRenderProcess(this)) {
+                return; // Do nothing if this is on render process
+            }
+            factory.initialize(this.getApplicationContext());
+
+//            if (BuildConfig.DEBUG && factory.getWebKitCapabilities().isDeveloperToolsSupported()) {
+//                //factory.enableDeveloperToolsUnix(this.getPackageName() + ".devtools");
+//                factory.enableDeveloperToolsTcp(9223);
+//            }
+
+            // factory configuration is done here, for example:
+            // factory.getCookieManager().setAcceptCookie(true);
+            factoryInited = true;
+        } else {
+            factory = AmazonWebKitFactories.getDefaultFactory();
+        }
 
         appSettings = new AppSettings(getApplicationContext());
-        if (appSettings.isPhone())
-            getActionBar().hide(); // TODO immersive
-        else
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        webView = (WebView)findViewById(R.id.webview);
-
+        webView = (AmazonWebView)findViewById(R.id.firetv_webview);
+        factory.initializeWebView(webView, 0xFFFFFF, false, null);
         webView.getSettings().setJavaScriptEnabled(true);
 
-        // String url = "file:///android_asset/mythling-epg/guide.html";
         String url = "http://192.168.0.69:6544/mythling-epg/guide.html";
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (BuildConfig.DEBUG)
-              WebView.setWebContentsDebuggingEnabled(true);
-        }
-        else {
-            // use omb
-            // no params: https://code.google.com/p/android/issues/detail?id=17535
-            //url = "file:///android_asset/mythling-epg/guide-omb.html";
-            url = "http://192.168.0.69:6544/mythling-epg/guide-omb.html";
-        }
+        webView.getSettings().setUseWideViewPort(true);
+//        webView.getSettings().setLoadWithOverviewMode(false);
+//        webView.getSettings().setSupportZoom(false);
+//        webView.setInitialScale(200);
 
         if (BuildConfig.DEBUG) {
-            webView.setWebChromeClient(new WebChromeClient() {
-                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            webView.setWebChromeClient(new AmazonWebChromeClient() {
+                public boolean onConsoleMessage(AmazonConsoleMessage consoleMessage) {
                     Log.e(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n" + consoleMessage.message());
                     return true;
                 }
@@ -93,10 +106,7 @@ public class EpgActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (appSettings.isPhone())
-            getMenuInflater().inflate(R.menu.guide_fs, menu);
-        else
-            getMenuInflater().inflate(R.menu.guide, menu);
+        getMenuInflater().inflate(R.menu.guide, menu);
         return true;
     }
 
@@ -120,3 +130,4 @@ public class EpgActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 }
+

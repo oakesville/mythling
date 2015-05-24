@@ -88,7 +88,7 @@ public class WebViewActivity extends Activity {
             webView.reload();
             return true;
         } else if (item.getItemId() == R.id.menu_guide) {
-            startActivity(new Intent(this, EpgActivity.class));
+            startActivity(new Intent(this, appSettings.isFireTv() ? FireTvEpgActivity.class : EpgActivity.class));
             return true;
         } else if (item.getItemId() == R.id.menu_settings) {
             startActivity(new Intent(this, PrefsActivity.class));

@@ -131,7 +131,7 @@ public class SearchActivity extends MediaActivity {
             startActivity(new Intent(this, MainActivity.class));
             return true;
         } else if (item.getItemId() == R.id.menu_guide) {
-            startActivity(new Intent(this, EpgActivity.class));
+            startActivity(new Intent(this, getAppSettings().isFireTv() ? FireTvEpgActivity.class : EpgActivity.class));
             return true;
         } else if (item.getItemId() == R.id.menu_help) {
             String url = getResources().getString(R.string.url_help);

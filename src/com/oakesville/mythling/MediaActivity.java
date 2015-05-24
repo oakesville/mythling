@@ -560,7 +560,7 @@ public abstract class MediaActivity extends Activity {
             } else if (item.getItemId() == R.id.menu_search) {
                 return onSearchRequested();
             } else if (item.getItemId() == R.id.menu_guide) {
-                startActivity(new Intent(this, EpgActivity.class));
+                startActivity(new Intent(this, appSettings.isFireTv() ? FireTvEpgActivity.class : EpgActivity.class));
                 return true;
             } else if (item.getItemId() == R.id.menu_help) {
                 String url = getString(R.string.url_help);
