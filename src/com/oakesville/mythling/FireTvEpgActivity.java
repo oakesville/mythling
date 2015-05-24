@@ -76,10 +76,10 @@ public class FireTvEpgActivity extends Activity {
         webView = (AmazonWebView)findViewById(R.id.firetv_webview);
         factory.initializeWebView(webView, 0xFFFFFF, false, null);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUseWideViewPort(true);
 
         String url = "http://192.168.0.69:6544/mythling-epg/guide.html";
 
-        webView.getSettings().setUseWideViewPort(true);
 //        webView.getSettings().setLoadWithOverviewMode(false);
 //        webView.getSettings().setSupportZoom(false);
 //        webView.setInitialScale(200);

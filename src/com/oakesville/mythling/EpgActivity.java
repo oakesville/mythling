@@ -56,6 +56,7 @@ public class EpgActivity extends Activity {
         webView = (WebView)findViewById(R.id.webview);
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUseWideViewPort(true);
 
         // String url = "file:///android_asset/mythling-epg/guide.html";
         String url = "http://192.168.0.69:6544/mythling-epg/guide.html";
