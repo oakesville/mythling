@@ -22,6 +22,9 @@ https://code.mythtv.org/trac/ticket/12250#ticket
 mythweb:
 http://192.168.0.69:80/mythweb
 
+mytling-epg:
+http://192.168.0.69:6544/mythling-epg/guide.html
+
 error reports url on amazon ec2:
 http://54.187.163.194/mythling/report
 

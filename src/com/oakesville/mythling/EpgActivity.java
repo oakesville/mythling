@@ -1,42 +1,24 @@
-/**
- * Copyright 2014 Donald Oakes
- *
- * This file is part of Mythling.
- *
- * Mythling is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Mythling is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.oakesville.mythling;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
-
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
-public class WebViewActivity extends Activity {
+@SuppressLint("SetJavaScriptEnabled")
+public class EpgActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
 
     private WebView webView;
@@ -45,27 +27,39 @@ public class WebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
 
         webView = (WebView) findViewById(R.id.webview);
-        webView.getSettings().setSupportZoom(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        // webView.getSettings().setDisplayZoomControls(false);
 
-        if (!appSettings.deviceSupportsWebLinks()) {
-            webView.setWebViewClient(new WebViewClient() {
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    view.loadUrl(url);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        String url = "file:///android_asset/mythling-epg/guide.html";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (BuildConfig.DEBUG)
+              WebView.setWebContentsDebuggingEnabled(true);
+        }
+        else {
+            // use omb
+            // no params: https://code.google.com/p/android/issues/detail?id=17535
+            url = "file:///android_asset/mythling-epg/guide-omb.html";
+        }
+
+        if (BuildConfig.DEBUG) {
+            webView.setWebChromeClient(new WebChromeClient() {
+                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                    Log.e(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n" + consoleMessage.message());
                     return true;
                 }
             });
         }
 
+
         try {
-            webView.loadUrl(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
+            webView.loadUrl(url);
+        } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
@@ -73,6 +67,7 @@ public class WebViewActivity extends Activity {
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,5 +102,4 @@ public class WebViewActivity extends Activity {
         else
             super.onBackPressed();
     }
-
 }

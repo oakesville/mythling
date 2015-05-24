@@ -63,7 +63,7 @@ public class MainActivity extends MediaActivity {
 
         if (!getAppSettings().isPrefsInitiallySet()) {
             String msg = getString(R.string.access_network_settings);
-            if (getAppSettings().isFireTv()) {
+            if (getAppSettings().isTv()) {
                 new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.setup_required))
@@ -79,7 +79,7 @@ public class MainActivity extends MediaActivity {
             }
         }
 
-        setContentView(getAppSettings().isFireTv() ? R.layout.firetv_split : R.layout.split);
+        setContentView(getAppSettings().isTv() ? R.layout.firetv_split : R.layout.split);
 
         findViewById(R.id.breadcrumbs).setVisibility(View.GONE);
 

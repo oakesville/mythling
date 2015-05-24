@@ -50,7 +50,7 @@ public class Localizer {
 
     private static String[] leadingArticles = new String[] { "A", "An", "The" };
 
-    private static DateFormat dateFormat = new SimpleDateFormat("MMM d yyyy");
+    private static DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
     public static DateFormat getDateFormat() { return dateFormat; }
 
     private static DateFormat timeFormat = new SimpleDateFormat("h:mm a");

@@ -27,12 +27,14 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -941,8 +943,17 @@ public class AppSettings {
             return new MythTvParser(this, json);
     }
 
+    public boolean isPhone() {
+        return !isTablet() && !isTv();
+    }
+
     public boolean isTablet() {
         return appContext.getResources().getBoolean(R.bool.isTablet);
+    }
+
+    public boolean isTv() {
+        UiModeManager modeMgr = (UiModeManager)appContext.getSystemService(Context.UI_MODE_SERVICE);
+        return modeMgr.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
     }
 
     public boolean isFireTv() {
@@ -952,7 +963,7 @@ public class AppSettings {
     public ViewType getDefaultViewType(MediaType mediaType) {
         if (mediaType == MediaType.liveTv)
             return ViewType.list; // regardless of device
-        return isTablet() || isFireTv() ? ViewType.split : ViewType.list;
+        return isTablet() || isTv() ? ViewType.split : ViewType.list;
     }
 
     private static String mythlingVersion;

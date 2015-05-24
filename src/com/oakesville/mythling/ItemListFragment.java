@@ -82,7 +82,7 @@ public class ItemListFragment extends ListFragment {
 
         registerForContextMenu(getListView());
 
-        if (mediaActivity.getAppSettings().isFireTv()) {
+        if (mediaActivity.getAppSettings().isTv()) {
             getListView().setOnKeyListener(new OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {

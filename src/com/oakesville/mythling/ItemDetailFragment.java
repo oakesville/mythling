@@ -155,7 +155,7 @@ public class ItemDetailFragment extends Fragment {
             artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
             Drawable folder = getResources().getDrawable(R.drawable.folder);
             artworkView.setImageDrawable(folder);
-            if (!getAppSettings().isFireTv()) {
+            if (!getAppSettings().isTv()) {
                 artworkView.setClickable(true);
                 artworkView.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -275,7 +275,7 @@ public class ItemDetailFragment extends Fragment {
             }
 
             ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
-            if (getAppSettings().isFireTv()) {
+            if (getAppSettings().isTv()) {
                 if (mediaActivity.getListView() != null) {
                     // split view
                     button.setOnKeyListener(new OnKeyListener() {
@@ -308,8 +308,8 @@ public class ItemDetailFragment extends Fragment {
             if (grabFocus)
                 button.requestFocus();
 
-            if (getAppSettings().isFireTv())
-                detailView.findViewById(R.id.detailScroll).setFocusable(false);;
+            if (getAppSettings().isTv())
+                detailView.findViewById(R.id.detailScroll).setFocusable(false);
 
             String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
             ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
@@ -325,7 +325,7 @@ public class ItemDetailFragment extends Fragment {
                     } else {
                         artworkView.setImageBitmap(bitmap);
                     }
-                    if (!getAppSettings().isFireTv()) {
+                    if (!getAppSettings().isTv()) {
                         artworkView.setClickable(true);
                         artworkView.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {

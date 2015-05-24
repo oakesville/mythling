@@ -37,6 +37,7 @@
     <string name="menu_byDate">By Date</string>
     <string name="menu_byRating">By Rating</string>
     <string name="menu_help">Help</string>
+    <string name="menu_guide">Program Guide</string>
     <string name="menu_mythweb">MythWeb</string>
     <string name="menu_play">Play</string>
     <string name="menu_stop">Stop</string>
@@ -46,6 +47,7 @@
     <string name="title_activity_search">Mythling</string>
     <string name="title_activity_pager">Mythling</string>
     <string name="title_activity_webview">Mythling</string>
+    <string name="title_activity_guide">Mythling</string>
     <string name="title_video_player">Video Player</string>
     <string name="title_prefs_playback">Playback</string>
     <string name="summary_prefs_playback">Media player selection and settings</string>

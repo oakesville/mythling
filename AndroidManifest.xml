@@ -99,6 +99,14 @@
                 android:value="com.oakesville.mythling.MainActivity" />
         </activity>
         <activity
+            android:name=".EpgActivity"
+            android:label="@string/title_activity_guide"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.oakesville.mythling.MainActivity" />
+        </activity>
+        <activity
             android:name=".VideoViewActivity"
             android:label="@string/title_activity_video_view"
             android:parentActivityName=".MainActivity"

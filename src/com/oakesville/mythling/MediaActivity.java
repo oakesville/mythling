@@ -562,8 +562,8 @@ public abstract class MediaActivity extends Activity {
                 return true;
             } else if (item.getItemId() == R.id.menu_search) {
                 return onSearchRequested();
-            } else if (item.getItemId() == R.id.menu_mythweb) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.getMythWebUrl())));
+            } else if (item.getItemId() == R.id.menu_guide) {
+                startActivity(new Intent(this, EpgActivity.class));
                 return true;
             } else if (item.getItemId() == R.id.menu_help) {
                 String url = getString(R.string.url_help);
@@ -816,7 +816,7 @@ public abstract class MediaActivity extends Activity {
 
     protected void goListView() {
         findViewById(R.id.detail_container).setVisibility(View.GONE);
-        if (!getAppSettings().isFireTv() && getListView() != null && getListView().getCheckedItemPosition() >= 0) {
+        if (!getAppSettings().isTv() && getListView() != null && getListView().getCheckedItemPosition() >= 0) {
             getListView().setItemChecked(getListView().getCheckedItemPosition(), false);
         }
     }
@@ -951,7 +951,7 @@ public abstract class MediaActivity extends Activity {
     protected void handleEmptyMediaList() {
         if (isSplitView())
             showSubListPane(null);
-        if (getAppSettings().isFireTv()) {
+        if (getAppSettings().isTv()) {
             // empty list - set focus on action bar
             int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
             getWindow().getDecorView().findViewById(actionBarResId).requestFocus();
@@ -1059,10 +1059,13 @@ public abstract class MediaActivity extends Activity {
         }
 
         protected void onPostExecute(Long result) {
-            refreshing = false;
             if (result != 0L) {
-                handleEmptyMediaList();
                 stopProgress();
+                new Handler().post(new Runnable() {
+                    public void run() {
+                        handleEmptyMediaList();
+                    }
+                });
                 if (ex != null)
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
             } else {
@@ -1086,6 +1089,7 @@ public abstract class MediaActivity extends Activity {
                         new Reporter(ex).send();
                 }
             }
+            refreshing = false;
         }
     }
 
@@ -1355,7 +1359,7 @@ public abstract class MediaActivity extends Activity {
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
                             getListView().setItemChecked(selItemIndex, true);
-                            if (appSettings.isFireTv()) {
+                            if (appSettings.isTv()) {
                             	// play the item since already selected
                             	item.setPath(getPath());
                             	playItem(item);
@@ -1385,7 +1389,7 @@ public abstract class MediaActivity extends Activity {
     }
 
     void initListViewOnItemSelectedListener() {
-        if (getListables().size() > 0 && getAppSettings().isFireTv()) {
+        if (getListables().size() > 0 && getAppSettings().isTv()) {
             getListView().setOnItemSelectedListener(new OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Listable sel = getListables().get(position);
@@ -1412,7 +1416,7 @@ public abstract class MediaActivity extends Activity {
     }
 
     void initListViewDpadHandler() {
-        if (getAppSettings().isFireTv()) {
+        if (getAppSettings().isTv()) {
             getListView().setOnKeyListener(new OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {

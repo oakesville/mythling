@@ -121,8 +121,8 @@
         android:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_mythweb"
-        android:title="@string/menu_mythweb"
+        android:id="@+id/menu_guide"
+        android:title="@string/menu_guide"
         android:orderInCategory="500"
         android:icon="@drawable/ic_menu_help"
         android:showAsAction="never" />
