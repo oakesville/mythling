@@ -72,7 +72,7 @@ public class WebViewActivity extends Activity {
             if (supportZoom()) {
                 webView.getSettings().setSupportZoom(true);
                 webView.getSettings().setBuiltInZoomControls(true);
-                // webView.getSettings().setDisplayZoomControls(false);
+                webView.getSettings().setDisplayZoomControls(false);
             }
 
             if (BuildConfig.DEBUG) {
