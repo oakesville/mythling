@@ -18,106 +18,86 @@
  */
 package com.oakesville.mythling;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import android.content.res.AssetManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.ConsoleMessage;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
-@SuppressLint("SetJavaScriptEnabled")
-public class EpgActivity extends Activity {
+public class EpgActivity extends WebViewActivity {
     private static final String TAG = EpgActivity.class.getSimpleName();
 
-    private WebView webView;
-    private AppSettings appSettings;
+    static final String INTERNAL_BASE_URL = "file:///android_asset/";
+    static final String VIEWPORT
+      = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no\" />";
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.webview);
+    @Override
+    protected String getUrl() throws UnsupportedOperationException {
+        boolean external = false; // TODO settings
+        String externalBaseUrl = "http://192.168.0.69:6544/"; // TODO settings
 
-        appSettings = new AppSettings(getApplicationContext());
-        if (appSettings.isPhone())
-            getActionBar().hide(); // TODO immersive
-        else
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        webView = (WebView)findViewById(R.id.webview);
-
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setUseWideViewPort(true);
-
-        // String url = "file:///android_asset/mythling-epg/guide.html";
-        String url = "http://192.168.0.69:6544/mythling-epg/guide.html";
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (BuildConfig.DEBUG)
-              WebView.setWebContentsDebuggingEnabled(true);
+        String baseUrl = external ? externalBaseUrl : INTERNAL_BASE_URL;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT || getAppSettings().isFireTv()) {
+        	return baseUrl + "mythling-epg/guide.html";
         }
         else {
-            // use omb
             // no params: https://code.google.com/p/android/issues/detail?id=17535
-            //url = "file:///android_asset/mythling-epg/guide-omb.html";
-            url = "http://192.168.0.69:6544/mythling-epg/guide-omb.html";
+            return baseUrl + "mythling-epg/guide-omb.html";
         }
+    }
 
-        if (BuildConfig.DEBUG) {
-            webView.setWebChromeClient(new WebChromeClient() {
-                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                    Log.e(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n" + consoleMessage.message());
-                    return true;
-                }
-            });
-        }
+    protected String getScale() {
+        return "1.0";
+    }
 
-        try {
-            webView.loadUrl(url);
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (appSettings.isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
-        }
+    @Override
+    protected boolean isJavaScriptEnabled() {
+        return true;
+    }
+
+    @Override
+    protected boolean supportZoom() {
+        return false;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (appSettings.isPhone())
+        if (getAppSettings().isPhone())
             getMenuInflater().inflate(R.menu.guide_fs, menu);
         else
             getMenuInflater().inflate(R.menu.guide, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            startActivity(new Intent(this, MainActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.menu_refresh) {
-            webView.reload();
-            return true;
-        } else if (item.getItemId() == R.id.menu_settings) {
-            startActivity(new Intent(this, PrefsActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.menu_help) {
-            String url = getString(R.string.url_help);
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class));
-            return true;
+    protected InputStream getGuideInputStreamScaled(String url, String scale) {
+        try {
+            InputStream inStream = getAssets().open(url, AssetManager.ACCESS_STREAMING);
+            StringBuilder strBuf = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
+            String str;
+            while ((str=in.readLine()) != null)
+              strBuf.append(str).append('\n');
+            in.close();
+            int idx = strBuf.indexOf(VIEWPORT);
+            if (idx > 0)
+                strBuf = new StringBuilder(strBuf.substring(0, idx)).append(strBuf.substring(idx));
+            return new ByteArrayInputStream(strBuf.toString().getBytes());
         }
-
-        return super.onOptionsItemSelected(item);
+        catch (IOException ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            return null;
+        }
     }
 }
