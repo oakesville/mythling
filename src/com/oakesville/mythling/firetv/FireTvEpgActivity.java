@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling;
+package com.oakesville.mythling.firetv;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.amazon.android.webkit.AmazonConsoleMessage;
 import com.amazon.android.webkit.AmazonWebChromeClient;
@@ -30,6 +31,11 @@ import com.amazon.android.webkit.AmazonWebKitFactory;
 import com.amazon.android.webkit.AmazonWebResourceResponse;
 import com.amazon.android.webkit.AmazonWebView;
 import com.amazon.android.webkit.AmazonWebViewClient;
+import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.EpgActivity;
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class FireTvEpgActivity extends EpgActivity {
@@ -63,21 +69,17 @@ public class FireTvEpgActivity extends EpgActivity {
         webView.getSettings().setUseWideViewPort(true);
 
         webView.setWebViewClient(new AmazonWebViewClient() {
-
             @Override
-            public boolean shouldOverrideUrlLoading(AmazonWebView view, String url) {
-                boolean should = super.shouldOverrideUrlLoading(view, url);
-                return should;
-            }
-
-            @Override
-            public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView webview, String url) {
-                AmazonWebResourceResponse response = super.shouldInterceptRequest(webview, url);
-                return response;
-//                if (!getScale().equals("1.0") && getUrl().equals(url))
-//                    return new AmazonWebResourceResponse("text/html", "UTF-8", getGuideInputStreamScaled(url, getScale()));
-//                else
-//                    return super.shouldInterceptRequest(webview, url);
+            public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView view, String url) {
+                if (url.startsWith(getEpgBaseUrl())) {
+                    String localPath = AppSettings.MYTHLING_EPG + url.substring(getEpgBaseUrl().length());
+                    String contentType = getLocalContentType(localPath);
+                    if (!getScale().equals("1.0") && getUrl().equals(url))
+                        return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
+                    else
+                        return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
+                }
+                return super.shouldInterceptRequest(view, url);
             }
         });
 
@@ -92,13 +94,22 @@ public class FireTvEpgActivity extends EpgActivity {
     }
 
     @Override
-    protected boolean useDefaultWebView() {
-        return false;
+    protected void onResume() {
+        super.onResume();
+        try {
+            webView.loadUrl(getUrl());
+        } catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
-    protected String getScale() {
-        return "1.5";
+    protected boolean useDefaultWebView() {
+        return false;
     }
 
     @Override

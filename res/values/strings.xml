@@ -52,9 +52,9 @@
     <string name="title_prefs_playback">Playback</string>
     <string name="summary_prefs_playback">Media player selection and settings</string>
     <string name="title_prefs_network">Network</string>
-    <string name="title_prefs_network_playback">Network/Playback</string>
+    <string name="title_prefs_basic_setup">Basic Setup</string>
     <string name="summary_prefs_network">MythTV backend host settings</string>
-    <string name="summary_prefs_network_playback">MythTV backend and playback settings</string>
+    <string name="summary_prefs_basic_setup">MythTV backend and playback settings</string>
     <string name="title_prefs_connections">Connections</string>
     <string name="summary_prefs_connections">Backend ports and paths</string>
     <string name="title_prefs_credentials">Authentication</string>
@@ -74,7 +74,7 @@
     <string name="summary_prefs_system">Operational Parameters</string>
     <string name="title_playback_settings">Playback Settings</string>
     <string name="title_network_settings">Network Settings</string>
-    <string name="title_network_playback_settings">Network/Playback Settings</string>
+    <string name="title_basic_setup">Basic Setup</string>
     <string name="title_connect_settings">Connection Settings</string>
     <string name="title_credentials_settings">Authentication Settings</string>
     <string name="title_categories_settings">Category Settings</string>
@@ -155,6 +155,7 @@
     <string name="title_content_services">Content Services</string>
     <string name="title_mythling">Mythling</string>
     <string name="title_version">Version</string>
+    <string name="title_mythling_version">Mythling Version</string>
     <string name="title_operation_timeouts">Backend Operations</string>
     <string name="title_http_timeouts">HTTP</string>
     <string name="title_tuner_timeout">Tuner Timeout</string>

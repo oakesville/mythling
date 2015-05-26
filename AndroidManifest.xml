@@ -107,7 +107,7 @@
                 android:value="com.oakesville.mythling.MainActivity" />
         </activity>
         <activity
-            android:name=".FireTvEpgActivity"
+            android:name=".firetv.FireTvEpgActivity"
             android:label="@string/title_activity_guide"
             android:parentActivityName=".MainActivity">
             <meta-data

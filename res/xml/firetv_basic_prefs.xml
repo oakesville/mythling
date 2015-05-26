@@ -17,7 +17,7 @@
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
+    
     <PreferenceCategory android:title="@string/title_mythtv_backend">
         <EditTextPreference
             android:key="mythbe_internal_host"
@@ -45,4 +45,12 @@
             android:defaultValue="true"
             android:layout="@layout/sw_pref_inner" />
     </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/title_mythling_version">
+      <Preference
+          android:key="mythling_version"
+          android:title="@string/title_version"
+          android:layout="@layout/pref" />
+    </PreferenceCategory>
+    
 </PreferenceScreen>

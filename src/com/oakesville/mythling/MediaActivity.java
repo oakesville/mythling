@@ -75,6 +75,7 @@ import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;

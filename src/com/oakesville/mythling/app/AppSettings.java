@@ -134,6 +134,7 @@ public class AppSettings {
     public static final String AUTH_TYPE_NONE = "None";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
     public static final String HOSTED_EPG = "hosted_epg";
+    public static final String MYTHLING_EPG = "mythling-epg";
     public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
@@ -256,7 +257,7 @@ public class AppSettings {
     }
 
     public String getHostedEpgRoot() {
-        return getStringPref(HOSTED_EPG_ROOT, "mythling-epg");
+        return getStringPref(HOSTED_EPG_ROOT, MYTHLING_EPG);
     }
 
 

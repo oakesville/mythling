@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.oakesville.mythling;
+package com.oakesville.mythling.firetv;
 
 import android.content.Context;
 import android.util.AttributeSet;

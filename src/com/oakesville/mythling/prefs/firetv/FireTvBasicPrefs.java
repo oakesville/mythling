@@ -27,11 +27,11 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
 
-public class FireTvNetworkPrefs extends PreferenceFragment {
+public class FireTvBasicPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_network_playback_settings);
-        addPreferencesFromResource(R.xml.firetv_network_prefs);
+        getActivity().getActionBar().setTitle(R.string.title_basic_setup);
+        addPreferencesFromResource(R.xml.firetv_basic_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
@@ -45,5 +45,10 @@ public class FireTvNetworkPrefs extends PreferenceFragment {
 
         SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_VIDEO_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
+        pref.setTitle(AppSettings.getMythlingVersion());
+
+
     }
 }

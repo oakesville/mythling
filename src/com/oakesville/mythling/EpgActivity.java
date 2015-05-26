@@ -34,6 +34,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.util.Reporter;
 
 public class EpgActivity extends WebViewActivity {
@@ -42,41 +43,42 @@ public class EpgActivity extends WebViewActivity {
     static final String INTERNAL_EPG_BASE_URL = "file:///android_asset/mythling-epg";
     static final String GUIDE = "guide.html";
     static final String GUIDE_OMB = "guide-omb.html";
-    static final String MYTHLING_EPG = "mythling-epg";
     static final String VIEWPORT
       = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no\" />";
 
     // refreshed from appSettings in onResume()
     private String epgBaseUrl;
+    protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale = "1.0";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWebView().setWebViewClient(new WebViewClient() {
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (url.startsWith(epgBaseUrl)) {
-                    if (getAppSettings().isHostedEpg()) {
-                        if (!getScale().equals("1.0") && getUrl().equals(url)) {
-                            WebResourceResponse response = super.shouldInterceptRequest(view, url);
-                            InputStream responseStream = response == null ? null : getHostedGuideInputStreamScaled(response.getData());
-                            return new WebResourceResponse("text/html", "UTF-8", responseStream);
+        if (useDefaultWebView()) {
+            getWebView().setWebViewClient(new WebViewClient() {
+                @Override
+                public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                    if (url.startsWith(epgBaseUrl)) {
+                        if (getAppSettings().isHostedEpg()) {
+                            if (!getScale().equals("1.0") && getUrl().equals(url)) {
+                                WebResourceResponse response = super.shouldInterceptRequest(view, url);
+                                InputStream responseStream = response == null ? null : getHostedGuideScaled(response.getData());
+                                return new WebResourceResponse("text/html", "UTF-8", responseStream);
+                            }
+                        }
+                        else {
+                            String localPath = AppSettings.MYTHLING_EPG + url.substring(epgBaseUrl.length());
+                            String contentType = getLocalContentType(localPath);
+                            if (!getScale().equals("1.0") && getUrl().equals(url))
+                                return new WebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
+                            else
+                                return new WebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                         }
                     }
-                    else {
-                        String localPath = MYTHLING_EPG + url.substring(epgBaseUrl.length());
-                        String contentType = getLocalContentType(localPath);
-                        if (!getScale().equals("1.0") && getUrl().equals(url))
-                            return new WebResourceResponse(contentType, "UTF-8", getLocalGuideInputStreamScaled(localPath));
-                        else
-                            return new WebResourceResponse(contentType, "UTF-8", getLocalAssetStream(localPath));
-                    }
+                    return super.shouldInterceptRequest(view, url);
                 }
-
-                return super.shouldInterceptRequest(view, url);
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -85,6 +87,8 @@ public class EpgActivity extends WebViewActivity {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             if (getAppSettings().isPhone())
                 scale = "0.8"; // TODO overridable in prefs (but ignored anyway)
+            else if (getAppSettings().isTv())
+                scale = "1.5";
         }
         catch (Exception ex) {
             if (BuildConfig.DEBUG)
@@ -131,7 +135,7 @@ public class EpgActivity extends WebViewActivity {
         return true;
     }
 
-    protected InputStream getLocalGuideInputStreamScaled(String path) {
+    protected InputStream getLocalGuideScaled(String path) {
         try {
             InputStream inStream = getAssets().open(path, AssetManager.ACCESS_STREAMING);
             StringBuilder strBuf = new StringBuilder();
@@ -156,7 +160,7 @@ public class EpgActivity extends WebViewActivity {
         }
     }
 
-    protected InputStream getHostedGuideInputStreamScaled(InputStream responseStream) {
+    protected InputStream getHostedGuideScaled(InputStream responseStream) {
         if (responseStream == null)
             return null;
         try {
@@ -182,7 +186,7 @@ public class EpgActivity extends WebViewActivity {
         }
     }
 
-    protected InputStream getLocalAssetStream(String path) {
+    protected InputStream getLocalAsset(String path) {
         try {
             return getAssets().open(path, AssetManager.ACCESS_STREAMING);
         }

@@ -41,8 +41,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.oakesville.mythling.FireTvViewPager.DpadMediaKeyHandler;
 import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.firetv.FireTvViewPager;
+import com.oakesville.mythling.firetv.FireTvViewPager.DpadMediaKeyHandler;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;

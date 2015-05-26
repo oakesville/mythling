@@ -38,6 +38,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
@@ -106,14 +107,16 @@ public class WebViewActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            webView.loadUrl(getUrl());
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (appSettings.isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        if (useDefaultWebView()) {
+            try {
+                webView.loadUrl(getUrl());
+            } catch (Exception ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 
