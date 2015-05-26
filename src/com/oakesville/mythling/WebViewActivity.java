@@ -100,16 +100,20 @@ public class WebViewActivity extends Activity {
                     }
                 });
             }
+        }
+    }
 
-            try {
-                webView.loadUrl(getUrl());
-            } catch (Exception ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
-                    new Reporter(ex).send();
-                Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
-            }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            webView.loadUrl(getUrl());
+        } catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

@@ -61,6 +61,8 @@
     <string name="summary_prefs_credentials">HTTP auth modes and credentials</string>
     <string name="title_prefs_categories">Categories</string>
     <string name="summary_prefs_categories">How media should be categorized</string>
+    <string name="title_prefs_guide">Program Guide</string>
+    <string name="summary_prefs_guide">Settings for Mythling EPG</string>
     <string name="title_prefs_artwork">Artwork</string>
     <string name="summary_prefs_artwork">Media artwork options</string>
     <string name="title_prefs_video_quality">HLS Video Quality</string>
@@ -76,6 +78,7 @@
     <string name="title_connect_settings">Connection Settings</string>
     <string name="title_credentials_settings">Authentication Settings</string>
     <string name="title_categories_settings">Category Settings</string>
+    <string name="title_guide_settings">Program Guide Settings</string>
     <string name="title_quality_settings">HLS Video Quality Settings</string>
     <string name="title_cache_settings">Data Cache Settings</string>
     <string name="title_system_settings">System Settings</string>
@@ -103,6 +106,10 @@
     <string name="message_tv_base_url">Base URL for TV Series detail links</string>
     <string name="title_custom_base_url">Custom Base URL</string>
     <string name="message_custom_base_url">URL-encoded title is appended to this base</string>
+    <string name="title_guide_location">Mythling EPG Location</string>
+    <string name="title_hosted_guide_root">Hosted EPG Root</string>
+    <string name="message_hosted_guide_root">Location on MythTV backend for hosted Mythling EPG resources</string>
+    <string name="switch_hosted">Hosted</string>
     <string name="title_artwork_settings">Artwork Settings</string>
     <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
     <string name="title_videos">Videos</string>

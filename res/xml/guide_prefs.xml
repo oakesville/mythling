@@ -1,0 +1,37 @@
+<!--
+ * Copyright 2015 Donald Oakes
+ * 
+ * This file is part of Mythling.
+ *
+ * Mythling is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mythling is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/title_guide_location">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="hosted_epg"
+            android:switchTextOn="@string/switch_hosted"
+            android:switchTextOff="@string/switch_built_in"
+            android:defaultValue="false"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+        <EditTextPreference
+            android:key="hosted_epg_root"
+            android:title="@string/title_hosted_guide_root"
+            android:dialogMessage="@string/message_hosted_guide_root"
+            android:defaultValue="mythling-epg"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

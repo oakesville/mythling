@@ -22,7 +22,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.amazon.android.webkit.AmazonConsoleMessage;
 import com.amazon.android.webkit.AmazonWebChromeClient;
@@ -31,7 +30,6 @@ import com.amazon.android.webkit.AmazonWebKitFactory;
 import com.amazon.android.webkit.AmazonWebResourceResponse;
 import com.amazon.android.webkit.AmazonWebView;
 import com.amazon.android.webkit.AmazonWebViewClient;
-import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class FireTvEpgActivity extends EpgActivity {
@@ -42,6 +40,7 @@ public class FireTvEpgActivity extends EpgActivity {
     private AmazonWebKitFactory factory;
     private AmazonWebView webView;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firetv_webview);
@@ -89,16 +88,6 @@ public class FireTvEpgActivity extends EpgActivity {
                     return true;
                 }
             });
-        }
-
-        try {
-            webView.loadUrl(getUrl());
-        } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

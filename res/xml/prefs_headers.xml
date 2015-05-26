@@ -50,6 +50,12 @@
         android:summary="@string/summary_prefs_categories" />
 
     <header
+        android:id="@+id/prefs_header_guide"
+        android:fragment="com.oakesville.mythling.prefs.ProgramGuidePrefs"
+        android:title="@string/title_prefs_guide"
+        android:summary="@string/summary_prefs_guide" />
+    
+    <header
         android:id="@+id/prefs_header_artwork"
         android:fragment="com.oakesville.mythling.prefs.ArtworkPrefs"
         android:title="@string/title_prefs_artwork"

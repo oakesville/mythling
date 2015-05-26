@@ -133,6 +133,8 @@ public class AppSettings {
     public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
     public static final String AUTH_TYPE_NONE = "None";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
+    public static final String HOSTED_EPG = "hosted_epg";
+    public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
@@ -244,6 +246,19 @@ public class AppSettings {
         int servicePort = getMythServicePort();
         return new URL("http://" + ip + ":" + servicePort);
     }
+
+    public URL getEpgBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
+        return new URL(getMythTvServicesBaseUrlWithCredentials() + "/" + getHostedEpgRoot());
+    }
+
+    public boolean isHostedEpg() {
+        return getBooleanPref(HOSTED_EPG, false);
+    }
+
+    public String getHostedEpgRoot() {
+        return getStringPref(HOSTED_EPG_ROOT, "mythling-epg");
+    }
+
 
     public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {
         String host = getMythTvServiceHost();
