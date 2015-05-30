@@ -133,9 +133,12 @@ public class AppSettings {
     public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
     public static final String AUTH_TYPE_NONE = "None";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
+    public static final String GUIDE_HTML = "guide.html";
+    public static final String GUIDE_OMB_HTML = "guide-omb.html";
     public static final String HOSTED_EPG = "hosted_epg";
     public static final String MYTHLING_EPG = "mythling-epg";
     public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
+    public static final String EPG_OMB = "epg_omb";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
@@ -252,6 +255,15 @@ public class AppSettings {
         return new URL(getMythTvServicesBaseUrlWithCredentials() + "/" + getHostedEpgRoot());
     }
 
+    public URL getEpgUrl() throws MalformedURLException, UnsupportedEncodingException {
+        String epgUrl = getEpgBaseUrl().toString();
+        if (isEpgOmb())
+            epgUrl += "/" + GUIDE_OMB_HTML; // no params
+        else
+            epgUrl += "/" + GUIDE_HTML; // TODO params
+        return new URL(epgUrl);
+    }
+
     public boolean isHostedEpg() {
         return getBooleanPref(HOSTED_EPG, false);
     }
@@ -260,6 +272,9 @@ public class AppSettings {
         return getStringPref(HOSTED_EPG_ROOT, MYTHLING_EPG);
     }
 
+    public boolean isEpgOmb() {
+        return getBooleanPref(EPG_OMB, Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && !isFireTv());
+    }
 
     public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {
         String host = getMythTvServiceHost();

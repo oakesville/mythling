@@ -22,7 +22,7 @@
         <com.oakesville.mythling.prefs.SwitchPreference
             android:key="hosted_epg"
             android:switchTextOn="@string/switch_hosted"
-            android:switchTextOff="@string/switch_built_in"
+            android:switchTextOff="@string/switch_embedded"
             android:defaultValue="false"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
@@ -34,4 +34,17 @@
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/title_guide_compat">
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="epg_omb"
+            android:switchTextOn="@string/switch_omb"
+            android:switchTextOff="@string/switch_modern"
+            android:defaultValue="false"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/title_guide_webapp">
+    </PreferenceCategory>
+    
 </PreferenceScreen>

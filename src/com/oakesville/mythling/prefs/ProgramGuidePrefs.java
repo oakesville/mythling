@@ -21,6 +21,7 @@ package com.oakesville.mythling.prefs;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
@@ -33,6 +34,8 @@ public class ProgramGuidePrefs extends PreferenceFragment {
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
+        // TODO pref change listener that refreshes browser cache instead of data cache
+
         Preference pref = getPreferenceScreen().findPreference(AppSettings.HOSTED_EPG);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -43,8 +46,13 @@ public class ProgramGuidePrefs extends PreferenceFragment {
         });
 
         pref = getPreferenceScreen().findPreference(AppSettings.HOSTED_EPG_ROOT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getHostedEpgRoot());
         pref.setEnabled(appSettings.isHostedEpg());
+
+        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_OMB);
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true));
+        swPref.setChecked(appSettings.isEpgOmb());
+
     }
 }

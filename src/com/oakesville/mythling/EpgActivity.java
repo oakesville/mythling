@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.res.AssetManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,13 +39,11 @@ import com.oakesville.mythling.util.Reporter;
 public class EpgActivity extends WebViewActivity {
     private static final String TAG = EpgActivity.class.getSimpleName();
 
-    static final String INTERNAL_EPG_BASE_URL = "file:///android_asset/mythling-epg";
-    static final String GUIDE = "guide.html";
-    static final String GUIDE_OMB = "guide-omb.html";
     static final String VIEWPORT
       = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no\" />";
 
     // refreshed from appSettings in onResume()
+    private String epgUrl;
     private String epgBaseUrl;
     protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale = "1.0";
@@ -85,6 +82,7 @@ public class EpgActivity extends WebViewActivity {
     protected void onResume() {
         try {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
+            epgUrl = getAppSettings().getEpgUrl().toString();
             if (getAppSettings().isPhone())
                 scale = "0.8"; // TODO overridable in prefs (but ignored anyway)
             else if (getAppSettings().isTv())
@@ -103,13 +101,7 @@ public class EpgActivity extends WebViewActivity {
 
     @Override
     protected String getUrl() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT || getAppSettings().isFireTv()) {
-        	return epgBaseUrl + "/" + GUIDE;
-        }
-        else {
-            // no params: https://code.google.com/p/android/issues/detail?id=17535
-            return epgBaseUrl + "/" + GUIDE_OMB;
-        }
+        return epgUrl;
     }
 
     protected String getScale() {
