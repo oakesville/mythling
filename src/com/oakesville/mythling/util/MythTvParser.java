@@ -37,6 +37,7 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
+import com.oakesville.mythling.media.ChannelGroup;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
@@ -486,6 +487,27 @@ public class MythTvParser implements MediaListParser {
         }
 
         return storageGroups;
+    }
+
+    public Map<String,ChannelGroup> parseChannelGroups() throws JSONException {
+        Map<String,ChannelGroup> channelGroups = new HashMap<String,ChannelGroup>();
+
+        JSONObject jsonObj = new JSONObject(json);
+        if (jsonObj.has("ChannelGroupList")) {  // will not for 0.27
+            JSONObject groupList = jsonObj.getJSONObject("ChannelGroupList");
+            if (groupList.has("ChannelGroups")) {
+                JSONArray groups = groupList.getJSONArray("ChannelGroups");
+                for (int i = 0; i < groups.length(); i++) {
+                    JSONObject group = (JSONObject) groups.get(i);
+                    String name = group.getString("Name");
+                    String id = group.getString("GroupId");
+                    ChannelGroup channelGroup = new ChannelGroup(id, name);
+                    channelGroups.put(name, channelGroup);
+                }
+            }
+        }
+
+        return channelGroups;
     }
 
     public String parseMythTvSetting(String key) throws JSONException {

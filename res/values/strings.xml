@@ -115,7 +115,7 @@
     <string name="switch_omb">Older</string>
     <string name="switch_modern">Modern</string>
     <string name="title_guide_webapp">Mythling EPG WebApp</string>
-    <string name="title_epg_scale">Zoom</string>
+    <string name="title_epg_scale">Zoom (Experimental)</string>
     <string-array name="epg_scale_entries">
         <item>25%</item>
         <item>50%</item>
@@ -134,6 +134,9 @@
         <item>1.5</item>
         <item>2.0</item>
     </string-array>
+    <string name="title_guide_prefs">Guide Preferences</string>
+    <string name="title_epg_channel_group">Channel Group (MythTV 0.28)</string>
+    <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28)</string>
     <string name="title_artwork_settings">Artwork Settings</string>
     <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
     <string name="title_videos">Videos</string>

@@ -990,7 +990,7 @@ public abstract class MediaActivity extends Activity {
             return new Transcoder(getAppSettings(), item.getStorageGroup());
     }
 
-    private class RefreshTask extends AsyncTask<URL, Integer, Long> {
+    private class RefreshTask extends AsyncTask<URL,Integer,Long> {
         private String mediaListJson;
         private String storageGroupsJson;
 
@@ -1091,7 +1091,7 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
-    private class StreamHlsTask extends AsyncTask<URL, Integer, Long> {
+    private class StreamHlsTask extends AsyncTask<URL,Integer,Long> {
         private Item item;
         private LiveStreamInfo streamInfo;
         private Exception ex;
@@ -1151,7 +1151,7 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
-    protected class TranscodeVideoTask extends AsyncTask<URL, Integer, Long> {
+    protected class TranscodeVideoTask extends AsyncTask<URL,Integer,Long> {
         private Item item;
         private Exception ex;
 
@@ -1184,7 +1184,7 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
-    protected class StreamTvTask extends AsyncTask<URL, Integer, Long> {
+    protected class StreamTvTask extends AsyncTask<URL,Integer,Long> {
         private TvShow tvShow;
         private Recording recording;
         private Recording recordingToDelete;

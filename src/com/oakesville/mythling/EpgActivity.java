@@ -24,8 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,8 +37,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.media.ChannelGroup;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Reporter;
 
 public class EpgActivity extends WebViewActivity {
@@ -49,6 +55,8 @@ public class EpgActivity extends WebViewActivity {
     private String epgBaseUrl;
     protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale;
+    private String channelGroup;
+    private Map<String,String> parameters = new HashMap<String,String>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +93,8 @@ public class EpgActivity extends WebViewActivity {
                         else {
                             Log.d(TAG, "Loading embedded: " + url);
                             String localPath = AppSettings.MYTHLING_EPG + url.substring(epgBaseUrl.length());
+                            if (localPath.indexOf('?') > 0)
+                                localPath = localPath.substring(0, localPath.indexOf('?'));
                             String contentType = getLocalContentType(localPath);
                             if (!getScale().equals("1.0") && getUrl().equals(url))
                                 return new WebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
@@ -104,6 +114,21 @@ public class EpgActivity extends WebViewActivity {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
             scale = getAppSettings().getEpgScale();
+            String prefsChannelGroup = getAppSettings().getEpgChannelGroup();
+            if (prefsChannelGroup == null || prefsChannelGroup.isEmpty()) {
+                parameters.remove("channelGroupId");
+                channelGroup = prefsChannelGroup;
+            }
+            else if (!prefsChannelGroup.equals(channelGroup) || parameters.get("channelGroupId") == null) {
+                channelGroup = prefsChannelGroup;
+                AppData appData = new AppData(getApplicationContext());
+                Map<String,ChannelGroup> channelGroups = appData.readChannelGroups();
+                if (channelGroups == null || !channelGroups.containsKey(channelGroup)) {
+                    // needs async channel group retrieval
+                    epgUrl = null; // postpone load in super.onResume()
+                    new PopulateParametersTask().execute((URL)null);
+                }
+            }
         }
         catch (Exception ex) {
             if (BuildConfig.DEBUG)
@@ -112,9 +137,25 @@ public class EpgActivity extends WebViewActivity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
+
         super.onResume();
     }
 
+    @Override
+    protected Map<String,String> getParameters() {
+        if ("0".equals(parameters.get("channelGroupId"))) {
+            // couldn't find channel group; exclude
+            Map<String,String> params = new HashMap<String,String>();
+            for (String key : parameters.keySet()) {
+                if (!"channelGroupId".equals(key))
+                    params.put(key, parameters.get(key));
+            }
+            return params;
+        }
+        else {
+            return parameters;
+        }
+    }
 
     @Override
     protected String getUrl() {
@@ -219,5 +260,42 @@ public class EpgActivity extends WebViewActivity {
             return "image/png";
         else
             return "text/plain";
+    }
+
+    protected class PopulateParametersTask extends AsyncTask<URL,Integer,Long> {
+        private Exception ex;
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                if (channelGroup != null && channelGroup.length() > 0) {
+                    String url = getAppSettings().getMythTvServicesBaseUrlWithCredentials() + "/Guide/GetChannelGroupList";
+                    Log.d(TAG, "Retrieving channel groups: " + url);
+                    HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
+                    String json = new String(helper.get());
+                    Map<String,ChannelGroup> channelGroups = new MythTvParser(getAppSettings(), json).parseChannelGroups();
+                    new AppData(getApplicationContext()).writeChannelGroups(json);
+                    ChannelGroup group = channelGroups.get(channelGroup);
+                    if (group != null && group.getId() != null && group.getId().length() > 0)
+                        parameters.put("channelGroupId", group.getId());
+                    else
+                        parameters.put("channelGroupId", "0"); // avoid re-retrieval
+                }
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                parameters.put("channelGroupId", "0"); // avoid re-retrieval
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            if (result != 0L && ex != null && !(ex instanceof IOException)) // IOException for 0.27
+                Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+            onResume();
+        }
     }
 }

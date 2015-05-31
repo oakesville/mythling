@@ -138,6 +138,7 @@ public class AppSettings {
     public static final String HOSTED_EPG = "hosted_epg";
     public static final String MYTHLING_EPG = "mythling-epg";
     public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
+    public static final String EPG_CHANNEL_GROUP = "epg_channel_group";
     public static final String EPG_OMB = "epg_omb";
     public static final String EPG_SCALE = "epg_scale";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
@@ -271,6 +272,10 @@ public class AppSettings {
 
     public String getHostedEpgRoot() {
         return getStringPref(HOSTED_EPG_ROOT, MYTHLING_EPG);
+    }
+
+    public String getEpgChannelGroup() {
+        return getStringPref(EPG_CHANNEL_GROUP, "");
     }
 
     public boolean isEpgOmb() {

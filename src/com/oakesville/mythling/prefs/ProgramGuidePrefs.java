@@ -24,6 +24,7 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 
 public class ProgramGuidePrefs extends PreferenceFragment {
@@ -48,6 +49,16 @@ public class ProgramGuidePrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getHostedEpgRoot());
         pref.setEnabled(appSettings.isHostedEpg());
+
+        pref = getPreferenceScreen().findPreference(AppSettings.EPG_CHANNEL_GROUP);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                new AppData(getActivity().getApplicationContext()).clearChannelGroups();
+                return super.onPreferenceChange(preference, newValue);
+            }
+
+        });
+        pref.setSummary(appSettings.getEpgChannelGroup());
 
         pref = getPreferenceScreen().findPreference(AppSettings.EPG_SCALE);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "%%") {

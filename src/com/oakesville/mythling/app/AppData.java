@@ -39,6 +39,7 @@ import android.util.LruCache;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.media.ChannelGroup;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -51,6 +52,11 @@ import com.oakesville.mythling.util.MythlingParser;
 public class AppData {
     public static final int BUILD_ID = 7;
     private static final String TAG = AppData.class.getSimpleName();
+
+    private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
+    private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
+    private static final String CHANNEL_GROUPS_JSON_FILE = "channelGroups.json";
+    private static final String QUEUE_FILE_SUFFIX = "Queue.json";
 
     private Context appContext;
     public AppData(Context appContext) { this.appContext = appContext;  }
@@ -75,13 +81,13 @@ public class AppData {
     public Map<String,StorageGroup> getStorageGroups() { return storageGroups; }
     public void setStorageGroups(Map<String,StorageGroup> sgs) { this.storageGroups = sgs; }
 
+    private Map<String,ChannelGroup> channelGroups;
+    public Map<String,ChannelGroup> getChannelGroups() { return channelGroups; }
+    public void setChannelGroups(Map<String,ChannelGroup> chgroups) { this.channelGroups = chgroups; }
+
     private SearchResults searchResults;
     public SearchResults getSearchResults() { return searchResults; }
     public void setSearchResults(SearchResults results) { this.searchResults = results; }
-
-    private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
-    private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
-    private static final String QUEUE_FILE_SUFFIX = "Queue.json";
 
     public MediaList readMediaList(MediaType mediaType) throws IOException, JSONException, ParseException {
         Map<String,StorageGroup> storageGroups = readStorageGroups();
@@ -110,6 +116,25 @@ public class AppData {
         return storageGroups;
     }
 
+    public Map<String,ChannelGroup> readChannelGroups() throws IOException, JSONException, ParseException {
+        File cacheDir = appContext.getCacheDir();
+        File channelGroupsJsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
+        if (channelGroupsJsonFile.exists()) {
+            AppSettings appSettings = new AppSettings(appContext);
+            String channelGroupsJson = new String(readFile(channelGroupsJsonFile));
+            MythTvParser channelGroupParser = new MythTvParser(appSettings, channelGroupsJson);
+            channelGroups = channelGroupParser.parseChannelGroups();
+        }
+        return channelGroups;
+    }
+
+    public void clearChannelGroups() {
+        File cacheDir = appContext.getCacheDir();
+        File channelGroupsJsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
+        if (channelGroupsJsonFile.exists())
+            channelGroupsJsonFile.delete();
+    }
+
     public void writeMediaList(String json) throws IOException, JSONException {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
@@ -122,7 +147,13 @@ public class AppData {
         writeFile(jsonFile, json.getBytes());
     }
 
-    private Map<MediaType, List<Item>> queues = new HashMap<MediaType, List<Item>>();
+    public void writeChannelGroups(String json) throws IOException, JSONException {
+        File cacheDir = appContext.getCacheDir();
+        File jsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
+        writeFile(jsonFile, json.getBytes());
+    }
+
+    private Map<MediaType,List<Item>> queues = new HashMap<MediaType, List<Item>>();
 
     public List<Item> getQueue(MediaType type) {
         return queues.get(type);

@@ -20,6 +20,8 @@ package com.oakesville.mythling;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -109,9 +111,11 @@ public class WebViewActivity extends Activity {
         super.onResume();
         if (useDefaultWebView()) {
             try {
-                String url = getUrl();
-                Log.d(TAG, "Loading mythling-epg URL: " + url);
-                webView.loadUrl(url);
+                if (getUrl() != null) { // indicates don't load yet
+                    String url = getUrl() + getParams();
+                    Log.d(TAG, "Loading mythling-epg URL: " + url);
+                    webView.loadUrl(url);
+                }
             } catch (Exception ex) {
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, ex.getMessage(), ex);
@@ -173,6 +177,29 @@ public class WebViewActivity extends Activity {
             webView.goBack();
         else
             super.onBackPressed();
+    }
+
+    protected Map<String,String> getParameters() {
+        return null;
+    }
+
+    protected String getParams() throws UnsupportedEncodingException {
+        String params = "";
+        Map<String,String> parameters = getParameters();
+        if (parameters != null) {
+            boolean hasOne = false;
+            for (String key : parameters.keySet()) {
+                if (!hasOne) {
+                    params += "?";
+                    hasOne = true;
+                }
+                else {
+                    params += "&";
+                }
+                params += key + "=" + URLEncoder.encode(parameters.get(key), "UTF-8");
+            }
+        }
+        return params;
     }
 
 }
