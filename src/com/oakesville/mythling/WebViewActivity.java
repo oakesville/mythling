@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Donald Oakes
+ * Copyright 2015 Donald Oakes
  *
  * This file is part of Mythling.
  *
@@ -109,7 +109,9 @@ public class WebViewActivity extends Activity {
         super.onResume();
         if (useDefaultWebView()) {
             try {
-                webView.loadUrl(getUrl());
+                String url = getUrl();
+                Log.d(TAG, "Loading mythling-epg URL: " + url);
+                webView.loadUrl(url);
             } catch (Exception ex) {
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, ex.getMessage(), ex);

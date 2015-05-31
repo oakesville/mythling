@@ -44,14 +44,21 @@ public class ProgramGuidePrefs extends PreferenceFragment {
                 return super.onPreferenceChange(preference, newValue);
             }
         });
-
         pref = getPreferenceScreen().findPreference(AppSettings.HOSTED_EPG_ROOT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getHostedEpgRoot());
         pref.setEnabled(appSettings.isHostedEpg());
 
+        pref = getPreferenceScreen().findPreference(AppSettings.EPG_SCALE);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "%%") {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                return super.onPreferenceChange(preference, String.valueOf((int)(Float.parseFloat(newValue.toString()) * 100)));
+            }
+        });
+        pref.setSummary(String.valueOf((int)(Float.parseFloat(appSettings.getEpgScale()) * 100)) + "%%");
+
         SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_OMB);
-        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, true));
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
         swPref.setChecked(appSettings.isEpgOmb());
 
     }

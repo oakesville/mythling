@@ -139,6 +139,7 @@ public class AppSettings {
     public static final String MYTHLING_EPG = "mythling-epg";
     public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
     public static final String EPG_OMB = "epg_omb";
+    public static final String EPG_SCALE = "epg_scale";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
@@ -274,6 +275,15 @@ public class AppSettings {
 
     public boolean isEpgOmb() {
         return getBooleanPref(EPG_OMB, Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT && !isFireTv());
+    }
+
+    public String getEpgScale() {
+        String def = "1.0";
+        if (isPhone())
+            def = "0.5";
+        else if (isTv())
+            def = "1.5";
+        return getStringPref(EPG_SCALE, def);
     }
 
     public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {

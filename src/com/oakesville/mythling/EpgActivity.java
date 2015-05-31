@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.Reporter;
 
 public class EpgActivity extends WebViewActivity {
@@ -46,24 +48,42 @@ public class EpgActivity extends WebViewActivity {
     private String epgUrl;
     private String epgBaseUrl;
     protected String getEpgBaseUrl() { return epgBaseUrl; }
-    private String scale = "1.0";
+    private String scale;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (useDefaultWebView()) {
             getWebView().setWebViewClient(new WebViewClient() {
                 @Override
                 public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
                     if (url.startsWith(epgBaseUrl)) {
                         if (getAppSettings().isHostedEpg()) {
+                            Log.d(TAG, "Loading hosted: " + url);
                             if (!getScale().equals("1.0") && getUrl().equals(url)) {
+                                InputStream responseStream = null;
                                 WebResourceResponse response = super.shouldInterceptRequest(view, url);
-                                InputStream responseStream = response == null ? null : getHostedGuideScaled(response.getData());
+                                if (response == null) {
+                                    try {
+                                        HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
+                                        responseStream = getHostedGuideScaled(new ByteArrayInputStream(helper.get()));
+                                    }
+                                    catch (Exception ex) {
+                                        if (BuildConfig.DEBUG)
+                                            Log.e(TAG, ex.getMessage(), ex);
+                                        if (getAppSettings().isErrorReportingEnabled())
+                                            new Reporter(ex).send();
+                                        return response;
+                                    }
+                                }
+                                else
+                                    responseStream = getHostedGuideScaled(response.getData());
                                 return new WebResourceResponse("text/html", "UTF-8", responseStream);
                             }
                         }
                         else {
+                            Log.d(TAG, "Loading embedded: " + url);
                             String localPath = AppSettings.MYTHLING_EPG + url.substring(epgBaseUrl.length());
                             String contentType = getLocalContentType(localPath);
                             if (!getScale().equals("1.0") && getUrl().equals(url))
@@ -83,10 +103,7 @@ public class EpgActivity extends WebViewActivity {
         try {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
-            if (getAppSettings().isPhone())
-                scale = "0.8"; // TODO overridable in prefs (but ignored anyway)
-            else if (getAppSettings().isTv())
-                scale = "1.5";
+            scale = getAppSettings().getEpgScale();
         }
         catch (Exception ex) {
             if (BuildConfig.DEBUG)
@@ -121,7 +138,7 @@ public class EpgActivity extends WebViewActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getAppSettings().isPhone())
-            getMenuInflater().inflate(R.menu.guide_fs, menu);
+            getMenuInflater().inflate(R.menu.guide_fs, menu); // otherwise menu items hidden
         else
             getMenuInflater().inflate(R.menu.guide, menu);
         return true;

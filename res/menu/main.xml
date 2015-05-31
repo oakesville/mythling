@@ -100,19 +100,19 @@
     </item>
 
     <item
-        android:id="@+id/menu_refresh"
-        android:title="@string/menu_refresh"
-        android:orderInCategory="200"
-        android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/menu_guide"
         android:title="@string/menu_guide"
-        android:orderInCategory="300"
+        android:orderInCategory="200"
         android:icon="@drawable/ic_menu_guide"
         android:showAsAction="ifRoom" />
     
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/menu_refresh"
+        android:orderInCategory="300"
+        android:icon="@drawable/ic_menu_refresh"
+        android:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/menu_search"
         android:title="@string/menu_search"

@@ -115,6 +115,25 @@
     <string name="switch_omb">Older</string>
     <string name="switch_modern">Modern</string>
     <string name="title_guide_webapp">Mythling EPG WebApp</string>
+    <string name="title_epg_scale">Zoom</string>
+    <string-array name="epg_scale_entries">
+        <item>25%</item>
+        <item>50%</item>
+        <item>75%</item>
+        <item>100%</item>
+        <item>125%</item>
+        <item>150%</item>
+        <item>200%</item>
+    </string-array>
+    <string-array name="epg_scale_values">
+        <item>0.25</item>
+        <item>0.5</item>
+        <item>0.75</item>
+        <item>1.0</item>
+        <item>1.25</item>
+        <item>1.5</item>
+        <item>2.0</item>
+    </string-array>
     <string name="title_artwork_settings">Artwork Settings</string>
     <string name="title_artwork_storage_groups">Artwork Storage Groups</string>
     <string name="title_videos">Videos</string>
