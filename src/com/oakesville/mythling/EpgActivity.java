@@ -69,7 +69,7 @@ public class EpgActivity extends WebViewActivity {
                     if (url.startsWith(epgBaseUrl)) {
                         if (getAppSettings().isHostedEpg()) {
                             Log.d(TAG, "Loading hosted: " + url);
-                            if (!getScale().equals("1.0") && getUrl().equals(url)) {
+                            if (!getScale().equals("1.0") && url.startsWith(getUrl())) {
                                 InputStream responseStream = null;
                                 WebResourceResponse response = super.shouldInterceptRequest(view, url);
                                 if (response == null) {
@@ -96,7 +96,7 @@ public class EpgActivity extends WebViewActivity {
                             if (localPath.indexOf('?') > 0)
                                 localPath = localPath.substring(0, localPath.indexOf('?'));
                             String contentType = getLocalContentType(localPath);
-                            if (!getScale().equals("1.0") && getUrl().equals(url))
+                            if (!getScale().equals("1.0") && url.startsWith(getUrl()))
                                 return new WebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
                             else
                                 return new WebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
@@ -114,6 +114,16 @@ public class EpgActivity extends WebViewActivity {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
             scale = getAppSettings().getEpgScale();
+            String params = getAppSettings().getEpgParams();
+            if (params != null && params.length() > 0) {
+                if (params.startsWith("?"))
+                    params = params.substring(1);
+                for (String param : params.split("&")) {
+                    int eq = param.indexOf('=');
+                    if (eq > 0 && param.length() > eq + 1)
+                        parameters.put(param.substring(0, eq), param.substring(eq + 1));
+                }
+            }
             String prefsChannelGroup = getAppSettings().getEpgChannelGroup();
             if (prefsChannelGroup == null || prefsChannelGroup.isEmpty()) {
                 parameters.remove("channelGroupId");
@@ -126,7 +136,7 @@ public class EpgActivity extends WebViewActivity {
                 if (channelGroups == null || !channelGroups.containsKey(channelGroup)) {
                     // needs async channel group retrieval
                     epgUrl = null; // postpone load in super.onResume()
-                    new PopulateParametersTask().execute((URL)null);
+                    new PopulateChannelGroupParamTask().execute((URL)null);
                 }
             }
         }
@@ -262,7 +272,7 @@ public class EpgActivity extends WebViewActivity {
             return "text/plain";
     }
 
-    protected class PopulateParametersTask extends AsyncTask<URL,Integer,Long> {
+    protected class PopulateChannelGroupParamTask extends AsyncTask<URL,Integer,Long> {
         private Exception ex;
 
         protected Long doInBackground(URL... urls) {

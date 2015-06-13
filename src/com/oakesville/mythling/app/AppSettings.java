@@ -141,6 +141,7 @@ public class AppSettings {
     public static final String EPG_CHANNEL_GROUP = "epg_channel_group";
     public static final String EPG_OMB = "epg_omb";
     public static final String EPG_SCALE = "epg_scale";
+    public static final String EPG_PARAMS = "epg_params";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
@@ -289,6 +290,10 @@ public class AppSettings {
         else if (isTv())
             def = "1.5";
         return getStringPref(EPG_SCALE, def);
+    }
+
+    public String getEpgParams() {
+        return getStringPref(EPG_PARAMS, "");
     }
 
     public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {

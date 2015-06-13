@@ -34,16 +34,6 @@
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/title_guide_webapp">
-        <ListPreference
-            android:key="epg_scale"
-            android:title="@string/title_epg_scale"
-            android:entries="@array/epg_scale_entries"
-            android:entryValues="@array/epg_scale_values"
-            android:defaultValue="1.0"
-            android:layout="@layout/pref" />
-    </PreferenceCategory>
-    
     <PreferenceCategory android:title="@string/title_guide_prefs">
         <EditTextPreference
             android:key="epg_channel_group"
@@ -63,5 +53,20 @@
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
     </PreferenceCategory>    
+    
+    <PreferenceCategory android:title="@string/title_guide_webapp">
+        <ListPreference
+            android:key="epg_scale"
+            android:title="@string/title_epg_scale"
+            android:entries="@array/epg_scale_entries"
+            android:entryValues="@array/epg_scale_values"
+            android:defaultValue="1.0"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="epg_params"
+            android:title="@string/title_epg_params"
+            android:dialogMessage="@string/message_epg_params"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
     
 </PreferenceScreen>
