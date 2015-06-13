@@ -74,7 +74,7 @@ public class FireTvEpgActivity extends EpgActivity {
                 if (url.startsWith(getEpgBaseUrl())) {
                     String localPath = AppSettings.MYTHLING_EPG + url.substring(getEpgBaseUrl().length());
                     String contentType = getLocalContentType(localPath);
-                    if (!getScale().equals("1.0") && getUrl().equals(url))
+                    if (!getScale().equals("1.0") && url.startsWith(getUrl()))
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
                     else
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
