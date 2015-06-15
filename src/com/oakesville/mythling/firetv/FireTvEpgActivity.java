@@ -18,10 +18,20 @@
  */
 package com.oakesville.mythling.firetv;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.annotation.SuppressLint;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.amazon.android.webkit.AmazonConsoleMessage;
@@ -41,14 +51,20 @@ import com.oakesville.mythling.util.Reporter;
 public class FireTvEpgActivity extends EpgActivity {
     private static final String TAG = FireTvEpgActivity.class.getSimpleName();
 
+    private static final String EPG_JS = "<script src=\"js/epg.js\"></script>";
+    private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
+
     private static boolean factoryInited = false;
 
     private AmazonWebKitFactory factory;
     private AmazonWebView webView;
+    private String focusedId = "calendarBtn";
+    private JsHandler jsHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().hide();
         setContentView(R.layout.firetv_webview);
 
         if (!factoryInited) {
@@ -73,6 +89,8 @@ public class FireTvEpgActivity extends EpgActivity {
             public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView view, String url) {
                 if (url.startsWith(getEpgBaseUrl())) {
                     String localPath = AppSettings.MYTHLING_EPG + url.substring(getEpgBaseUrl().length());
+                    if (localPath.indexOf('?') > 0)
+                        localPath = localPath.substring(0, localPath.indexOf('?'));
                     String contentType = getLocalContentType(localPath);
                     if (!getScale().equals("1.0") && url.startsWith(getUrl()))
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
@@ -83,6 +101,9 @@ public class FireTvEpgActivity extends EpgActivity {
             }
         });
 
+        jsHandler = new JsHandler();
+        webView.addJavascriptInterface(jsHandler, "jsHandler");
+
         if (BuildConfig.DEBUG) {
             webView.setWebChromeClient(new AmazonWebChromeClient() {
                 public boolean onConsoleMessage(AmazonConsoleMessage consoleMessage) {
@@ -90,6 +111,9 @@ public class FireTvEpgActivity extends EpgActivity {
                     return true;
                 }
             });
+
+            // do not cache in debug
+            webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         }
     }
 
@@ -97,7 +121,7 @@ public class FireTvEpgActivity extends EpgActivity {
     protected void onResume() {
         super.onResume();
         try {
-            webView.loadUrl(getUrl());
+            webView.loadUrl(getUrl() + getParams());
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
@@ -121,22 +145,70 @@ public class FireTvEpgActivity extends EpgActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-//            if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-//                System.out.println("LEFT...");
-//                return false;
-//            }
-//            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-//                System.out.println("RIGHT...");
-//                webView.loadUrl("javascript:arrow('right')");
+    @Override
+    protected InputStream getLocalGuideScaled(String path) {
+        try {
+            InputStream inStream = getAssets().open(path, AssetManager.ACCESS_STREAMING);
+            StringBuilder strBuf = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
+            String str;
+            while ((str=in.readLine()) != null) {
+                if (str.equals(VIEWPORT))
+                    strBuf.append(str.replaceAll("1\\.0", getScale()));
+                else if (str.equals(EPG_JS))
+                    strBuf.append(str).append('\n').append(EPG_FIRETV_JS).append('\n');
+                else
+                    strBuf.append(str);
+                strBuf.append('\n');
+            }
+            in.close();
+            return new ByteArrayInputStream(strBuf.toString().getBytes());
+        }
+        catch (IOException ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            return null;
+        }
+    }
+
+    private boolean dpadHandling = true;
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (dpadHandling && event.getAction() == KeyEvent.ACTION_DOWN) {
+            System.out.println("FOCUSED_ID: " + focusedId);
+//            if (focusedId != null) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    webView.loadUrl("javascript:webViewKey('left')");
+                    return true;
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    webView.loadUrl("javascript:webViewKey('right')");
+                    return true;
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                    webView.loadUrl("javascript:webViewKey('up')");
+                    return true;
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    webView.loadUrl("javascript:webViewKey('down')");
+                    return true;
+                }
+//            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+//                webView.loadUrl("javascript:webViewKey('enter')");
 //                return true;
 //            }
+            }
 //        }
-//        return super.dispatchKeyEvent(event);
-//    }
+        return super.dispatchKeyEvent(event);
+    }
 
-
+    class JsHandler {
+        @JavascriptInterface
+        public void setFocusedId(String id) {
+            focusedId = id;
+        }
+    }
 }
 

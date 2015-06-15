@@ -47,8 +47,8 @@ import com.oakesville.mythling.util.Reporter;
 public class EpgActivity extends WebViewActivity {
     private static final String TAG = EpgActivity.class.getSimpleName();
 
-    static final String VIEWPORT
-      = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no\" />";
+    protected static final String VIEWPORT
+      = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,user-scalable=no\">";
 
     // refreshed from appSettings in onResume()
     private String epgUrl;
@@ -188,7 +188,7 @@ public class EpgActivity extends WebViewActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (getAppSettings().isPhone())
+        if (getAppSettings().isPhone() || getAppSettings().isTv())
             getMenuInflater().inflate(R.menu.guide_fs, menu); // otherwise menu items hidden
         else
             getMenuInflater().inflate(R.menu.guide, menu);
