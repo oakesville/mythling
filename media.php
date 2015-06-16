@@ -198,6 +198,7 @@ if (!$type->isSearch())
   else if ($type->isLiveTv())
   {
     $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
+    // TODO: check whether groupBy is needed
     $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
     $orderBy = "order by cast(c.channum as unsigned)";
     $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
@@ -277,8 +278,8 @@ if (!$type->isSearch())
     $id = mysql_result($result, $i, "id");
     if ($type->isMovies() || $type->isTvSeries())
     {
-      $ttl = mysql_result($result, $i, "title");
-      $stl = mysql_result($result, $i, "subtitle");
+      $ttl = cleanup(mysql_result($result, $i, "title"));
+      $stl = cleanup(mysql_result($result, $i, "subtitle"));
       $inr = mysql_result($result, $i, "inetref");
       $hp = mysql_result($result, $i, "homepage");
       $seas = mysql_result($result, $i, "season");
@@ -291,6 +292,8 @@ if (!$type->isSearch())
       $sum = mysql_result($result, $i, "summary");
       if (strcmp('None', $sum) == 0)
         $sum = null;
+      else
+        $sum = cleanup($sum);
       $art = mysql_result($result, $i, "coverfile");
       if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
         $art = mysql_result($result, $i, "fanart");
@@ -307,8 +310,7 @@ if (!$type->isSearch())
       else
         $progst = null;
       $cs = mysql_result($result, $i, "callsign");
-      $tit = mysql_result($result, $i, "title");
-      $tit = str_replace("/", "--", $tit);
+      $tit = cleanup(mysql_result($result, $i, "title"));
       if ($type->isRecordings() && $groupRecordingsByTitle)
         $full = $tit . "/" . $tit;
       else
@@ -317,8 +319,8 @@ if (!$type->isSearch())
         $bn = mysql_result($result, $i, "basename");
       else
         $bn = null;
-      $subtit = mysql_result($result, $i, "subtitle");
-      $descrip = mysql_result($result, $i, "description");
+      $subtit = cleanup(mysql_result($result, $i, "subtitle"));
+      $descrip = cleanup(mysql_result($result, $i, "description"));
       $oads = mysql_result($result, $i, "oad");
       if ($oads != null && strcmp("0000-00-00", $oads) != 0)
       {
@@ -617,7 +619,7 @@ else
       while ($i < $mNum)
       {
         $id = mysql_result($mRes, $i, "id");
-        $title = mysql_result($mRes, $i, "title");
+        $title = cleanup(mysql_result($mRes, $i, "title"));
         $full = mysql_result($mRes, $i, "filename");
         if ($isVideoStorageGroup)
           $part = $full;
@@ -631,7 +633,7 @@ else
         $year = mysql_result($mRes, $i, "year");
         $rating = mysql_result($mRes, $i, "userrating");
         $director = mysql_result($mRes, $i, "director");
-        $summary = mysql_result($mRes, $i, "summary");
+        $summary = cleanup(mysql_result($mRes, $i, "summary"));
         $art = mysql_result($mRes, $i, "coverfile");
         if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
           $art = mysql_result($mRes, $i, "fanart");
@@ -663,8 +665,8 @@ else
       while ($i < $tsNum)
       {
         $id = mysql_result($tsRes, $i, "id");
-        $title = mysql_result($tsRes, $i, "title");
-        $subTitle = mysql_result($tsRes, $i, "subtitle");
+        $title = cleanup(mysql_result($tsRes, $i, "title"));
+        $subTitle = cleanup(mysql_result($tsRes, $i, "subtitle"));
         $season = mysql_result($tsRes, $i, "season");
         $episode = mysql_result($tsRes, $i, "episode");
         $full = mysql_result($tsRes, $i, "filename");
@@ -680,7 +682,7 @@ else
         $aired = mysql_result($tsRes, $i, "releasedate");
         $rating = mysql_result($tsRes, $i, "userrating");
         $director = mysql_result($tsRes, $i, "director");
-        $summary = mysql_result($tsRes, $i, "summary");
+        $summary = cleanup(mysql_result($tsRes, $i, "summary"));
         $art = mysql_result($tsRes, $i, "coverfile");
         if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
           $art = mysql_result($tsRes, $i, "fanart");
@@ -736,9 +738,9 @@ else
     $id = mysql_result($tRes, $i, "id");
     $progstart = null; // always identifed by id
     $callsign = mysql_result($tRes, $i, "callsign");
-    $title = mysql_result($tRes, $i, "title");
-    $subtitle = mysql_result($tRes, $i, "subtitle");
-    $description = mysql_result($tRes, $i, "description");
+    $title = cleanup(mysql_result($tRes, $i, "title"));
+    $subtitle = cleanup(mysql_result($tRes, $i, "subtitle"));
+    $description = cleanup(mysql_result($tRes, $i, "description"));
     $rating = mysql_result($tRes, $i, "stars");
     $oads = mysql_result($tRes, $i, "oad");
     if ($oads != null && strcmp("0000-00-00", $oads) != 0)
@@ -772,10 +774,10 @@ else
     $id = mysql_result($rRes, $i, "id");
     $progstart = mysql_result($rRes, $i, "progstart");
     $callsign = mysql_result($rRes, $i, "callsign");
-    $title = mysql_result($rRes, $i, "title");
+    $title = cleanup(mysql_result($rRes, $i, "title"));
     $basename = mysql_result($rRes, $i, "basename");
-    $subtitle = mysql_result($rRes, $i, "subtitle");
-    $description = mysql_result($rRes, $i, "description");
+    $subtitle = cleanup(mysql_result($rRes, $i, "subtitle"));
+    $description = cleanup(mysql_result($rRes, $i, "description"));
     $rating = mysql_result($rRes, $i, "stars");
     $storagegroup = mysql_result($rRes, $i, "storagegroup");
     $oads = mysql_result($rRes, $i, "oad");
@@ -1210,6 +1212,14 @@ function getAlbumArtMap()
 function error($message)
 {
   echo '{ "error": "' . $message . '" }'; 
+}
+
+// replace problem characters in sql results
+function cleanup($in)
+{
+  if ($in == null)
+    return $in;
+  return str_replace('"', "'", str_replace("/", "--", $in));
 }
 
 class Type
