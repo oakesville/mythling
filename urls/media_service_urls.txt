@@ -23,6 +23,8 @@ http://192.168.0.69:6544/Dvr/GetRecordedList?Descending=true
 http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2014-06-14T22:28:29&EndTime=2014-06-18T22:28:29
 # MythTV Guide Service (ChannelGroupId req. 0.28)
 http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2015-04-19T00:00:00&EndTime=2015-04-19T04:00:00&ChannelGroupId=1
+# Mythling Guide Service
+http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-04-19T00:00:00&EndTime=2015-04-19T04:00:00&ChannelGroupId=1
 # MythTV Program Details
 http://192.168.0.69:6544/Guide/GetProgramDetails?ChanId=1012&StartTime=2015-05-15T22:30:00Z
 
