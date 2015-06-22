@@ -53,12 +53,14 @@ public class FireTvEpgActivity extends EpgActivity {
 
     private static final String EPG_JS = "<script src=\"js/epg.js\"></script>";
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
+    private static final String MYTHLING_CSS = "<link rel=\"stylesheet\" href=\"css/mythling.css\">";
+    private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
 
     private static boolean factoryInited = false;
 
     private AmazonWebKitFactory factory;
     private AmazonWebView webView;
-    private String focusedId = "calendarBtn";
+    private boolean popupOpen = false;
     private JsHandler jsHandler;
 
     @Override
@@ -98,6 +100,12 @@ public class FireTvEpgActivity extends EpgActivity {
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                 }
                 return super.shouldInterceptRequest(view, url);
+            }
+
+            @Override
+            public void onPageFinished(AmazonWebView view, String url) {
+                super.onPageFinished(view, url);
+                popupOpen = false;
             }
         });
 
@@ -157,6 +165,8 @@ public class FireTvEpgActivity extends EpgActivity {
                     strBuf.append(str.replaceAll("1\\.0", getScale()));
                 else if (str.equals(EPG_JS))
                     strBuf.append(str).append('\n').append(EPG_FIRETV_JS).append('\n');
+                else if (str.equals(MYTHLING_CSS))
+                    strBuf.append(str).append('\n').append(MYTHLING_FIRETV_CSS).append('\n');
                 else
                     strBuf.append(str);
                 strBuf.append('\n');
@@ -173,12 +183,25 @@ public class FireTvEpgActivity extends EpgActivity {
         }
     }
 
-    private boolean dpadHandling = true;
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (dpadHandling && event.getAction() == KeyEvent.ACTION_DOWN) {
-            System.out.println("FOCUSED_ID: " + focusedId);
-//            if (focusedId != null) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
+                // next day
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
+                // previous day
+                return true;
+            }
+            else if (popupOpen) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    webView.loadUrl("javascript:closePopups()");
+                    popupOpen = false;
+                    return true;
+                }
+            }
+            else {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                     webView.loadUrl("javascript:webViewKey('left')");
                     return true;
@@ -195,19 +218,15 @@ public class FireTvEpgActivity extends EpgActivity {
                     webView.loadUrl("javascript:webViewKey('down')");
                     return true;
                 }
-//            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
-//                webView.loadUrl("javascript:webViewKey('enter')");
-//                return true;
-//            }
             }
-//        }
+        }
         return super.dispatchKeyEvent(event);
     }
 
     class JsHandler {
         @JavascriptInterface
-        public void setFocusedId(String id) {
-            focusedId = id;
+        public void setPopupOpen(boolean isOpen) {
+            popupOpen = isOpen;
         }
     }
 }
