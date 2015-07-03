@@ -1,0 +1,9 @@
+<ul class="dropdown-menu popover-menu">
+  <li ng-if="!program.willRecord"><a href="#" focus-me epg-record="single">Record This</a></li>
+  <li ng-if="!program.willRecord"><a href="#" epg-record="transcode">Record &amp; Transcode</a></li>
+  <li ng-if="!program.willRecord"><a href="#" epg-record="all">Record All</a></li>
+  <li ng-if="program.willRecord"><a href="#" focus-me epg-record="dont">Don't Record</a></li>
+  <li ng-if="program.willRecord"><a href="#" epg-record="never">Never Record</a></li>
+  <li class="divider"></li>
+  <li ng-click="details(program)"><a href="#">Details...</a></li>
+</ul>

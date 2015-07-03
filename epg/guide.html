@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="x-ua-compatible" content="IE=Edge">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="application-name" content="mythling-epg" data-version="1.2.0">
+<title>Mythling EPG</title>
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/mythling.css">
+<link rel="icon" type="image/png" href="images/icon.png">
+<script src="js/angular/angular.min.js"></script>
+<script src="js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="js/ng-infinite-scroll-h-fix.min.js"></script>
+<script src="js/mythling-epg.min.js"></script>
+</head>
+<body ng-app="epgApp" ng-controller="EpgController">
+
+  <div class="guide-status label-width header-height">
+    <div class="status-outer">
+      <div class="status" ng-controller="EpgCalController">
+        <input id="calendarInput" type="text" class="form-control calendar-input" blur-me ng-click="openCalendar($event)"
+          ng-model="currentDate" ng-model-options="{getterSetter: true}" datepicker-popup="EEE MMM d"
+          min-date="minDate" max-date="maxDate" show-weeks="false" show-button-bar="false" is-open="calendarOpened" />
+        <div class="calendar-outer">
+          <button id="calendarBtn" type="button" class="action-button" ng-click="openCalendar($event)" tabIndex="1">
+            <img ng-src="{{calendarOpened ? 'images/cal22x.png' : 'images/cal22.png'}}" />
+          </button>
+        </div>
+        <div class="search-outer" ng-controller="EpgSearchController">
+          <button id="searchBtn" type="button" class="action-button" search-pre-render
+            popover-template="'views/search.html'" popover-placement="right" ng-click="searchClick($event)" tabIndex="2">
+            <img ng-src="{{searchOpened ? 'images/srch22x.png' : 'images/srch22.png'}}" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeslot-row" stay="top" ng-style="::{left:labelWidth+'px'}">
+    <div class="timeslot-outer slot-width header-height" ng-repeat="timeslot in guideData.timeslots track by $index" >
+      <div class="timeslot">{{timeslot}}</div>
+    </div>
+  </div>
+    
+  <div class="channel-column" stay="left" stay-track="setPosition" ng-style="::{top:headerHeight+'px'}">
+    <div class="channel-outer label-width row-height" ng-repeat="channel in guideData.channels">
+      <div class="channel">
+        {{::channel.ChanNum}}<br/>{{::channel.CallSign}}
+      </div>
+    </div>
+  </div>
+
+  <div class="listings" ng-style="::{marginLeft:labelWidth+'px',marginTop:headerHeight+'px'}" 
+    infinite-scroll="guideData.nextPage()" 
+    infinite-scroll-horizontal="true"
+    infinite-scroll-disabled="bufferSize == 0 || guideData.busy" 
+    infinite-scroll-distance="bufferSize">
+    <div class="channel-row" ng-repeat="channel in guideData.channels">
+      <div class="program-outer" ng-repeat="program in channel.programs">
+        <div class="program row-height" popover-template="'views/menu.html'" popover-trigger="popShow" popover-placement="{{popPlace}}"
+          pop-click ng-style="::{width:program.width+'px'}">
+          <div id="{{::program.id}}" class="program-inner {{program.willRecord ? 'recording' : ''}}" 
+            tabIndex="{{::program.index}}" data-seq="{{::program.seq}}" data-offset="{{::program.offset}}">
+            <span class="program-title">{{::program.Title}}</span><br/>{{::program.subTitle}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</body>
+</html>
