@@ -1,0 +1,998 @@
+ {
+  "ProgramGuide": { "AsOf": "2015-07-03T19:52:06Z", "Version": "0.28",
+    "Channels":
+    [
+      { "CallSign": "COMCET", "ChanId": "1005", "ChanNum": "5",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "", "Title": "Out West" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "CNM: Colorado Wildfires" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "CNM: Colorado Wildfires" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Colorado Ballet" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "", "Title": "Denver Performing Arts Complex" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Colfax Chronicles" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "History of Mt. Princeton Hot Springs" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Western Insider" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Roadrunner Review" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Xfinity Sports Report" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Xfinity Sports Report" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Colorado Business News" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "The Aaron Harber Show" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Legends of the Knight" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "", "Title": "Legends of the Knight" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Legends of the Knight" }
+        ]
+      },
+      { "CallSign": "KBDI", "ChanId": "1012", "ChanNum": "12",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Home improvement", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Charlestown Project 2014; Kitchens and Baths", "Title": "This Old House" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Kansas City Natural Gas BBQ Grill Install; Ask Roger: Shady Lawn Care; Hanging a Mirror on a Stone Fireplace", "Title": "Ask This Old House" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Get to Know Your Grains", "Title": "Lidia's Kitchen" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Eat Legumes; Mangiate i Legumi", "Title": "Ciao Italia" },
+          { "CatType": "series", "Category": "How-to", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Almond Cake and British Scones", "Title": "America's Test Kitchen From Cook's Illustrated" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Sweet Endings From the Icebox", "Title": "Cook's Country" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Journal" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Democracy Now!" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Tavis Smiley" },
+          { "CatType": "series", "Category": "Historical drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "The Towers of Silence", "Title": "The Jewel in the Crown" },
+          { "CatType": "series", "Category": "Mystery", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Grantchester, Episode 3", "Title": "Masterpiece Mystery!" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Express Yourself", "Title": "Film School Shorts" }
+        ]
+      },
+      { "CallSign": "CSPAN", "ChanId": "1098", "ChanNum": "98",
+        "Programs": 
+        [
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Key Capitol Hill Hearings" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Key Capitol Hill Hearings" }
+        ]
+      },
+      { "CallSign": "COMCET", "ChanId": "1105", "ChanNum": "105",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "", "Title": "Out West" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "CNM: Colorado Wildfires" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "CNM: Colorado Wildfires" },
+          { "CatType": "series", "Category": "", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Colorado Ballet" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "", "Title": "Denver Performing Arts Complex" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Colfax Chronicles" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "History of Mt. Princeton Hot Springs" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Western Insider" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Roadrunner Review" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Xfinity Sports Report" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Xfinity Sports Report" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Colorado Business News" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "The Aaron Harber Show" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Legends of the Knight" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "", "Title": "Legends of the Knight" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Legends of the Knight" }
+        ]
+      },
+      { "CallSign": "KMGHDT", "ChanId": "1652", "ChanNum": "652",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Game show", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Let's Ask America" },
+          { "CatType": "series", "Category": "Newsmagazine", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "Inside Edition" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "The Dr. Oz Show" },
+          { "CatType": "series", "Category": "Community", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "The Now Denver" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "7News at 5" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "ABC World News Tonight With David Muir" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "7News Right Now" },
+          { "CatType": "series", "Category": "Newsmagazine", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "The List" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:01:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "The Bachelorette" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:01:00Z", "SubTitle": "Whatever It Takes", "Title": "The Whispers" }
+        ]
+      },
+      { "CallSign": "KUSADT", "ChanId": "1653", "ChanNum": "653",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Soap", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Days of our Lives" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Ellen's Superstar Week", "Title": "The Ellen DeGeneres Show" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "9News at 4:00 O'Clock" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "9News at 5pm" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "NBC Nightly News" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "9News at 6pm" },
+          { "CatType": "series", "Category": "Newsmagazine", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Entertainment Tonight" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:01:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Venice Finals", "Title": "American Ninja Warrior" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:01:00Z", "SubTitle": "Kate Hudson", "Title": "Running Wild With Bear Grylls" }
+        ]
+      },
+      { "CallSign": "KCNCDT", "ChanId": "1654", "ChanNum": "654",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Game show", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Let's Make a Deal" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "100,000 Miles of Fraud?!; Facebook Message Saves the Day!", "Title": "Hot Bench" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Music Video Mayhem; Ex-Lover Computer Thief?", "Title": "Hot Bench" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Dr. Phil" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "CBS4 News at 5" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "CBS Evening News With Scott Pelley" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "CBS4 News at 6" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "CBS4 News at 6:30" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "And the Knock-Off Knockout", "Title": "2 Broke Girls" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "Whatever Happened to Baby Peggy", "Title": "Mike & Molly" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T02:59:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Father's Day", "Title": "Scorpion" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:59:00Z", "SubTitle": "Praesidium", "Title": "NCIS: Los Angeles" }
+        ]
+      },
+      { "CallSign": "KDVRDT", "ChanId": "1655", "ChanNum": "655",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Sherrod vs. Hardnett", "Title": "Divorce Court" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Lester vs. Lester", "Title": "Divorce Court" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Fight, Broken Jaw; Siblings' Cadillac Fight", "Title": "Judge Judy" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Boyfriend ATM Scam?; Loaned Truck Crash", "Title": "Judge Judy" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Judge Judy" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Judge Judy" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "FOX31 Denver News at 5pm" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "FOX31 Denver News at 5:30P" },
+          { "CatType": "series", "Category": "Game show", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Jeopardy!" },
+          { "CatType": "series", "Category": "Game show", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Show Your Disney Side Week", "Title": "Wheel of Fortune" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Top 20 Perform", "Title": "So You Think You Can Dance" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "FOX31 Denver News at 9pm" }
+        ]
+      },
+      { "CallSign": "KWGNDT", "ChanId": "1656", "ChanNum": "656",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "You're a Disgrace ... Get Out of My Face!", "Title": "The Bill Cunningham Show" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "The Ditch", "Title": "The Middle" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "The Test", "Title": "The Middle" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "The One With George Stephanopoulos", "Title": "Friends" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "The One With Phoebe's Cookies", "Title": "Friends" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "The Sniffing Accountant", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "The Doll", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "The Big Bang Theory" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "The Big Bang Theory" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Channel 2 News at 7pm" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "The Invisi-Ball Thread", "Title": "Penn & Teller: Fool Us" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Kathie Lee Gifford", "Title": "Whose Line Is It Anyway?" }
+        ]
+      },
+      { "CallSign": "KTVDDT", "ChanId": "1657", "ChanNum": "657",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "America's Court With Judge Ross" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "America's Court With Judge Ross" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Jerry Springer" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Cops Reloaded" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Cops Reloaded" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Paternal Affairs", "Title": "The King of Queens" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Strike One", "Title": "The King of Queens" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Molly Can't Lie", "Title": "Mike & Molly" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Mike Snores", "Title": "Mike & Molly" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Uncivilized", "Title": "Law & Order: Special Victims Unit" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Stalked", "Title": "Law & Order: Special Victims Unit" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "9News at 9pm" }
+        ]
+      },
+      { "CallSign": "KRMADT", "ChanId": "1658", "ChanNum": "658",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Exciting Friends", "Title": "Thomas & Friends" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Lamb", "Title": "Martha Stewart's Cooking School" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Piemonte Peppers", "Title": "Lidia's Kitchen" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Peter Piper's Purpose", "Title": "Sesame Street" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Tenrec Treasure Hunt", "Title": "Wild Kratts" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Rise of the Hydraclops; O Is Not for Old", "Title": "Odd Squad" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Feeling Flush; Family Fortune", "Title": "Arthur" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "BBC World News America" },
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Nightly Business Report" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "PBS NewsHour" },
+          { "CatType": "series", "Category": "Collectibles", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Vintage Las Vegas", "Title": "Antiques Roadshow" },
+          { "CatType": "series", "Category": "Collectibles", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Vintage Providence", "Title": "Antiques Roadshow" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Web Junkie", "Title": "POV" }
+        ]
+      },
+      { "CallSign": "KPXCDT", "ChanId": "1659", "ChanNum": "659",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "No. 6", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Brothers Hotchner", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "The Replicator", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Route 66", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Black Queen", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "The Road Home", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "200", "Title": "Criminal Minds" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Persuasion", "Title": "Criminal Minds" }
+        ]
+      },
+      { "CallSign": "AXSTV", "ChanId": "1664", "ChanNum": "664",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Video Killed the Radio Star" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "Rock Legends" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Discovering Lucy Angel" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "", "Title": "Discovering Lucy Angel" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Gene Simmons Family Jewels" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Gene Simmons Family Jewels" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Gene Simmons Family Jewels" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Gene Simmons Family Jewels" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Rock Legends" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Rock Legends" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Movie" }
+        ]
+      },
+      { "CallSign": "RTRHD", "ChanId": "1665", "ChanNum": "665",
+        "Programs": 
+        [
+          { "CatType": "tvshow", "Category": "Shopping", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "", "Title": "Paid Programming" },
+          { "CatType": "sports", "Category": "Sports event", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Atlanta Braves at Colorado Rockies", "Title": "MLB Baseball" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Fallsview Poker Classic - Part 1", "Title": "World Poker Tour" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Fallsview Poker Classic - Part 2", "Title": "World Poker Tour" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Championship", "Title": "Bull Riding" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Los Angeles", "Title": "PowerShares Champions Series Tennis" }
+        ]
+      },
+      { "CallSign": "TNTHD", "ChanId": "1667", "ChanNum": "667",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Rocker in the Rinse Cycle", "Title": "Bones" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Cuffed", "Title": "Castle" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Till Death Do Us Part", "Title": "Castle" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Dial M for Mayor", "Title": "Castle" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Snitch", "Title": "Major Crimes" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Personal Effects", "Title": "Major Crimes" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Oh, Mexico", "Title": "Murder in the First" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Personal Effects", "Title": "Major Crimes" }
+        ]
+      },
+      { "CallSign": "ESPNHD", "ChanId": "1668", "ChanNum": "668",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "NFL Live" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Baseball Tonight" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Baseball Tonight" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "2015 Home Run Derby" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "2015 All-Star Legends and Celebrity Game", "Title": "Softball" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "SportsCenter" }
+        ]
+      },
+      { "CallSign": "ESPN2HD", "ChanId": "1670", "ChanNum": "670",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "His & Hers" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "", "Title": "You Herd Me With Colin Cowherd" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Olbermann" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "", "Title": "Outside the Lines" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "SportsNation" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Outside the Lines 25th Anniversary Special" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "2015 Pan American Games" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Big One for One Drop", "Title": "2014 World Series of Poker" }
+        ]
+      },
+      { "CallSign": "PLDHD", "ChanId": "1671", "ChanNum": "671",
+        "Programs": 
+        [
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Palladia Special" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Palladia Special" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Palladia Special" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Palladia Special" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Soundgarden", "Title": "Live From the Artists Den" },
+          { "CatType": "movie", "Category": "Documentary", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Rush: Beyond the Lighted Stage" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "KISS", "Title": "MTV World Stage" }
+        ]
+      },
+      { "CallSign": "UHD", "ChanId": "1673", "ChanNum": "673",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "No Good Deed", "Title": "White Collar" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Live Feed", "Title": "White Collar" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Shot Through the Heart", "Title": "White Collar" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Taking Stock", "Title": "White Collar" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Special Delivery", "Title": "Kidnapped" },
+          { "CatType": "movie", "Category": "Crime drama", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Running Scared" }
+        ]
+      },
+      { "CallSign": "NGCHD", "ChanId": "1674", "ChanNum": "674",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "24-Hour Watch", "Title": "Border Wars" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Death on the Rio Grande", "Title": "Border Wars" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Meth Mobile", "Title": "Border Wars" },
+          { "CatType": "series", "Category": "History", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Ground Zero", "Title": "The 2000s: A New Reality" },
+          { "CatType": "series", "Category": "History", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Boom and Bust", "Title": "The 2000s: A New Reality" },
+          { "CatType": "series", "Category": "History", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Boom and Bust", "Title": "The 2000s: A New Reality" }
+        ]
+      },
+      { "CallSign": "AETVHD", "ChanId": "1675", "ChanNum": "675",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Unwelcome Guest; Wrecked", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Thicker Than Water", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Caught Up", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Unarmed; Bad Feeling", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:01:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Safe House", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:01:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:01:00Z", "SubTitle": "Dead Wrong", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:02:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:01:00Z", "SubTitle": "Night Run", "Title": "The First 48" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:01:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:02:00Z", "SubTitle": "Calling for a Killer; Boiling Point", "Title": "The First 48" }
+        ]
+      },
+      { "CallSign": "NFLHD", "ChanId": "1676", "ChanNum": "676",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Hard Knocks: Training Camp With the Dallas Cowboys" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Hard Knocks: Training Camp With the Dallas Cowboys" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Dallas Cowboys", "Title": "Top 10" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "NFL Total Access" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Hard Knocks: Training Camp With the Atlanta Falcons" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Rise of a Colossus", "Title": "Star-Spangled Sundays" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Things We Miss About Football", "Title": "Top 10" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "NFL Total Access" }
+        ]
+      },
+      { "CallSign": "TLCHD", "ChanId": "1677", "ChanNum": "677",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "The Mouth of the South", "Title": "Say Yes to the Dress: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "New Beginnings", "Title": "Say Yes to the Dress" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Red She Said", "Title": "Say Yes to the Dress" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Image Is Everything", "Title": "Say Yes to the Dress" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "NFL Brides", "Title": "Say Yes to the Dress" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Antlers and Tiaras", "Title": "Brides Gone Styled" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "From Plain Jane to Sexy Diva", "Title": "Brides Gone Styled" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Secret Wedding" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Twins Grow Up", "Title": "Little People, Big World" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T06:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "The Twins Grow Up", "Title": "Little People, Big World" }
+        ]
+      },
+      { "CallSign": "TBSHD", "ChanId": "1678", "ChanNum": "678",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "The One With the Dirty Girl", "Title": "Friends" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The One Where Chandler Crosses the Line", "Title": "Friends" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "The One Where Rachel Smokes", "Title": "Friends" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "The Fix-Up", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "The Good Samaritan", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "The Puffy Shirt", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "The Library", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "The Clip Show", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "The Clip Show", "Title": "Seinfeld" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Viewer Mail 2", "Title": "Family Guy" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Internal Affairs", "Title": "Family Guy" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Less Money, Mo' Problems", "Title": "American Dad" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "The Kidney Stays in the Picture", "Title": "American Dad" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "The Gothowitz Deviation", "Title": "The Big Bang Theory" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "The Pirate Solution", "Title": "The Big Bang Theory" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Conan" }
+        ]
+      },
+      { "CallSign": "DISNHD", "ChanId": "1679", "ChanNum": "679",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Girl Meets Sneak Attack", "Title": "Girl Meets World" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Twin-A-Rooney", "Title": "Liv & Maddie" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Dodge-A-Rooney", "Title": "Liv & Maddie" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Stan Runs Away", "Title": "Dog With a Blog" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Tyler Gets a Girlfriend", "Title": "Dog With a Blog" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Girl Meets Mr. Squirrels", "Title": "Girl Meets World" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Girl Meets the Tell-Tale-Tot", "Title": "Girl Meets World" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Karate Kid-tastrophe", "Title": "Jessie" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Driving Miss Crazy", "Title": "Jessie" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Puppies Talk", "Title": "Dog With a Blog" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Girl Meets Mr. Squirrels Goes to Washington", "Title": "Girl Meets World" },
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T02:40:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Princess Protection Program" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T03:05:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:40:00Z", "SubTitle": "Four Broke Kids", "Title": "Jessie" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:05:00Z", "SubTitle": "Lindy Goes to the Dogs!", "Title": "I Didn't Do It" }
+        ]
+      },
+      { "CallSign": "ABCFHD", "ChanId": "1680", "ChanNum": "680",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "The Break Up", "Title": "Reba" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Sweet Child O' Mine", "Title": "Reba" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Locked and Loaded", "Title": "Reba" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Out of Mind, Out of Sight", "Title": "Buffy the Vampire Slayer" },
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Zookeeper" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T01:01:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "It's My Party", "Title": "The Fosters" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T02:01:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:01:00Z", "SubTitle": "The Age of Consent", "Title": "Chasing Life" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:01:00Z", "SubTitle": "LoveHurts", "Title": "Becoming Us" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "The 700 Club" }
+        ]
+      },
+      { "CallSign": "FOODHD", "ChanId": "1681", "ChanNum": "681",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Cooking With Raffy and Buzz", "Title": "Giada at Home" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Bread and Butter", "Title": "Barefoot Contessa" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Breakfast In, Breakfast Out", "Title": "Barefoot Contessa" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Perfect Pies", "Title": "The Pioneer Woman" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Antique Hunt", "Title": "Farmhouse Rules" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "A Dicey Situation", "Title": "Guy's Grocery Games" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Family Favorites", "Title": "Diners, Drive-Ins and Dives" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Long Time Legends", "Title": "Diners, Drive-Ins and Dives" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Knot", "Title": "Cake Wars" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Back to the Beginning", "Title": "Diners, Drive-Ins and Dives" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Southern Fried Road Trip" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Best Tacos", "Title": "Top 5 Restaurants" },
+          { "CatType": "series", "Category": "Cooking", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Fresh Fish and Funky Chicken", "Title": "Diners, Drive-Ins and Dives" }
+        ]
+      },
+      { "CallSign": "HGTVD", "ChanId": "1682", "ChanNum": "682",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Home improvement", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Lorraine & Bob", "Title": "Love It or List It" },
+          { "CatType": "series", "Category": "Home improvement", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Jacqueline & Bevin", "Title": "Love It or List It" },
+          { "CatType": "series", "Category": "Home improvement", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Brent & John", "Title": "Love It or List It" },
+          { "CatType": "series", "Category": "Home improvement", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Sachi & Cam", "Title": "Love It or List It" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Listed Sisters" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Listed Sisters" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Tiny House, Big Living" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "Tiny House, Big Living" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "He Wants Gadgets and She Wants Mermaids in Baltimore", "Title": "House Hunters" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "New Habitation, New Occupation", "Title": "House Hunters International: Where Are They Now?" },
+          { "CatType": "series", "Category": "House/garden", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "A Sale of Two Cities" }
+        ]
+      },
+      { "CallSign": "SCIHD", "ChanId": "1683", "ChanNum": "683",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Science", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Alien Galaxies", "Title": "How the Universe Works" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Search for Alien Planets" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Journey into a Black Hole" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Killer Space Junk" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Search for Alien Planets" }
+        ]
+      },
+      { "CallSign": "SYFYHD", "ChanId": "1688", "ChanNum": "688",
+        "Programs": 
+        [
+          { "CatType": "movie", "Category": "Adventure", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Indiana Jones and the Kingdom of the Crystal Skull" },
+          { "CatType": "movie", "Category": "Science fiction", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Starship Troopers" },
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Paul" }
+        ]
+      },
+      { "CallSign": "NBCSNHD", "ChanId": "1689", "ChanNum": "689",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "NASCAR America" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "ABC Supply Wisconsin 250", "Title": "IndyCar Racing" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Rest Day One - Pau", "Title": "2015 Tour de France" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "The States of NASCAR", "Title": "NASCAR America" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "World of Adventure Sports" }
+        ]
+      },
+      { "CallSign": "FXPHD", "ChanId": "1691", "ChanNum": "691",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Good Crazy", "Title": "How I Met Your Mother" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Magician's Code Part One", "Title": "How I Met Your Mother" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "The Magician's Code Part Two", "Title": "How I Met Your Mother" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Farhampton", "Title": "How I Met Your Mother" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Charlie and Lacey Shack Up", "Title": "Anger Management" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Charlie and the Christmas Hooker", "Title": "Anger Management" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "One False Move, Zimbabwe!", "Title": "Two and a Half Men" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Slowly and in a Circular Fashion", "Title": "Two and a Half Men" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Thanksgiving Is Canceled", "Title": "Mike & Molly" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Mike Likes Briefs", "Title": "Mike & Molly" },
+          { "CatType": "movie", "Category": "Romance", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "The Twilight Saga: Breaking Dawn Part 2" },
+          { "CatType": "movie", "Category": "Action", "EndTime": "2015-07-14T06:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Jack Reacher" }
+        ]
+      },
+      { "CallSign": "DSCHD", "ChanId": "1716", "ChanNum": "716",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "She's a Good Girl", "Title": "Street Outlaws" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Texas Grudge", "Title": "Street Outlaws" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "To Be 1 or Not to Be 1", "Title": "Street Outlaws" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Fear and Gloating in Las Vegas", "Title": "Street Outlaws" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Angel City Danger", "Title": "Street Outlaws: Full Throttle" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Episode 19", "Title": "Street Outlaws" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Cuban Chrome" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Episode 19", "Title": "Street Outlaws" }
+        ]
+      },
+      { "CallSign": "MTVHD", "ChanId": "1723", "ChanNum": "723",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:25:00Z", "SubTitle": "Bad Relationships", "Title": "Girl Code" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Girl Code" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Girl Code" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Keep It Moving", "Title": "Teen Mom 2" },
+          { "CatType": "series", "Category": "Docudrama", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Jessica Rasdall", "Title": "One Bad Choice" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Dreamcatchers", "Title": "Teen Wolf" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Condition Terminal", "Title": "Teen Wolf" },
+          { "CatType": "series", "Category": "Suspense", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Hello, Emma", "Title": "Scream" }
+        ]
+      },
+      { "CallSign": "USAHD", "ChanId": "1724", "ChanNum": "724",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Agent Afloat", "Title": "NCIS" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Capitol Offense", "Title": "NCIS" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Heartland", "Title": "NCIS" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Murder 2.0", "Title": "NCIS" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:05:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "WWE Monday Night RAW" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T04:07:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:05:00Z", "SubTitle": "Eps1.2d3bug.mkv", "Title": "Mr. Robot" }
+        ]
+      },
+      { "CallSign": "ALTSPHD", "ChanId": "1725", "ChanNum": "725",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Denver Nuggets Summer League Special" },
+          { "CatType": "sports", "Category": "Sports event", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Real Salt Lake at Colorado Rapids", "Title": "MLS Soccer" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Green Valley Ranch", "Title": "Golf at Altitude" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "At Your Leisure" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "Denver Nuggets Summer League Special" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Miami Heat vs. Denver Nuggets", "Title": "NBA Summer League Basketball" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Denver Nuggets Summer League Special" },
+          { "CatType": "sports", "Category": "Sports event", "EndTime": "2015-07-14T04:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Real Salt Lake at Colorado Rapids", "Title": "MLS Soccer" }
+        ]
+      },
+      { "CallSign": "NIKHD", "ChanId": "1728", "ChanNum": "728",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Pressure; The Smoking Peanut", "Title": "SpongeBob SquarePants" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Bad Heir Day; Freaks and Greeks", "Title": "The Fairly OddParents" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Chicken Poofs; Stupid Cupid", "Title": "The Fairly OddParents" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Your Shoe's Untied; Squid's Day Off", "Title": "SpongeBob SquarePants" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "The Original Fry Cook; Night Light", "Title": "SpongeBob SquarePants" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "On the Straight and Arrow", "Title": "The Thundermans" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Invisible Brad", "Title": "Henry Danger" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Twisted Sister", "Title": "Every Witch Way" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Fowl Play", "Title": "Talia in the Kitchen" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Wedding", "Title": "Full House" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "The Wedding", "Title": "Full House" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Fuller House", "Title": "Full House" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "The Hole in the Wall Gang", "Title": "Full House" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Mama's Baby, Carlton's Maybe", "Title": "The Fresh Prince of Bel-Air" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "P.S. I Love You", "Title": "The Fresh Prince of Bel-Air" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T03:36:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "The One With Ross' Wedding", "Title": "Friends" }
+        ]
+      },
+      { "CallSign": "APLHD", "ChanId": "1730", "ChanNum": "730",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Country Superstar Speakeasy", "Title": "Treehouse Masters" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:01:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Wild Butterfly Escape", "Title": "Treehouse Masters" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:02:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:01:00Z", "SubTitle": "Nelson Family Treehouse", "Title": "Treehouse Masters" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:03:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:02:00Z", "SubTitle": "Holly Madison's Chicks", "Title": "Redwood Kings" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:04:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:03:00Z", "SubTitle": "Wild Butterfly Escape", "Title": "Treehouse Masters" }
+        ]
+      },
+      { "CallSign": "HSTRYHD", "ChanId": "1736", "ChanNum": "736",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Now or Never", "Title": "Swamp People" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:03:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Tree Castle", "Title": "The Woodsmen" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:03:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:03:00Z", "SubTitle": "Viking Battle Axe", "Title": "Forged in Fire" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:03:00Z", "SubTitle": "Of Gods & Otters", "Title": "Swamp People" }
+        ]
+      },
+      { "CallSign": "HLNHD", "ChanId": "1737", "ChanNum": "737",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Dr. Drew" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Trouble Brewing (The Virginia Russell Case)", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Holy Terror (The Illinois Church Bombings)", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Good as Gold", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Freedom Fighter", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Writing on the Wall (The Karen Pannell Case)", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Hundreds of Reasons (The Stephen Holmes Story)", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Nancy Grace" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Dr. Drew" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "All That Glitters Is Gold", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Deadly Rebellion (The Joshua Ashbrook Case)", "Title": "Forensic Files" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Hell's Kitchen", "Title": "Forensic Files" }
+        ]
+      },
+      { "CallSign": "CNNHD", "ChanId": "1738", "ChanNum": "738",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "The Lead With Jake Tapper" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "The Situation Room" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "The Situation Room" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Erin Burnett OutFront" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Anderson Cooper 360" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Crimes of the Father", "Title": "The Hunt With John Walsh" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "CNN Tonight WIth Don Lemon" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Anderson Cooper 360" }
+        ]
+      },
+      { "CallSign": "FNCHD", "ChanId": "1742", "ChanNum": "742",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Your World With Neil Cavuto" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "The Five" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Special Report With Bret Baier" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "On the Record With Greta Van Susteren" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "The O'Reilly Factor" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "The Kelly File" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Hannity" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "The O'Reilly Factor" }
+        ]
+      },
+      { "CallSign": "CNBCHD", "ChanId": "1746", "ChanNum": "746",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Fast Money" },
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Mad Money" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Car Cash", "Title": "The Profit" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Shark Tank" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Grafton Furniture", "Title": "The Profit" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "The Lano Company", "Title": "The Profit" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Sweet Pete's", "Title": "The Profit" }
+        ]
+      },
+      { "CallSign": "SPIKEHD", "ChanId": "1759", "ChanNum": "759",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Red Truck Desert Roll", "Title": "World's Wildest Police Videos" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Jacksonville, FL; Palm Beach County, FL; Albuquerque, NM: Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Seattle--Tacoma", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Jail" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Passaic County, NJ; Maui County, HI; Passaic County, NJ: War on Drugs: Special Edition", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "Coast to Coast", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Fort Worth, TX; Jacksonville, FL; Pierce County, WA: Bad Girls 4: Special Edition", "Title": "Cops" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "", "Title": "Cops" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Comic-Con All Access" }
+        ]
+      },
+      { "CallSign": "BRAVOHP", "ChanId": "1860", "ChanNum": "761",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Dying to Get In", "Title": "Odd Mom Out" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Omakase", "Title": "Odd Mom Out" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Brooklandia", "Title": "Odd Mom Out" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Midwife Crisis", "Title": "Odd Mom Out" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Under Construction", "Title": "The Real Housewives of Orange County" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Take a Swing", "Title": "The Real Housewives of Orange County" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Whine Country", "Title": "The Real Housewives of Orange County" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Charity Case", "Title": "The Real Housewives of Orange County" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Game Changer", "Title": "The Real Housewives of Orange County" }
+        ]
+      },
+      { "CallSign": "AMCHD", "ChanId": "1764", "ChanNum": "764",
+        "Programs": 
+        [
+          { "CatType": "movie", "Category": "Crime drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Scarface" },
+          { "CatType": "series", "Category": "Docudrama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Exit Strategy", "Title": "The Making of the Mob: New York" },
+          { "CatType": "series", "Category": "Docudrama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Exit Strategy", "Title": "The Making of the Mob: New York" }
+        ]
+      },
+      { "CallSign": "MNBCHD", "ChanId": "1765", "ChanNum": "765",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "NOW With Alex Wagner" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "The Ed Show" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "PoliticsNation" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Hardball With Chris Matthews" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "All In With Chris Hayes" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "The Rachel Maddow Show" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "The Last Word With Lawrence O'Donnell" },
+          { "CatType": "series", "Category": "News", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "All In With Chris Hayes" }
+        ]
+      },
+      { "CallSign": "VH1HD", "ChanId": "1766", "ChanNum": "766",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Truth Hurts", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "I Deserve", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Friends With Benefits", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "On the Road", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Blast From the Past", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "A Major Manager", "Title": "T.I. and Tiny: The Family Hustle" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "T.I. and Tiny: The Family Hustle" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Blast From the Past", "Title": "Love & Hip Hop: Atlanta" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "A Major Manager", "Title": "T.I. and Tiny: The Family Hustle" }
+        ]
+      },
+      { "CallSign": "TCMHD", "ChanId": "1767", "ChanNum": "767",
+        "Programs": 
+        [
+          { "CatType": "movie", "Category": "Comedy-drama", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "A Majority of One" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "", "Title": "MGM Parade" },
+          { "CatType": "movie", "Category": "Musical comedy", "EndTime": "2015-07-14T01:45:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Stowaway" },
+          { "CatType": "movie", "Category": "Comedy-drama", "EndTime": "2015-07-14T03:45:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:45:00Z", "SubTitle": "", "Title": "Wee Willie Winkie" }
+        ]
+      },
+      { "CallSign": "EHD", "ChanId": "1768", "ChanNum": "768",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Secrets of a Double Life", "Title": "Keeping Up With the Kardashians" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Rocking the Cradle", "Title": "Keeping Up With the Kardashians" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Kim's Journey to the Altar", "Title": "Keeping Up With the Kardashians" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "E! News" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Attack of the 3,000cc Implants", "Title": "Botched" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Say Yes to the Breasts", "Title": "Botched" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "The Serial Filler", "Title": "Botched" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "E! News" }
+        ]
+      },
+      { "CallSign": "TRUTVHD", "ChanId": "1771", "ChanNum": "771",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "World's Dumbest Performers 3", "Title": "World's Dumbest ..." },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "World's Dumbest Performers 4", "Title": "World's Dumbest ..." },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "World's Dumbest Performers 5", "Title": "World's Dumbest ..." },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "World's Dumbest Performers 6", "Title": "World's Dumbest ..." },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "The Lizard Law", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Out of Bounce", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "It's a Makeshift", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "Just a Milker", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "A Problem With Chocolate Turtles and Seeds", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T03:01:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Green Friendly", "Title": "The Carbonaro Effect" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T04:02:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:01:00Z", "SubTitle": "Two Bits vs. 67 Orange Street (New York)", "Title": "Barmageddon" }
+        ]
+      },
+      { "CallSign": "CCHD", "ChanId": "1772", "ChanNum": "772",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Terrorist Meeting", "Title": "Key & Peele" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Late Philip J. Fry", "Title": "Futurama" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "That Darn Katz!", "Title": "Futurama" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "A Clockwork Origin", "Title": "Futurama" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "The Prisoner of Benda", "Title": "Futurama" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "D-Yikes", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Casa Bonita", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Cartmanland", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Lice Capades", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "City Sushi", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Crack Baby Athletic Association", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "My Future Self 'n' Me", "Title": "South Park" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "I Should Have Never Gone Ziplining", "Title": "South Park" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Midnight Ron", "Title": "Archer" },
+          { "CatType": "series", "Category": "Comedy", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Viscous Coupling", "Title": "Archer" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "To Be Announced" }
+        ]
+      },
+      { "CallSign": "BBCAHD", "ChanId": "1773", "ChanNum": "773",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Botswana Special", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-14T02:40:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Top Gear" },
+          { "CatType": "series", "Category": "Auto", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:40:00Z", "SubTitle": "Bolivia Special", "Title": "Top Gear" }
+        ]
+      },
+      { "CallSign": "TRAVHD", "ChanId": "1774", "ChanNum": "774",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Outback", "Title": "Bizarre Foods With Andrew Zimmern" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Knoxville", "Title": "Man v. Food" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Salt Lake City", "Title": "Man v. Food" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Rio De Janeiro", "Title": "Bizarre Foods With Andrew Zimmern" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Wisconsin", "Title": "Bizarre Foods America" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Portland", "Title": "Bizarre Foods America" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Atlanta", "Title": "Bizarre Foods: Delicious Destinations" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "San Francisco", "Title": "Bizarre Foods: Delicious Destinations" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Undiscovered Hawaii", "Title": "Bizarre Foods America" },
+          { "CatType": "series", "Category": "Travel", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "West Virginia", "Title": "Bizarre Foods America" }
+        ]
+      },
+      { "CallSign": "DXDHD", "ChanId": "1776", "ChanNum": "776",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Into the Bunker", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Golf War", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Sock Opera", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Soos and the Real Girl", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Little Gift Shop of Horrors", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Society of the Blind Eye", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Blendin's Game", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "The Love God", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Northwest Mansion Noir", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Not What He Seems", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "A Tale of Two Stans", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Fantasy", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Exit from Endor", "Title": "Star Wars: Droid Tales" },
+          { "CatType": "series", "Category": "Science fiction", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "The Idiot's Lantern", "Title": "Doctor Who" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Not What He Seems", "Title": "Gravity Falls" },
+          { "CatType": "series", "Category": "Children", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "A Tale of Two Stans", "Title": "Gravity Falls" }
+        ]
+      },
+      { "CallSign": "WEHD", "ChanId": "1783", "ChanNum": "783",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Company", "Title": "Will & Grace" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "The Oath", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Not Landing", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Rap Sheet", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "MIA--NYC - NonStop", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Innocent", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Lost Son", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Murder in a Flash", "Title": "CSI: Miami" },
+          { "CatType": "series", "Category": "Crime drama", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "The Oath", "Title": "CSI: Miami" }
+        ]
+      },
+      { "CallSign": "FYIHD", "ChanId": "1784", "ChanNum": "784",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "House of Horrors", "Title": "Flipping San Diego" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Oceanside in Marathon", "Title": "Waterfront House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Family Friendly in Gulfport", "Title": "Waterfront House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Luxury Micro Cabins in Wisconsin", "Title": "Tiny House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Going Tiny in the Tetons", "Title": "Tiny House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "264 Sq. Ft. Honeymoon Suite", "Title": "Tiny House Nation" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "340 Sq. Ft. Steampunk Adventure Home", "Title": "Tiny House Nation" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "300 Sq. Ft-- His n' Hers House", "Title": "Tiny House Nation" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Corpus Christi Charmers", "Title": "Waterfront House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:01:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Fun & Funky Venice Beach", "Title": "Waterfront House Hunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:31:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:01:00Z", "SubTitle": "Lake Havasu Haven", "Title": "Waterfront House Hunting" }
+        ]
+      },
+      { "CallSign": "DESTHD", "ChanId": "1785", "ChanNum": "785",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Monster in the Apartment", "Title": "A Haunting" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "No Roads In", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Dangerous Trails", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Jaws, Claws, and Beaver Fever", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Cabin Upgrade", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Log Homes and Saloons", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Flip Flops to Snowshoes", "Title": "Buying Alaska" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Buying Log Cabins: Million Dollar Log Castles" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "", "Title": "Buying Log Cabins: Mountain Log Homes" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Sky High Savings", "Title": "Buying the Rockies" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "Alpine Oasis", "Title": "Buying the Rockies" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Treehouse Tour", "Title": "Buying Alaska" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Rainforest Cabins", "Title": "Buying Alaska" },
+          { "CatType": "tvshow", "Category": "Special", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Buying Log Cabins: Million Dollar Log Castles" }
+        ]
+      },
+      { "CallSign": "ESQHD", "ChanId": "1787", "ChanNum": "787",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Pittsburgh Qualifying", "Title": "American Ninja Warrior" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Military Qualifying", "Title": "American Ninja Warrior" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Ron and Diane", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:30:00Z", "SubTitle": "Two Parties", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Women in Garbage", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "Ann's Decision", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Emergency Response", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Leslie and Ben", "Title": "Parks and Recreation" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Day 7", "Title": "Running of the Bulls Festival and Highlights" }
+        ]
+      },
+      { "CallSign": "TVONEHD", "ChanId": "1788", "ChanNum": "788",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "Jury Duty", "Title": "The Parkers" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T20:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "An Ivy League of Her Own", "Title": "The Parkers" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:30:00Z", "SubTitle": "Join the Club", "Title": "The Parkers" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T21:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Conflict of Interest", "Title": "A Different World" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:30:00Z", "SubTitle": "Sellmates", "Title": "A Different World" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Boo's in the House", "Title": "Martin" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "Back in Trouble Again", "Title": "Martin" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-13T23:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Sophomore Jinx", "Title": "Martin" },
+          { "CatType": "series", "Category": "Sitcom", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:30:00Z", "SubTitle": "Working Girls", "Title": "Martin" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Toxic Romance", "Title": "Fatal Attraction" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Fatal Attraction" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Fatal Attraction" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "A Lethal Love", "Title": "Fatal Attraction" }
+        ]
+      },
+      { "CallSign": "H2HD", "ChanId": "1790", "ChanNum": "790",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "History", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "MysteryQuest" },
+          { "CatType": "series", "Category": "History", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "MysteryQuest" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Ancient Aliens" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Ancient Aliens" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Ancient Aliens" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Ancient Aliens" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "In Search of Aliens" }
+        ]
+      },
+      { "CallSign": "IDHD", "ChanId": "1791", "ChanNum": "791",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "Under a Halloween Moon", "Title": "Dateline on ID" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "Kill Thy Neighbor", "Title": "Fear Thy Neighbor" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Lake of Madness", "Title": "Fear Thy Neighbor" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "Driveway of Death", "Title": "Fear Thy Neighbor" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "Home Bloody Home", "Title": "Fear Thy Neighbor" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "Fatal Family Feud", "Title": "Fear Thy Neighbor" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Facing Down Terror", "Title": "Over My Dead Body" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Revenge on Wheels", "Title": "Over My Dead Body" },
+          { "CatType": "series", "Category": "Crime", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "Home Bloody Home", "Title": "Fear Thy Neighbor" }
+        ]
+      },
+      { "CallSign": "FBNHD", "ChanId": "1793", "ChanNum": "793",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "After the Bell" },
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Risk and Reward With Deirdre Bolton" },
+          { "CatType": "series", "Category": "Bus./financial", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Making Money With Charles Payne" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Lou Dobbs Tonight" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Kennedy" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "Strange Inheritance" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "Strange Inheritance" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Strange Inheritance" },
+          { "CatType": "series", "Category": "Documentary", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "", "Title": "Strange Inheritance" },
+          { "CatType": "series", "Category": "Talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Lou Dobbs Tonight" }
+        ]
+      },
+      { "CallSign": "BETHD", "ChanId": "1795", "ChanNum": "795",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "", "Title": "Movie" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "106 & Park: BET's Top 10 Live" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Movie" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "", "Title": "Movie" }
+        ]
+      },
+      { "CallSign": "FUSEHD", "ChanId": "1834", "ChanNum": "834",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Absolute Hip Hop: From Tupac to 2 Chainz" },
+          { "CatType": "series", "Category": "Music", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Absolute Hip Hop: From Tupac to 2 Chainz" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Movie" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Movie" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T04:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Movie" }
+        ]
+      },
+      { "CallSign": "CMTVHD", "ChanId": "1835", "ChanNum": "835",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "Friday Night Lights" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "Friday Night Lights" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "Friday Night Lights" },
+          { "CatType": "series", "Category": "Drama", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "Friday Night Lights" },
+          { "CatType": "series", "Category": "Entertainment", "EndTime": "2015-07-14T02:35:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "Movie" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:35:00Z", "SubTitle": "", "Title": "Cops Reloaded" },
+          { "CatType": "series", "Category": "Reality", "EndTime": "2015-07-14T03:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "Cops Reloaded" }
+        ]
+      },
+      { "CallSign": "P12MTHD", "ChanId": "1840", "ChanNum": "840",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T19:30:00Z", "SubTitle": "2015 Pac-12 Championships", "Title": "Women's College Gymnastics" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "The 12 Best: 2014-15 Moments of the Year" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "2015 Pac-12 Championships", "Title": "Women's College Gymnastics" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "2015: Stanford at Utah", "Title": "Women's College Gymnastics" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "2015: Utah at Oregon State", "Title": "Women's College Gymnastics" }
+        ]
+      },
+      { "CallSign": "ESPNWHD", "ChanId": "1841", "ChanNum": "841",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T21:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T20:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T21:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-13T22:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "", "Title": "ESPN FC" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T22:30:00Z", "SubTitle": "", "Title": "Olbermann" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "SportsCenter" },
+          { "CatType": "series", "Category": "Sports talk", "EndTime": "2015-07-14T04:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "", "Title": "SportsNation" }
+        ]
+      },
+      { "CallSign": "CBSSNHD", "ChanId": "1846", "ChanNum": "846",
+        "Programs": 
+        [
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-13T23:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T22:00:00Z", "SubTitle": "Lucas Oil: Pro Lite and Pro 2 - Round 6", "Title": "Auto Racing" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T01:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:00:00Z", "SubTitle": "National Pro Fastpitch: Chicago Bandits at USSSA Pride", "Title": "Softball" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T01:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:00:00Z", "SubTitle": "A Bunch of Tough Guys", "Title": "Poker Night in America" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T01:30:00Z", "SubTitle": "The Chainsaw Stops By", "Title": "Poker Night in America" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T02:30:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "Poker Night Royale", "Title": "Poker Night in America" },
+          { "CatType": "series", "Category": "Sports non-event", "EndTime": "2015-07-14T03:00:00Z", "Recording": { "Status": "0" }, "Repeat": "true", "StartTime": "2015-07-14T02:30:00Z", "SubTitle": "Cincinnati Kid, by way of Pittsburgh", "Title": "Poker Night in America" },
+          { "CatType": "series", "Category": "Sports event", "EndTime": "2015-07-14T05:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T03:00:00Z", "SubTitle": "National Pro Fastpitch: Chicago Bandits at USSSA Pride", "Title": "Softball" }
+        ]
+      },
+      { "CallSign": "IFCHD", "ChanId": "1855", "ChanNum": "855",
+        "Programs": 
+        [
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T00:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:15:00Z", "SubTitle": "", "Title": "Me, Myself & Irene" },
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T02:15:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T00:00:00Z", "SubTitle": "", "Title": "BASEketball" },
+          { "CatType": "movie", "Category": "Comedy", "EndTime": "2015-07-14T04:30:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:15:00Z", "SubTitle": "", "Title": "Shaun of the Dead" }
+        ]
+      },
+      { "CallSign": "MGMHD", "ChanId": "1859", "ChanNum": "859",
+        "Programs": 
+        [
+          { "CatType": "movie", "Category": "Drama", "EndTime": "2015-07-13T23:40:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T21:20:00Z", "SubTitle": "", "Title": "The Russia House" },
+          { "CatType": "movie", "Category": "Adventure", "EndTime": "2015-07-14T02:00:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-13T23:40:00Z", "SubTitle": "", "Title": "Cuba" },
+          { "CatType": "movie", "Category": "Action", "EndTime": "2015-07-14T04:15:00Z", "Recording": { "Status": "0" }, "Repeat": "false", "StartTime": "2015-07-14T02:00:00Z", "SubTitle": "", "Title": "Navy SEALS" }
+        ]
+      }
+    ]
+  }
+}
