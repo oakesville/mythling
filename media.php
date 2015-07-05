@@ -201,7 +201,8 @@ if ($type->isGuide())
 
   mysql_close();
   
-  printChannelEnd(true);
+  if ($num > 0)
+    printChannelEnd(true);
   echo '    ]' . "\n";
   echo '  }' . "\n";
   echo '}';
