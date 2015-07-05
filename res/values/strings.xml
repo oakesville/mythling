@@ -388,6 +388,8 @@
     <string name="transcode_jobs_running">Already %0% transcode jobs running</string>
     <string name="no_live_stream_found">No live stream found.\u0020Please try again.</string>
     <string name="no_stream_available_">No stream available (try increasing transcode timeout):\u0020</string>
+    <string name="epg_hint">Mythling EPG Hint</string>
+    <string name="epg_ff_rew_hint_">Use the >> and &lt;&lt; keys on the remote to skip forward and backward</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>
@@ -416,4 +418,5 @@
     <string name="year_format">yyyy</string> <!-- 2015 -->
     <string name="abbrev_am">a</string> <!-- abbreviation for a.m. -->
     <string name="abbrev_pm">p</string> <!-- abbreviation for p.m. -->
+    <string name="abbrev_hrs">hrs</string> <!-- abbreviation for hours -->
 </resources>

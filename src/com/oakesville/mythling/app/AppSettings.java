@@ -140,6 +140,7 @@ public class AppSettings {
     public static final String EPG_SCALE = "epg_scale";
     public static final String EPG_PARAMS = "epg_params";
     public static final String EPG_SKIP_INTERVAL = "epg_skip_interval";
+    public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
 
@@ -1099,7 +1100,7 @@ public class AppSettings {
     }
 
     /**
-     * returns true only once (when newly installed)
+     * returns false only once (when newly installed)
      */
     public boolean isPrefsInitiallySet() {
         boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
@@ -1111,4 +1112,15 @@ public class AppSettings {
         }
         return set;
     }
+
+    /**
+     * returns false only once (when epg first accessed)
+     */
+    public boolean isEpgInitiallyAccessed() {
+        boolean accessed = prefs.getBoolean(EPG_INITIALLY_ACCESSED, false);
+        if (!accessed)
+            prefs.edit().putBoolean(EPG_INITIALLY_ACCESSED, true).commit();
+        return accessed;
+    }
+
 }

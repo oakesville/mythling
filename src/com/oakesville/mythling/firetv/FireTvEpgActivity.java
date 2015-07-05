@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,6 +72,17 @@ public class FireTvEpgActivity extends EpgActivity {
         super.onCreate(savedInstanceState);
         getActionBar().hide();
         setContentView(R.layout.firetv_webview);
+
+        if (!getAppSettings().isEpgInitiallyAccessed()) {
+            String msg = getString(R.string.epg_ff_rew_hint_) + " " +
+                    getAppSettings().getEpgSkipInterval() + " " + getString(R.string.abbrev_hrs) + ".";
+            new AlertDialog.Builder(this)
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .setTitle(getString(R.string.epg_hint))
+            .setMessage(msg)
+            .setPositiveButton(android.R.string.ok, null)
+            .show();
+        }
 
         if (!factoryInited) {
             factory = AmazonWebKitFactories.getDefaultFactory();
