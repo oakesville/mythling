@@ -1,3 +1,5 @@
+# Mythling
+
 Mythling is an open-source mobile media player for MythTV.
 
 Setup Guide:
