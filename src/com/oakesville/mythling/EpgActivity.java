@@ -199,7 +199,7 @@ public class EpgActivity extends WebViewActivity {
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
             String str;
             while ((str=in.readLine()) != null) {
-                if (str.equals(VIEWPORT))
+                if (str.trim().equals(VIEWPORT))
                     strBuf.append(str.replaceAll("1\\.0", scale));
                 else
                     strBuf.append(str);

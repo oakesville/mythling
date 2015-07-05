@@ -45,6 +45,14 @@ public class Localizer {
     }
     public static final DateFormat SERVICE_DATE_TIME_ZONE_FORMAT = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss Z");
 
+    public static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    static {
+        ISO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+    public static DateFormat getIsoDateFormat() {
+        return ISO_DATE_FORMAT;
+    }
+
     private static String[] leadingArticles = new String[] { "A", "An", "The" };
 
     private static DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");

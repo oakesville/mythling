@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 
 import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
@@ -42,13 +44,14 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.EpgActivity;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class FireTvEpgActivity extends EpgActivity {
     private static final String TAG = FireTvEpgActivity.class.getSimpleName();
 
-    private static final String EPG_JS = "<script src=\"js/epg.js\"></script>";
+    private static final String EPG_JS = "<script src=\"js/mythling-epg.js\"></script>";
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
     private static final String MYTHLING_CSS = "<link rel=\"stylesheet\" href=\"css/mythling.css\">";
     private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
@@ -59,6 +62,9 @@ public class FireTvEpgActivity extends EpgActivity {
     private AmazonWebView webView;
     private boolean popupOpen = false;
     private JsHandler jsHandler;
+
+    private int skipInterval;
+    private Calendar startTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +131,15 @@ public class FireTvEpgActivity extends EpgActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        startTime = Calendar.getInstance();
+        startTime.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE) >= 30 ? 30 : 0);
+        startTime.set(Calendar.SECOND, 0);
+        startTime.set(Calendar.MILLISECOND, 0);
+        skipInterval = getAppSettings().getEpgSkipInterval();
+        load();
+    }
+
+    private void load() {
         try {
             webView.loadUrl(getUrl() + getParams());
         } catch (Exception ex) {
@@ -134,6 +149,12 @@ public class FireTvEpgActivity extends EpgActivity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected String getParams() throws UnsupportedEncodingException {
+        String startDateParam = Localizer.getIsoDateFormat().format(startTime.getTime());
+        return super.getParams() + "&guideInterval=" + skipInterval + "&startTime=" + startDateParam;
     }
 
     @Override
@@ -158,11 +179,11 @@ public class FireTvEpgActivity extends EpgActivity {
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
             String str;
             while ((str=in.readLine()) != null) {
-                if (str.equals(VIEWPORT))
+                if (str.trim().equals(VIEWPORT))
                     strBuf.append(str.replaceAll("1\\.0", getScale()));
-                else if (str.equals(EPG_JS))
+                else if (str.trim().equals(EPG_JS))
                     strBuf.append(str).append('\n').append(EPG_FIRETV_JS).append('\n');
-                else if (str.equals(MYTHLING_CSS))
+                else if (str.trim().equals(MYTHLING_CSS))
                     strBuf.append(str).append('\n').append(MYTHLING_FIRETV_CSS).append('\n');
                 else
                     strBuf.append(str);
@@ -184,11 +205,13 @@ public class FireTvEpgActivity extends EpgActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                // next day
+                startTime.add(Calendar.HOUR, -skipInterval);
+                load();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                // previous day
+                startTime.add(Calendar.HOUR, skipInterval);
+                load();
                 return true;
             }
             else if (popupOpen) {
