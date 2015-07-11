@@ -44,6 +44,7 @@ import com.oakesville.mythling.util.Reporter;
 @SuppressLint("SetJavaScriptEnabled")
 public class WebViewActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
+    protected static final String CONSOLE_ERROR_TAG = "ERROR: "; // must match epg.js
 
     private WebView webView;
     protected WebView getWebView() { return webView; }
@@ -80,17 +81,31 @@ public class WebViewActivity extends Activity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
                     WebView.setWebContentsDebuggingEnabled(true);
 
-                // print javascript console output
-                webView.setWebChromeClient(new WebChromeClient() {
-                    public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                        Log.e(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n" + consoleMessage.message());
-                        return true;
-                    }
-                });
-
                 // do not cache in debug
                 webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             }
+
+            // print javascript console output
+            webView.setWebChromeClient(new WebChromeClient() {
+                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                    if (consoleMessage.message().startsWith(CONSOLE_ERROR_TAG)) {
+                        String msg = consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message();
+                        Log.e(TAG, msg);
+                        if (appSettings.isErrorReportingEnabled())
+                            new Reporter(msg).send();
+                        Toast.makeText(getApplicationContext(), consoleMessage.message(), Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                    else if (BuildConfig.DEBUG) {
+                        Log.i(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message());
+                        return true;
+                    }
+                    else {
+                        return super.onConsoleMessage(consoleMessage);
+                    }
+                }
+            });
+
 
             if (!appSettings.deviceSupportsWebLinks()) {
                 webView.setWebViewClient(new WebViewClient() {
@@ -198,5 +213,4 @@ public class WebViewActivity extends Activity {
         }
         return params;
     }
-
 }

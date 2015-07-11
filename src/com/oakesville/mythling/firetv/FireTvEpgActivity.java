@@ -128,16 +128,29 @@ public class FireTvEpgActivity extends EpgActivity {
         webView.addJavascriptInterface(jsHandler, "jsHandler");
 
         if (BuildConfig.DEBUG) {
-            webView.setWebChromeClient(new AmazonWebChromeClient() {
-                public boolean onConsoleMessage(AmazonConsoleMessage consoleMessage) {
-                    Log.e(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n" + consoleMessage.message());
-                    return true;
-                }
-            });
-
             // do not cache in debug
             webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         }
+
+        webView.setWebChromeClient(new AmazonWebChromeClient() {
+            public boolean onConsoleMessage(AmazonConsoleMessage consoleMessage) {
+                if (consoleMessage.message().startsWith(CONSOLE_ERROR_TAG)) {
+                    String msg = consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message();
+                    Log.e(TAG, msg);
+                    if (getAppSettings().isErrorReportingEnabled())
+                        new Reporter(msg).send();
+                    Toast.makeText(getApplicationContext(), consoleMessage.message(), Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                else if (BuildConfig.DEBUG) {
+                    Log.i(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message());
+                    return true;
+                }
+                else {
+                    return super.onConsoleMessage(consoleMessage);
+                }
+            }
+        });
     }
 
     @Override

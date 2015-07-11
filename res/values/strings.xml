@@ -346,6 +346,7 @@
     <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="error_">Error:\u0020</string>
+    <string name="failed_to_load_">Failed to load:\u0020</string>
     <string name="bad_setting_">Bad or missing setting:</string>
     <string name="directed_by_">Directed By:\u0020</string>
     <string name="starring_">Starring:\u0020</string>

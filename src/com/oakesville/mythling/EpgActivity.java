@@ -29,6 +29,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -53,7 +54,7 @@ public class EpgActivity extends WebViewActivity {
     protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale;
     private String channelGroup;
-    private Map<String,String> parameters = new HashMap<String,String>();
+    private Map<String,String> parameters;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,8 @@ public class EpgActivity extends WebViewActivity {
                 public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
                     if (url.startsWith(epgBaseUrl)) {
                         if (getAppSettings().isHostedEpg()) {
-                            Log.d(TAG, "Loading hosted: " + url);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "Loading hosted: " + url);
                             if (!getScale().equals("1.0") && url.startsWith(getUrl())) {
                                 InputStream responseStream = null;
                                 WebResourceResponse response = super.shouldInterceptRequest(view, url);
@@ -88,7 +90,8 @@ public class EpgActivity extends WebViewActivity {
                             }
                         }
                         else {
-                            Log.d(TAG, "Loading embedded: " + url);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "Loading embedded: " + url);
                             String localPath = AppSettings.MYTHLING_EPG + url.substring(epgBaseUrl.length());
                             if (localPath.indexOf('?') > 0)
                                 localPath = localPath.substring(0, localPath.indexOf('?'));
@@ -99,7 +102,17 @@ public class EpgActivity extends WebViewActivity {
                                 return new WebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                         }
                     }
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "Loading: " + url);
                     return super.shouldInterceptRequest(view, url);
+                }
+
+                @Override
+                public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+                    if (getAppSettings().isMythlingMediaServices())
+                        handler.proceed(getAppSettings().getBackendWebUser(), getAppSettings().getBackendWebPassword());
+                    else
+                        handler.proceed(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
                 }
             });
         }
@@ -111,15 +124,22 @@ public class EpgActivity extends WebViewActivity {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
             scale = getAppSettings().getEpgScale();
-            String params = getAppSettings().getEpgParams();
-            if (params != null && params.length() > 0) {
-                if (params.startsWith("?"))
-                    params = params.substring(1);
-                for (String param : params.split("&")) {
+            parameters = new HashMap<String,String>();
+            String epgParams = getAppSettings().getEpgParams();
+            if (epgParams != null && epgParams.length() > 0) {
+                if (epgParams.startsWith("?"))
+                    epgParams = epgParams.substring(1);
+                for (String param : epgParams.split("&")) {
                     int eq = param.indexOf('=');
                     if (eq > 0 && param.length() > eq + 1)
                         parameters.put(param.substring(0, eq), param.substring(eq + 1));
                 }
+            }
+            if (!parameters.containsKey("mythlingServices")) { // honor explicity-set parameter first
+                if (getAppSettings().isMythlingMediaServices())
+                    parameters.put("mythlingServices", "true");
+                else
+                    parameters.remove("mythlingServices");
             }
             String prefsChannelGroup = getAppSettings().getEpgChannelGroup();
             if (prefsChannelGroup == null || prefsChannelGroup.isEmpty()) {

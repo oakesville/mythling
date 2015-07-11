@@ -253,17 +253,32 @@ public class AppSettings {
         return new URL("http://" + ip + ":" + servicePort);
     }
 
+    /**
+     * Excludes credentials (used by webview for comparison in shouldIntercept).
+     */
     public URL getEpgBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
-        return new URL(getMythTvServicesBaseUrlWithCredentials() + "/" + getHostedEpgRoot());
+        if (isMythlingMediaServices())
+            return new URL("http://" + getMythlingServiceHost() + ":" + getMythlingWebPort() + "/" + getHostedEpgRoot());
+        else
+            return new URL(getMythTvServicesBaseUrl() + "/" + getHostedEpgRoot());
     }
 
+    /**
+     * Params are added separately in epg activities.
+     */
     public URL getEpgUrl() throws MalformedURLException, UnsupportedEncodingException {
-        String epgUrl = getEpgBaseUrl().toString();
+        String epgUrl;
+        if (isMythlingMediaServices()) {
+            // backend services must be proxied to same host/port as mythling web
+            epgUrl = getMythlingServicesBaseUrlWithCredentials() +  "/" + getHostedEpgRoot();
+        }
+        else {
+            epgUrl = getMythTvServicesBaseUrlWithCredentials() + "/" + getHostedEpgRoot();
+        }
         if (isEpgOmb())
-            epgUrl += "/" + GUIDE_OMB_HTML; // no params
+            return new URL(epgUrl += "/" + GUIDE_OMB_HTML);
         else
-            epgUrl += "/" + GUIDE_HTML; // TODO params
-        return new URL(epgUrl);
+            return new URL(epgUrl += "/" + GUIDE_HTML);
     }
 
     public boolean isHostedEpg() {
@@ -310,6 +325,18 @@ public class AppSettings {
         } else {
             String encodedUser = URLEncoder.encode(getMythTvServicesUser(), "UTF-8");
             String encodedPw = URLEncoder.encode(getMythTvServicesPassword(), "UTF-8");
+            return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
+        }
+    }
+
+    public URL getMythlingServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {
+        String host = getMythlingServiceHost();
+        int servicePort = getMythlingServicePort();
+        if (AuthType.None.toString().equals(getMythlingServicesAuthType())) {
+            return new URL("http://" + host + ":" + servicePort);
+        } else {
+            String encodedUser = URLEncoder.encode(getBackendWebUser(), "UTF-8");
+            String encodedPw = URLEncoder.encode(getBackendWebPassword(), "UTF-8");
             return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
         }
     }
