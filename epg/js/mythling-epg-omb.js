@@ -113,6 +113,17 @@ epgApp.controller('EpgController',
       angular.element(document.getElementById(program.id)).addClass('program-select');
     }, 0);
     
+    if ($scope.guideData.demoMode || !$scope.guideData.isMyth28) {
+      $scope.program = program;
+      var modalInstance = $modal.open({
+        animation: false,
+        templateUrl: 'views/details.html',
+        controller: 'EpgModalController',
+        scope: $scope
+      });
+      return;
+    }
+    
     var url = '/Guide/GetProgramDetails?ChanId=' + program.channel.ChanId + '&StartTime=' + program.StartTime;
     console.log('details url: ' + url);
     $http.get(url).success(function(data) {
