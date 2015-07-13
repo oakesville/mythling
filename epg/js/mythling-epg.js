@@ -211,8 +211,8 @@ epgApp.directive('popClick', ['$timeout', function($timeout) {
           var btmRoom = document.documentElement.clientHeight - viewportOffset.bottom;
           var leftRoom = viewportOffset.left;
           var rightRoom = document.documentElement.clientWidth - viewportOffset.right;
-          var topClose = topRoom < 115;
-          var btmClose = btmRoom < 115;
+          var topClose = topRoom < 120;
+          var btmClose = btmRoom < 120;
           var leftClose = leftRoom < 155;
           var rightClose = rightRoom < 155;
           // leftVClose and rightVClose mean there's no room to display menu on top or bottom
@@ -320,9 +320,14 @@ epgApp.directive('epgRecord', ['$http', function($http) {
 
         scope.fireEpgAction('record');
         console.log('record action url: ' + url);
-        $http.post(url).success(function(data, status, headers, config) {
+        if (scope.guideData.demoMode) {
           scope.program.willRecord = (action == 'single' || action == 'transcode' || action == 'all');
-        });
+        }
+        else {
+          $http.post(url).success(function(data, status, headers, config) {
+            scope.program.willRecord = (action == 'single' || action == 'transcode' || action == 'all');
+          });
+        }
       });
     }
   };

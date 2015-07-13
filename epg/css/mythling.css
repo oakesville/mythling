@@ -108,7 +108,7 @@ table {
   color: white;
   background-color: #455a64;
   text-align: center;
-  padding-top: 3px;
+  padding-top: 5px;
   height: 100%;
   width: 100%;
   border-radius: 3px;  
@@ -208,7 +208,7 @@ table {
   left: -10px;
   height: 27px;
   border-radius: 4px;
-  box-shadow:0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 .search-content {
   width: auto;
@@ -334,7 +334,7 @@ table {
   font-weight: bold;
 }
 .modal-body {
-  padding: 10px;
+  padding: 5px 10px;
 }
 .modal-body p {
   margin: 0 0 5px;
@@ -359,6 +359,10 @@ table {
 }
 .accordion-heading {
   font-size: 15px;
+}
+.panel-group {
+	margin-top: 5px;
+	margin-bottom: 3px;
 }
 .panel-body {
   padding: 5px;
