@@ -541,88 +541,111 @@ if (typeof String.prototype.endsWith !== 'function') {
 };
 'use strict';
 
-//in case js string does not supply startsWith() and endsWith()
-if (typeof String.prototype.startsWith != 'function') {
-  String.prototype.startsWith = function(prefix) {
-    return this.indexOf(prefix) === 0;
-  };
-}
-if (typeof String.prototype.endsWith !== 'function') {
-  String.prototype.endsWith = function(suffix) {
-      return this.indexOf(suffix, this.length - suffix.length) !== -1;
-  };
-}
+var stayMod = angular.module('stay', []);
 
-function parseCssDim(dim) {
-  if (dim.endsWith('px'))
-    dim = dim.substring(0, dim.lastIndexOf('px'));
-  return parseInt(dim);
-}
+stayMod.directive('stay', ['$window', '$timeout', function($window, $timeout) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+    
+      var scrollTimeout;
+      var scLeft = 0, oldScLeft = 0;
+      var scTop = 0, oldScTop = 0;
+      var fixedOffset;
+      var ua = $window.navigator.userAgent;
+            
+      elem.css('position', 'fixed');
 
-// for old mobile browsers
-var stayOmbMod = angular.module('stay', []);
+      if (!fixedOffset) {
+        $timeout(function() {
+          // initialize here to support expression offset values
+          if (attrs.stay == 'left')
+            fixedOffset = elem[0].getBoundingClientRect().top;
+          else if (attrs.stay == 'top') 
+            fixedOffset = elem[0].getBoundingClientRect().left;
+        }, 5);      
+      }
+      
+      function scrollCheck() {
+        if (elem.css('position') == 'absolute') {
+          if (attrs.stay == 'left') {
+            elem.css('position', 'fixed');
+            elem.css('top', (fixedOffset - scTop) + 'px');
+            elem.css('left', '0px');
+          }
+          else if (attrs.stay == 'top') {
+            elem.css('position', 'fixed');
+            elem.css('left', (fixedOffset - scLeft) + 'px');
+            elem.css('top', '0px');
+          }
+        }
+      }
+      
+      var scrollHandler = function() {
+        
+        if (scrollTimeout) {
+          $timeout.cancel(scrollTimeout);
+          scrollTimeout = null;
+        }
+      
+        scLeft = this.pageXOffset;
+        if (scLeft != oldScLeft) {
+          if (attrs.stay == 'left') {
+            if (elem.css('position') == 'absolute') {
+              elem.css('position', 'fixed');
+              elem.css('top', (fixedOffset - scTop) + 'px');
+              elem.css('left', '0px');
+            }
+            if (attrs.stayTrack)
+              scope.$eval(attrs.stayTrack + '(' + scLeft + ')');
+          }
+          else if (attrs.stay == 'top') {
+            if (elem.css('position') == 'fixed') {
+              elem.css('position', 'absolute');
+              elem.css('left', fixedOffset + 'px');
+              elem.css('top', scTop + 'px');
+            }
+          }
+          oldScLeft = scLeft;
+        }
+        
+        scTop = this.pageYOffset;
+        if (scTop != oldScTop) {
+          if (attrs.stay == 'left') {
+            if (elem.css('position') == 'fixed') {
+              elem.css('position', 'absolute');
+              elem.css('top', fixedOffset + 'px');
+              elem.css('left', scLeft + 'px');
+            }
+          }
+          else if (attrs.stay == 'top') {
+            if (elem.css('position') == 'absolute') {
+              elem.css('position', 'fixed');
+              elem.css('left', (fixedOffset - scLeft) + 'px');
+              elem.css('top', '0px');
+            }
+            if (attrs.stayTrack)
+              scope.$eval(attrs.stayTrack + '(' + scTop + ')');            
+          }
+          oldScTop = scTop;
+        }
+        
+        if (attrs.stayRevertToFixed)
+          scrollTimeout = $timeout(scrollCheck, parseInt(attrs.stayRevertToFixed));
+      };
 
-//layout parameters
-var labelWidth = 105; 
-var headerHeight = 50;
-for (var i = 0; i < document.styleSheets.length; i++) {
-  var sheet = document.styleSheets[i];
-  if (sheet.href !== null && sheet.href.endsWith('mythling.css'))  { // allows override (my-mythling.css)
-    for (var j = 0; j < sheet.cssRules.length; j++) {
-      var rule = sheet.cssRules[j];
-      if (rule.selectorText === '.header-height')
-        headerHeight = parseCssDim(rule.style.height);
-      else if (rule.selectorText === '.label-width')
-        labelWidth = parseCssDim(rule.style.width);
+      angular.element($window).bind('scroll', scrollHandler);
+      
+      elem.on('$destroy', function() {
+        $timeout.cancel(scrollCheck);
+      });
+      
+      scope.$on('$destroy', function() {
+        angular.element($window).unbind('scroll', scrollHandler);
+      });
     }
-  }
-}
-
-var timeslotRowA, channelColA, timeslotRowF, channelColF;
-
-var sl,oldSl = 0;
-var st,oldSt = 0;
-
-document.addEventListener('DOMContentLoaded', function(event) { 
-  timeslotRowA = document.getElementById('timeslot-row-a');
-  channelColA = document.getElementById('channel-column-a');
-  timeslotRowF = document.getElementById('timeslot-row-f');
-  channelColF = document.getElementById('channel-column-f');
-});
-
-function scrollHandler() {
-  sl = window.pageXOffset;
-  if (sl != oldSl) {
-    timeslotRowF.style.visibility = 'hidden';
-    timeslotRowA.style.visibility = 'visible';
-    channelColA.style.visibility = 'hidden';
-    channelColF.style.visibility = 'visible';
-    
-    timeslotRowF.style.left = (labelWidth - sl) + 'px';
-    channelColA.style.left = sl + 'px';
-    
-    oldSl = sl;
-    setPosition(sl);
-  }
-
-  st = window.pageYOffset;
-  if (st != oldSt) {
-    channelColF.style.visibility = 'hidden';
-    channelColA.style.visibility = 'visible';
-    timeslotRowA.style.visibility = 'hidden';
-    timeslotRowF.style.visibility = 'visible';
-    
-    channelColF.style.top = (headerHeight - st) + 'px';
-    
-    timeslotRowA.style.top = st + 'px';
-    
-    oldSt = st;
-  }
-}
-
-window.onscroll = function() {
-  scrollHandler();
-};;
+  };
+}]);;
 'use strict';
 
 var epgCalendar = angular.module('epgCalendar', []);

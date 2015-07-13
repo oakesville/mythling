@@ -1,21 +1,20 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta http-equiv="x-ua-compatible" content="IE=Edge">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<meta name="application-name" content="mythling-epg" data-version="1.2.0">
-<title>Mythling EPG</title>
-<link rel="stylesheet" href="css/bootstrap.css">
-<link rel="stylesheet" href="css/mythling.css">
-<link rel="icon" type="image/png" href="images/icon.png">
-<script src="js/angular/angular.min.js"></script>
-<script src="js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-<script src="js/ng-infinite-scroll-h-fix.min.js"></script>
-<script src="js/mythling-epg.min.js"></script>
+  <meta http-equiv="x-ua-compatible" content="IE=Edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <meta name="application-name" content="mythling-epg" data-version="1.2.0">
+  <title>Mythling EPG</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/mythling.css">
+  <link rel="icon" type="image/png" href="images/icon.png">
+  <script src="js/angular/angular.min.js"></script>
+  <script src="js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script src="js/ng-infinite-scroll-h-fix.min.js"></script>
+  <script src="js/mythling-epg.js"></script>
 </head>
 <body ng-app="epgApp" ng-controller="EpgController">
-
   <div class="guide-status label-width header-height">
     <div class="status-outer">
       <div class="status" ng-controller="EpgCalController">
@@ -54,13 +53,13 @@
   <div class="listings" ng-style="::{marginLeft:labelWidth+'px',marginTop:headerHeight+'px'}" 
     infinite-scroll="guideData.nextPage()" 
     infinite-scroll-horizontal="true"
-    infinite-scroll-disabled="bufferSize == 0 || guideData.busy" 
+    infinite-scroll-disabled="bufferSize == 0" 
     infinite-scroll-distance="bufferSize">
     <div class="channel-row" ng-repeat="channel in guideData.channels">
       <div class="program-outer" ng-repeat="program in channel.programs">
         <div class="program row-height" popover-template="'views/menu.html'" popover-trigger="popShow" popover-placement="{{popPlace}}"
           pop-click ng-style="::{width:program.width+'px'}">
-          <div id="{{::program.id}}" class="program-inner {{program.willRecord ? 'recording' : ''}}" 
+          <div id="{{::program.id}}" class="program-inner" ng-class="{'program-record': program.willRecord}" 
             tabIndex="{{::program.index}}" data-seq="{{::program.seq}}" data-offset="{{::program.offset}}">
             <span class="program-title">{{::program.Title}}</span><br/>{{::program.subTitle}}
           </div>

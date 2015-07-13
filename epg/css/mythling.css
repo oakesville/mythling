@@ -18,17 +18,17 @@ table {
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
-.slot-width {
-  width: 250px;
-}
 .header-height {
-  height: 53px;
+  height: 60px;
 }
 .label-width {
-  width: 110px;
+  width: 115px;
 }
 .row-height {
-  height: 60px;
+  height: 58px;
+}
+.slot-width {
+  width: 250px;
 }
 .guide-status {
   position: fixed;
@@ -54,29 +54,35 @@ table {
   cursor: default;
   text-align: center;
   margin-top: 1px;
+  margin-left: 1px;
   padding: 1px; 
-  height: 22px;
-  border: 1px solid gray;
-  border-radius: 3px;  
+  padding-right: 2px;
+  width: 107px;
+  height: 24px;
+  border: 1px solid #607d8b;
+  border-radius: 3px;
   background-color: #eceff1;  
-  background: linear-gradient(to top, #cfd8dc, white); 
+  background: linear-gradient(to top, #cfd8dc, white);
+  box-shadow: 2px 1px 4px #424242;  
 }
 .calendar-outer {
   float: left;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 .search-outer {
   float: right;
-  margin-top: 1px;
+  margin-top: 2px;
+  padding-right: 2px;
 }
 .action-button {
   cursor: default;
   padding: 0;
   background-color: transparent;
-  border: 1px solid gray;
+  border: 1px solid #607d8b;
   border-radius: 3px;
   margin: 2px 1px 1px 1px;
   outline: none;
+  box-shadow: 2px 2px 4px #424242;  
 }
 .action-button:focus {
   border: 2px solid blue;
@@ -102,6 +108,7 @@ table {
   color: white;
   background-color: #455a64;
   text-align: center;
+  padding-top: 3px;
   height: 100%;
   width: 100%;
   border-radius: 3px;  
@@ -123,7 +130,7 @@ table {
   height: 100%;
   width: 100%;
   border-radius: 3px;
-  padding-left: 3px;
+  padding-left: 5px;
 }
 .channel-row {
 	display: -webkit-inline-flex;
@@ -167,7 +174,13 @@ table {
 .program-title {
   font-size: 18px;
 }
-.recording {
+.program-select {
+  padding: 0;
+  border: 2px solid black;
+  background-color: #90caf9;
+  background: linear-gradient(to top, #64b5f6, #bbdefb);
+}
+.program-record {
   background-color: #80cbc4;
   background: linear-gradient(to top, #80cbc4, #e0f2f1);
 }
@@ -291,6 +304,10 @@ table {
 }
 .dropdown-menu > li > a {
   outline: none;
+  padding: 3px 10px;
+}
+.dropdown-menu > li > a:focus {
+  background-color: transparent;
 }
 .dropdown-menu > li > a:hover {
   color: #262626;
