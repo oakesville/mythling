@@ -135,7 +135,7 @@ public class FireTvEpgActivity extends EpgActivity {
         webView.setWebChromeClient(new AmazonWebChromeClient() {
             public boolean onConsoleMessage(AmazonConsoleMessage consoleMessage) {
                 if (consoleMessage.message().startsWith(CONSOLE_ERROR_TAG)) {
-                    String msg = consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message();
+                    String msg = consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n -> " + consoleMessage.message();
                     Log.e(TAG, msg);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(msg).send();
@@ -143,7 +143,7 @@ public class FireTvEpgActivity extends EpgActivity {
                     return true;
                 }
                 else if (BuildConfig.DEBUG) {
-                    Log.i(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n ->" + consoleMessage.message());
+                    Log.i(TAG, consoleMessage.sourceId() + ":" + consoleMessage.lineNumber() + "\n -> " + consoleMessage.message());
                     return true;
                 }
                 else {
