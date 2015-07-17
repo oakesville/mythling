@@ -190,7 +190,7 @@
     <string name="title_transcode_timeout_dialog">Transcode Timeout (seconds)</string>
     <string name="title_tuner_limit">Tuner Limit</string>
     <string name="title_transcode_job_limit">Transcode Job Limit</string>
-    <string name="message_tuner_limit">Backend tuners available for simultaneous recordings (0 = No limit: Let recordings fail)</string>
+    <string name="message_tuner_limit">Backend tuners available for simultaneous recordings (0 = No limit &#8212; Just let recordings fail)</string>
     <string name="message_transcode_job_limit">Maximum number of simultaneous HLS transcoding jobs Mythling will request (0 = No limit)</string>
     <string name="title_connect_timeout">Connect Timeout</string>
     <string name="title_connect_timeout_dialog">Connect Timeout (seconds)</string>
@@ -364,7 +364,6 @@
     <string name="transcoding_not_started">Transcoding does not seem to have started.</string>
     <string name="recording_conflict">Recording Conflict</string>
     <string name="tuners_in_use_">Recording would exceed max tuners setting:\u0020</string>
-    <string name="delete_recording_to_watch">Delete an ongoing recording to watch this program.</string>
     <string name="confirm_delete">Confirm Delete</string>
     <string name="delete_recording">Delete recording</string>
     <string name="tv">TV</string>

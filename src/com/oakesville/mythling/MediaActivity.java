@@ -1293,7 +1293,8 @@ public abstract class MediaActivity extends Activity {
                     new AlertDialog.Builder(MediaActivity.this)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setTitle(getString(R.string.recording_conflict))
-                            .setMessage(getString(R.string.tuners_in_use_) + ex.getMessage() + "\n" + getString(R.string.delete_recording_to_watch))
+                            .setMessage(getString(R.string.tuners_in_use_) + ex.getMessage())
+                            .setPositiveButton("OK", null)
                             .show();
                 } else {
                     if (ex != null)
