@@ -817,7 +817,10 @@ public abstract class MediaActivity extends Activity {
                         try {
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
                             boolean removed = false;
-                            if (path == null || path.equals(""))
+                            String path = recording.getPath();
+                            if (path.startsWith("/"))
+                                path = path.substring(1);
+                            if (path.equals(""))
                                 removed = mediaList.removeItem(recording);
                             else
                                 removed = mediaList.getCategory(path).removeItem(recording);
@@ -1526,7 +1529,9 @@ public abstract class MediaActivity extends Activity {
                 transcodeItem((Item)getListView().getItemAtPosition(info.position));
                 return true;
             } else if (item.getItemId() == 2) {
-                deleteRecording((Recording)getListView().getItemAtPosition(info.position));
+                Recording rec = (Recording)getListView().getItemAtPosition(info.position);
+                rec.setPath(path);
+                deleteRecording(rec);
                 return true;
             }
         }

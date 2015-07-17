@@ -146,7 +146,9 @@ public class ItemListFragment extends ListFragment {
                 mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
                 return true;
             } else if (item.getItemId() == 2) {
-                mediaActivity.deleteRecording((Recording)getListView().getItemAtPosition(info.position));
+                Recording rec = (Recording)getListView().getItemAtPosition(info.position);
+                rec.setPath(path);
+                mediaActivity.deleteRecording(rec);
                 return true;
             }
         }
