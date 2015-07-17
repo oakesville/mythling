@@ -38,14 +38,39 @@
 
     </FrameLayout>
     
-    <ImageButton
-        android:id="@+id/pagerPlay"
-        android:src="@drawable/play"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:contentDescription="@string/play"
-        android:layout_gravity="center|top" />    
+        android:layout_gravity="center|top">
+    
+        <ImageButton
+            android:id="@+id/pagerPlay"
+            android:src="@drawable/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:contentDescription="@string/play"
+            android:layout_gravity="center|top" />    
+    
+        <ImageButton
+            android:id="@+id/pagerDelete"
+            android:src="@drawable/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:contentDescription="@string/delete"
+            android:layout_gravity="center|top" />
+        
+        <ImageButton
+            android:id="@+id/pagerTranscode"
+            android:src="@drawable/queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:contentDescription="@string/transcode"
+            android:layout_gravity="center|top" />
+    </LinearLayout>    
 
     <ScrollView
         android:id="@+id/detailScroll"

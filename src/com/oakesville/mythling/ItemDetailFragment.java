@@ -53,6 +53,7 @@ import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
@@ -271,11 +272,13 @@ public class ItemDetailFragment extends Fragment {
                 }
             }
 
-            ImageButton button = (ImageButton) detailView.findViewById(R.id.pagerPlay);
+            ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.pagerPlay);
+            ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.pagerDelete);
+            ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.pagerTranscode);
             if (getAppSettings().isTv()) {
                 if (mediaActivity.getListView() != null) {
                     // split view
-                    button.setOnKeyListener(new OnKeyListener() {
+                    playBtn.setOnKeyListener(new OnKeyListener() {
                         public boolean onKey(View v, int keyCode, KeyEvent event) {
                             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                                 if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -289,10 +292,14 @@ public class ItemDetailFragment extends Fragment {
                 }
             }
             else {
-                button.setBackgroundColor(Color.TRANSPARENT);
+                playBtn.setBackgroundColor(Color.TRANSPARENT);
+                deleteBtn.setBackgroundColor(Color.TRANSPARENT);
+                transcodeBtn.setBackgroundColor(Color.TRANSPARENT);
             }
-            button.setVisibility(android.view.View.VISIBLE);
-            button.setOnClickListener(new OnClickListener() {
+            playBtn.setVisibility(android.view.View.VISIBLE);
+            deleteBtn.setVisibility(item.isRecording() ? android.view.View.VISIBLE : android.view.View.GONE);
+            transcodeBtn.setVisibility(android.view.View.VISIBLE);
+            playBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
                     item.setPath(mediaActivity.getPath());
@@ -301,9 +308,21 @@ public class ItemDetailFragment extends Fragment {
                     mediaActivity.playItem(item);
                 }
             });
+            deleteBtn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    Recording recording = (Recording) listable;
+                    mediaActivity.deleteRecording(recording);
+                }
+            });
+            transcodeBtn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    Item item = (Item) listable;
+                    mediaActivity.transcodeItem(item);
+                }
+            });
 
             if (grabFocus)
-                button.requestFocus();
+                playBtn.requestFocus();
 
             if (getAppSettings().isTv())
                 detailView.findViewById(R.id.detailScroll).setFocusable(false);

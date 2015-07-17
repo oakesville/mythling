@@ -31,6 +31,7 @@ import android.widget.ListView;
 
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
+import com.oakesville.mythling.media.Recording;
 
 public class ItemListFragment extends ListFragment {
 
@@ -122,12 +123,14 @@ public class ItemListFragment extends ListFragment {
         if (v == getListView()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
-            if (listable instanceof Item) {
+            if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
                 menu.setHeaderTitle(item.getTitle());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
+                if (item.isRecording())
+                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, 2, 2, getString(R.string.delete));
             }
         }
     }
@@ -141,6 +144,9 @@ public class ItemListFragment extends ListFragment {
                 return true;
             } else if (item.getItemId() == 1) {
                 mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            } else if (item.getItemId() == 2) {
+                mediaActivity.deleteRecording((Recording)getListView().getItemAtPosition(info.position));
                 return true;
             }
         }
