@@ -424,7 +424,7 @@ else if ($type->isSearch())
   echo "  ],\n";
   
   // recordings
-  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";
   $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
@@ -465,7 +465,6 @@ else if ($type->isSearch())
 }
 else
 {
-
   // non-search request
   header("Content-type:application/json");
   $base = null;
@@ -557,7 +556,7 @@ else
   }
   else if ($type->isRecordings())
   {
-    $where = "inner join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
+    $where = "inner join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid) where r.recgroup != 'Deleted'";
     if ($sort == "date")
     {
       $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
