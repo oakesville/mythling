@@ -75,6 +75,10 @@ public class MediaList {
         items.add(item);
     }
 
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
+
     private List<Category> categories = new ArrayList<Category>();
     public List<Category> getCategories() { return categories; }
     public void setCategories(List<Category> cats) { this.categories = cats; }

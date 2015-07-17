@@ -31,13 +31,13 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.media.AllTunersInUseException;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.media.TunerInUseException;
 import com.oakesville.mythling.media.TvShow;
 
 public class Recorder {
@@ -49,6 +49,10 @@ public class Recorder {
     public Recorder(AppSettings appSettings, Map<String,StorageGroup> storageGroups) {
         this.appSettings = appSettings;
         this.storageGroups = storageGroups;
+    }
+
+    public Recorder(AppSettings appSettings) {
+        this.appSettings = appSettings;
     }
 
     private TvShow tvShow;
@@ -73,7 +77,7 @@ public class Recorder {
         } else {
             // schedule the recording
             URL addRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/AddRecordSchedule?" + show.getChanIdStartTimeParams()
-                    + "&EndTime=" + show.getEndTimeParam() + "&Title=" + show.getEncodedTitle() + "&Station=" + show.getCallsign() + "&FindDay=0&FindTime=00:00:00");
+                    + "&EndTime=" + show.getEndTimeParam() + "&Title=" + show.getEncodedTitle() + "&Station=" + show.getCallsign() + "&FindDay=0&FindTime=00:00:00&Type=single");
 
             String addRecJson = new String(getServiceHelper(addRecUrl).post());
             recRuleId = new MythTvParser(appSettings, addRecJson).parseUint();
@@ -128,10 +132,6 @@ public class Recorder {
         boolean deleteResult = new MythTvParser(appSettings, delRecRes).parseBool();
         if (!deleteResult)
             throw new IOException(Localizer.getStringRes(R.string.problem_deleting_recording_) + recording.getTitle());
-
-        // wait for recording to be deleted
-        int lagSeconds = 5; // TODO: prefs
-        Thread.sleep(lagSeconds * 1000);
     }
 
     private Recording getRecording(TvShow tvShow) throws IOException, JSONException, ParseException {
@@ -140,6 +140,7 @@ public class Recorder {
         MediaListParser jsonParser = appSettings.getMediaListParser(recordingsListJson);
         MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings, storageGroups);
         Date now = new Date();
+        int tunersInUse = 0;
         for (Category cat : recordingsList.getCategories()) {
             for (Item item : cat.getItems()) {
                 Recording rec = ((Recording) item);
@@ -149,13 +150,14 @@ public class Recorder {
                     return recording;
                 } else if (!"Deleted".equals(rec.getRecordingGroup()) && rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0) {
                     if (rec.getRecordId() != 0) {
-                        TunerInUseException ex = new TunerInUseException(rec.toString());
-                        ex.setRecording(rec);
-                        throw ex;
+                        tunersInUse++;
                     }
                 }
             }
         }
+        int tunerLimit = appSettings.getTunerLimit();
+        if (tunerLimit != 0 && tunersInUse >= tunerLimit)
+            throw new AllTunersInUseException(tunerLimit);
         return null;
     }
 

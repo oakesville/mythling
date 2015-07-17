@@ -109,7 +109,7 @@ public class Transcoder {
         }
 
         if (streamInfo == null) {
-            if (inProgress >= maxTranscodes) {
+            if (inProgress >= maxTranscodes && maxTranscodes != 0) {
                 throw new RuntimeException(Localizer.getStringRes(R.string.transcode_jobs_running, String.valueOf(inProgress)));
             }
             // add the stream

@@ -31,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -82,7 +81,7 @@ public class WebViewActivity extends Activity {
                     WebView.setWebContentsDebuggingEnabled(true);
 
                 // do not cache in debug
-                webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+                // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             }
 
             // print javascript console output

@@ -73,6 +73,7 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.media.AllTunersInUseException;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
@@ -85,7 +86,6 @@ import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.media.TunerInUseException;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
@@ -787,9 +787,37 @@ public abstract class MediaActivity extends Activity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            // TODO: if TV, schedule recording and start transcode
-                            if (item.isRecording())
-                                new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                            new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                        } catch (MalformedURLException ex) {
+                            stopProgress();
+                            if (BuildConfig.DEBUG)
+                                Log.e(TAG, ex.getMessage(), ex);
+                            if (getAppSettings().isErrorReportingEnabled())
+                                new Reporter(ex).send();
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        stopProgress();
+                        onResume();
+                    }
+                })
+                .show();
+    }
+
+    protected void deleteRecording(final Recording recording) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.confirm_delete))
+                .setMessage(getString(R.string.delete_recording) +  " '" + recording.getTitle() + "'?")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
+                            mediaList.removeItem(recording);
+                            onResume();
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             if (BuildConfig.DEBUG)
@@ -1181,10 +1209,42 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    protected class DeleteRecordingTask extends AsyncTask<URL,Integer,Long> {
+        private Recording recording;
+        private Exception ex;
+
+        public DeleteRecordingTask(Recording recording) {
+            this.recording = recording;
+        }
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                Recorder recorder = new Recorder(getAppSettings());
+                recorder.deleteRecording(recording);
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            stopProgress();
+            if (result != 0L) {
+                if (ex != null)
+                    Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+                onResume();
+            }
+        }
+    }
+
     protected class StreamTvTask extends AsyncTask<URL,Integer,Long> {
         private TvShow tvShow;
         private Recording recording;
-        private Recording recordingToDelete;
         private LiveStreamInfo streamInfo;
         private boolean raw;
         private Exception ex;
@@ -1194,16 +1254,9 @@ public abstract class MediaActivity extends Activity {
             this.raw = raw;
         }
 
-        public StreamTvTask(TvShow tvShow, boolean raw, Recording recordingToDelete) {
-            this(tvShow, raw);
-            this.recordingToDelete = recordingToDelete;
-        }
-
         protected Long doInBackground(URL... urls) {
             try {
                 Recorder recorder = new Recorder(getAppSettings(), storageGroups);
-                if (recordingToDelete != null)
-                    recorder.deleteRecording(recordingToDelete);
                 boolean recordAvail = recorder.scheduleRecording(tvShow);
 
                 if (!recordAvail)
@@ -1236,39 +1289,11 @@ public abstract class MediaActivity extends Activity {
         protected void onPostExecute(Long result) {
             stopProgress();
             if (result != 0L) {
-                if (ex instanceof TunerInUseException) {
+                if (ex instanceof AllTunersInUseException) {
                     new AlertDialog.Builder(MediaActivity.this)
-                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
                             .setTitle(getString(R.string.recording_conflict))
-                            .setMessage(getString(R.string.tuner_in_use_recording_) + "\n" + ex.getMessage() + "\n" + getString(R.string.delete_recording_and_proceed_))
-                            .setPositiveButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    final Recording inProgressRecording = ((TunerInUseException) ex).getRecording();
-                                    new AlertDialog.Builder(MediaActivity.this)
-                                            .setIcon(android.R.drawable.ic_dialog_alert)
-                                            .setTitle(getString(R.string.confirm_delete))
-                                            .setMessage(getString(R.string.delete_in_progress_recording_) + "\n" + inProgressRecording)
-                                            .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    startProgress();
-                                                    new StreamTvTask(tvShow, raw, inProgressRecording).execute();
-                                                }
-                                            })
-                                            .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    stopProgress();
-                                                    onResume();
-                                                }
-                                            })
-                                            .show();
-                                }
-                            })
-                            .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    stopProgress();
-                                    onResume();
-                                }
-                            })
+                            .setMessage(getString(R.string.tuners_in_use_) + ex.getMessage() + "\n" + getString(R.string.delete_recording_to_watch))
                             .show();
                 } else {
                     if (ex != null)
@@ -1470,12 +1495,14 @@ public abstract class MediaActivity extends Activity {
         if (v == getListView()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
-            if (listable instanceof Item) {
+            if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
                 menu.setHeaderTitle(item.getTitle());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
+                if (item.isRecording())
+                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, 2, 2, getString(R.string.delete));
             }
         }
     }
@@ -1489,6 +1516,9 @@ public abstract class MediaActivity extends Activity {
                 return true;
             } else if (item.getItemId() == 1) {
                 transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                return true;
+            } else if (item.getItemId() == 2) {
+                deleteRecording((Recording)getListView().getItemAtPosition(info.position));
                 return true;
             }
         }

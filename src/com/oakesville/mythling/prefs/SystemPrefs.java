@@ -37,6 +37,10 @@ public class SystemPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getTunerTimeout() + " Seconds");
 
+        pref = getPreferenceScreen().findPreference(AppSettings.TUNER_LIMIT);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary("" + appSettings.getTunerLimit());
+
         pref = getPreferenceScreen().findPreference(AppSettings.TRANSCODE_TIMEOUT);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getTranscodeTimeout() + " " + getString(R.string.seconds));

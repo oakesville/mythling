@@ -31,6 +31,13 @@
             android:defaultValue="30"
             android:layout="@layout/pref" />
         <EditTextPreference
+            android:key="tuner_limit"
+            android:title="@string/title_tuner_limit"
+            android:inputType="number"
+            android:defaultValue="0"
+            android:dialogMessage="@string/message_tuner_limit"
+            android:layout="@layout/pref" />
+        <EditTextPreference
             android:key="transcode_timeout"
             android:title="@string/title_transcode_timeout"
             android:dialogTitle="@string/title_transcode_timeout_dialog"

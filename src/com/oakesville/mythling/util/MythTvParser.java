@@ -153,18 +153,20 @@ public class MythTvParser implements MediaListParser {
             JSONArray recs = infoList.getJSONArray("Programs");
             for (int i = 0; i < recs.length(); i++) {
                 JSONObject rec = (JSONObject) recs.get(i);
-                Item recItem = buildRecordingItem(rec, storageGroups);
-                ViewType viewType = appSettings.getMediaSettings().getViewType();
-                if ((viewType == ViewType.list || viewType == ViewType.split) && (sortType == null || sortType == SortType.byTitle)) {
-                    // categorize by title
-                    Category cat = mediaList.getCategory(recItem.getTitle());
-                    if (cat == null) {
-                        cat = new Category(recItem.getTitle(), MediaType.recordings);
-                        mediaList.addCategory(cat);
+                Recording recItem = buildRecordingItem(rec, storageGroups);
+                if (!"Deleted".equals(recItem.getRecordingGroup())) {
+                    ViewType viewType = appSettings.getMediaSettings().getViewType();
+                    if ((viewType == ViewType.list || viewType == ViewType.split) && (sortType == null || sortType == SortType.byTitle)) {
+                        // categorize by title
+                        Category cat = mediaList.getCategory(recItem.getTitle());
+                        if (cat == null) {
+                            cat = new Category(recItem.getTitle(), MediaType.recordings);
+                            mediaList.addCategory(cat);
+                        }
+                        cat.addItem(recItem);
+                    } else {
+                        mediaList.addItem(recItem);
                     }
-                    cat.addItem(recItem);
-                } else {
-                    mediaList.addItem(recItem);
                 }
             }
         } else if (list.has("ProgramGuide")) {

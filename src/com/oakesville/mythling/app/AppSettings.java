@@ -117,6 +117,7 @@ public class AppSettings {
     public static final String MYTHLING_SERVICES_PASSWORD = "mythling_services_password";
     public static final String MYTHLING_VERSION = "mythling_version";
     public static final String TUNER_TIMEOUT = "tuner_timeout";
+    public static final String TUNER_LIMIT = "tuner_limit";
     public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
     public static final String TRANSCODE_JOB_LIMIT = "transcode_job_limit";
     public static final String HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
@@ -834,6 +835,10 @@ public class AppSettings {
 
     public int getTunerTimeout() {
         return Integer.parseInt(getStringPref(TUNER_TIMEOUT, "30").trim());
+    }
+
+    public int getTunerLimit() {
+        return Integer.parseInt(getStringPref(TUNER_LIMIT, "0").trim());
     }
 
     public int getTranscodeTimeout() {
