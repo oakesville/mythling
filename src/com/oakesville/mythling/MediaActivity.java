@@ -816,7 +816,14 @@ public abstract class MediaActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
-                            mediaList.removeItem(recording);
+                            boolean removed = false;
+                            if (path == null || path.equals(""))
+                                removed = mediaList.removeItem(recording);
+                            else
+                                removed = mediaList.getCategory(path).removeItem(recording);
+                            if (removed) {
+                                mediaList.setCount(mediaList.getCount() - 1);
+                            }
                             onResume();
                         } catch (MalformedURLException ex) {
                             stopProgress();

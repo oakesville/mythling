@@ -73,6 +73,10 @@ public class Category implements Listable, Comparable<Category> {
         items.add(item);
     }
 
+    public boolean removeItem(Item item) {
+        return items.remove(item);
+    }
+
     public boolean hasItems() {
         return items != null && items.size() > 0;
     }

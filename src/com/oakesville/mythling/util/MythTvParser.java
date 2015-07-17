@@ -167,6 +167,8 @@ public class MythTvParser implements MediaListParser {
                     } else {
                         mediaList.addItem(recItem);
                     }
+                } else {
+                    mediaList.setCount(mediaList.getCount() - 1); // otherwise reported count will be off
                 }
             }
         } else if (list.has("ProgramGuide")) {

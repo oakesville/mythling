@@ -33,6 +33,7 @@ import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.Reporter;
 
@@ -166,6 +167,9 @@ public class MediaListActivity extends MediaActivity {
     public void sort() throws IOException, JSONException, ParseException {
         super.refresh();
         getAppSettings().setLastLoad(0);
+        SortType sortType = getAppSettings().getMediaSettings().getSortType();
+        if (getMediaType() == MediaType.recordings && (sortType == SortType.byDate || sortType == SortType.byRating))
+            setPath(""); // recordings list will be flattened
         Uri uri = new Uri.Builder().path(getPath()).build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
