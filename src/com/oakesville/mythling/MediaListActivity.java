@@ -20,13 +20,13 @@ import java.text.ParseException;
 
 import org.json.JSONException;
 
-import android.app.FragmentBreadCrumbs;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
@@ -43,7 +43,7 @@ import com.oakesville.mythling.util.Reporter;
 public class MediaListActivity extends MediaActivity {
     private static final String TAG = MediaListActivity.class.getSimpleName();
 
-    private FragmentBreadCrumbs breadCrumbs;
+    private TextView breadCrumbs;
 
     private ListView listView;
     public ListView getListView() { return listView; }
@@ -79,9 +79,8 @@ public class MediaListActivity extends MediaActivity {
         if (!Localizer.getMediaLabel(MediaType.liveTv).equals(getPath()))
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        breadCrumbs = (FragmentBreadCrumbs) findViewById(R.id.breadcrumbs);
-        breadCrumbs.setActivity(this);
-        breadCrumbs.setTitle(getPath(), getPath());
+        breadCrumbs = (TextView) findViewById(R.id.breadcrumbs);
+        breadCrumbs.setText(getPath());
     }
 
     @Override
@@ -128,8 +127,8 @@ public class MediaListActivity extends MediaActivity {
         setMediaType(mediaList.getMediaType());
 
         if (Localizer.getMediaLabel(MediaType.liveTv).equals(getPath())) {
-            String title = getString(R.string.tv) + " (" + mediaList.getRetrieveDateDisplay() + " " + mediaList.getRetrieveTimeDisplay() + ")";
-            breadCrumbs.setTitle(title, title);
+            String bc = getString(R.string.tv) + " (" + mediaList.getRetrieveDateDisplay() + " " + mediaList.getRetrieveTimeDisplay() + ")";
+            breadCrumbs.setText(bc);
         }
 
         setListAdapter(new ListableListAdapter(MediaListActivity.this, getListables().toArray(new Listable[0])));
