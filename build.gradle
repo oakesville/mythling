@@ -49,3 +49,19 @@ android {
         abortOnError false
     }    
 }
+
+task buildMythlingEpg(type: Exec) {
+    workingDir mythlingEpgLoc
+    commandLine 'cmd', '/c', 'grunt', '--no-color'
+}
+
+task getMythlingEpg(type: Copy) {
+    dependsOn buildMythlingEpg
+
+    from("${mythlingEpgLoc}/dist") {
+        exclude 'demo/'
+        exclude 'js/mythling-epg.min.js'
+        exclude 'js/mythling-epg-omb.min.js'
+    }
+    into 'assets/mythling-epg'
+}
