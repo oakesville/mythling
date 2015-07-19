@@ -187,6 +187,12 @@ table {
 .program-details {
   padding-top: 2px;
 }
+.details-status {
+	float: left;
+	font-size: 12px;
+	font-weight: bold;
+	margin-top: 8px;
+}
 .program-category {
   font-style: italic;  
 }

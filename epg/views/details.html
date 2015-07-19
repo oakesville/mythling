@@ -41,7 +41,7 @@
   </div>
 </div>
 <div class="modal-footer">
-  <div ng-if="program.willRecord" style="float:left;">Will Record</div>
+  <div ng-if="program.willRecord" class="details-status">Will Record</div>
   <button class="btn btn-default modal-button" epg-record="single" ng-if="!program.willRecord" ng-click="close(program)">Record This</button>
   <button class="btn btn-default modal-button" epg-record="all" ng-if="!program.willRecord" ng-click="close(program)">Record All</button>
   <button class="btn btn-default modal-button" epg-record="dont" ng-if="program.willRecord" ng-click="close(program)">Don't Record</button>

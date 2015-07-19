@@ -74,7 +74,7 @@ epgApp.controller('EpgController',
   
   $scope.setPosition = function(offset) {
     var slots = Math.floor(offset / $scope.slotWidth);
-    var newCurDate = new Date($scope.guideData.zeroTime.getTime() + slots * 1800000);
+    var newCurDate = new Date($scope.guideData.beginTime.getTime() + slots * 1800000);
     if (newCurDate.getTime() != $scope.guideData.curDate.getTime()) {
       $scope.guideData.curDate = newCurDate;
       if (!$scope.guideData.busy)
@@ -352,7 +352,10 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
       e.preventDefault();
     };
     
+    // startTime is where epg data retrieval begins
     this.setStartTime(startDate);
+    // zeroTime is the absolute beginning from first request
+    this.zeroTime = new Date(this.startTime);
     this.awaitPrime = awaitPrime;
     this.mythlingServices = mythlingServices;
     this.demoMode = demoMode;
@@ -373,7 +376,8 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
     this.startTime.setSeconds(0);
     this.startTime.setMilliseconds(0);
     this.endTime = new Date(this.startTime.getTime() + this.interval);
-    this.zeroTime = new Date(this.startTime);
+    // beginTime is where startTime was set before any scrolling
+    this.beginTime = new Date(this.startTime);
     this.timeslots = [];
     
     this.index = 10;
@@ -645,7 +649,7 @@ var epgCalendar = angular.module('epgCalendar', []);
 
 epgCalendar.controller('EpgCalController', ['$scope', '$timeout', function($scope, $timeout) {
   
-  $scope.minDate = new Date();
+  $scope.minDate = new Date($scope.guideData.zeroTime);
   $scope.maxDate = new Date($scope.minDate.getTime() + 1209600000); // two weeks
   
   $scope.openCalendar = function($event) {
@@ -666,6 +670,9 @@ epgCalendar.controller('EpgCalController', ['$scope', '$timeout', function($scop
   $scope.currentDate = function(newValue) {
     if (newValue) {
       var newTime = new Date(newValue);
+      newTime.setMinutes(newTime.getMinutes() < 30 ? 0 : 30);
+      newTime.setSeconds(0);
+      newTime.setMilliseconds(0);
       var startTime = new Date(newTime);
       startTime.setHours(0);
       startTime.setMinutes(0);
