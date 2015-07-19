@@ -56,8 +56,8 @@ http://192.168.0.69:6544/Content/AddVideoLiveStream?Id=13277
 http://192.168.0.69:6544/Content/GetFile?StorageGroup=Default&FileName=1855_20141127193000.mpg
 
 # MythTV Schedule Recording (FindDay/FindTime are hardcoded)
-http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1682&StartTime=2015-05-08T01:00:00Z&EndTime=2015-05-08T01:30:00&Title=Rehab+Addict&Station=HGTVD&FindDay=0&FindTime=00:00:00
-http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Type=single&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00
+http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1682&Station=HGTVD&StartTime=2015-05-08T01:00:00Z&EndTime=2015-05-08T01:30:00&Title=Rehab+Addict&FindDay=0&FindTime=00:00:00
+http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&Type=single
 # MythTV Schedule Record/Transcode (req. MythTV 0.28)
 http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Type=single&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&AutoTranscode=true
 
@@ -67,6 +67,7 @@ http://192.168.0.69:6544/Status/GetStatus
 http://192.168.0.69:6544/Myth/GetSetting?Key=DefaultTranscoder
 http://192.168.0.69:6544/Myth/GetSetting?Key=VideoStartupDir&HostName=mythbe
 http://192.168.0.69:6544/Myth/GetStorageGroupDirs
+http://192.168.0.69:6544/Capture/GetCaptureCardList
 
 # MythTV Frontend Service Action List
 http://192.168.0.69:6547/Frontend/GetActionList
