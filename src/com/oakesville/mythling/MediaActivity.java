@@ -807,7 +807,7 @@ public abstract class MediaActivity extends Activity {
                 .show();
     }
 
-    protected void deleteRecording(final Recording recording) {
+    protected void deleteRecording(final String itemPath, final Recording recording) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
@@ -817,16 +817,15 @@ public abstract class MediaActivity extends Activity {
                         try {
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
                             boolean removed = false;
-                            String path = recording.getPath();
-                            if (path.startsWith("/"))
-                                path = path.substring(1);
-                            if (path.equals(""))
+                            String remPath = itemPath;
+                            if (remPath.startsWith("/"))
+                                remPath = remPath.substring(1);
+                            if (remPath.equals(""))
                                 removed = mediaList.removeItem(recording);
                             else
-                                removed = mediaList.getCategory(path).removeItem(recording);
-                            if (removed) {
+                                removed = mediaList.getCategory(remPath).removeItem(recording);
+                            if (removed)
                                 mediaList.setCount(mediaList.getCount() - 1);
-                            }
                             onResume();
                         } catch (MalformedURLException ex) {
                             stopProgress();
@@ -1530,8 +1529,7 @@ public abstract class MediaActivity extends Activity {
                 return true;
             } else if (item.getItemId() == 2) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
-                rec.setPath(path);
-                deleteRecording(rec);
+                deleteRecording(path, rec);
                 return true;
             }
         }
