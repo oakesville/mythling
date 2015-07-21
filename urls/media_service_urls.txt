@@ -60,6 +60,13 @@ http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1682&Station=HGTVD&StartTi
 http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&Type=single
 # MythTV Schedule Record/Transcode (req. MythTV 0.28)
 http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Type=single&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&AutoTranscode=true
+# Don't Record
+http://192.168.0.69:6544/Dvr/AddDontRecordSchedule?ChanId=1656&StartTime=2015-07-20T01:30:00Z&NeverRecord=false
+/Dvr/AddDontRecordSchedule?ChanId=1673&StartTime=2015-07-22T11:00:00Z&NeverRecord=true
+
+# Get Recordings
+http://192.168.0.69:6544/Dvr/GetUpcomingList
+http://192.168.0.69:6544/Dvr/GetRecordSchedule?RecordId=181 (not used currently)
 
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
