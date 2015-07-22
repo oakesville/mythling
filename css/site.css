@@ -1,5 +1,77 @@
+body {
+  box-sizing: border-box;
+  color:#373737;
+  background-color: #f2f2f2;
+  font-size: 16px;
+  font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  margin: 15px; 
+}
 .title-image {
 	float: left;
 	margin-right: 12px;
 	margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ebebeb;
+  box-shadow: 0 0 5px #ebebeb;
+  border-radius: 3px;	
+}
+.epg-header {
+  font-family: 'Lucida Grande', Calibri, Helvetica, Arial, sans-serif;	
+	color: black;
+	padding: 20px 10px 30px 30px;	
+	height: 180px;
+}
+.epg-header img {
+	border: 1px solid black;
+  box-shadow: 0 0 5px black;
+}
+.link-button {
+	color: white;
+	background-color: #446e9b;
+	border: 1px solid #3c6189;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 20px;
+	float: left;
+	margin: 0 20px 20px 0;
+	height: 45px;
+  min-width: 120px;
+}
+.link-button a {
+	color: white;
+  padding: 20px;	
+}
+.link-button a:hover {
+	color: white;
+	text-decoration: none;
+}
+.link-button:hover {
+	background-color: #3c6189;
+}
+.pseudo-link {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+}
+.epg-site-header {
+	float: left;
+	width: 540px;
+}
+.epg-site-buttons {
+	margin-top: 45px;
+}
+.button-menu {
+	top: 45px;
+	font-size: 16px;
+}
+.button-menu > li > a {
+	padding: 3px 15px;
+}
+.button-menu > li > a:hover {
+  color: #262626;
+  text-decoration: none;
+  background-color: #b0bec5;
+  border-radius: 3px;
 }
