@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="x-ua-compatible" content="IE=Edge">
+  <meta charset="utf-8" />
+  <meta name="description" content="Mythling : Android frontend for MythTV" />
+  <title>Mythling EPG</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="../css/site.css">
+  <script src="js/angular/angular.min.js"></script>
+  <script src="js/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+  <script src="js/epg-site.js"></script>  
+</head>
+<body ng-app="epgSiteApp" ng-controller="EpgSiteController">
+  <div class="epg-header">
+    <div class="epg-site-header">
+      <img src="../images/mythling.png" alt="Mythling" class="title-image"/>
+      <div>
+        <h1 style="font-size:42px;">Mythling EPG</h1>
+        <h2 id="project_tagline" style="position:relative;top:-20px;">Program Guide for MythTV</h2>
+      </div>
+    </div>
+    <div class="epg-site-buttons">
+      <div class="btn-group" dropdown>
+        <button type="button" class="link-button dropdown-toggle" dropdown-toggle>
+          Demo <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu button-menu" role="menu">
+          <li><a href="#">Most Browsers</a></li>
+          <li><a href="#">Older Browsers</a></li>
+        </ul>
+      </div>  
+      <div class="btn-group" dropdown>
+        <button type="button" class="link-button dropdown-toggle" dropdown-toggle>
+          Download <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu button-menu" role="menu">
+          <li><a href="#">Distribution Zip</a></li>
+          <li><a href="#">Source on GitHub</a></li>
+        </ul>
+      </div>
+    </div>    
+  </div>
+    
+  <div style="clear:both;margin:20px;">
+    <h3><a id="what-it-does" href="#what-it-does"></a>What It Does</h3>
+    <p>Mythling EPG is a streamlined, mobile-first program guide for MythTV.  
+    From your browser, Mythling EPG gives you access to all your upcoming TV listings.
+    From there you can search for programs, schedule recordings, and even initiate transcode jobs.</p>
+    
+    <!-- 
+    <p>It's not meant as a replacement for the full-blown recording rules editors in MythTV's WebFrontend and MythWeb.
+    Instead, its focus is on simplicity and mobile-friendliness.</p>
+     -->
+     
+    <h3><a id="how-to-use" href="#how-to-use"></a>How To Use It</h3>
+    <p>You need MythTV 0.27 or later.  Click the download button above and unpack the distribution zip file into the
+    <a href="link-to-wiki">root directory</a> of your backend's built-in web server.  That's all there is to it!
+    Now point your browser to:<br/>
+    <span class="pseudo-link">http://&lt;backend-ip>:6544/mythling-epg/guide.html</span>
+    (or <span class="pseudo-link">guide-omb.html</span> for older browsers).</p>
+    
+    <p>If you have the <a href="../">Mythling</a> mobile app for Android or Fire TV, then you already have Mythling EPG embedded in
+    the app.  So you don't need to install anything to access the guide from within Mythling (unless you want the latest
+    <a href="wiki-page">development build</a>).</p>
+
+    <h3><a id="further-reading" href="#further-reading"></a>Further Reading</h3>
+    <p>Mythling EPG gives you many advanced options (for example, to view listings for a specific date based on a URL parameter).
+    These options are explained in detail on the Mythling GitHub Wiki:</p>
+    <ul>
+      <li><a href="https://github.com/oakesville/mythling/wiki">https://github.com/oakesville/mythling/wiki</a></li>
+    </ul>
+
+    <h3><a id="get-involved" href="#get-involved"></a>Get Involved</h3>
+    <p>Join the Mythling Users group:</p>
+    <ul>
+      <li><a href="https://groups.google.com/forum/?hl=en#!forum/mythling-users">https://groups.google.com/forum/?hl=en#!forum/mythling-users</a></li>
+    </ul>
+    <p>Contribute to Mythling EPG on GitHub:</p>
+    <ul>
+      <li><a href="https://github.com/oakesville/mythling-epg">https://github.com/oakesville/mythling-epg</a></li>
+    </ul>
+
+  </div>
+
+</body>
+</html>
