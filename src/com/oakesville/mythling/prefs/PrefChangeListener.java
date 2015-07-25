@@ -15,11 +15,11 @@
  */
 package com.oakesville.mythling.prefs;
 
-import com.oakesville.mythling.app.AppSettings;
-
 import android.content.SharedPreferences.Editor;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+
+import com.oakesville.mythling.app.AppSettings;
 
 public class PrefChangeListener implements OnPreferenceChangeListener {
     private boolean triggerCacheRefresh;
@@ -47,6 +47,7 @@ public class PrefChangeListener implements OnPreferenceChangeListener {
         if (triggerCacheRefresh) {
             Editor ed = preference.getEditor();
             ed.putLong(AppSettings.LAST_LOAD, 0);
+            ed.putLong(AppSettings.EPG_LAST_LOAD, 0);
             ed.commit();
         }
         return true;

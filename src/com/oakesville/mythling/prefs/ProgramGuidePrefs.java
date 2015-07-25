@@ -25,20 +25,21 @@ import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 
 public class ProgramGuidePrefs extends PreferenceFragment {
+    private AppSettings appSettings;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getActionBar().setTitle(R.string.title_guide_settings);
         addPreferencesFromResource(R.xml.guide_prefs);
 
-        AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
-
-        // TODO pref change listener that refreshes browser cache instead of data cache
+        appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.HOSTED_EPG);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean hostedEpg = Boolean.valueOf(newValue.toString());
                 getPreferenceScreen().findPreference(AppSettings.HOSTED_EPG_ROOT).setEnabled(hostedEpg);
+                appSettings.setEpgLastLoad(0); // refresh
                 return super.onPreferenceChange(preference, newValue);
             }
         });
@@ -51,26 +52,37 @@ public class ProgramGuidePrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 new AppData(getActivity().getApplicationContext()).clearChannelGroups();
+                appSettings.setEpgLastLoad(0); // refresh
                 return super.onPreferenceChange(preference, newValue);
             }
-
         });
         pref.setSummary(appSettings.getEpgChannelGroup());
 
         SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_OMB);
-        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                appSettings.setEpgLastLoad(0); // refresh
+                return super.onPreferenceChange(preference, newValue);
+            }
+        });
         swPref.setChecked(appSettings.isEpgOmb());
 
         pref = getPreferenceScreen().findPreference(AppSettings.EPG_SCALE);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, "%%") {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                appSettings.setEpgLastLoad(0); // refresh
                 return super.onPreferenceChange(preference, String.valueOf((int)(Float.parseFloat(newValue.toString()) * 100)));
             }
         });
         pref.setSummary(String.valueOf((int)(Float.parseFloat(appSettings.getEpgScale()) * 100)) + "%%");
 
         pref = getPreferenceScreen().findPreference(AppSettings.EPG_PARAMS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                appSettings.setEpgLastLoad(0); // refresh
+                return super.onPreferenceChange(preference, newValue);
+            }
+        });
         pref.setSummary(appSettings.getEpgParams());
     }
 }

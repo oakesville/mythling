@@ -141,6 +141,7 @@ public class AppSettings {
     public static final String EPG_SCALE = "epg_scale";
     public static final String EPG_PARAMS = "epg_params";
     public static final String EPG_SKIP_INTERVAL = "epg_skip_interval";
+    public static final String EPG_LAST_LOAD = "epg_last_load";
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
@@ -316,6 +317,16 @@ public class AppSettings {
      */
     public int getEpgSkipInterval() {
         return getIntPref(EPG_SKIP_INTERVAL, 12);
+    }
+
+    public long getEpgLastLoad() {
+        return getLongPref(EPG_LAST_LOAD, 0);
+    }
+
+    public boolean setEpgLastLoad(long ll) {
+        Editor ed = prefs.edit();
+        ed.putLong(EPG_LAST_LOAD, ll);
+        return ed.commit();
     }
 
     public URL getMythTvServicesBaseUrlWithCredentials() throws MalformedURLException, UnsupportedEncodingException {

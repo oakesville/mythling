@@ -98,7 +98,10 @@
         <activity
             android:name=".EpgActivity"
             android:label="@string/title_activity_guide"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleInstance"
+            android:alwaysRetainTaskState="true"
+            android:taskAffinity="">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.oakesville.mythling.MainActivity" />
@@ -136,7 +139,8 @@
             </intent-filter>
         </receiver>
         <service android:name=".MusicPlaybackService" />
-        <!-- 
+        
+        <!-- TODO: is Google Play auto-update prevented by the following? -->
         <uses-library android:name="com.amazon.webview" android:required="false"/>
         <service
             android:name="org.chromium.content.app.SandboxedProcessService0"
@@ -168,7 +172,7 @@
             android:exported="false"
             android:permission="org.chromium.content_shell.permission.SANDBOX"
             android:process=":sandboxed_process5" />
-         -->            
+        
 </application>
 
 </manifest>

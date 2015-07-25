@@ -21,14 +21,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -38,6 +43,7 @@ import android.widget.Toast;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.ChannelGroup;
+import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Reporter;
@@ -55,11 +61,16 @@ public class EpgActivity extends WebViewActivity {
     private String scale;
     private String channelGroup;
     private Map<String,String> parameters;
+    protected long lastLoad;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null)
+            getWebView().restoreState(savedInstanceState);
+        else
+            getAppSettings().setEpgLastLoad(0);
         if (useDefaultWebView()) {
             getWebView().setWebViewClient(new WebViewClient() {
                 @Override
@@ -114,12 +125,24 @@ public class EpgActivity extends WebViewActivity {
                     else
                         handler.proceed(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
                 }
+
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    lastLoad = System.currentTimeMillis();
+                }
             });
         }
     }
 
     @Override
+    protected void onPause() {
+        getAppSettings().setEpgLastLoad(lastLoad);
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
+        lastLoad = getAppSettings().getEpgLastLoad();
         try {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
@@ -166,6 +189,68 @@ public class EpgActivity extends WebViewActivity {
         }
 
         super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            backToMythling();
+            return true;
+        } else if (item.getItemId() == R.id.menu_settings) {
+            Intent intent = new Intent(this, PrefsActivity.class);
+            intent.putExtra(PrefsActivity.BACK_TO, this.getClass().getName());
+            startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.menu_help) {
+            String url = getString(R.string.url_help);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url), getApplicationContext(), WebViewActivity.class);
+            intent.putExtra(WebViewActivity.BACK_TO, this.getClass().getName());
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backToMythling();
+    }
+
+    protected void backToMythling() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        getWebView().saveState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        getWebView().restoreState(savedInstanceState);
+    }
+
+    @Override
+    protected boolean shouldReload() {
+        lastLoad = getAppSettings().getEpgLastLoad();
+        if (lastLoad > 0) {
+            // if crossed the next half-hour threshold
+            Calendar llCal = Calendar.getInstance();
+            llCal.setTime(new Date(lastLoad));
+            int mins = llCal.get(Calendar.MINUTE);
+            if (mins >= 30)
+                llCal.set(Calendar.MINUTE, 30);
+            else
+                llCal.set(Calendar.MINUTE, 0);
+            return System.currentTimeMillis() - llCal.getTimeInMillis() >= 1800000;
+        } else {
+            return true;
+        }
     }
 
     @Override

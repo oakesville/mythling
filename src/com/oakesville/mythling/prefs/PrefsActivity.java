@@ -23,22 +23,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
+import android.widget.Toast;
 
+import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.WebViewActivity;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
 
 public class PrefsActivity extends PreferenceActivity {
+    public static final String BACK_TO = "back_to";
+    private static final String TAG = PrefsActivity.class.getSimpleName();
+
     private List<Header> headers;
+    private String backTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle(getString(R.string.menu_settings));
+
+        backTo = getIntent().getStringExtra(BACK_TO);
     }
 
     @Override
@@ -82,5 +92,23 @@ public class PrefsActivity extends PreferenceActivity {
         }
 
         super.setListAdapter(new HeaderListAdapter(this, headers));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (backTo != null) {
+            try {
+                startActivity(new Intent(this, Class.forName(backTo)));
+                return;
+            }
+            catch (Exception ex) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+        super.onBackPressed();
     }
 }

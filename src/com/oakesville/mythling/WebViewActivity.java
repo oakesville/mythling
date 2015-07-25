@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -43,12 +44,14 @@ import com.oakesville.mythling.util.Reporter;
 @SuppressLint("SetJavaScriptEnabled")
 public class WebViewActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
+    public static final String BACK_TO = "back_to";
     protected static final String CONSOLE_ERROR_TAG = "ERROR: "; // must match epg.js
 
     private WebView webView;
     protected WebView getWebView() { return webView; }
     private AppSettings appSettings;
     protected AppSettings getAppSettings() { return appSettings; }
+    private String backTo;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,8 @@ public class WebViewActivity extends Activity {
             getActionBar().hide(); // TODO immersive
         else
             getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        backTo = getIntent().getStringExtra(BACK_TO);
 
         if (useDefaultWebView()) {
 
@@ -81,7 +86,7 @@ public class WebViewActivity extends Activity {
                     WebView.setWebContentsDebuggingEnabled(true);
 
                 // do not cache in debug
-                // webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+                webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             }
 
             // print javascript console output
@@ -120,21 +125,27 @@ public class WebViewActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (useDefaultWebView()) {
-            try {
-                if (getUrl() != null) { // indicates don't load yet
-                    String url = getUrl() + getParams();
-                    Log.d(TAG, "Loading mythling-epg URL: " + url);
-                    webView.loadUrl(url);
+        if (shouldReload()) {
+            if (useDefaultWebView()) {
+                try {
+                    if (getUrl() != null) { // null url indicates don't load yet
+                        String url = getUrl() + getParams();
+                        Log.d(TAG, "Loading mythling-epg URL: " + url);
+                        webView.loadUrl(url);
+                    }
+                } catch (Exception ex) {
+                    if (BuildConfig.DEBUG)
+                        Log.e(TAG, ex.getMessage(), ex);
+                    if (appSettings.isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
                 }
-            } catch (Exception ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
-                    new Reporter(ex).send();
-                Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    protected boolean shouldReload() {
+        return true;
     }
 
     protected boolean useDefaultWebView() {
@@ -184,10 +195,25 @@ public class WebViewActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (useDefaultWebView() && webView.canGoBack() == true)
+        if (useDefaultWebView() && webView.canGoBack() == true) {
             webView.goBack();
-        else
+        }
+        else {
+            if (backTo != null) {
+                try {
+                    startActivity(new Intent(this, Class.forName(backTo)));
+                    return;
+                }
+                catch (Exception ex) {
+                    if (BuildConfig.DEBUG)
+                        Log.e(TAG, ex.getMessage(), ex);
+                    if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
             super.onBackPressed();
+        }
     }
 
     protected Map<String,String> getParameters() {
