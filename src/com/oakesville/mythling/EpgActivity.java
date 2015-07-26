@@ -45,7 +45,6 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.ChannelGroup;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Reporter;
 
 public class EpgActivity extends WebViewActivity {
@@ -53,6 +52,8 @@ public class EpgActivity extends WebViewActivity {
 
     protected static final String VIEWPORT
       = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,user-scalable=no\">";
+
+    AppData appData;
 
     // refreshed from appSettings in onResume()
     private String epgUrl;
@@ -66,6 +67,8 @@ public class EpgActivity extends WebViewActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        appData = new AppData(getApplicationContext());
 
         if (savedInstanceState != null)
             getWebView().restoreState(savedInstanceState);
@@ -171,12 +174,17 @@ public class EpgActivity extends WebViewActivity {
             }
             else if (!prefsChannelGroup.equals(channelGroup) || parameters.get("channelGroupId") == null) {
                 channelGroup = prefsChannelGroup;
-                AppData appData = new AppData(getApplicationContext());
-                Map<String,ChannelGroup> channelGroups = appData.readChannelGroups();
-                if (channelGroups == null || !channelGroups.containsKey(channelGroup)) {
+                Map<String,ChannelGroup> channelGroups = appData.getChannelGroups();
+                if (channelGroups == null)
+                    channelGroups = appData.readChannelGroups();
+                if (channelGroups == null) {
                     // needs async channel group retrieval
                     epgUrl = null; // postpone load in super.onResume()
                     new PopulateChannelGroupParamTask().execute((URL)null);
+                }
+                else {
+                    ChannelGroup group = channelGroups.get(channelGroup);
+                    parameters.put("channelGroupId", group == null ? "999" : group.getId());
                 }
             }
         }
@@ -384,22 +392,21 @@ public class EpgActivity extends WebViewActivity {
                     Log.d(TAG, "Retrieving channel groups: " + url);
                     HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
                     String json = new String(helper.get());
-                    Map<String,ChannelGroup> channelGroups = new MythTvParser(getAppSettings(), json).parseChannelGroups();
                     new AppData(getApplicationContext()).writeChannelGroups(json);
-                    ChannelGroup group = channelGroups.get(channelGroup);
-                    if (group != null && group.getId() != null && group.getId().length() > 0)
-                        parameters.put("channelGroupId", group.getId());
-                    else
-                        parameters.put("channelGroupId", "0"); // avoid re-retrieval
                 }
                 return 0L;
             } catch (Exception ex) {
-                this.ex = ex;
+                try {
+                    new AppData(getApplicationContext()).writeChannelGroups("{}"); // prevent infinite re-retrieve
+                    this.ex = ex;
+                }
+                catch (Exception ex2) {
+                    this.ex = ex2;
+                }
                 if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, this.ex.getMessage(), this.ex);
                 if (getAppSettings().isErrorReportingEnabled())
-                    new Reporter(ex).send();
-                parameters.put("channelGroupId", "0"); // avoid re-retrieval
+                    new Reporter(this.ex).send();
                 return -1L;
             }
         }
