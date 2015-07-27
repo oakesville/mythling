@@ -13,6 +13,7 @@
   <script src="js/epg-site.js"></script>  
 </head>
 <body ng-app="epgSiteApp" ng-controller="EpgSiteController">
+<div class="epg-outer">
   <div class="epg-header">
     <div class="epg-site-header">
       <img src="../images/mythling.png" alt="Mythling" class="title-image"/>
@@ -45,23 +46,25 @@
     
   <div style="clear:both;margin:20px;">
     <h3><a id="what-it-does" href="#what-it-does"></a>What It Does</h3>
-    <p>Mythling EPG is a streamlined, mobile-first program guide for MythTV.</p>  
-    <p>From your browser, Mythling EPG gives you access to all your upcoming TV listings.
+    <p class="p-wide">Mythling EPG is a streamlined, mobile-first program guide for MythTV.</p>  
+    <p class="p-wide">From your browser, Mythling EPG gives you access to all your upcoming TV listings.<br>
     You can search for programs, schedule recordings, and even initiate transcode jobs.</p>
     
+    <img src="images/d.png" alt="d" style="border-radius:5px;box-shadowx:0 4px 4px #424242;"/>
+    
     <h3><a id="how-to-use" href="#how-to-use"></a>How To Use It</h3>
-    <p>You need MythTV 0.27 or later.  Click the download button above and unpack the distribution zip file into the
-    <a href="link-to-wiki">root directory</a> of your backend's built-in web server.  That's all there is to it!
+    <p class="p-wide">Click the download button above and unpack the distribution zip file into the
+    <a href="link-to-wiki">root directory</a> of your backend's built-in web server.  That's all there is to it!<br>
     Now point your browser to:<br/>
     <span class="pseudo-link">http://&lt;backend-ip>:6544/mythling-epg/guide.html</span>
     (or <span class="pseudo-link">guide-omb.html</span> for older browsers).</p>
     
-    <p>If you have the <a href="../">Mythling</a> mobile app for Android or Fire TV, then you already have Mythling EPG embedded in
+    <p class="p-wide">If you have the <a href="../">Mythling</a> mobile app for Android or Fire TV, then you already have Mythling EPG embedded in
     the app.  So you don't need to install anything to access the guide from within Mythling (unless you want the latest
     <a href="wiki-page">development build</a>).</p>
 
     <h3><a id="further-reading" href="#further-reading"></a>Further Reading</h3>
-    <p>Mythling EPG supports quite a few user-specified options (for example, to view listings for a specific date).
+    <p class="p-wide">Mythling EPG supports quite a few user-specified options (for example, to view listings for a specific date).
     These parameters are explained in detail on the Mythling GitHub Wiki:</p>
     <ul>
       <li><a href="https://github.com/oakesville/mythling/wiki/Mythling-EPG">https://github.com/oakesville/mythling/wiki/Mythling-EPG</a></li>
@@ -78,6 +81,6 @@
     </ul>
 
   </div>
-
+</div>
 </body>
 </html>

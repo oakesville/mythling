@@ -62,6 +62,15 @@ body {
 .epg-site-buttons {
 	float: right;
 	margin-top: 25px;
+	width: 100%;
+}
+.epg-outer {
+  margin: 0 auto;
+  position: relative;
+  max-width: 750px;	
+}
+.p-wide {
+	width: 650px;
 }
 .button-menu {
 	top: 45px;
