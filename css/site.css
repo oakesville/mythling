@@ -60,6 +60,7 @@ body {
 	width: 540px;
 }
 .epg-site-buttons {
+	float: right;
 	margin-top: 45px;
 }
 .button-menu {
