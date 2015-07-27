@@ -161,7 +161,7 @@ if ($type->isGuide())
   echo ' "AsOf": "' . substr(date(DATE_ISO8601), 0, -5) . 'Z", "Version": "' . $MYTHTV_VERSION . '",' . "\n";
   echo '    "Channels":' . "\n" . '    [' . "\n";
 
-    
+  mysql_set_charset("utf8");
   $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($res);
   $curChan = null;
@@ -241,6 +241,7 @@ else if ($type->isSearch())
     $vQuery = "select intid as id, filename from videometadata " . $vWhere . " order by filename";
     if (isShowQuery())
       echo "vQuery: " . $vQuery . "\n\n";
+    mysql_set_charset("utf8");
     $vRes = mysql_query($vQuery) or die(error("Query failed: " . mysql_error()));
     $vNum = mysql_numrows($vRes);
     echo '  "videos": ' . "\n  [\n";
@@ -578,6 +579,7 @@ else
   if (isShowQuery())
     echo "query: " . $query . "\n\n";
   
+  mysql_set_charset("utf8");
   $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($result);
   $catPaths = array();
@@ -1300,6 +1302,7 @@ function getCastMap()
 {
   $castMap = array();
   $query = "select vmdc.idvideo, group_concat(t.cast SEPARATOR ', ') as actors from videometadatacast vmdc, (select * from videocast) t where t.intid = vmdc.idcast group by vmdc.idvideo";
+  mysql_set_charset("utf8");
   $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($res);
   $i = 0;
@@ -1326,6 +1329,7 @@ function getAlbumArtMap()
   {
     $query = "select albumart_id, song_id from music_albumart where song_id != 0";
   }
+  mysql_set_charset("utf8");  
   $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($res);
   $i = 0;
