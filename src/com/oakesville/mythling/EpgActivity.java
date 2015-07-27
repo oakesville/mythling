@@ -182,7 +182,7 @@ public class EpgActivity extends WebViewActivity {
                         parameters.put(param.substring(0, eq), param.substring(eq + 1));
                 }
             }
-            if (!parameters.containsKey("mythlingServices")) { // honor explicity-set parameter first
+            if (!parameters.containsKey("mythlingServices")) { // honor explicitly-set parameter first
                 if (getAppSettings().isMythlingMediaServices())
                     parameters.put("mythlingServices", "true");
                 else
