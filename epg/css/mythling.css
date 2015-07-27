@@ -61,7 +61,8 @@ table {
   height: 24px;
   border: 1px solid #607d8b;
   border-radius: 3px;
-  background-color: #eceff1;  
+  background-color: #eceff1;
+  background: -webkit-linear-gradient(white, #cfd8dc);
   background: linear-gradient(to top, #cfd8dc, white);
   box-shadow: 2px 1px 4px #424242;  
 }
@@ -155,7 +156,8 @@ table {
   white-space: normal;
   height: 100%;
   width: 100%;
-  background-color: #eceff1;
+  background-color: #f2f5f7;
+  background: -webkit-linear-gradient(white, #cfd8dc);  
   background: linear-gradient(to top, #cfd8dc, white);
   cursor: pointer;
   outline: none;
@@ -163,12 +165,12 @@ table {
 .program-inner:hover {
   padding: 0;
   border: 2px solid black;
-  /* background: linear-gradient(to top, #42a5f5, #bbdefb); */
 }
 .program-inner:focus {
   padding: 0;
   border: 2px solid black;
   background-color: #90caf9;
+  background: -webkit-linear-gradient(#bbdefb, #64b5f6);
   background: linear-gradient(to top, #64b5f6, #bbdefb);
 }
 .program-title {
@@ -178,20 +180,41 @@ table {
   padding: 0;
   border: 2px solid black;
   background-color: #90caf9;
+  background: -webkit-linear-gradient(#bbdefb, #64b5f6);
   background: linear-gradient(to top, #64b5f6, #bbdefb);
 }
 .program-record {
   background-color: #80cbc4;
+  background: -webkit-linear-gradient(#e0f2f1, #80cbc4);
   background: linear-gradient(to top, #80cbc4, #e0f2f1);
+}
+.program-error {
+  background-color: #ef9a9a;
+  background: -webkit-linear-gradient(#ffebee, #ef9a9a);
+  background: linear-gradient(to top, #ef9a9a, #ffebee);
+}
+.program-warn {
+  background-color: #fff176;
+  background: -webkit-linear-gradient(#fffde7, #fff176);
+  background: linear-gradient(to top, #fff176, #fffde7);
 }
 .program-details {
   padding-top: 2px;
 }
 .details-status {
 	float: left;
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: bold;
-	margin-top: 8px;
+	margin: 10px 5px 0 5px;
+}
+.details-record {
+	color: #009688;
+}
+.details-error {
+	color: #f44336;
+}
+.details-warn {
+  color: #f9a825;
 }
 .program-category {
   font-style: italic;  
@@ -204,7 +227,8 @@ table {
 }
 .modal-button {
   background-color: #e8e8e9;
-  /* background: linear-gradient(to top, #eceff1, #b0bec5); */
+  padding: 6px 8px;
+  margin-top: 5px;
 }
 .search-popover {
   background-color: white;
@@ -212,7 +236,7 @@ table {
   position: absolute;
   top: -12px;
   left: -10px;
-  height: 27px;
+  height: 32px;
   border-radius: 4px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
@@ -258,7 +282,6 @@ table {
   font-size: 11px;
   font-weight: normal;
   margin-left: 2px;
-  
 }
 .close-button {
   display: inline-block;
@@ -269,9 +292,12 @@ table {
   border: none;
   background-color: transparent;
 }
+.close-button:hover {
+	outline: none;
+}
 .close-button img {
   background-color: white;
-  padding: 3px;
+  padding: 6px 8px;
   border: 1px solid transparent;
   border-radius: 2px;
 }
@@ -281,7 +307,8 @@ table {
   border-radius: 2px;
 }
 .input-warn {
-  background-color: #80deea;  
+  background-color: #80deea;
+  background: -webkit-linear-gradient(#e0f7fa, #4dd0e1);  
   background: linear-gradient(to top, #4dd0e1, #e0f7fa); 
 }
 
@@ -298,6 +325,7 @@ table {
   height: 100%;
   border: none;
   padding: 0;
+  background: -webkit-linear-gradient(white, #cfd8dc);   
   background: linear-gradient(to top, #cfd8dc, white);  
 }
 
@@ -311,6 +339,18 @@ table {
 .dropdown-menu > li > a {
   outline: none;
   padding: 3px 10px;
+}
+/* disabled menu items */
+.dropdown-menu > li > span {
+  outline: none;
+  padding: 3px 10px;
+  display: block;
+  clear: both;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1.42857143;
+  color: #909090;
+  white-space: nowrap;  
 }
 .dropdown-menu > li > a:focus {
   background-color: transparent;
@@ -330,6 +370,7 @@ table {
 .modal-header {
   padding: 10px;
   background-color: #b0bec5;
+  background: -webkit-linear-gradient(#90a4ae, #eceff1);  
   background: linear-gradient(to top, #eceff1, #90a4ae);
   white-space: nowrap;
 }
@@ -346,11 +387,13 @@ table {
   margin: 0 0 5px;
 }
 .modal-footer {
-  margin-top: 5px;
+  margin-top: 10px;
+  padding: 5px 10px 15px 5px;
 }
 .panel-heading {
   padding: 5px;
   background-color: #b0bec5;
+  background: -webkit-linear-gradient(#90a4ae, #eceff1);  
   background: linear-gradient(to top, #eceff1, #90a4ae);
 }
 .panel-heading a {

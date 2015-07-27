@@ -6,6 +6,59 @@
 var epgApp = angular.module('epgApp', ['epgSearch', 'epgCalendar', 'infinite-scroll', 'stay', 'ui.bootstrap']);
 
 epgApp.constant('ERROR_TAG', 'ERROR: ');
+epgApp.value('RECORD_STATUSES', [
+  // from programtypes.h
+  { status: 'Failing', code: -14, record: false, error: true, description: 'Failing',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'MissedFuture', code: -11, record: false, error: true, description: 'Missed Future',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Tuning', code: -10, record: true, error: false, description: 'Tuning',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Failed', code: -9, record: false, error: true, description: 'Failed',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'TunerBusy', code: -8, record: false, error: true, description: 'Tuner Busy',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'LowDiskSpace', code: -7, record: false, error: true, description: 'Low Disk Space',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Cancelled', code: -6, record: false, error: false, description: 'Cancelled',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Missed', code: -5, record: false, error: false, description: 'Missed',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Aborted', code: -4, record: false, error: false, description: 'Aborted',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Recorded', code: -3, record: true, error: false, description: 'Recorded',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Recording', code: -2, record: true, error: false, description: 'Recording',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'WillRecord', code: -1, record: true, error: false, description: 'Will Record',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Unknown', code: 0, record: false, error: false, description: '',
+    actions: ['single', 'transcode', 'all'] },
+  { status: 'DontRecord', code: 1, record: false, error: false, description: "Don't Record",
+    actions: ['single', 'transcode', 'all'] },
+  { status: 'PreviousRecording', code: 2, record: false, error: false, description: 'Previous Recording',
+    actions: ['single', 'transcode', 'remove'] },
+  { status: 'CurrentRecording', code: 3, record: false, error: false, description: 'Current Recording',
+    actions: ['single', 'transcode', 'remove'] },
+  { status: 'EarlierShowing', code: 4, record: false, error: false, description: 'Earlier Showing',
+    actions: ['single', 'transcode', 'remove'] },
+  { status: 'TooManyRecordings', code: 5, record: false, error: false, description: 'Too Many Recordings',
+    actions: ['single', 'transcode', 'remove'] },
+  { status: 'NotListed', code: 6, record: false, error: true, description: 'Not Listed',
+    actions: [] },
+  { status: 'Conflict', code: 7, record: false, error: false, description: 'Conflict',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'LaterShowing', code: 8, record: false, error: false, description: 'Later Showing',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Repeat', code: 9, record: false, error: false, description: 'Repeat',
+    actions: ['dont', 'never', 'remove'] },
+  { status: 'Inactive', code: 10, record: false, error: false, description: 'Inactive',
+    actions: ['single', 'transcode', 'all'] },
+  { status: 'NeverRecord', code: 11, record: false, error: false, description: 'Never Record',
+    actions: ['single', 'transcode', 'all'] },
+  { status: 'Offline', code: 12, record: false, error: true, description: 'Recorder Offline',
+    actions: [] }
+]);
 
 epgApp.config(['$compileProvider', function($compileProvider) {
   var debugInfo = 'true' == urlParams().angularDebug;
@@ -33,8 +86,8 @@ epgApp.config(['$tooltipProvider', function($tooltipProvider) {
 }]);
 
 epgApp.controller('EpgController', 
-    ['$scope', '$window', '$http', '$timeout', '$location', '$modal', '$filter', 'GuideData', 
-    function($scope, $window, $http, $timeout, $location, $modal, $filter, GuideData) {
+    ['$scope', '$window', '$http', '$timeout', '$location', '$modal', '$filter', 'GuideData', 'RECORD_STATUSES', 
+    function($scope, $window, $http, $timeout, $location, $modal, $filter, GuideData, RECORD_STATUSES) {
 
   console.log('userAgent: ' + $window.navigator.userAgent);
   console.log('location: ' + $window.location);
@@ -64,13 +117,32 @@ epgApp.controller('EpgController',
   console.log('startTime: ' + startTime);
   var guideInterval = params.guideInterval ? parseInt(params.guideInterval) : 12; // hours
   var guideHistory = params.guideHistory ? parseInt(params.guideHistory) : 0; // hours (must be less than interval)
-  $scope.bufferSize = params.bufferSize ? parseInt(params.bufferSize) : 6; // screen widths (say, around 2 hours per)
+  $scope.bufferSize = params.bufferSize ? parseInt(params.bufferSize) : 8; // screen widths (say, around 2 hours per)
   var awaitPrime = params.awaitPrime ? params.awaitPrime == 'true' : false; // whether to disable mobile scroll until loaded
   var channelGroupId = params.channelGroupId ? parseInt(params.channelGroupId) : 0;
   var mythlingServices = params.mythlingServices ? params.mythlingServices == 'true' : false;
   var demoMode = params.demoMode ? params.demoMode == 'true' : false;
+  $scope.revertLabelsToFixed = params.revertLabelsToFixed ? parseInt(params.revertLabelsToFixed) : 0; // ms till revert to fixed
   
   $scope.guideData = new GuideData(startTime, $scope.slotWidth, guideInterval, awaitPrime, guideHistory, channelGroupId, mythlingServices, demoMode);
+  
+  // takes either code or status as input for futureproofing
+  // TODO: make this into a service so it can be used by GuideData
+  $scope.recordStatus = function(input) {
+    var recCode = parseInt(input);
+    if (isNaN(recCode)) {
+      for (var i = 0; i < RECORD_STATUSES.length; i++) {
+        if (RECORD_STATUSES[i].status == input)
+          return RECORD_STATUSES[i];
+      }
+    }
+    else {
+      for (var j = 0; j < RECORD_STATUSES.length; j++) {
+        if (RECORD_STATUSES[j].code == recCode)
+          return RECORD_STATUSES[j];
+      }
+    }
+  };
   
   $scope.setPosition = function(offset) {
     var slots = Math.floor(offset / $scope.slotWidth);
@@ -113,7 +185,7 @@ epgApp.controller('EpgController',
       angular.element(document.getElementById(program.id)).addClass('program-select');
     }, 0);
     
-    if ($scope.guideData.demoMode || !$scope.guideData.isMyth28) {
+    if ($scope.guideData.demoMode) {
       $scope.program = program;
       var modalInstance = $modal.open({
         animation: false,
@@ -166,6 +238,11 @@ epgApp.controller('EpgController',
         if (actors !== '')
           program.actors = actors.substring(0, actors.length - 2);
       }
+      
+      if (Program.Recording && Program.Recording.Status) {
+        var statusCode = parseInt(Program.Recording.Status);
+        program.recStatus = $scope.recordStatus(statusCode);
+      }
 
       $scope.program = program;
       var modalInstance = $modal.open({
@@ -173,6 +250,14 @@ epgApp.controller('EpgController',
         templateUrl: 'views/details.html',
         controller: 'EpgModalController',
         scope: $scope
+      });
+      
+      modalInstance.result.catch(function() {
+        // TODO: better way
+        $timeout(function() {
+          var progElem = document.getElementById(program.id);
+          angular.element(progElem).removeClass('program-select');
+        }, 0);    
       });
     });
   };
@@ -189,12 +274,6 @@ epgApp.controller('EpgController',
 
 epgApp.controller('EpgModalController', ['$scope', '$timeout', '$modalInstance', function($scope, $timeout, $modalInstance) {
   $scope.close = function(program) {
-    // TODO: better way
-    $timeout(function() {
-      var progElem = document.getElementById(program.id);
-      angular.element(progElem).removeClass('program-select');
-      progElem.focus();
-    }, 0);    
     $modalInstance.dismiss('close');
   };
 }]);
@@ -290,13 +369,13 @@ epgApp.directive('blurMe', function() {
   };
 });
 
-epgApp.directive('epgRecord', ['$http', function($http) {
+epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSES', function($http, $timeout, ERROR_TAG, RECORD_STATUSES) {
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
       elem.bind('click', function() {
         var action = attrs.epgRecord;
-        // TODO use a controller
+        // TODO use a controller -- this MUST be refactored
         var url = '/Dvr/';
         if (action == 'single' || action == 'transcode' || action == 'all') {
           url += 'AddRecordSchedule?' + 
@@ -311,9 +390,16 @@ epgApp.directive('epgRecord', ['$http', function($http) {
         else if (action == 'dont' || action == 'never') {
           url += 'AddDontRecordSchedule?' + 
               'ChanId=' + scope.program.channel.ChanId + '&' + 
-              'StartTime=' + scope.program.StartTime + '&' + 
-              'NeverRecord=' + (action == 'never');
+              'StartTime=' + scope.program.StartTime; 
         }
+        else if (action == 'remove') {
+          url += 'GetRecordSchedule?' + 
+              'ChanId=' + scope.program.channel.ChanId + '&' + 
+              'StartTime=' + scope.program.StartTime; 
+        }
+        
+        if (action == 'never')
+          url += 'NeverRecord=true';
         
         if (action == 'transcode')
           url += '&AutoTranscode=true';
@@ -321,11 +407,85 @@ epgApp.directive('epgRecord', ['$http', function($http) {
         scope.fireEpgAction('record');
         console.log('record action url: ' + url);
         if (scope.guideData.demoMode) {
-          scope.program.willRecord = (action == 'single' || action == 'transcode' || action == 'all');
+          if ((action == 'single' || action == 'transcode' || action == 'all'))
+            scope.program.recStatus = RECORD_STATUSES[11];
+          else
+            scope.program.recStatus = RECORD_STATUSES[12];
         }
         else {
           $http.post(url).success(function(data, status, headers, config) {
-            scope.program.willRecord = (action == 'single' || action == 'transcode' || action == 'all');
+            if (action == 'remove') {
+              var recId = data.RecRule.Id;
+              url = '/Dvr/RemoveRecordSchedule?RecordId=' + recId;
+              console.log('remove recording schedule url: ' + url);
+              $http.post(url).success(function(data, status, headers, config) {
+                $timeout(function() {
+                  var upcomingUrl = '/Dvr/GetUpcomingList?ShowAll=true';
+                  $http.get(upcomingUrl).success(function(data, status, headers, config) {
+                    console.log('upcoming list response time: ' + config.responseTime);
+                    // update all guide data for matching titles per upcoming recordings (consider omitting title match) 
+                    var upcoming = data.ProgramList.Programs;
+                    var upcomingForTitle = [];
+                    for (var i = 0; i < upcoming.length; i++) {
+                      if (upcoming[i].Title == scope.program.Title)
+                        upcomingForTitle.push(upcoming[i]);
+                    }
+                    for (var chanNum in scope.guideData.channels) {
+                      for (var startTime in scope.guideData.channels[chanNum].programs) {
+                        var prog = scope.guideData.channels[chanNum].programs[startTime];
+                        if (prog.Title == scope.program.Title) {
+                          var foundUpcoming = null;
+                          for (var j = 0; j < upcomingForTitle.length; j++) {
+                            var upProg = upcomingForTitle[j];
+                            if (upProg.StartTime == prog.StartTime && upProg.Channel.ChanId == prog.channel.ChanId) {
+                              foundUpcoming = upProg;
+                            }
+                          }
+                          if (foundUpcoming === null)
+                            prog.recStatus = RECORD_STATUSES[12];
+                          else
+                            prog.recStatus = scope.recordStatus(foundUpcoming.Recording.Status);
+                        }
+                      }
+                    }
+                  }).error(function(data, status) {
+                    console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
+                  });
+                }, 500);
+              }).error(function(data, status) {
+                console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
+              });
+            }
+            else {
+              $timeout(function() {
+                var upcomingUrl = '/Dvr/GetUpcomingList?ShowAll=true';
+                $http.get(upcomingUrl).success(function(data, status, headers, config) {
+                  console.log('upcoming list response time: ' + config.responseTime);
+                  // update recording status for all matching programs in upcoming recordings
+                  var upcoming = data.ProgramList.Programs;
+                  for (var i = 0; i < upcoming.length; i++) {
+                    var upProg = upcoming[i];
+                    if (upProg.Title == scope.program.Title) {
+                      var chanNum = upProg.Channel.ChanNum;
+                      // pad to 4 digits
+                      while (chanNum.length < 4)
+                        chanNum = '0' + chanNum;
+                      var chan = scope.guideData.channels[chanNum];
+                      if (chan) {
+                        var prog = chan.programs[upProg.StartTime];
+                        if (prog && prog.Title == upProg.Title) {
+                          prog.recStatus = scope.recordStatus(upProg.Recording.Status);
+                        }
+                      }
+                    }
+                  }
+                }).error(function(data, status) {
+                  console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
+                });
+              }, 500);
+            }
+          }).error(function(data, status) {
+            console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
           });
         }
       });
@@ -334,7 +494,7 @@ epgApp.directive('epgRecord', ['$http', function($http) {
 }]);
 
 // GuideData constructor function to encapsulate HTTP and pagination logic
-epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_TAG', function($http, $timeout, $window, $filter, ERROR_TAG) {
+epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_TAG', 'RECORD_STATUSES', function($http, $timeout, $window, $filter, ERROR_TAG, RECORD_STATUSES) {
   var GuideData = function(startDate, slotWidth, intervalHours, awaitPrime, historyHours, channelGroupId, mythlingServices, demoMode) {
     
     this.slotWidth = slotWidth; // width of 1/2 hour
@@ -473,8 +633,13 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
                 prog.offset = channel.progOffset;
                 prog.width = Math.round(this.slotWidth * slots);
                 prog.subTitle = prog.SubTitle ? '"' + prog.SubTitle + '"' : '';
-                prog.willRecord = prog.Recording.Status == '-1' || prog.Recording.Status == '-2' || prog.Recording.Status == '-3' || 
-                    prog.Recording.Status == 'WillRecord' || prog.Recording.Status == 'Recording' || prog.Recording.Status == 'Recorded'; // futureproofing
+                if (prog.Recording && prog.Recording.Status) {
+                  var recCode = parseInt(prog.Recording.Status);
+                  for (var k = 0; k < RECORD_STATUSES.length; k++) {
+                    if (RECORD_STATUSES[k].code == recCode)
+                      prog.recStatus = RECORD_STATUSES[k];
+                  }
+                }
                 prog.channel = channel;
                 prog.id = 'ch' + channel.ChanId + 'pr' + prog.StartTime;
                 prog.seq = 'ch' + chanIdx + 'pr' + channel.progSize;
@@ -558,7 +723,8 @@ if (typeof String.prototype.endsWith !== 'function') {
   String.prototype.endsWith = function(suffix) {
       return this.indexOf(suffix, this.length - suffix.length) !== -1;
   };
-};
+}
+;
 'use strict';
 
 var stayMod = angular.module('stay', []);
@@ -650,8 +816,11 @@ stayMod.directive('stay', ['$window', '$timeout', function($window, $timeout) {
           oldScTop = scTop;
         }
         
-        if (attrs.stayRevertToFixed)
-          scrollTimeout = $timeout(scrollCheck, parseInt(attrs.stayRevertToFixed));
+        if (attrs.stayRevertToFixed) {
+          var revertMs = parseInt(attrs.stayRevertToFixed);
+          if (revertMs > 0)
+            scrollTimeout = $timeout(scrollCheck, revertMs);
+        }
       };
 
       angular.element($window).bind('scroll', scrollHandler);
@@ -759,7 +928,7 @@ epgSearch.controller('EpgSearchController', ['$scope', '$timeout', 'search', fun
     }
     else {
       if (!$scope.guideData.isMyth28)
-        return 'Search requires MythTV 0.28';
+        return 'Available in MythTV 0.28';
       else if ($scope.guideData.demoMode)
         return 'Search not available in demo';
     }

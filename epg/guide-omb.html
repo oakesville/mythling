@@ -71,12 +71,13 @@
       <div class="program-outer" ng-repeat="program in channel.programs">
         <div class="program row-height" popover-template="'views/menu.html'" popover-trigger="popShow" popover-placement="{{popPlace}}"
           pop-click ng-style="::{width:program.width+'px'}">
-          <div id="{{::program.id}}" class="program-inner" ng-class="{'program-record': program.willRecord}" style="white-space:nowrap;" tabIndex="{{::program.index}}">
+          <div id="{{::program.id}}" class="program-inner" style="white-space:nowrap;" tabIndex="{{::program.index}}"
+            ng-class="{'program-record': program.recStatus.record, 'program-error': program.recStatus.error, 'program-warn': program.recStatus.code == 7}">
             <div>
-            <span class="program-title">{{::program.Title}}</span>
+              <span class="program-title">{{::program.Title}}</span>
             </div>
             <div style="float:left;">
-            {{::program.subTitle}}
+              {{::program.subTitle}}
             </div>
           </div>
         </div>

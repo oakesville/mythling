@@ -1,6 +1,6 @@
 <div class="modal-header">
   <span class="modal-title">{{program.Title}}</span>
-  <button type="button" class="close-button" style="float:right;" ng-click="close()">
+  <button type="button" class="close-button" autofocus style="float:right;" ng-click="fireEpgAction('close');close(program);">
     <img src="images/x.png" />
   </button>  
 </div>
@@ -30,7 +30,7 @@
           Not available in demo
         </p>
         <p class="program-details" ng-if="!guideData.isMyth28 && !guideData.demoMode">
-          Cast only available in MythTV 0.28
+          Available in MythTV 0.28
         </p>
         <p class="program-details" ng-if="guideData.isMyth28 && !guideData.demoMode">
           Directed by: {{program.directors}}<br/>
@@ -41,10 +41,21 @@
   </div>
 </div>
 <div class="modal-footer">
-  <div ng-if="program.willRecord" class="details-status">Will Record</div>
-  <button class="btn btn-default modal-button" epg-record="single" ng-if="!program.willRecord" ng-click="close(program)">Record This</button>
-  <button class="btn btn-default modal-button" epg-record="all" ng-if="!program.willRecord" ng-click="close(program)">Record All</button>
-  <button class="btn btn-default modal-button" epg-record="dont" ng-if="program.willRecord" ng-click="close(program)">Don't Record</button>
-  <button class="btn btn-default modal-button" epg-record="never" ng-if="program.willRecord" ng-click="close(program)">Never Record</button>
-  <button class="btn btn-default modal-button" autofocus ng-click="fireEpgAction('close');close(program)">Close</button>
+  <div ng-if="program.recStatus.code != 0" class="details-status"
+    ng-class="{'details-record': program.recStatus.record, 'details-error': program.recStatus.error, 'details-warn': program.recStatus.code == 7}">
+    {{program.recStatus.description}}
+  </div>
+  <button class="btn btn-default modal-button" epg-record="single" ng-if="program.recStatus.actions.indexOf('single') >= 0" 
+    ng-disabled="program.recStatus.error || program.recStatus.code == 7" ng-click="close(program)">Record This</button>
+  <button class="btn btn-default modal-button" epg-record="transcode" ng-if="program.recStatus.actions.indexOf('transcode') >= 0" 
+    ng-disabled="program.recStatus.error || program.recStatus.code == 7" ng-click="close(program)">Record &amp; Transcode</button>
+  <button class="btn btn-default modal-button" epg-record="all" ng-if="program.recStatus.actions.indexOf('all') >= 0" 
+    ng-disabled="program.recStatus.error || program.recStatus.code == 7" ng-click="close(program)">Record All</button>
+    
+  <button class="btn btn-default modal-button" epg-record="dont" ng-if="program.recStatus.actions.indexOf('dont') >= 0" 
+    ng-disabled="!guideData.isMyth28" ng-click="close(program)">Don't Record</button>
+  <button class="btn btn-default modal-button" epg-record="never" ng-if="program.recStatus.actions.indexOf('never') >= 0"
+    ng-disabled="!guideData.isMyth28" ng-click="close(program)">Never Record</button>
+  <button class="btn btn-default modal-button" epg-record="remove" ng-if="program.recStatus.actions.indexOf('remove') >= 0" 
+    ng-click="close(program)">Remove Schedule</button>    
 </div>
