@@ -130,7 +130,7 @@ public class WebViewActivity extends Activity {
                 try {
                     if (getUrl() != null) { // null url indicates don't load yet
                         String url = getUrl() + getParams();
-                        Log.d(TAG, "Loading mythling-epg URL: " + url);
+                        Log.d(TAG, "Loading URL: " + url);
                         webView.loadUrl(url);
                     }
                 } catch (Exception ex) {

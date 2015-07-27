@@ -126,6 +126,7 @@ public class AppData {
     }
 
     public void clearChannelGroups() {
+        channelGroups = null;
         File cacheDir = appContext.getCacheDir();
         File channelGroupsJsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
         if (channelGroupsJsonFile.exists())

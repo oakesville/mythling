@@ -60,7 +60,6 @@ public class EpgActivity extends WebViewActivity {
     private String epgBaseUrl;
     protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale;
-    private String channelGroup;
     private Map<String,String> parameters;
     protected long lastLoad;
 
@@ -69,6 +68,20 @@ public class EpgActivity extends WebViewActivity {
         super.onCreate(savedInstanceState);
 
         appData = new AppData(getApplicationContext());
+
+        try {
+            String channelGroup = getAppSettings().getEpgChannelGroup();
+            if ((appData.getChannelGroups() != null || appData.readChannelGroups() != null)
+                    && appData.getChannelGroups().get(channelGroup) == null)
+                appData.clearChannelGroups(); // force re-retrieve
+        }
+        catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        }
 
         if (savedInstanceState != null)
             getWebView().restoreState(savedInstanceState);
@@ -133,6 +146,13 @@ public class EpgActivity extends WebViewActivity {
                 public void onPageFinished(WebView view, String url) {
                     lastLoad = System.currentTimeMillis();
                 }
+
+                @Override
+                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                    System.out.println("Failed loading: " + failingUrl + " (" + errorCode + ": " + description + ")");
+                    Log.e(TAG, "Failed loading: " + failingUrl + " (" + errorCode + ": " + description + ")");
+                    super.onReceivedError(view, errorCode, description, failingUrl);
+                }
             });
         }
     }
@@ -167,13 +187,11 @@ public class EpgActivity extends WebViewActivity {
                 else
                     parameters.remove("mythlingServices");
             }
-            String prefsChannelGroup = getAppSettings().getEpgChannelGroup();
-            if (prefsChannelGroup == null || prefsChannelGroup.isEmpty()) {
+            String channelGroup = getAppSettings().getEpgChannelGroup();
+            if (channelGroup == null || channelGroup.isEmpty()) {
                 parameters.remove("channelGroupId");
-                channelGroup = prefsChannelGroup;
             }
-            else if (!prefsChannelGroup.equals(channelGroup) || parameters.get("channelGroupId") == null) {
-                channelGroup = prefsChannelGroup;
+            else {
                 Map<String,ChannelGroup> channelGroups = appData.getChannelGroups();
                 if (channelGroups == null)
                     channelGroups = appData.readChannelGroups();
@@ -387,13 +405,12 @@ public class EpgActivity extends WebViewActivity {
 
         protected Long doInBackground(URL... urls) {
             try {
-                if (channelGroup != null && channelGroup.length() > 0) {
-                    String url = getAppSettings().getMythTvServicesBaseUrlWithCredentials() + "/Guide/GetChannelGroupList";
-                    Log.d(TAG, "Retrieving channel groups: " + url);
-                    HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
-                    String json = new String(helper.get());
-                    new AppData(getApplicationContext()).writeChannelGroups(json);
-                }
+                String url = getAppSettings().getMythTvServicesBaseUrlWithCredentials() + "/Guide/GetChannelGroupList";
+                Log.d(TAG, "Retrieving channel groups: " + url);
+                HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
+                helper.setCredentials(getAppSettings().getMythTvServicesUser(), getAppSettings().getMythTvServicesPassword());
+                String json = new String(helper.get());
+                new AppData(getApplicationContext()).writeChannelGroups(json);
                 return 0L;
             } catch (Exception ex) {
                 try {

@@ -259,28 +259,25 @@ public class AppSettings {
      * Excludes credentials (used by webview for comparison in shouldIntercept).
      */
     public URL getEpgBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
-        if (isMythlingMediaServices())
-            return new URL("http://" + getMythlingServiceHost() + ":" + getMythlingWebPort() + "/" + getHostedEpgRoot());
-        else
+        if (isMythlingMediaServices()) {
+            int port = getMythlingWebPort();
+            // extraneous port 80 causes mismatch in EpgActivity shouldInterceptRequest
+            return new URL("http://" + getMythlingServiceHost() + (port == 80 ? "" : ":" + getMythlingWebPort()) + "/" + getHostedEpgRoot());
+        }
+        else {
             return new URL(getMythTvServicesBaseUrl() + "/" + getHostedEpgRoot());
+        }
     }
 
     /**
      * Params are added separately in epg activities.
      */
     public URL getEpgUrl() throws MalformedURLException, UnsupportedEncodingException {
-        String epgUrl;
-        if (isMythlingMediaServices()) {
-            // backend services must be proxied to same host/port as mythling web
-            epgUrl = getMythlingServicesBaseUrlWithCredentials() +  "/" + getHostedEpgRoot();
-        }
-        else {
-            epgUrl = getMythTvServicesBaseUrlWithCredentials() + "/" + getHostedEpgRoot();
-        }
+        URL epgUrl = getEpgBaseUrl();
         if (isEpgOmb())
-            return new URL(epgUrl += "/" + GUIDE_OMB_HTML);
+            return new URL(epgUrl + "/" + GUIDE_OMB_HTML);
         else
-            return new URL(epgUrl += "/" + GUIDE_HTML);
+            return new URL(epgUrl + "/" + GUIDE_HTML);
     }
 
     public boolean isHostedEpg() {
