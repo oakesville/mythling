@@ -17,15 +17,22 @@ body {
   box-shadow: 0 0 5px #ebebeb;
   border-radius: 3px;	
 }
+.epg-title {
+  font-size: 42px;
+  margin-top: 10px;	
+  margin-bottom: 0;
+}
 .epg-header {
   font-family: 'Lucida Grande', Calibri, Helvetica, Arial, sans-serif;	
 	color: black;
-	padding: 20px 10px 30px 30px;	
-	height: 180px;
+	padding: 20px 10px 0 30px;	
 }
 .epg-header img {
 	border: 1px solid black;
   box-shadow: 0 0 5px black;
+}
+.epg-tagline {
+	margin-top: 0;
 }
 .link-button {
 	color: white;
@@ -34,7 +41,6 @@ body {
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 20px;
-	float: left;
 	margin: 0 20px 20px 0;
 	height: 45px;
   min-width: 120px;
@@ -56,13 +62,10 @@ body {
 	font-weight: bold;
 }
 .epg-site-header {
-	float: left;
-	width: 540px;
 }
 .epg-site-buttons {
-	float: right;
-	margin-top: 25px;
-	width: 100%;
+	margin-top: 27px;
+	white-space: nowrap;
 }
 .epg-outer {
   margin: 0 auto;
@@ -71,6 +74,10 @@ body {
 }
 .p-wide {
 	width: 650px;
+}
+.sample-image {
+  margin-bottom: 5px;
+	border-radius: 5px;
 }
 .button-menu {
 	top: 45px;

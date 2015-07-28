@@ -18,30 +18,31 @@
     <div class="epg-site-header">
       <img src="../images/mythling.png" alt="Mythling" class="title-image"/>
       <div>
-        <h1 style="font-size:42px;">Mythling EPG</h1>
-        <h2 id="project_tagline" style="position:relative;top:-20px;">Program Guide for MythTV</h2>
-      </div>
-    </div>
-    <div class="epg-site-buttons">
-      <div class="btn-group" dropdown>
-        <button type="button" class="link-button dropdown-toggle" dropdown-toggle>
-          Demo <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu button-menu" role="menu">
-          <li><a href="guide.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24">Most Browsers</a></li>
-          <li><a href="guide-omb.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24">Older Browsers</a></li>
-        </ul>
-      </div>  
-      <div class="btn-group" dropdown>
-        <button type="button" class="link-button dropdown-toggle" dropdown-toggle>
-          Download <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu button-menu" role="menu">
-          <li><a href="dist/mythling-epg-1.2.0.zip">Distribution Zip</a></li>
-          <li><a href="https://github.com/oakesville/mythling-epg">Source on GitHub</a></li>
-        </ul>
-      </div>
-    </div>    
+        <h1 class="epg-title">Mythling EPG</h1>
+        <h2 id="project_tagline" class="epg-tagline">Program Guide for MythTV</h2>
+        <div class="epg-site-buttons">
+          <div class="btn-group" dropdown>
+            <button type="button" class="link-button dropdown-toggle" dropdown-toggle style="margin-left:15px;">
+              Demo <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu button-menu" role="menu">
+              <li><a href="guide.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24">Most Browsers</a></li>
+              <li><a href="guide-omb.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24">Older Browsers</a></li>
+            </ul>
+          </div>  
+          <div class="btn-group" dropdown>
+            <button type="button" class="link-button dropdown-toggle" dropdown-toggle>
+              Download <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu button-menu" role="menu">
+              <li><a href="dist/mythling-epg-1.2.0.zip">Distribution Zip</a></li>
+              <li><a href="https://github.com/oakesville/mythling-epg">Source on GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>    
+  </div>
+      
   </div>
     
   <div style="clear:both;margin:20px;">
@@ -50,14 +51,14 @@
     <p class="p-wide">From your browser, Mythling EPG gives you access to all your upcoming TV listings.<br>
     You can search for programs, schedule recordings, and even initiate transcode jobs.</p>
     
-    <img src="images/sample.png" alt="sample" style="border-radius:5px;"/>
+    <img src="images/sample.png" alt="sample" class="sample-image"/>
     
     <h3><a id="how-to-use" href="#how-to-use"></a>How To Use It</h3>
     <p class="p-wide">If you have the <a href="../">Mythling</a> mobile app for Android or Fire TV, then you already have Mythling EPG embedded in
     the app.</p>
 
     <p class="p-wide">Otherwise click the download button above and unpack the distribution zip file into the
-    <a href="link-to-wiki">root directory</a> of your backend's web server.  That's all there is to it./p>
+    <a href="link-to-wiki">root directory</a> of your backend's web server.  That's all there is to it.</p>
     <p>Now point your browser to:<br>
     <span class="pseudo-link">http://&lt;backend-ip>:6544/mythling-epg/guide.html</span>
     (or <span class="pseudo-link">guide-omb.html</span> for older browsers).</p>
