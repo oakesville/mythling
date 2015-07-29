@@ -17,6 +17,7 @@ package com.oakesville.mythling.util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.json.JSONException;
 
@@ -109,8 +110,12 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected Long doInBackground(URL... urls) {
             try {
                 URL url = appSettings.getFrontendServiceBaseUrl();
-                if (item.isRecording() || item.isLiveTv())
+                if (item.isRecording()) {
+                    // jump to recordings -- otherwise playback sometimes doesn't work
+                    sendAction("TV Recording Playback");
+                    Thread.sleep(650);
                     url = new URL(url + "/Frontend/PlayRecording?" + ((Recording) item).getChanIdStartTimeParams());
+                }
                 else if (item.isMusic())
                     throw new UnsupportedOperationException(Localizer.getStringRes(R.string.music_not_supported_by_svc_fe_player));
                 else
@@ -145,12 +150,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
 
         protected Long doInBackground(URL... urls) {
             try {
-                URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");
-                HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-                String resJson = new String(poster.post(), "UTF-8");
-                boolean res = new MythTvParser(appSettings, resJson).parseBool();
-                if (!res)
-                    throw new ServiceException(Localizer.getStringRes(R.string.error_stopping_frontend_playback_) + url);
+                sendAction("STOPPLAYBACK");
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
@@ -168,5 +168,17 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                     Toast.makeText(appSettings.getAppContext(), Localizer.getStringRes(R.string.error_frontend_status_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    /**
+     * Must be on background thread.
+     */
+    private void sendAction(String action) throws IOException, JSONException {
+        URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=" + URLEncoder.encode(action, "UTF-8"));
+        HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
+        String resJson = new String(poster.post(), "UTF-8");
+        boolean res = new MythTvParser(appSettings, resJson).parseBool();
+        if (!res)
+            throw new ServiceException(Localizer.getStringRes(R.string.error_performing_frontend_action_) + url);
     }
 }

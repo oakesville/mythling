@@ -387,6 +387,7 @@
     <string name="frontend_playback_failed_">Frontend playback failed for url:\u0020</string>
     <string name="frontend_playback_error_">Frontend playback error:\u0020</string>
     <string name="error_stopping_frontend_playback_">Error stopping frontend playback:\u0020</string>
+    <string name="error_performing_frontend_action_">Error performing frontend action:\u0020</string>
     <string name="transcode_jobs_running">Already %0% transcode jobs running</string>
     <string name="no_live_stream_found">No live stream found.\u0020Please try again.</string>
     <string name="no_stream_available_">No stream available (try increasing transcode timeout):\u0020</string>
