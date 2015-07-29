@@ -147,7 +147,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
             try {
                 URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=STOPPLAYBACK");
                 HttpHelper poster = new HttpHelper(new URL[]{url}, AuthType.None.toString(), appSettings.getPrefs());
-                String resJson = new String(poster.get(), "UTF-8");
+                String resJson = new String(poster.post(), "UTF-8");
                 boolean res = new MythTvParser(appSettings, resJson).parseBool();
                 if (!res)
                     throw new ServiceException(Localizer.getStringRes(R.string.error_stopping_frontend_playback_) + url);
