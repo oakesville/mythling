@@ -121,10 +121,8 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mediaActivity.refreshing)
-            return;
-
-        populate();
+        if (mediaActivity.getListables().size() > idx) // otherwise may not be loaded
+            populate();
     }
 
     private void populate() {

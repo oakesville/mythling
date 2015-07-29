@@ -188,7 +188,6 @@ public abstract class MediaActivity extends Activity {
     private Timer timer;
 
     protected boolean modeSwitch; // tracking for back button
-    protected boolean refreshing;
 
     public void refresh() {
         currentTop = 0;
@@ -973,7 +972,6 @@ public abstract class MediaActivity extends Activity {
             if (getAppSettings().getMediaSettings().getType() == MediaType.music && !supportsMusic())
                 getAppSettings().setMediaType(MediaType.valueOf(AppSettings.DEFAULT_MEDIA_TYPE));
 
-            refreshing = true;
             new RefreshTask().execute(getAppSettings().getUrls(getAppSettings().getMediaListUrl()));
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -1121,7 +1119,6 @@ public abstract class MediaActivity extends Activity {
                         new Reporter(ex).send();
                 }
             }
-            refreshing = false;
         }
     }
 
