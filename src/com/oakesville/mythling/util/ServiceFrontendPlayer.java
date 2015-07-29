@@ -113,7 +113,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 if (item.isRecording()) {
                     // jump to recordings -- otherwise playback sometimes doesn't work
                     sendAction("TV Recording Playback");
-                    Thread.sleep(650);
+                    Thread.sleep(500);
                     url = new URL(url + "/Frontend/PlayRecording?" + ((Recording) item).getChanIdStartTimeParams());
                 }
                 else if (item.isMusic())
@@ -151,6 +151,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected Long doInBackground(URL... urls) {
             try {
                 sendAction("STOPPLAYBACK");
+                Thread.sleep(250);
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
