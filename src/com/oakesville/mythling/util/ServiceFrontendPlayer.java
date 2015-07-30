@@ -172,7 +172,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
     }
 
     /**
-     * Must be on background thread.
+     * Perform a MythTV SendAction.  Must be on background thread.
      */
     private void sendAction(String action) throws IOException, JSONException {
         URL url = new URL(appSettings.getFrontendServiceBaseUrl() + "/Frontend/SendAction?Action=" + URLEncoder.encode(action, "UTF-8"));
