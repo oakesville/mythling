@@ -309,7 +309,8 @@ public class ItemDetailFragment extends Fragment {
             deleteBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Recording recording = (Recording) listable;
-                    mediaActivity.deleteRecording(mediaActivity.getPath(), recording);
+                    recording.setPath(mediaActivity.getPath());
+                    mediaActivity.deleteRecording(recording, idx);
                 }
             });
             transcodeBtn.setOnClickListener(new OnClickListener() {

@@ -653,7 +653,7 @@ public abstract class MediaActivity extends Activity {
                     }
                     else {
                         startProgress();
-                        Toast.makeText(getApplicationContext(), getString(R.string.playing) + " '" + item.getTitle() + "'", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.playing) + ": " + item.getTitle(), Toast.LENGTH_LONG).show();
                         Intent playMusic = new Intent(this, MusicPlaybackService.class);
                         playMusic.setData(Uri.parse(musicUrl));
                         playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
@@ -669,7 +669,7 @@ public abstract class MediaActivity extends Activity {
                     }
                 } else {
                     StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
-                    dialog.setMessage(item.getTitle());
+                    dialog.setMessage(item.getLabel());
                     dialog.setListener(new StreamDialogListener() {
                         public void onClickHls() {
                             startProgress();
@@ -689,7 +689,7 @@ public abstract class MediaActivity extends Activity {
 
                         public void onClickCancel() {
                             stopProgress();
-                            onResume();
+                            // onResume();
                         }
                     });
 
@@ -713,7 +713,7 @@ public abstract class MediaActivity extends Activity {
                         dialog.setMessage(dialogMessage);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
                     } else  {
-                        // detail or split mode -- no dialog unless preferred stream mode is unknown
+                        // detail or split mode -- no dialog unless preferred stream is unknown
                         if (appSettings.isPreferHls(item.getFormat())) {
                             startProgress();
                             new StreamHlsTask(item).execute((URL) null);
@@ -782,7 +782,7 @@ public abstract class MediaActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle(getString(R.string.transcode))
-                .setMessage(getString(R.string.begin_transcode) +  " '" + item.getTitle() + "'?")
+                .setMessage(getString(R.string.begin_transcode) +  ":\n" + item.getLabel())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -800,32 +800,48 @@ public abstract class MediaActivity extends Activity {
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         stopProgress();
-                        onResume();
+                        // onResume();
                     }
                 })
                 .show();
     }
 
-    protected void deleteRecording(final String itemPath, final Recording recording) {
+    protected void deleteRecording(final Recording recording, final int pos) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
-                .setMessage(getString(R.string.delete_recording) +  " '" + recording.getTitle() + "'?")
+                .setMessage(getString(R.string.delete_recording) +  ":\n" + recording.getLabel())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
+                            int newPos = pos == 0 ? 0 : pos - 1;
+                            if (isSplitView()) {
+                                getListView().performItemClick(
+                                        getListView().getAdapter().getView(newPos, null, null), newPos,
+                                        getListView().getAdapter().getItemId(newPos));
+                            }
+                            else {
+                                getListView().setSelection(newPos);
+                            }
+
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
-                            boolean removed = false;
-                            String remPath = itemPath;
+
+                            // remove in this same thread to avoid confusing user
+                            String remPath = recording.getPath();
                             if (remPath.startsWith("/"))
                                 remPath = remPath.substring(1);
+                            boolean removed = false;
                             if (remPath.equals(""))
                                 removed = mediaList.removeItem(recording);
                             else
                                 removed = mediaList.getCategory(remPath).removeItem(recording);
-                            if (removed)
+                            if (removed) {
                                 mediaList.setCount(mediaList.getCount() - 1);
-                            onResume();
+                                ((ListableListAdapter)getListView().getAdapter()).notifyDataSetChanged();
+//                                if (MediaActivity.this.is instanceof MainActivity)
+//                                  onResume();
+                            }
+
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             if (BuildConfig.DEBUG)
@@ -839,7 +855,7 @@ public abstract class MediaActivity extends Activity {
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         stopProgress();
-                        onResume();
+                        // onResume();
                     }
                 })
                 .show();
@@ -891,7 +907,7 @@ public abstract class MediaActivity extends Activity {
                 // prepare for a progress bar dialog
                 countdownDialog = new ProgressDialog(this);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ": " + item.getLabel());
+                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ":\n" + item.getLabel());
                 countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 countdownDialog.setProgressPercentFormat(null);
                 countdownDialog.setProgressNumberFormat(null);
@@ -1504,7 +1520,15 @@ public abstract class MediaActivity extends Activity {
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
             if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
-                menu.setHeaderTitle(item.getTitle());
+                menu.setHeaderTitle(item.getLabel());
+                if (isSplitView()) {
+                    getListView().performItemClick(
+                            getListView().getChildAt(info.position), info.position,
+                            getListView().getAdapter().getItemId(info.position));
+                }
+                else {
+                    getListView().setItemChecked(info.position, true);
+                }
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
@@ -1519,14 +1543,19 @@ public abstract class MediaActivity extends Activity {
         if (item.getGroupId() == MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             if (item.getItemId() == 0) {
-                playItem((Item)getListView().getItemAtPosition(info.position));
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(getPath());
+                playItem(it);
                 return true;
             } else if (item.getItemId() == 1) {
-                transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(getPath());
+                transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
-                deleteRecording(path, rec);
+                rec.setPath(path);
+                deleteRecording(rec, info.position);
                 return true;
             }
         }

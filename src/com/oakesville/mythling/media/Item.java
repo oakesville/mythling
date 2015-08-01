@@ -154,7 +154,7 @@ public abstract class Item implements Listable {
     }
 
     public String getDialogText() {
-        return getText();
+        return getTitle() + getExtraText();
     }
 
     public boolean isSearchResult() {

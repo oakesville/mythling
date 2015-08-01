@@ -225,6 +225,7 @@ public class TvShow extends Item {
         return buf.toString();
     }
 
+    @Override
     public String getLabel() {
         String label = getTitle();
         if (isShowMovie() && getYear() > 0)

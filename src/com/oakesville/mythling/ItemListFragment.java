@@ -40,7 +40,6 @@ public class ItemListFragment extends ListFragment {
     private String path;
     private int preSelIdx = -1;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +124,7 @@ public class ItemListFragment extends ListFragment {
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
             if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
-                menu.setHeaderTitle(item.getTitle());
+                menu.setHeaderTitle(item.getLabel());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
@@ -140,14 +139,19 @@ public class ItemListFragment extends ListFragment {
         if (item.getGroupId() == MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             if (item.getItemId() == 0) {
-                mediaActivity.playItem((Item)getListView().getItemAtPosition(info.position));
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(path);
+                mediaActivity.playItem(it);
                 return true;
             } else if (item.getItemId() == 1) {
-                mediaActivity.transcodeItem((Item)getListView().getItemAtPosition(info.position));
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(path);
+                mediaActivity.transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
-                mediaActivity.deleteRecording(path, rec);
+                rec.setPath(path);
+                mediaActivity.deleteRecording(rec, info.position);
                 return true;
             }
         }
