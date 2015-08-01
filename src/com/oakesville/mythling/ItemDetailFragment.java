@@ -310,7 +310,10 @@ public class ItemDetailFragment extends Fragment {
                 public void onClick(View v) {
                     Recording recording = (Recording) listable;
                     recording.setPath(mediaActivity.getPath());
-                    mediaActivity.deleteRecording(recording, idx);
+                    int size = mediaActivity.getListables().size();
+                    if (size == 1 || size == mediaActivity.getSelItemIndex() + 1)
+                        mediaActivity.setSelItemIndex(mediaActivity.getSelItemIndex() - 1);
+                    mediaActivity.deleteRecording(recording);
                 }
             });
             transcodeBtn.setOnClickListener(new OnClickListener() {

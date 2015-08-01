@@ -806,7 +806,7 @@ public abstract class MediaActivity extends Activity {
                 .show();
     }
 
-    protected void deleteRecording(final Recording recording, final int pos) {
+    protected void deleteRecording(final Recording recording) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
@@ -814,16 +814,6 @@ public abstract class MediaActivity extends Activity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            int newPos = pos == 0 ? 0 : pos - 1;
-                            if (isSplitView()) {
-                                getListView().performItemClick(
-                                        getListView().getAdapter().getView(newPos, null, null), newPos,
-                                        getListView().getAdapter().getItemId(newPos));
-                            }
-                            else {
-                                getListView().setSelection(newPos);
-                            }
-
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
 
                             // remove in this same thread to avoid confusing user
@@ -837,11 +827,8 @@ public abstract class MediaActivity extends Activity {
                                 removed = mediaList.getCategory(remPath).removeItem(recording);
                             if (removed) {
                                 mediaList.setCount(mediaList.getCount() - 1);
-                                ((ListableListAdapter)getListView().getAdapter()).notifyDataSetChanged();
-//                                if (MediaActivity.this.is instanceof MainActivity)
-//                                  onResume();
+                                onResume();
                             }
-
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             if (BuildConfig.DEBUG)
@@ -855,7 +842,6 @@ public abstract class MediaActivity extends Activity {
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         stopProgress();
-                        // onResume();
                     }
                 })
                 .show();
@@ -1555,7 +1541,10 @@ public abstract class MediaActivity extends Activity {
             } else if (item.getItemId() == 2) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
                 rec.setPath(path);
-                deleteRecording(rec, info.position);
+                int size = getListables().size();
+                if (size == 1 || size == info.position + 1)
+                    setSelItemIndex(getSelItemIndex() - 1);
+                deleteRecording(rec);
                 return true;
             }
         }
