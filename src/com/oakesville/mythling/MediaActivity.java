@@ -1474,7 +1474,7 @@ public abstract class MediaActivity extends Activity {
     }
 
     void initSplitView() {
-        if (selItemIndex != -1) {
+        if (selItemIndex != -1 && getListables().size() > 0) {
             getListView().setItemChecked(selItemIndex, true);
             Listable preSel = getListables().get(selItemIndex);
             if (preSel instanceof Item)
