@@ -149,7 +149,7 @@ public class MediaListActivity extends MediaActivity {
                 initSplitView();
             listView.requestFocus();
         } else {
-            handleEmptyMediaList(); // really shouldn't happen
+            handleEmptyMediaList(); // can happen when item deleted from detail frag in split mode
         }
     }
 
