@@ -247,6 +247,7 @@ public class EpgActivity extends WebViewActivity {
     protected void backToMythling() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PrefsActivity.BACK_TO, this.getClass().getName());
         startActivity(intent);
     }
 

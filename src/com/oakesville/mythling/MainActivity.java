@@ -45,6 +45,8 @@ public class MainActivity extends MediaActivity {
     private ListView listView;
     public ListView getListView() { return listView; }
 
+    private String backTo;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,8 @@ public class MainActivity extends MediaActivity {
 
         createProgressBar();
 
+        backTo = getIntent().getStringExtra("back_to");
+
         setPathFromIntent();
 
         setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
@@ -100,6 +104,8 @@ public class MainActivity extends MediaActivity {
         if (getAppSettings().getMediaSettings().getViewType() == ViewType.detail) {
             Intent intent = new Intent(this, MediaPagerActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (backTo != null)
+                intent.putExtra("back_to", backTo);
             startActivity(intent);
             finish();
             return;
@@ -131,6 +137,16 @@ public class MainActivity extends MediaActivity {
         super.onResume();
     }
 
+    public void onBackPressed() {
+        if (EpgActivity.class.getName().equals(backTo)) {
+            Intent a = new Intent(Intent.ACTION_MAIN);
+            a.addCategory(Intent.CATEGORY_HOME);
+            a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(a);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     public void refresh() {
         super.refresh();

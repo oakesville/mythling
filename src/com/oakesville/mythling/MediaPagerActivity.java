@@ -56,6 +56,7 @@ public class MediaPagerActivity extends MediaActivity {
     private MediaPagerAdapter pagerAdapter;
 
     private SeekBar positionBar;
+    private String backTo;
 
     public String getCharSet() {
         return mediaList.getCharSet();
@@ -70,6 +71,8 @@ public class MediaPagerActivity extends MediaActivity {
             setContentView(R.layout.pager);
 
         createProgressBar();
+
+        backTo = getIntent().getStringExtra("back_to");
 
         setPathFromIntent();
 
@@ -236,7 +239,12 @@ public class MediaPagerActivity extends MediaActivity {
 
     @Override
     public void onBackPressed() {
-        if (modeSwitch) {
+        if (EpgActivity.class.getName().equals(backTo)) {
+            Intent a = new Intent(Intent.ACTION_MAIN);
+            a.addCategory(Intent.CATEGORY_HOME);
+            a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(a);
+        } else if (modeSwitch) {
             modeSwitch = false;
             Intent intent = new Intent(this, MediaPagerActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
