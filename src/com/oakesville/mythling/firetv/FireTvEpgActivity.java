@@ -104,6 +104,8 @@ public class FireTvEpgActivity extends EpgActivity {
         webView.setWebViewClient(new AmazonWebViewClient() {
             @Override
             public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView view, String url) {
+                if (getEpgBaseUrl() == null)
+                    populateParams();
                 if (url.startsWith(getEpgBaseUrl())) {
                     String localPath = AppSettings.MYTHLING_EPG + url.substring(getEpgBaseUrl().length());
                     if (localPath.indexOf('?') > 0)

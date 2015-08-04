@@ -92,6 +92,8 @@ public class EpgActivity extends WebViewActivity {
             getWebView().setWebViewClient(new WebViewClient() {
                 @Override
                 public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                    if (epgBaseUrl == null)
+                        populateParams();
                     if (url.startsWith(epgBaseUrl)) {
                         if (getAppSettings().isHostedEpg()) {
                             if (BuildConfig.DEBUG)
@@ -167,6 +169,11 @@ public class EpgActivity extends WebViewActivity {
     @Override
     protected void onResume() {
         lastLoad = getAppSettings().getEpgLastLoad();
+        populateParams();
+        super.onResume();
+    }
+
+    protected void populateParams() {
         try {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
@@ -214,8 +221,6 @@ public class EpgActivity extends WebViewActivity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
-
-        super.onResume();
     }
 
     @Override
