@@ -1072,7 +1072,6 @@ public class AppSettings {
             PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
             mythlingVersion = info.versionName;
         }
-        Localizer.initialize(this);
     }
 
     public static String getMythlingVersion() {

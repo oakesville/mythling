@@ -201,6 +201,8 @@ public abstract class MediaActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         appSettings = new AppSettings(getApplicationContext());
+        if (!Localizer.isInitialized())
+            Localizer.initialize(getAppSettings());
     }
 
     @Override
@@ -867,6 +869,12 @@ public abstract class MediaActivity extends Activity {
         startActivity(intent);
     }
 
+    public void goMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     protected void goSplitView() {
         findViewById(R.id.detail_container).setVisibility(View.VISIBLE);
     }
@@ -935,7 +943,6 @@ public abstract class MediaActivity extends Activity {
         stopTimer();
         super.onStop();
     }
-
 
     private void stopTimer() {
         if (timer != null)

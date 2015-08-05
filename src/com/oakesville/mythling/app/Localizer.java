@@ -98,6 +98,9 @@ public class Localizer {
         return appSettings.getAppContext();
     }
 
+    private static boolean initialized;
+    public static boolean isInitialized() { return initialized; }
+
     public static void initialize(AppSettings appSettings) {
         Localizer.appSettings = appSettings;
         try {
@@ -112,6 +115,7 @@ public class Localizer {
             pm = AM_PM_FORMAT.format(AM_PM_FORMAT_US.parse("12"));
             abbrevAm = getStringRes(R.string.abbrev_am);
             abbrevPm = getStringRes(R.string.abbrev_pm);
+            initialized = true;
         } catch (Exception ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);

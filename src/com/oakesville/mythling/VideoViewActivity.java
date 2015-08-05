@@ -37,6 +37,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.util.Reporter;
 
 public class VideoViewActivity extends Activity {
@@ -61,6 +62,8 @@ public class VideoViewActivity extends Activity {
         getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
+        if (!Localizer.isInitialized())
+            Localizer.initialize(appSettings);
 
         videoView = (VideoView) findViewById(R.id.video_view);
 
