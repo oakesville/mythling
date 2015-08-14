@@ -193,6 +193,13 @@ epgApp.controller('EpgController',
         controller: 'EpgModalController',
         scope: $scope
       });
+      modalInstance.result.catch(function() {
+        // TODO: better way and don't duplicate below
+        $timeout(function() {
+          var progElem = document.getElementById(program.id);
+          angular.element(progElem).removeClass('program-select');
+        }, 0);    
+      });
       return;
     }
     
