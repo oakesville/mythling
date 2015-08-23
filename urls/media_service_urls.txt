@@ -24,9 +24,16 @@ http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2014-06-14T22:28:29&End
 # MythTV Guide Service (ChannelGroupId req. 0.28)
 http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2015-04-19T00:00:00&EndTime=2015-04-19T04:00:00&ChannelGroupId=1
 # Mythling Guide Service
-http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-04-19T00:00:00&EndTime=2015-04-19T04:00:00&ChannelGroupId=1
+http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-08-23T19:30:00.000Z&EndTime=2015-08-24T07:30:00.000Z&ChannelGroupId=1
+
 # MythTV Program Details
 http://192.168.0.69:6544/Guide/GetProgramDetails?ChanId=1012&StartTime=2015-05-15T22:30:00Z
+
+# MythTV Listings Search
+http://192.168.0.69:6544/Guide/GetProgramList?StartTime=2014-06-14T22:28:29&KeywordFilter=Love
+http://192.168.0.69:6544/Guide/GetProgramList?StartTime=2014-06-14T22:28:29&PersonFilter=Love
+# Mythling Listings Search
+http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-04-19T00:00:00&listingsSearch=Love
 
 # MythTV Channel Groups (req. 0.28)
 http://192.168.0.69:6544/Guide/GetChannelGroupList
