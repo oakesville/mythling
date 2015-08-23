@@ -50,11 +50,22 @@ if ($type->isGuide())
     die(error("Missing guide parameter: StartTime"));
   if (!strpos($startTime, 'Z', strlen($startTime) - 1))
     $startTime .= 'Z';
-  $endTime = $_REQUEST['EndTime'];
-  if ($endTime == null)
-    die(error("Missing guide parameter: EndTime"));
-  if (!strpos($endTime, 'Z', strlen($endTime) - 1))
-    $endTime .= 'Z';
+  if (isset($_REQUEST['EndTime']))
+  {
+    $endTime = $_REQUEST['EndTime'];
+    if (!strpos($endTime, 'Z', strlen($endTime) - 1))
+      $endTime .= 'Z';
+  }
+  else
+  {
+    $endTime = null;
+  }
+  if (isset($_REQUEST['listingsSearch']))
+    $listingsSearch = $_REQUEST['listingsSearch'];
+  else
+    $listingsSearch = null;
+  if ($endTime == null && $listingsSearch == null)
+    die(error("Missing guide parameter: EndTime or listingsSearch"));
   if (isset($_REQUEST['ChannelGroupId']))
     $channelGroupId = $_REQUEST['ChannelGroupId'];
   else
@@ -142,70 +153,124 @@ if ($type->isGuide())
     $where .= "  and c.chanid in (select chanid from channelgroup where grpid = " . $channelGroupId . ")" . "\n";
   $where .= "left outer join oldrecorded r on c.callsign = r.station" . "\n";
   $where .= "  and p.starttime = r.starttime" . "\n";
-  $where .= "where p.starttime >= '" . $startTime . "'" . "\n";
-  $where .= "and p.starttime < '" . $endTime . "'" . "\n";
-  $where .= "and p.endtime >= '" . $startTime . "'";
+  if ($listingsSearch != null)
+  {
+    $where .= "left outer join credits cr on p.chanid = cr.chanid and p.starttime = cr.starttime" . "\n";
+    $where .= "left outer join people peeps on peeps.person = cr.person" . "\n";
+    $where .= "where p.endtime >= '" . $startTime . "'" . "\n";
+    $where .= "and (p.title like '%" . $listingsSearch . "%' or p.subtitle like '%" . $listingsSearch . "%' or p.description like '%" . $listingsSearch . "%'";
+    $where .= " or peeps.name like '%" . $listingsSearch . "%')";
+  }
+  else
+  {
+    $where .= "where p.starttime >= '" . $startTime . "'" . "\n";
+    $where .= "and p.starttime < '" . $endTime . "'" . "\n";
+    $where .= "and p.endtime >= '" . $startTime . "'";
+  }
 
-  $orderBy = "order by cast(c.channum as unsigned), p.starttime";
-  $query = "select c.chanid, c.callsign, c.channum, c.icon, p.category_type, p.category, p.starttime, p.endtime, p.title, p.subtitle, p.previouslyshown, r.recstatus" . "\n";
+  if ($listingsSearch != null)
+    $orderBy = "order by p.starttime, cast(c.channum as unsigned)";
+  else
+    $orderBy = "order by cast(c.channum as unsigned), p.starttime";
+  
+  $query = $listingsSearch == null ? "select " : "select distinct ";
+  $query .= "c.chanid, c.callsign, c.channum, c.icon, p.category_type, p.category, p.starttime, p.endtime, p.title, p.subtitle, p.previouslyshown, r.recstatus" . "\n";
   $query .= "from program p" . "\n";
   
   $query .= $where . "\n" . $orderBy;
   
   if (isShowQuery())
     echo "query:\n" . $query . "\n\n";
-  
-  header("Content-type:application/json");
-  echo '{' . "\n";
-  echo '  "ProgramGuide": {';
-  echo ' "AsOf": "' . substr(date(DATE_ISO8601), 0, -5) . 'Z", "Version": "' . $MYTHTV_VERSION . '",' . "\n";
-  echo '    "Channels":' . "\n" . '    [' . "\n";
 
   mysql_set_charset("utf8");
   $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
   $num = mysql_numrows($res);
-  $curChan = null;
-  $i = 0;
-  while ($i < $num)
+  
+  header("Content-type:application/json");
+  if ($listingsSearch != null)
   {
-    $chanId = mysql_result($res, $i, "chanid");
-    if ($chanId == $curChan)
+    echo '{' . "\n";
+    echo '  "ProgramList": {';
+    echo ' "AsOf": "' . substr(date(DATE_ISO8601), 0, -5) . 'Z", "Version": "' . $MYTHTV_VERSION . '",' . "\n";
+    echo ' "Count": "' . $num . '",' . "\n";
+    echo '    "Programs":' . "\n" . '    [' . "\n";
+    $i = 0;
+    while ($i < $num)
     {
-      echo ',' . "\n"; // sep programs in array
-    }
-    else
-    {
-      if ($curChan != null)
-        printChannelEnd(false);
+      $chanId = mysql_result($res, $i, "chanid");
       $callSign = mysql_result($res, $i, "callsign");
       $chanNum = mysql_result($res, $i, "channum");
-      $icon = mysql_result($res, $i, "icon");
-      printChannelBegin($chanId, $chanNum, $callSign, $icon);
-      $curChan = $chanId;
+      $type = mysql_result($res, $i, "category_type");
+      $category = mysql_result($res, $i, "category");
+      $startTime = mysql_result($res, $i, "starttime");
+      $startTime = str_replace(' ', 'T', $startTime) . 'Z';
+      $endTime = mysql_result($res, $i, "endtime");
+      $endTime = str_replace(' ', 'T', $endTime) . 'Z';
+      $title = cleanup(mysql_result($res, $i, "title"));
+      $subTitle = cleanup(mysql_result($res, $i, "subtitle"));
+      $repeat = mysql_result($res, $i, "previouslyshown");
+      $recStatus = mysql_result($res, $i, "recstatus");
+      if ($recStatus == null)
+        $recStatus = 0;
+      printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus, $chanId, $callSign, $chanNum);
+      if ($i < $num - 1)
+        echo ', ' . "\n";
+      $i++;
     }
-    $type = mysql_result($res, $i, "category_type");
-    $category = mysql_result($res, $i, "category");
-    $startTime = mysql_result($res, $i, "starttime");
-    $startTime = str_replace(' ', 'T', $startTime) . 'Z';
-    $endTime = mysql_result($res, $i, "endtime");
-    $endTime = str_replace(' ', 'T', $endTime) . 'Z';
-    $title = cleanup(mysql_result($res, $i, "title"));
-    $subTitle = cleanup(mysql_result($res, $i, "subtitle"));
-    $repeat = mysql_result($res, $i, "previouslyshown");
-    $recStatus = mysql_result($res, $i, "recstatus");
-    if ($recStatus == null)
-      $recStatus = 0;
-    printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus);
-    $i++;
+    echo '    ]' . "\n";
+    echo '  }' . "\n";
+    echo '}';
+  }
+  else
+  {
+    echo '{' . "\n";
+    echo '  "ProgramGuide": {';
+    echo ' "AsOf": "' . substr(date(DATE_ISO8601), 0, -5) . 'Z", "Version": "' . $MYTHTV_VERSION . '",' . "\n";
+    echo '    "Channels":' . "\n" . '    [' . "\n";
+    $curChan = null;
+    $i = 0;
+    while ($i < $num)
+    {
+      $chanId = mysql_result($res, $i, "chanid");
+      if ($chanId == $curChan)
+      {
+        echo ',' . "\n"; // sep programs in array
+      }
+      else
+      {
+        if ($curChan != null)
+          printChannelEnd(false);
+        $callSign = mysql_result($res, $i, "callsign");
+        $chanNum = mysql_result($res, $i, "channum");
+        $icon = mysql_result($res, $i, "icon");
+        printChannelBegin($chanId, $chanNum, $callSign, $icon);
+        $curChan = $chanId;
+      }
+      $type = mysql_result($res, $i, "category_type");
+      $category = mysql_result($res, $i, "category");
+      $startTime = mysql_result($res, $i, "starttime");
+      $startTime = str_replace(' ', 'T', $startTime) . 'Z';
+      $endTime = mysql_result($res, $i, "endtime");
+      $endTime = str_replace(' ', 'T', $endTime) . 'Z';
+      $title = cleanup(mysql_result($res, $i, "title"));
+      $subTitle = cleanup(mysql_result($res, $i, "subtitle"));
+      $repeat = mysql_result($res, $i, "previouslyshown");
+      $recStatus = mysql_result($res, $i, "recstatus");
+      if ($recStatus == null)
+        $recStatus = 0;
+      printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus, null, null, null);
+      $i++;
+    }
+    
+    if ($num > 0)
+      printChannelEnd(true);
+    echo '    ]' . "\n";
+    echo '  }' . "\n";
+    echo '}';
   }
 
   mysql_close();
   
-  if ($num > 0)
-    printChannelEnd(true);
-  echo '    ]' . "\n";
-  echo '  }' . "\n";
-  echo '}';
 }
 else if ($type->isSearch())
 {
@@ -1194,7 +1259,7 @@ function printChannelEnd($last)
   echo "\n";
 }
 
-function printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus)
+function printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus, $chanId, $callSign, $chanNum)
 {
   echo '          { ';
   echo '"CatType": "' . $type . '"';
@@ -1204,7 +1269,9 @@ function printProgram($type, $category, $startTime, $endTime, $title, $subTitle,
   echo ', "Repeat": "' . ($repeat == 0 ? 'false' : 'true') . '"';
   echo ', "StartTime": "' . $startTime . '"';
   echo ', "SubTitle": "' . $subTitle . '"';
-  echo ', "Title": "' . $title . '"'; 
+  echo ', "Title": "' . $title . '"';
+  if ($chanId != null)
+    echo ', "Channel": { "ChanId": "' . $chanId . '", "CallSign": "' . $callSign . '", "ChanNum": "' . $chanNum . '" }';
   echo ' }';
 }
 
