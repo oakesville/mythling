@@ -3,7 +3,7 @@ body {
   color:#373737;
   background-color: #f2f2f2;
   font-size: 16px;
-  font-family: 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif, 'Myriad Pro', Calibri, ;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   margin: 15px; 
