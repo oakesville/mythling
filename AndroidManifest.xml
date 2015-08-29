@@ -144,7 +144,6 @@
         <service android:name=".MusicPlaybackService" />
         
         <!-- TODO: is Google Play auto-update prevented by the following? -->
-        <!--
         <uses-library android:name="com.amazon.webview" android:required="false"/>
         <service
             android:name="org.chromium.content.app.SandboxedProcessService0"
@@ -176,7 +175,6 @@
             android:exported="false"
             android:permission="org.chromium.content_shell.permission.SANDBOX"
             android:process=":sandboxed_process5" />
-        -->
         
 </application>
 
