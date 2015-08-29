@@ -84,11 +84,11 @@ public class EpgActivity extends WebViewActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
-        if (savedInstanceState != null)
-            getWebView().restoreState(savedInstanceState);
-        else
-            getAppSettings().setEpgLastLoad(0);
         if (useDefaultWebView()) {
+            if (savedInstanceState != null)
+                getWebView().restoreState(savedInstanceState);
+            else
+                getAppSettings().setEpgLastLoad(0);
             getWebView().setWebViewClient(new WebViewClient() {
                 @Override
                 public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -258,14 +258,16 @@ public class EpgActivity extends WebViewActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        getWebView().saveState(outState);
+        if (useDefaultWebView())
+            getWebView().saveState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        getWebView().restoreState(savedInstanceState);
+        if (useDefaultWebView())
+            getWebView().restoreState(savedInstanceState);
     }
 
     @Override

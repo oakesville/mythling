@@ -101,6 +101,11 @@ public class FireTvEpgActivity extends EpgActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setUseWideViewPort(true);
 
+        if (savedInstanceState != null)
+            webView.restoreState(savedInstanceState);
+        else
+            getAppSettings().setEpgLastLoad(0);
+
         webView.setWebViewClient(new AmazonWebViewClient() {
             @Override
             public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView view, String url) {
@@ -196,6 +201,18 @@ public class FireTvEpgActivity extends EpgActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        webView.saveState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
     }
 
     @Override
