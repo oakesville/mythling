@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.firetv.FireTvViewPager;
 import com.oakesville.mythling.firetv.FireTvViewPager.DpadMediaKeyHandler;
 import com.oakesville.mythling.media.MediaList;
@@ -239,7 +240,7 @@ public class MediaPagerActivity extends MediaActivity {
 
     @Override
     public void onBackPressed() {
-        if (EpgActivity.class.getName().equals(backTo)) {
+        if (EpgActivity.class.getName().equals(backTo) || FireTvEpgActivity.class.getName().equals(backTo)) {
             Intent a = new Intent(Intent.ACTION_MAIN);
             a.addCategory(Intent.CATEGORY_HOME);
             a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

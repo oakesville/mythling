@@ -245,6 +245,14 @@ public class FireTvEpgActivity extends EpgActivity {
         }
     }
 
+    /**
+     * However, dispatchKeyEvent() takes precedence if popupOpen.
+     */
+    @Override
+    public void onBackPressed() {
+        backToMythling();
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
