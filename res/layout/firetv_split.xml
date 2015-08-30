@@ -31,11 +31,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="1">
-        <android.app.FragmentBreadCrumbs
+        <TextView
             android:id="@+id/breadcrumbs"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
-
+            android:layout_height="wrap_content"
+            android:gravity="top|left"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/blank"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:maxLines="1" />   
         <com.oakesville.mythling.firetv.FireTvListView
             android:id="@+id/split_cats"
             android:layout_width="match_parent"
