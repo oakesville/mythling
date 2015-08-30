@@ -1,10 +1,10 @@
 <div class="modal-header">
-  <span class="modal-title">{{program.Title}}</span>
-  <button type="button" class="close-button" autofocus style="float:right;" ng-click="fireEpgAction('close');close(program);">
+  <div style="float:left;"><span class="modal-title">{{program.Title}}</span></div>
+  <button type="button" class="close-button" style="float:right;" autofocus ng-click="fireEpgAction('close');close(program);">
     <img src="images/x.png" />
   </button>  
 </div>
-<div class="modal-body">
+<div class="modal-body" style="clear:both;">
   <div ng-if="program.subTitle != ''">
     {{program.subTitle}}
   </div>

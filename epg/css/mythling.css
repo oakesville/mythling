@@ -368,6 +368,7 @@ table {
   padding: 0;
 }
 .modal-header {
+  min-height: 42px;
   padding: 10px;
   background-color: #b0bec5;
   background: -webkit-linear-gradient(#90a4ae, #eceff1);  

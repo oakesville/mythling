@@ -873,12 +873,12 @@ epgSearch.controller('EpgSearchController', ['$scope', '$timeout', 'search', fun
   
   $scope.searchForward = function() {
     $scope.resultsSummary = null;
-    search.forward($scope.filterVal, $scope.guideData.curDate, $scope.showResult);
+    search.forward($scope.filterVal, $scope.guideData.curDate, $scope.showResult, $scope.guideData.mythlingServices);
   };
   
   $scope.searchBackward = function() {
     $scope.resultsSummary = null;
-    search.backward($scope.filterVal, $scope.guideData.curDate, $scope.showResult);
+    search.backward($scope.filterVal, $scope.guideData.curDate, $scope.showResult, $scope.guideData.mythlingServices);
   };
   
   $scope.showResult = function(results) {
@@ -908,8 +908,8 @@ epgSearch.controller('EpgSearchController', ['$scope', '$timeout', 'search', fun
       $scope.filterVal = newValue;
     }
     else {
-      if (!$scope.guideData.isMyth28)
-        return 'Available in MythTV 0.28';
+      if (!$scope.guideData.isMyth28 && !$scope.guideData.mythlingServices)
+        return 'Requires MythTV 0.28 or Mythling Services';
       else if ($scope.guideData.demoMode)
         return 'Search not available in demo';
     }
@@ -937,38 +937,50 @@ epgSearch.factory('search', ['$http', '$q', function($http, $q) {
     hasProgram: function(prog) {
       for (var i = 0; i < this.programs.length; i++) {
         var program = this.programs[i];
-        if (program.ChanId == prog.ChanId && program.StartTime == prog.StartTime)
+        if (program.StartTime == prog.StartTime && program.Channel.ChanId == prog.Channel.ChanId)
           return true;
       }
+      return false;
     }
   };
   
-  function doSearch(filter, curDate, callback) {
+  function doSearch(filter, curDate, callback, mythlingServices) {
     busy = true;
     results.index = -1;
     results.programs = [];
     encodedFilter = filter;
 
     var startTime = new Date();
-    var baseUrl = '/Guide/GetProgramList?StartTime=' + startTime.toISOString();
+    var baseUrl = mythlingServices ? '/mythling/media.php?type=guide&' : '/Guide/GetProgramList?';
+    baseUrl += 'StartTime=' + startTime.toISOString();
     console.log('search base url: ' + baseUrl);
     
-    $q.all({
-      // title search redundant with keyword search?
-      // titleSearch: $http.get(baseUrl + '&TitleFilter=' + encodedFilter),
-      personSearch: $http.get(baseUrl + '&PersonFilter=' + encodedFilter),
-      keywordSearch: $http.get(baseUrl + '&KeywordFilter=' + encodedFilter)
-    }).then(function(res) {
+    var searches;
+    if (mythlingServices) {
+      searches = {
+        mythlingSearch: $http.get(baseUrl + '&listingsSearch=' + encodedFilter),
+      };
+    }
+    else {
+      searches = {
+        // title search redundant with keyword search
+        // titleSearch: $http.get(baseUrl + '&TitleFilter=' + encodedFilter),
+        personSearch: $http.get(baseUrl + '&PersonFilter=' + encodedFilter),
+        keywordSearch: $http.get(baseUrl + '&KeywordFilter=' + encodedFilter)
+      };
+    }
+    
+    $q.all(searches).then(function(res) {
 
       busy = false;
 
-      // console.log('titleSearch:\n============\n' + JSON.stringify(res.titleSearch.data, null, 2));
-      // console.log('\npersonSearch:\n============\n' + JSON.stringify(res.personSearch.data, null, 2));
-      // console.log('\nkeywordSearch:\n============\n' + JSON.stringify(res.personSearch.data, null, 2));
-      
-      // results.addPrograms(res.titleSearch.data.ProgramList.Programs);
-      results.addPrograms(res.personSearch.data.ProgramList.Programs);
-      results.addPrograms(res.keywordSearch.data.ProgramList.Programs);
+      if (mythlingServices) {
+        results.addPrograms(res.mythlingSearch.data.ProgramList.Programs);
+      }
+      else {
+        results.addPrograms(res.personSearch.data.ProgramList.Programs);
+        results.addPrograms(res.keywordSearch.data.ProgramList.Programs);
+      }
       
       // initialize the index
       if (results.programs.length > 0) {
@@ -988,12 +1000,12 @@ epgSearch.factory('search', ['$http', '$q', function($http, $q) {
   }
   
   return {
-    forward: function(filter, curDate, callback) {
+    forward: function(filter, curDate, callback, mythlingServices) {
       if (!filter || filter === '')
         return;
       var newFilter = encodeURIComponent(filter);
       if (newFilter != encodedFilter) {
-        doSearch(newFilter, curDate, callback);
+        doSearch(newFilter, curDate, callback, mythlingServices);
       }
       if (results.programs.length > 0) {
         results.index++;
@@ -1002,12 +1014,12 @@ epgSearch.factory('search', ['$http', '$q', function($http, $q) {
         callback(results);
       }
     },
-    backward: function(filter, curDate, callback) {
+    backward: function(filter, curDate, callback, mythlingServices) {
       if (!filter || filter === '')
         return;
       var newFilter = encodeURIComponent(filter);
       if (newFilter != encodedFilter) {
-        doSearch(newFilter, curDate, callback);
+        doSearch(newFilter, curDate, callback, mythlingServices);
       }
       if (results.programs.length > 0) {
         results.index--;

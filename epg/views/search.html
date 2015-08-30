@@ -1,6 +1,6 @@
 <div class="search-popover">
   <div class="search-content">
-    <input id="searchInput" type="text" class="form-control search-input" ng-class="'search-input'" ng-disabled="!guideData.isMyth28"
+    <input id="searchInput" type="text" class="form-control search-input" ng-class="'search-input'" ng-disabled="!guideData.isMyth28 && !guideData.mythlingServices"
       ng-model="searchFilter" ng-model-options="{getterSetter: true}" focus-me="later" on-enter="searchForward()" />
     <button type="button" class="search-button" ng-click="searchBackward()" 
       ng-disabled="!guideData.isMyth28 || filterVal.length == 0">
