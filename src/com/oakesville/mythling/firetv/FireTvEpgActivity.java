@@ -61,7 +61,9 @@ public class FireTvEpgActivity extends EpgActivity {
 
     private AmazonWebKitFactory factory;
     private AmazonWebView webView;
-    private boolean popupOpen = false;
+    private String popup;
+    private int menuItems;
+    private int menuItemFromBtm;
     private JsHandler jsHandler;
 
     private int skipInterval;
@@ -127,7 +129,8 @@ public class FireTvEpgActivity extends EpgActivity {
             @Override
             public void onPageFinished(AmazonWebView view, String url) {
                 super.onPageFinished(view, url);
-                popupOpen = false;
+                popup = null;
+                menuItemFromBtm = 0;
             }
         });
 
@@ -246,7 +249,7 @@ public class FireTvEpgActivity extends EpgActivity {
     }
 
     /**
-     * However, dispatchKeyEvent() takes precedence if popupOpen.
+     * However, dispatchKeyEvent() takes precedence if popup != null.
      */
     @Override
     public void onBackPressed() {
@@ -266,11 +269,38 @@ public class FireTvEpgActivity extends EpgActivity {
                 load();
                 return true;
             }
-            else if (popupOpen) {
+            else if (popup != null) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                     webView.loadUrl("javascript:closePopups()");
-                    popupOpen = false;
+                    popup = null;
+                    menuItemFromBtm = 0;
                     return true;
+                }
+                else if (popup.equals("menu")) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        return true; // not allowed
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        return true; // not allowed
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                        if (menuItemFromBtm == menuItems - 1) {
+                            return true; // no further
+                        }
+                        else {
+                            menuItemFromBtm++;
+                            return super.dispatchKeyEvent(event);
+                        }
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        if (menuItemFromBtm == 0) {
+                            return true; // no further
+                        }
+                        else {
+                            menuItemFromBtm--;
+                            return super.dispatchKeyEvent(event);
+                        }
+                    }
                 }
             }
             else {
@@ -297,8 +327,15 @@ public class FireTvEpgActivity extends EpgActivity {
 
     class JsHandler {
         @JavascriptInterface
-        public void setPopupOpen(boolean isOpen) {
-            popupOpen = isOpen;
+        public void setPopup(String openPopup) {
+            popup = openPopup;
+            if (!"menu".equals(popup))
+                menuItemFromBtm = 0;
+        }
+
+        @JavascriptInterface
+        public void setMenuItems(int numMenuItems) {
+            menuItems = numMenuItems;
         }
     }
 }
