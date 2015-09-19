@@ -276,7 +276,7 @@ public class FireTvEpgActivity extends EpgActivity {
                     menuItemFromBtm = 0;
                     return true;
                 }
-                else if (popup.equals("menu")) {
+                else if (popup.equals("menu") || popup.equals("details")) {
                     if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                         return true; // not allowed
                     }
@@ -284,7 +284,7 @@ public class FireTvEpgActivity extends EpgActivity {
                         return true; // not allowed
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                        if (menuItemFromBtm == menuItems - 1) {
+                        if (popup.equals("details") || menuItemFromBtm == menuItems - 1) {
                             return true; // no further
                         }
                         else {
@@ -293,7 +293,7 @@ public class FireTvEpgActivity extends EpgActivity {
                         }
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                        if (menuItemFromBtm == 0) {
+                        if (popup.equals("details") || menuItemFromBtm == 0) {
                             return true; // no further
                         }
                         else {
