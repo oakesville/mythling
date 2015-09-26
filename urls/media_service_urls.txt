@@ -26,6 +26,11 @@ http://192.168.0.69:6544/Guide/GetProgramGuide?StartTime=2015-04-19T00:00:00&End
 # Mythling Guide Service
 http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-08-23T19:30:00.000Z&EndTime=2015-08-24T07:30:00.000Z&ChannelGroupId=1
 
+# MythTV Guide Services WSDL
+http://192.168.0.69:6544/Guide/wsdl
+# MythTV Program Guide XSD
+http://192.168.0.69:6544/Guide/xsd?type=ProgramGuide
+
 # MythTV Program Details
 http://192.168.0.69:6544/Guide/GetProgramDetails?ChanId=1012&StartTime=2015-05-15T22:30:00Z
 
@@ -66,7 +71,7 @@ http://192.168.0.69:6544/Content/GetFile?StorageGroup=Default&FileName=1855_2014
 http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1682&Station=HGTVD&StartTime=2015-05-08T01:00:00Z&EndTime=2015-05-08T01:30:00&Title=Rehab+Addict&FindDay=0&FindTime=00:00:00
 http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&Type=single
 # MythTV Schedule Record/Transcode (req. MythTV 0.28)
-http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Type=single&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&AutoTranscode=true
+http://192.168.0.69:6544/Dvr/AddRecordSchedule?ChanId=1683&Station=SCIHD&StartTime=2015-05-31T18:00:00Z&EndTime=2015-05-31T18:30:00Z&Type=single&Title=How%20It's%20Made&FindDay=0&FindTime=00:00:00&AutoTranscode=true&RecPriority=10
 # Don't Record
 http://192.168.0.69:6544/Dvr/AddDontRecordSchedule?ChanId=1656&StartTime=2015-07-20T01:30:00Z&NeverRecord=false
 /Dvr/AddDontRecordSchedule?ChanId=1673&StartTime=2015-07-22T11:00:00Z&NeverRecord=true
