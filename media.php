@@ -163,8 +163,7 @@ if ($type->isGuide())
   }
   else
   {
-    $where .= "where p.starttime >= '" . $startTime . "'" . "\n";
-    $where .= "and p.starttime < '" . $endTime . "'" . "\n";
+    $where .= "where p.starttime < '" . $endTime . "'" . "\n";
     $where .= "and p.endtime >= '" . $startTime . "'";
   }
 
