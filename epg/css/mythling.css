@@ -12,8 +12,8 @@ table {
   outline: none;
 }
 .glyphicon {
-	/* avoid dependency on glyphicon fonts */
-	font-family: Verdana, Geneva, sans-serif;
+  /* avoid dependency on glyphicon fonts */
+  font-family: Verdana, Geneva, sans-serif;
 }
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
@@ -134,7 +134,7 @@ table {
   padding-left: 5px;
 }
 .channel-row {
-	display: -webkit-inline-flex;
+  display: -webkit-inline-flex;
   display: inline-flex;
   white-space: nowrap;
 }
@@ -202,16 +202,16 @@ table {
   padding-top: 2px;
 }
 .details-status {
-	float: left;
-	font-size: 14px;
-	font-weight: bold;
-	margin: 10px 5px 0 5px;
+  float: left;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 5px 0 5px;
 }
 .details-record {
-	color: #009688;
+  color: #009688;
 }
 .details-error {
-	color: #f44336;
+  color: #f44336;
 }
 .details-warn {
   color: #f9a825;
@@ -293,7 +293,7 @@ table {
   background-color: transparent;
 }
 .close-button:hover {
-	outline: none;
+  outline: none;
 }
 .close-button img {
   background-color: white;
@@ -411,8 +411,8 @@ table {
   font-size: 15px;
 }
 .panel-group {
-	margin-top: 5px;
-	margin-bottom: 3px;
+  margin-top: 5px;
+  margin-bottom: 3px;
 }
 .panel-body {
   padding: 5px;

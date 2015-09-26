@@ -9,3 +9,12 @@
   background-color: #b0bec5;
   border-radius: 3px;
 }
+.modal-button {
+  display: none;
+}
+.close-button:focus {
+  background-color: buttonface;
+  border: 2px solid #18ffff;
+  border-radius: 3px;
+}
+

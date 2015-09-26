@@ -1,28 +1,28 @@
 <ul class="dropdown-menu popover-menu">
   <li ng-if="program.recStatus.actions.indexOf('single') >= 0">
-    <a href="#" epg-record="single">Record This</a>
+    <a id="menu-single" href="#" epg-record="single">Record This</a>
   </li>
   <li ng-if="program.recStatus.actions.indexOf('transcode') >= 0">
-    <a href="#" epg-record="transcode">Record &amp; Transcode</a>
+    <a id="menu-transcode" href="#" epg-record="transcode">Record &amp; Transcode</a>
   </li>
   <li ng-if="program.recStatus.actions.indexOf('all') >= 0">
-    <a href="#" epg-record="all">Record All</a>
+    <a id="menu-all" href="#" epg-record="all">Record All</a>
   </li>
   
   <li ng-if="program.recStatus.actions.indexOf('dont') >= 0">
-    <a href="#" ng-if="guideData.isMyth28" epg-record="dont">Don't Record</a>
+    <a id="menu-dont" href="#" ng-if="guideData.isMyth28" epg-record="dont">Don't Record</a>
     <span ng-if="!guideData.isMyth28">Don't Record</span>
   </li>
   <li ng-if="program.recStatus.actions.indexOf('never') >= 0">
-    <a href="#" ng-if="guideData.isMyth28" epg-record="never">Never Record</a>
+    <a id="menu-never" href="#" ng-if="guideData.isMyth28" epg-record="never">Never Record</a>
     <span ng-if="!guideData.isMyth28">Never Record</span>
   </li>
   <li ng-if="program.recStatus.actions.indexOf('remove') >= 0">
-    <a href="#" epg-record="remove">Remove Schedule</a>
+    <a id="menu-remove" href="#" epg-record="remove">Remove Schedule</a>
   </li>
   
   <li class="divider" ng-if="program.recStatus.actions.length > 0"></li>
   <li ng-click="details(program)">
-    <a href="#">Details...</a>
+    <a id="menu-details" href="#">Details...</a>
   </li>
 </ul>

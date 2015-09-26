@@ -2,11 +2,11 @@
   <div class="search-content">
     <input id="searchInput" type="text" class="form-control search-input" ng-class="'search-input'" ng-disabled="!guideData.isMyth28 && !guideData.mythlingServices"
       ng-model="searchFilter" ng-model-options="{getterSetter: true}" focus-me="later" on-enter="searchForward()" />
-    <button type="button" class="search-button" ng-click="searchBackward()" 
+    <button id="searchBackwardBtn" type="button" class="search-button" ng-click="searchBackward()" 
       ng-disabled="!guideData.isMyth28 || filterVal.length == 0">
       <img src="images/lft.png" />
     </button>
-    <button type="button" class="search-button" ng-click="searchForward()" 
+    <button id="searchForwardBtn" type="button" class="search-button" ng-click="searchForward()" 
       ng-disabled="!guideData.isMyth28 || filterVal.length == 0">
       <img src="images/rt.png" />
     </button>
