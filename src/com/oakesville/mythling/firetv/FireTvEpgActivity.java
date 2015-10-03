@@ -131,6 +131,8 @@ public class FireTvEpgActivity extends EpgActivity {
                 super.onPageFinished(view, url);
                 popup = null;
                 menuItemFromBtm = 0;
+                if (BuildConfig.DEBUG)
+                    webView.loadUrl("javascript:setDebug(true)");
             }
         });
 
