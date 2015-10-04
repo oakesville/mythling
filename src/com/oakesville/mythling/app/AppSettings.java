@@ -270,6 +270,21 @@ public class AppSettings {
     }
 
     /**
+     * Returns the base guide service URL without parameters.
+     */
+    public URL getGuideServiceUrl() throws MalformedURLException, UnsupportedEncodingException {
+        if (isMythlingMediaServices()) {
+            int port = getMythlingWebPort();
+            // extraneous port 80 causes mismatch in EpgActivity shouldInterceptRequest
+            return new URL("http://" + getMythlingServiceHost() + (port == 80 ? "" : ":" + getMythlingWebPort()) +
+                    "/" + getMythlingWebRoot() + "/media.php?type=guide");
+        }
+        else {
+            return new URL(getMythTvServicesBaseUrl() + "/Guide/GetProgramGuide");
+        }
+    }
+
+    /**
      * Params are added separately in epg activities.
      */
     public URL getEpgUrl() throws MalformedURLException, UnsupportedEncodingException {
@@ -1106,6 +1121,12 @@ public class AppSettings {
                 deviceDefault = (Boolean)val;
         }
         return prefs.getBoolean(key, deviceDefault);
+    }
+
+    public void setBooleanPref(String key, boolean value) {
+        Editor ed = prefs.edit();
+        ed.putBoolean(key, value);
+        ed.commit();
     }
 
     public long getLongPref(String key, long defValue) {

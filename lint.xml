@@ -3,5 +3,6 @@
     <issue id="InflateParams">
         <ignore path="src/com/oakesville/mythling/ItemLongClickDialog.java" />
         <ignore path="src/com/oakesville/mythling/StreamVideoDialog.java" />
+        <ignore path="src/com/oakesville/mythling/prefs/PrefDismissDialog.java" />
     </issue>
 </lint>

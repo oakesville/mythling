@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +34,7 @@ import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import com.amazon.android.webkit.AmazonConsoleMessage;
+import com.amazon.android.webkit.AmazonUrlRequest;
 import com.amazon.android.webkit.AmazonWebChromeClient;
 import com.amazon.android.webkit.AmazonWebKitFactories;
 import com.amazon.android.webkit.AmazonWebKitFactory;
@@ -46,6 +46,7 @@ import com.oakesville.mythling.EpgActivity;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -56,6 +57,9 @@ public class FireTvEpgActivity extends EpgActivity {
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
     private static final String MYTHLING_CSS = "<link rel=\"stylesheet\" href=\"css/mythling.css\">";
     private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
+
+    private static final String SHOW_GUIDE_HINT_PREF = "show_guide_hint";
+    private static final String SHOW_SEARCH_HINT_PREF = "show_search_hint";
 
     private static boolean factoryInited = false;
 
@@ -68,23 +72,14 @@ public class FireTvEpgActivity extends EpgActivity {
 
     private int skipInterval;
     private Calendar startTime;
+    private boolean showGuideHint;
+    private boolean showSearchHint;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().hide();
         setContentView(R.layout.firetv_webview);
-
-        if (!getAppSettings().isEpgInitiallyAccessed()) {
-            String msg = getString(R.string.epg_ff_rew_hint_) + " " +
-                    getAppSettings().getEpgSkipInterval() + " " + getString(R.string.abbrev_hrs) + ".";
-            new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_info)
-            .setTitle(getString(R.string.epg_hint))
-            .setMessage(msg)
-            .setPositiveButton(android.R.string.ok, null)
-            .show();
-        }
 
         if (!factoryInited) {
             factory = AmazonWebKitFactories.getDefaultFactory();
@@ -109,6 +104,7 @@ public class FireTvEpgActivity extends EpgActivity {
             getAppSettings().setEpgLastLoad(0);
 
         webView.setWebViewClient(new AmazonWebViewClient() {
+
             @Override
             public AmazonWebResourceResponse shouldInterceptRequest(AmazonWebView view, String url) {
                 if (getEpgBaseUrl() == null)
@@ -124,6 +120,39 @@ public class FireTvEpgActivity extends EpgActivity {
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                 }
                 return super.shouldInterceptRequest(view, url);
+            }
+
+            @Override
+            public void onCompletedUrlRequest(AmazonUrlRequest request) {
+                super.onCompletedUrlRequest(request);
+                // wait until ajax request is complete before showing any hints
+                if (isGuideServiceUrl(request.getUrl())) {
+                    if (showGuideHint) {
+                        // don't show again for this session regardless of pref setting
+                        showGuideHint = false;
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                String title = getString(R.string.epg_hint);
+                                String msg = getString(R.string.epg_ff_rew_hint_) + " " +
+                                        getAppSettings().getEpgSkipInterval() + " " + getString(R.string.abbrev_hrs) + ".";
+                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SHOW_GUIDE_HINT_PREF);
+                                hintDlg.show(getFragmentManager(), SHOW_GUIDE_HINT_PREF);
+                            }
+                        });
+                    }
+                    else if (showSearchHint && "search".equals(popup)) {
+                        // don't show again for this session regardless of pref setting
+                        showSearchHint = false;
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                String title = getString(R.string.epg_hint);
+                                final String msg = getString(R.string.epg_search_res_hint);
+                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SHOW_SEARCH_HINT_PREF);
+                                hintDlg.show(getFragmentManager(), SHOW_SEARCH_HINT_PREF);
+                            }
+                        });
+                    }
+                }
             }
 
             @Override
@@ -173,6 +202,9 @@ public class FireTvEpgActivity extends EpgActivity {
         startTime.set(Calendar.SECOND, 0);
         startTime.set(Calendar.MILLISECOND, 0);
         skipInterval = getAppSettings().getEpgSkipInterval();
+        showGuideHint = getAppSettings().getBooleanPref(SHOW_GUIDE_HINT_PREF, true);
+        showSearchHint = getAppSettings().getBooleanPref(SHOW_SEARCH_HINT_PREF, true);
+
         load();
     }
 
@@ -250,6 +282,20 @@ public class FireTvEpgActivity extends EpgActivity {
         }
     }
 
+    private boolean isGuideServiceUrl(String url) {
+        try {
+            return url != null && url.startsWith(getAppSettings().getGuideServiceUrl().toString());
+        }
+        catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
     /**
      * However, dispatchKeyEvent() takes precedence if popup != null.
      */
@@ -262,14 +308,24 @@ public class FireTvEpgActivity extends EpgActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                startTime.add(Calendar.HOUR, -skipInterval);
-                load();
-                return true;
+                if ("search".equals(popup)) {
+                    webView.loadUrl("javascript:searchBackward()");
+                }
+                else {
+                    startTime.add(Calendar.HOUR, -skipInterval);
+                    load();
+                    return true;
+                }
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                startTime.add(Calendar.HOUR, skipInterval);
-                load();
-                return true;
+                if ("search".equals(popup)) {
+                    webView.loadUrl("javascript:searchForward()");
+                }
+                else {
+                    startTime.add(Calendar.HOUR, skipInterval);
+                    load();
+                    return true;
+                }
             }
             else if (popup != null) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
