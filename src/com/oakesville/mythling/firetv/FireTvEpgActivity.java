@@ -21,17 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Calendar;
-
-import android.annotation.SuppressLint;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
-import android.widget.Toast;
 
 import com.amazon.android.webkit.AmazonConsoleMessage;
 import com.amazon.android.webkit.AmazonUrlRequest;
@@ -49,13 +40,20 @@ import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.Reporter;
 
+import android.annotation.SuppressLint;
+import android.content.res.AssetManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.webkit.WebSettings;
+import android.widget.Toast;
+
 @SuppressLint("SetJavaScriptEnabled")
 public class FireTvEpgActivity extends EpgActivity {
     private static final String TAG = FireTvEpgActivity.class.getSimpleName();
 
-    private static final String EPG_JS = "<script src=\"js/mythling-epg.js\"></script>";
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
-    private static final String MYTHLING_CSS = "<link rel=\"stylesheet\" href=\"css/mythling.css\">";
     private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
 
     private static final String SHOW_GUIDE_HINT_PREF = "show_guide_hint";
@@ -65,15 +63,13 @@ public class FireTvEpgActivity extends EpgActivity {
 
     private AmazonWebKitFactory factory;
     private AmazonWebView webView;
-    private String popup;
-    private int menuItems;
-    private int menuItemFromBtm;
-    private JsHandler jsHandler;
 
     private int skipInterval;
     private Calendar startTime;
     private boolean showGuideHint;
     private boolean showSearchHint;
+
+    private int menuItemFromBtm;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +111,7 @@ public class FireTvEpgActivity extends EpgActivity {
                         localPath = localPath.substring(0, localPath.indexOf('?'));
                     String contentType = getLocalContentType(localPath);
                     if (!getScale().equals("1.0") && url.startsWith(getUrl()))
-                        return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
+                        return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalGuide(localPath));
                     else
                         return new AmazonWebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                 }
@@ -140,7 +136,7 @@ public class FireTvEpgActivity extends EpgActivity {
                             }
                         });
                     }
-                    else if (showSearchHint && "search".equals(popup)) {
+                    else if (showSearchHint && getPopups().contains("search")) {
                         // don't show again for this session regardless of pref setting
                         showSearchHint = false;
                         runOnUiThread(new Runnable() {
@@ -158,15 +154,13 @@ public class FireTvEpgActivity extends EpgActivity {
             @Override
             public void onPageFinished(AmazonWebView view, String url) {
                 super.onPageFinished(view, url);
-                popup = null;
+                setLastLoad(System.currentTimeMillis());
+                popups = new ArrayList<String>();
                 menuItemFromBtm = 0;
-                if (BuildConfig.DEBUG)
-                    webView.loadUrl("javascript:setDebug(true)");
             }
         });
 
-        jsHandler = new JsHandler();
-        webView.addJavascriptInterface(jsHandler, "jsHandler");
+        webView.addJavascriptInterface(new JsHandler(), "jsHandler");
 
         if (BuildConfig.DEBUG) {
             // do not cache in debug
@@ -253,17 +247,19 @@ public class FireTvEpgActivity extends EpgActivity {
     }
 
     @Override
-    protected InputStream getLocalGuideScaled(String path) {
+    protected InputStream getLocalGuide(String path) {
         try {
             InputStream inStream = getAssets().open(path, AssetManager.ACCESS_STREAMING);
             StringBuilder strBuf = new StringBuilder();
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
             String str;
             while ((str=in.readLine()) != null) {
-                if (str.trim().equals(VIEWPORT))
+                if (str.trim().equals(VIEWPORT) && !getScale().equals("1.0"))
                     strBuf.append(str.replaceAll("1\\.0", getScale()));
-                else if (str.trim().equals(EPG_JS))
+                else if (str.trim().equals(EPG_JS)) {
+                    strBuf.append(str).append('\n').append(EPG_DEVICE_JS).append('\n');
                     strBuf.append(str).append('\n').append(EPG_FIRETV_JS).append('\n');
+                }
                 else if (str.trim().equals(MYTHLING_CSS))
                     strBuf.append(str).append('\n').append(MYTHLING_FIRETV_CSS).append('\n');
                 else
@@ -308,7 +304,7 @@ public class FireTvEpgActivity extends EpgActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                if ("search".equals(popup)) {
+                if (getPopups().contains("search")) {
                     webView.loadUrl("javascript:searchBackward()");
                 }
                 else {
@@ -318,7 +314,7 @@ public class FireTvEpgActivity extends EpgActivity {
                 }
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                if ("search".equals(popup)) {
+                if (getPopups().contains("search")) {
                     webView.loadUrl("javascript:searchForward()");
                 }
                 else {
@@ -327,14 +323,8 @@ public class FireTvEpgActivity extends EpgActivity {
                     return true;
                 }
             }
-            else if (popup != null) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                    webView.loadUrl("javascript:closePopups()");
-                    popup = null;
-                    menuItemFromBtm = 0;
-                    return true;
-                }
-                else if (popup.equals("menu") || popup.equals("details")) {
+            else if (getPopups() != null && !getPopups().isEmpty()) {
+                if (getPopups().contains("menu") || getPopups().contains("details")) {
                     if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                         return true; // not allowed
                     }
@@ -342,7 +332,7 @@ public class FireTvEpgActivity extends EpgActivity {
                         return true; // not allowed
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                        if (popup.equals("details") || menuItemFromBtm == menuItems - 1) {
+                        if (getPopups().contains("details") || menuItemFromBtm == menuItems - 1) {
                             return true; // no further
                         }
                         else {
@@ -351,7 +341,7 @@ public class FireTvEpgActivity extends EpgActivity {
                         }
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                        if (popup.equals("details") || menuItemFromBtm == 0) {
+                        if (getPopups().contains("details") || menuItemFromBtm == 0) {
                             return true; // no further
                         }
                         else {
@@ -383,18 +373,5 @@ public class FireTvEpgActivity extends EpgActivity {
         return super.dispatchKeyEvent(event);
     }
 
-    class JsHandler {
-        @JavascriptInterface
-        public void setPopup(String openPopup) {
-            popup = openPopup;
-            if (!"menu".equals(popup))
-                menuItemFromBtm = 0;
-        }
-
-        @JavascriptInterface
-        public void setMenuItems(int numMenuItems) {
-            menuItems = numMenuItems;
-        }
-    }
 }
 

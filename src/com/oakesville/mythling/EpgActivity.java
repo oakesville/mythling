@@ -21,24 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import android.content.Intent;
-import android.content.res.AssetManager;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.HttpAuthHandler;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
@@ -47,13 +35,34 @@ import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.Reporter;
 
+import android.content.Intent;
+import android.content.res.AssetManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.webkit.HttpAuthHandler;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Toast;
+
 public class EpgActivity extends WebViewActivity {
     private static final String TAG = EpgActivity.class.getSimpleName();
 
     protected static final String VIEWPORT
       = "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,user-scalable=no\">";
 
-    AppData appData;
+    protected static final String MYTHLING_CSS = "<link rel=\"stylesheet\" href=\"css/mythling.css\">";
+
+    protected static final String EPG_JS = "<script src=\"js/mythling-epg.js\"></script>";
+    protected static final String EPG_DEVICE_JS = "<script src=\"js/epg-device.js\"></script>";
+
+    private AppData appData;
 
     // refreshed from appSettings in onResume()
     private String epgUrl;
@@ -61,7 +70,15 @@ public class EpgActivity extends WebViewActivity {
     protected String getEpgBaseUrl() { return epgBaseUrl; }
     private String scale;
     private Map<String,String> parameters;
-    protected long lastLoad;
+
+    private long lastLoad;
+    public long getLastLoad() { return lastLoad; }
+    protected void setLastLoad(long ll) { this.lastLoad = ll; }
+
+    protected List<String> popups = new ArrayList<String>();
+    public List<String> getPopups() { return popups; }
+
+    protected int menuItems;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +101,7 @@ public class EpgActivity extends WebViewActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
+
         if (useDefaultWebView()) {
             if (savedInstanceState != null)
                 getWebView().restoreState(savedInstanceState);
@@ -98,13 +116,13 @@ public class EpgActivity extends WebViewActivity {
                         if (getAppSettings().isHostedEpg()) {
                             if (BuildConfig.DEBUG)
                                 Log.d(TAG, "Loading hosted: " + url);
-                            if (!getScale().equals("1.0") && url.startsWith(getUrl())) {
+                            if (url.startsWith(getUrl())) {
                                 InputStream responseStream = null;
                                 WebResourceResponse response = super.shouldInterceptRequest(view, url);
                                 if (response == null) {
                                     try {
                                         HttpHelper helper = new HttpHelper(new URL[]{new URL(url)}, getAppSettings().getMythTvServicesAuthType(), getAppSettings().getPrefs());
-                                        responseStream = getHostedGuideScaled(new ByteArrayInputStream(helper.get()));
+                                        responseStream = getHostedGuide(new ByteArrayInputStream(helper.get()));
                                     }
                                     catch (Exception ex) {
                                         if (BuildConfig.DEBUG)
@@ -115,7 +133,7 @@ public class EpgActivity extends WebViewActivity {
                                     }
                                 }
                                 else
-                                    responseStream = getHostedGuideScaled(response.getData());
+                                    responseStream = getHostedGuide(response.getData());
                                 return new WebResourceResponse("text/html", "UTF-8", responseStream);
                             }
                         }
@@ -126,8 +144,8 @@ public class EpgActivity extends WebViewActivity {
                             if (localPath.indexOf('?') > 0)
                                 localPath = localPath.substring(0, localPath.indexOf('?'));
                             String contentType = getLocalContentType(localPath);
-                            if (!getScale().equals("1.0") && url.startsWith(getUrl()))
-                                return new WebResourceResponse(contentType, "UTF-8", getLocalGuideScaled(localPath));
+                            if (url.startsWith(getUrl()))
+                                return new WebResourceResponse(contentType, "UTF-8", getLocalGuide(localPath));
                             else
                                 return new WebResourceResponse(contentType, "UTF-8", getLocalAsset(localPath));
                         }
@@ -147,7 +165,9 @@ public class EpgActivity extends WebViewActivity {
 
                 @Override
                 public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
                     lastLoad = System.currentTimeMillis();
+                    popups = new ArrayList<String>();
                 }
 
                 @Override
@@ -157,7 +177,10 @@ public class EpgActivity extends WebViewActivity {
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
             });
+
+            getWebView().addJavascriptInterface(new JsHandler(), "jsHandler");
         }
+
     }
 
     @Override
@@ -213,6 +236,9 @@ public class EpgActivity extends WebViewActivity {
                     parameters.put("channelGroupId", group == null ? "999" : group.getId());
                 }
             }
+
+            if (BuildConfig.DEBUG && !parameters.containsKey("epgDebug"))
+                parameters.put("epgDebug", "true");
         }
         catch (Exception ex) {
             if (BuildConfig.DEBUG)
@@ -332,15 +358,32 @@ public class EpgActivity extends WebViewActivity {
         return true;
     }
 
-    protected InputStream getLocalGuideScaled(String path) {
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (popups != null && !popups.isEmpty()) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    getWebView().loadUrl("javascript:closePopup()");
+                    return true;
+                }
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    protected InputStream getLocalGuide(String path) {
         try {
             InputStream inStream = getAssets().open(path, AssetManager.ACCESS_STREAMING);
             StringBuilder strBuf = new StringBuilder();
             BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
             String str;
             while ((str=in.readLine()) != null) {
-                if (str.trim().equals(VIEWPORT))
+                if (str.trim().equals(VIEWPORT) && !getScale().equals("1.0"))
                     strBuf.append(str.replaceAll("1\\.0", scale));
+                else if (str.trim().equals(EPG_JS))
+                    strBuf.append(str).append('\n').append(EPG_DEVICE_JS).append('\n');
                 else
                     strBuf.append(str);
                 strBuf.append('\n');
@@ -357,7 +400,7 @@ public class EpgActivity extends WebViewActivity {
         }
     }
 
-    protected InputStream getHostedGuideScaled(InputStream responseStream) {
+    protected InputStream getHostedGuide(InputStream responseStream) {
         if (responseStream == null)
             return null;
         try {
@@ -365,8 +408,10 @@ public class EpgActivity extends WebViewActivity {
             BufferedReader in = new BufferedReader(new InputStreamReader(responseStream, "UTF-8"));
             String str;
             while ((str=in.readLine()) != null) {
-                if (str.equals(VIEWPORT))
+                if (str.equals(VIEWPORT) && getScale().equals("1.0"))
                     strBuf.append(str.replaceAll("1\\.0", scale));
+                else if (str.trim().equals(EPG_JS))
+                    strBuf.append(str).append('\n').append(EPG_DEVICE_JS).append('\n');
                 else
                     strBuf.append(str);
                 strBuf.append('\n');
@@ -443,4 +488,24 @@ public class EpgActivity extends WebViewActivity {
             onResume();
         }
     }
+
+    protected class JsHandler {
+        public JsHandler() {}
+
+        @JavascriptInterface
+        public void popupOpened(String popup) {
+            popups.add(popup);
+        }
+
+        @JavascriptInterface
+        public void popupClosed(String popup) {
+            popups.remove(popup);
+        }
+
+        @JavascriptInterface
+        public void setMenuItems(int numMenuItems) {
+            menuItems = numMenuItems;
+        }
+    }
+
 }
