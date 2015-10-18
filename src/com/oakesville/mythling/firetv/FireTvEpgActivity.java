@@ -23,16 +23,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
-import android.annotation.SuppressLint;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
-import android.widget.Toast;
-
 import com.amazon.android.webkit.AmazonConsoleMessage;
 import com.amazon.android.webkit.AmazonUrlRequest;
 import com.amazon.android.webkit.AmazonWebChromeClient;
@@ -48,6 +38,16 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.Reporter;
+
+import android.annotation.SuppressLint;
+import android.content.res.AssetManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class FireTvEpgActivity extends EpgActivity {
@@ -160,8 +160,6 @@ public class FireTvEpgActivity extends EpgActivity {
                 super.onPageFinished(view, url);
                 popup = null;
                 menuItemFromBtm = 0;
-                if (BuildConfig.DEBUG)
-                    webView.loadUrl("javascript:setDebug(true)");
             }
         });
 
