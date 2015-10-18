@@ -50,18 +50,44 @@ android {
     }    
 }
 
+// Note: On win8 grunt fails with "ENOTSUP, operation not supported on socket"
+// when copying from mapped drives.  Run grunt on linux in that case.
 task buildMythlingEpg(type: Exec) {
     workingDir mythlingEpgLoc
     commandLine 'cmd', '/c', 'grunt', '--no-color'
 }
 
-task getMythlingEpg(type: Copy) {
-    dependsOn buildMythlingEpg
-
+task copyEpgDist(type: Copy) {
     from("${mythlingEpgLoc}/dist") {
         exclude 'demo/'
         exclude 'js/mythling-epg.min.js'
         exclude 'js/mythling-epg-omb.min.js'
+    }
+    into 'assets/mythling-epg'
+}
+
+task getMythlingEpg() {
+    dependsOn(buildMythlingEpg, copyEpgDist)
+}
+
+task devCopyJs(type: Copy) {
+    from("${mythlingEpgLoc}/src") {
+        include 'epg-device.js'
+        include 'epg-firetv.js'
+    }
+    into 'assets/mythling-epg/js'
+}
+
+// Copies epg resources directly from src rather than dist.
+// Does not include stuff that needs to be processed by grunt (mythling-epg.js, guide.html)
+// Run copyEpgDist at least once first.
+task devCopyEpg(type: Copy) {
+
+    dependsOn devCopyJs
+
+    from("${mythlingEpgLoc}") {
+        include 'views/*'
+        include 'css/*'
     }
     into 'assets/mythling-epg'
 }
