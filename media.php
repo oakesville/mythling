@@ -1243,7 +1243,7 @@ function printChannelBegin($chanId, $chanNum, $callSign, $icon)
   echo ', "ChanId": "' . $chanId . '"';
   echo ', "ChanNum": "' . $chanNum . '"';
   if ($icon)
-    echo ', "IconURL: "/Guide/GetChannelIcon?ChanId=' . $chanId . '"';
+    echo ', "IconURL": "/Guide/GetChannelIcon?ChanId=' . $chanId . '"';
   echo ",\n";
   echo '        "Programs": ' . "\n";
   echo '        [' . "\n";
