@@ -46,16 +46,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
-import android.widget.Toast;
-
-import android.annotation.SuppressLint;
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
@@ -335,7 +325,11 @@ public class FireTvEpgActivity extends EpgActivity {
             }
             else if (getPopups() != null && !getPopups().isEmpty()) {
                 if (getPopups().contains("menu") || getPopups().contains("details")) {
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                        webView.loadUrl("javascript:closePopup()");
+                        return true;
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                         return true; // not allowed
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
