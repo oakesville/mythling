@@ -1,19 +1,27 @@
 <div class="modal-header">
   <div style="float:left;"><span class="modal-title">{{program.Title}}</span></div>
-  <button id="detailsCloseBtn" type="button" class="close-button" style="float:right;" autofocus ng-click="fireEpgAction('close');close(program);">
+  <button id="detailsCloseBtn" type="button" class="close-button" style="float:right;" autofocus ng-click="close(program);">
     <img src="images/x.png" />
   </button>  
 </div>
 <div class="modal-body" style="clear:both;">
-  <div ng-if="program.subTitle != ''">
-    {{program.subTitle}}
+  <div class="details-icon" ng-if="showChannelIcons">
+    <img ng-src="{{program.channel.IconURL}}" alt="{{program.channel.CallSign}}" />
   </div>
   <div>
-    {{program.start | date:'MMM d h:mm a'}} - {{program.end | date:'h:mm a'}} &nbsp; {{program.channel.ChanNum}} ({{program.channel.CallSign}})
-    <p ng-if="program.category || program.originalAirDate">
-      <span class="program-category">{{program.category}} </span> 
-      <span ng-if="program.originalAirDate">(Originally Aired {{program.originalAirDate | date:'MMM d, yyyy'}})</span>
-    </p>
+    <div ng-if="program.subTitle != ''">
+      {{program.subTitle}}
+    </div>
+    <div>
+      {{program.start | date:'MMM d h:mm a'}} - {{program.end | date:'h:mm a'}} &nbsp; {{program.channel.ChanNum}} ({{program.channel.CallSign}})
+      <p ng-if="program.category || program.aired">
+        <span class="program-category">{{program.category}} </span> 
+        <span ng-if="program.repeat && program.aired && !program.isMovie">(Originally Aired {{program.aired | date:'MMM d, yyyy'}})</span>
+        <span ng-if="program.aired && program.isMovie">({{program.aired | date:'yyyy'}})</span>
+      </p>
+    </div>
+  </div>
+  <div class="modal-details">
     <accordion close-others="true">
       <accordion-group is-open="true">
         <accordion-heading><div class="accordion-heading">Description</div></accordion-heading>

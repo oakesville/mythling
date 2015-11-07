@@ -1,4 +1,4 @@
-/*! mythling-epg v1.2.0
+/*! mythling-epg v1.2.1
  *  Copyright 2015 Donald Oakes
  *  License: Apache-2.0 */
 'use strict';
@@ -61,7 +61,7 @@ epgApp.value('RECORD_STATUSES', [
 ]);
 
 epgApp.config(['$compileProvider', function($compileProvider) {
-  var debugInfo = 'true' == urlParams().angularDebug;
+  var debugInfo = 'true' == urlParams().epgDebug;
   $compileProvider.debugInfoEnabled(debugInfo);
 }]);
 
@@ -89,9 +89,6 @@ epgApp.controller('EpgController',
     ['$scope', '$window', '$http', '$timeout', '$location', '$modal', '$filter', 'GuideData', 'RECORD_STATUSES', 
     function($scope, $window, $http, $timeout, $location, $modal, $filter, GuideData, RECORD_STATUSES) {
 
-  console.log('userAgent: ' + $window.navigator.userAgent);
-  console.log('location: ' + $window.location);
-  
   // layout dimensions
   for (var i = 0; i < $window.document.styleSheets.length; i++) {
     var sheet = $window.document.styleSheets[i];
@@ -113,16 +110,24 @@ epgApp.controller('EpgController',
   var params = urlParams();
   // supportedParams
   var startTime = params.startTime ? new Date(params.startTime) : new Date();
-  startTime = params.StartTime ? new Date(params.StartTime) : startTime; // support MythTV param name
-  console.log('startTime: ' + startTime);
+  startTime = params.StartTime ? new Date(params.StartTime) : startTime; // support std MythTV param name
   var guideInterval = params.guideInterval ? parseInt(params.guideInterval) : 12; // hours
   var guideHistory = params.guideHistory ? parseInt(params.guideHistory) : 0; // hours (must be less than interval)
   $scope.bufferSize = params.bufferSize ? parseInt(params.bufferSize) : 8; // screen widths (say, around 2 hours per)
   var awaitPrime = params.awaitPrime ? params.awaitPrime == 'true' : false; // whether to disable mobile scroll until loaded
   var channelGroupId = params.channelGroupId ? parseInt(params.channelGroupId) : 0;
+  $scope.showChannelIcons = params.showChannelIcons ? params.showChannelIcons == 'true' : false; // display channel icons on guide/detail
+  var recordingPriority = params.recordingPriority ? params.recordingPriority : 0; // priority for all recordings scheduled thru epg
   var mythlingServices = params.mythlingServices ? params.mythlingServices == 'true' : false;
   var demoMode = params.demoMode ? params.demoMode == 'true' : false;
   $scope.revertLabelsToFixed = params.revertLabelsToFixed ? parseInt(params.revertLabelsToFixed) : 0; // ms till revert to fixed
+  epgDebug = params.epgDebug ? params.epgDebug == 'true' : false;
+  
+  if (epgDebug) {
+    console.log('userAgent: ' + $window.navigator.userAgent);
+    console.log('location: ' + $window.location);
+    console.log('startTime: ' + startTime);
+  }
   
   $scope.guideData = new GuideData(startTime, $scope.slotWidth, guideInterval, awaitPrime, guideHistory, channelGroupId, mythlingServices, demoMode);
   
@@ -165,18 +170,16 @@ epgApp.controller('EpgController',
       $scope.popElem.triggerHandler('popHide');
       $scope.popElem.children(0).removeClass('program-select');
       $scope.popElem = null;
+      $scope.fireEpgAction('close.menu');
     }
   };
+  popHide = $scope.popHide;
   
   $scope.popPlace = "top";
   $scope.setPopPlace = function(place) {
     $scope.popPlace = place;
   };
   
-  var win = angular.element($window); 
-  win.bind('click', $scope.popHide);
-  win.bind('scroll', $scope.popHide);
-  win.bind('resize', $scope.popHide);
   
   // TODO make details a service
   $scope.details = function(program) {
@@ -184,6 +187,8 @@ epgApp.controller('EpgController',
     $timeout(function() {
       angular.element(document.getElementById(program.id)).addClass('program-select');
     }, 0);
+    
+    $scope.fireEpgAction('open.details');
     
     if ($scope.guideData.demoMode) {
       $scope.program = program;
@@ -198,18 +203,23 @@ epgApp.controller('EpgController',
         $timeout(function() {
           var progElem = document.getElementById(program.id);
           angular.element(progElem).removeClass('program-select');
+          progElem.focus();
+          $scope.fireEpgAction('close.details');          
         }, 0);    
       });
       return;
     }
     
     var url = '/Guide/GetProgramDetails?ChanId=' + program.channel.ChanId + '&StartTime=' + program.StartTime;
-    console.log('details url: ' + url);
+    if (epgDebug)
+      console.log('details url: ' + url);
     $http.get(url).success(function(data) {
       var Program = data.Program;
       if (Program.Description)
         program.description = Program.Description.replace('``', '"');
-      if (Program.Airdate && "true" === Program.Repeat) {
+      program.repeat = "true" === Program.Repeat;
+      program.isMovie = "movie" === Program.CatType;
+      if (Program.Airdate) {
         var oad = Program.Airdate;
         var d = new Date();
         d.setFullYear(parseInt(oad.substring(0, oad.indexOf('-'))));
@@ -219,7 +229,7 @@ epgApp.controller('EpgController',
         d.setMinutes(0);
         d.setSeconds(0);
         d.setMilliseconds(0);
-        program.originalAirDate = d;
+        program.aired = d;
       }
       if (Program.Category)
         program.category = Program.Category;
@@ -264,6 +274,8 @@ epgApp.controller('EpgController',
         $timeout(function() {
           var progElem = document.getElementById(program.id);
           angular.element(progElem).removeClass('program-select');
+          progElem.focus();
+          $scope.fireEpgAction('close.details');    
         }, 0);    
       });
     });
@@ -271,7 +283,9 @@ epgApp.controller('EpgController',
   
   $scope.fireEpgAction = function(name) {
     if (typeof CustomEvent == 'function')
-      document.dispatchEvent(new CustomEvent('epgAction', {'name': name})); // enable outside listeners
+      if (epgDebug)
+        console.log('firing epgAction: ' + name);
+      document.dispatchEvent(new CustomEvent('epgAction', {'detail': name})); // enable outside listeners
   };
   
   if ($scope.bufferSize === 0)
@@ -285,11 +299,33 @@ epgApp.controller('EpgModalController', ['$scope', '$timeout', '$modalInstance',
   };
 }]);
 
+// container for one-at-a-time popovers
+epgApp.directive('popContainer', ['$window', function($window) {
+  
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+
+      var win = angular.element($window); 
+      win.bind('click', scope.popHide);
+      win.bind('scroll', scope.popHide);
+      win.bind('resize', scope.popHide);
+      
+      scope.$on('$destroy', function() {
+        win.unbind('click', scope.popHide);
+        win.unbind('scroll', scope.popHide);
+        win.unbind('resize', scope.popHide);
+      });
+    }
+  };
+}]);
+
 epgApp.directive('popClick', ['$timeout', function($timeout) {
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
-      elem.bind('click', function() {
+      
+      var popHandler = function() {
         if (scope.popElem != elem) {
           // calculate placement
           var viewportOffset = elem[0].getBoundingClientRect();
@@ -316,16 +352,56 @@ epgApp.directive('popClick', ['$timeout', function($timeout) {
                 place = 'left';
             }
           }
-          
+
           scope.setPopPlace(place);
           scope.$apply();
+
           $timeout(function() {
             if (scope.popElem === null) {
               elem.triggerHandler('popShow');
               scope.setPopElem(elem);
+              scope.fireEpgAction('open.menu');
             }
           }, 0);
         }
+      };
+
+      var popKeyHandler = function(event) {
+        if (event.which === 13) {
+          event.preventDefault();
+          if (scope.popElem === elem)
+            popHide();
+          else
+            popHandler();
+        }
+        else if (event.which === 27 && scope.popElem === elem) {
+          event.preventDefault();
+          popHide();
+        }
+      };
+      
+      elem.bind('click', popHandler);
+      elem.bind('keyup', popKeyHandler);
+      
+      scope.$on('$destroy', function() {
+        elem.unbind('click', popHandler);
+        elem.unbind('keyup', popKeyHandler);
+      });
+    }
+  };
+}]);
+
+epgApp.directive('popHide', ['$timeout', function($timeout) {
+  return {
+    restrict: 'A',
+    link: function link(scope, elem, attrs) {
+      var blurHandler = function(event) {
+        scope.popHide();
+      };
+      
+      elem.bind('blur', blurHandler);
+      scope.$on('$destroy', function() {
+        elem.unbind('blur', blurHandler);
       });
     }
   };
@@ -335,13 +411,19 @@ epgApp.directive('onEnter', function() {
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
-      elem.bind('keypress', function(event) {
+      
+      var keyHandler = function(event) {
         if (event.which === 13) {
           scope.$apply(function() {
             scope.$eval(attrs.onEnter);
           });
           event.preventDefault();
         }
+      };
+      
+      elem.bind('keypress', keyHandler);
+      scope.$on('$destroy', function() {
+        elem.unbind('click', keyHandler);
       });
     }
   };
@@ -369,8 +451,14 @@ epgApp.directive('blurMe', function() {
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
-      elem.bind('focus', function() {
+
+      var focusHandler = function() {
         elem[0].blur();
+      };
+      
+      elem.bind('focus', focusHandler);
+      scope.$on('$destroy', function() {
+        elem.unbind('focus', focusHandler);
       });
     }
   };
@@ -380,7 +468,7 @@ epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSE
   return {
     restrict: 'A',
     link: function link(scope, elem, attrs) {
-      elem.bind('click', function() {
+      var clickHandler = function() {
         var action = attrs.epgRecord;
         // TODO use a controller -- this MUST be refactored
         var url = '/Dvr/';
@@ -411,8 +499,8 @@ epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSE
         if (action == 'transcode')
           url += '&AutoTranscode=true';
 
-        scope.fireEpgAction('record');
-        console.log('record action url: ' + url);
+        if (epgDebug)
+          console.log('record action url: ' + url);
         if (scope.guideData.demoMode) {
           if ((action == 'single' || action == 'transcode' || action == 'all'))
             scope.program.recStatus = RECORD_STATUSES[11];
@@ -424,12 +512,14 @@ epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSE
             if (action == 'remove') {
               var recId = data.RecRule.Id;
               url = '/Dvr/RemoveRecordSchedule?RecordId=' + recId;
-              console.log('remove recording schedule url: ' + url);
+              if (epgDebug)
+                console.log('remove recording schedule url: ' + url);
               $http.post(url).success(function(data, status, headers, config) {
                 $timeout(function() {
                   var upcomingUrl = '/Dvr/GetUpcomingList?ShowAll=true';
                   $http.get(upcomingUrl).success(function(data, status, headers, config) {
-                    console.log('upcoming list response time: ' + config.responseTime);
+                    if (epgDebug)
+                      console.log('upcoming list response time: ' + config.responseTime);
                     // update all guide data for matching titles per upcoming recordings (consider omitting title match) 
                     var upcoming = data.ProgramList.Programs;
                     var upcomingForTitle = [];
@@ -467,16 +557,14 @@ epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSE
               $timeout(function() {
                 var upcomingUrl = '/Dvr/GetUpcomingList?ShowAll=true';
                 $http.get(upcomingUrl).success(function(data, status, headers, config) {
-                  console.log('upcoming list response time: ' + config.responseTime);
+                  if (epgDebug)
+                    console.log('upcoming list response time: ' + config.responseTime);
                   // update recording status for all matching programs in upcoming recordings
                   var upcoming = data.ProgramList.Programs;
                   for (var i = 0; i < upcoming.length; i++) {
                     var upProg = upcoming[i];
                     if (upProg.Title == scope.program.Title) {
-                      var chanNum = upProg.Channel.ChanNum;
-                      // pad to 4 digits
-                      while (chanNum.length < 4)
-                        chanNum = '0' + chanNum;
+                      var chanNum = scope.guideData.getChanNumIndex(upProg.Channel);
                       var chan = scope.guideData.channels[chanNum];
                       if (chan) {
                         var prog = chan.programs[upProg.StartTime];
@@ -495,6 +583,12 @@ epgApp.directive('epgRecord', ['$http', '$timeout', 'ERROR_TAG', 'RECORD_STATUSE
             console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
           });
         }
+      };
+      
+      elem.bind('click', clickHandler);
+      
+      scope.$on('$destroy', function() {
+        elem.unbind('click', clickHandler);
       });
     }
   };
@@ -530,7 +624,8 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
 
   GuideData.prototype.setStartTime = function(startTime) {
 
-    console.log('startTime: ' + startTime.toISOString());
+    if (epgDebug)
+      console.log('startTime: ' + startTime.toISOString());
     
     this.curDate = new Date(startTime);
     
@@ -585,7 +680,8 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
     if (this.channelGroupId && this.channelGroupId > 0)
       path += "&ChannelGroupId=" + this.channelGroupId;
     url += this.demoMode ? path.replace(/:/g, '-') + '.json' : path;
-    console.log('retrieving from: ' + url);
+    if (epgDebug)
+      console.log('retrieving from: ' + url);
     if (this.awaitPrime)
       angular.element(document.body).bind('touchmove', this.preventMobileScroll);
     
@@ -601,40 +697,61 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
       console.log(ERROR_TAG + 'HTTP ' + status + ': ' + url);
       this.busy = false;
     }).success(function(data, status, headers, config) {
-      console.log('guide data response time: ' + config.responseTime);
+      if (epgDebug)
+        console.log('guide data response time: ' + config.responseTime);
       if (typeof this.isMyth28 === 'undefined') {
         this.mythVersion = data.ProgramGuide.Version ? data.ProgramGuide.Version : '0.27';
-        console.log('MythTV version ' + this.mythVersion);
+        if (epgDebug)
+          console.log('MythTV version ' + this.mythVersion);
         this.isMyth28 = !this.mythVersion.startsWith('0.27');
       }
+      
       var chans = data.ProgramGuide.Channels;
+      
+      var isFirstRetrieve = this.startTime.getTime() == this.beginTime.getTime();
+      
+      // insert channels missing from this retrieval (due to missing data)
+      if (!isFirstRetrieve)
+        this.addMissingChannelsTo(chans);
+      
       var chanIdx = 0;
       for (var i = 0; i < chans.length; i++) {
+
         var chan = chans[i];
-        if (chan.Programs.length > 0) {
+        // do not add channels that have no programs in the initial retrieval
+        if (!isFirstRetrieve || chan.Programs.length > 0) {
           chanIdx++;
-          var chanNum = chan.ChanNum;
-          // pad to 4 digits to ensure proper sorting by chanNum
-          while (chanNum.length < 4)
-            chanNum = '0' + chanNum;
-          if (!(chanNum in this.channels)) {
+          var chanNum = this.getChanNumIndex(chan);
+          
+          // do not add new channels discovered when scrolling
+          if (!(chanNum in this.channels) && isFirstRetrieve) {
             chan.programs = {};
             chan.progSize = 0;
             chan.progOffset = 0;
             this.channels[chanNum] = chan;
           }          
           var channel = this.channels[chanNum];
-          for (var j = 0; j < chan.Programs.length; j++) {
-            var prog = chan.Programs[j];
-            var end = new Date(prog.EndTime);
-            if (end.getTime() > this.startTime.getTime() - this.history) { // ignore programs that already ended
+          if (typeof channel !== 'undefined' && channel !== null) {  // if new channel during scrolling
+            var prevProgEnd = this.startTime;
+            for (var j = 0; j < chan.Programs.length; j++) {
+              var prog = chan.Programs[j];
               var startTime = prog.StartTime;
-              if (!(startTime in channel.programs)) {
+              var start = new Date(prog.StartTime);
+              var end = new Date(prog.EndTime);
+              // ignore programs that already ended or start after range
+              if ((end.getTime() > this.startTime.getTime() - this.history) && (start.getTime() < this.endTime.getTime())) { 
                 channel.programs[startTime] = prog;
-                channel.progSize++;
-                var start = new Date(prog.StartTime);
-                var slotsStartTime = start.getTime() < this.startTime.getTime() ? this.startTime.getTime() : start.getTime();
-                var slots = (end.getTime() - slotsStartTime) / 1800000;
+  
+                // don't start before begin time or end after end time
+                var slotsStartTime = start.getTime() < this.beginTime.getTime() ? this.startTime.getTime() : start.getTime();
+                var slotsEndTime = end.getTime() > this.endTime.getTime() ? this.endTime.getTime() : end.getTime();
+                var slots = (slotsEndTime - slotsStartTime) / 1800000;
+  
+                // account for gaps in data
+                if (slotsStartTime > prevProgEnd.getTime())
+                  this.addFiller(channel, prevProgEnd, new Date(slotsStartTime));
+                prevProgEnd = end;
+                
                 prog.start = start;
                 prog.end = end;
                 prog.offset = channel.progOffset;
@@ -648,10 +765,29 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
                   }
                 }
                 prog.channel = channel;
+                channel.progSize++;
                 prog.id = 'ch' + channel.ChanId + 'pr' + prog.StartTime;
                 prog.seq = 'ch' + chanIdx + 'pr' + channel.progSize;
                 prog.index = this.index++;
                 channel.progOffset += prog.width;
+              }
+            }
+            
+            // account for gaps in data
+            if (this.endTime.getTime() > prevProgEnd.getTime())
+              this.addFiller(channel, prevProgEnd, this.endTime);
+            if (isFirstRetrieve) {
+              var firstProg = channel.programs[this.startTime.toISOString()];
+              if (firstProg && firstProg.filler) {
+                // first program is filler -- insert blank to fix guide appearance
+                var blankProg = {
+                  Title: '',
+                  SubTitle: '',
+                  channel: channel
+                };
+                blankProg.width = 0;
+                channel.programs[this.startTime.toISOString()] = blankProg;
+                channel.programs[new Date(this.startTime.getTime() + 1000).toISOString()] = firstProg;
               }
             }
           }
@@ -680,7 +816,8 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
       
       if (programId && programId !== null) {
         $timeout(function() {
-          console.log('selecting program: ' + programId);
+          if (epgDebug)
+            console.log('selecting program: ' + programId);
           document.getElementById(programId).focus();
         }, 0);
       }
@@ -698,6 +835,59 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
       
     }.bind(this));
   };
+  
+  // channel object index for proper sorting
+  GuideData.prototype.getChanNumIndex = function(channel) {
+    var chanNum = channel.ChanNum;
+    // replace underscore or dot
+    if (chanNum.indexOf('_') >= 0 || chanNum.indexOf('.') >= 0)
+      chanNum = chanNum.replace(/[\._]/, '');
+    else
+      chanNum += '0';
+    // pad to 5 digits to ensure proper sorting by chanNum
+    while (chanNum.length < 5)
+      chanNum = '0' + chanNum;
+
+    // append padded chanid to accommodate duplicate channums
+    var chanId = channel.ChanId;
+    while (chanId.length < 5)
+      chanId = '0' + chanId;
+
+    return chanNum + '_' + chanId;
+  };
+  
+  GuideData.prototype.addMissingChannelsTo = function(chans) {
+    for (var chanNum in this.channels) {
+      var found = false;
+      for (var i = 0; i < chans.length; i++) {
+        if (chans[i].ChanNum == this.channels[chanNum].ChanNum) {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+        chans.push(this.channels[chanNum]);
+    }
+  };
+  
+  GuideData.prototype.addFiller = function(channel, start, end) {
+    console.log(ERROR_TAG + 'Missing Data for Channel ' + channel.ChanNum + ': ' + start + ' -> ' + end);
+    var fillerStart = start.toISOString();
+    channel.progSize++;
+    var fillerProg = {
+      filler: true,
+      offset: channel.progOffset,
+      Title: '',
+      SubTitle: '',
+      channel: channel
+    };
+    
+    fillerProg.width = Math.round((end.getTime() - start.getTime()) * this.slotWidth / 1800000);
+    channel.progOffset += fillerProg.width;
+    channel.programs[fillerStart] = fillerProg;
+    return fillerProg;
+  };
+  
   
   return GuideData;
 }]);
@@ -717,8 +907,12 @@ function parseCssDim(dim) {
   return parseInt(dim);
 }
 
-// hack: function for outside access from stay-omb
+//globals
+var epgDebug;
+// function for outside access from stay-omb
 var setPosition;
+// function for outside access from epg-device
+var popHide;
 
 // in case js string does not supply startsWith() and endsWith()
 if (typeof String.prototype.startsWith != 'function') {
@@ -866,6 +1060,10 @@ epgCalendar.controller('EpgCalController', ['$scope', '$timeout', function($scop
     }
   };
   
+  $scope.$watch('calendarOpened', function(isOpened) {
+    $scope.fireEpgAction(isOpened ? 'open.calendar' : 'close.calendar');
+  });  
+  
   $scope.currentDate = function(newValue) {
     if (newValue) {
       var newTime = new Date(newValue);
@@ -876,7 +1074,6 @@ epgCalendar.controller('EpgCalController', ['$scope', '$timeout', function($scop
       startTime.setHours(0);
       startTime.setMinutes(0);
       $scope.guideData.setStartTime(startTime);
-      $scope.fireEpgAction('calendar');
       $scope.guideData.nextPage(null, newTime);
     }
     return $scope.guideData.curDate;
@@ -895,6 +1092,7 @@ epgSearch.controller('EpgSearchController', ['$scope', '$timeout', 'search', fun
   $scope.searchOpened = false;
   $scope.searchClick = function($event) {
     $scope.searchOpened = !$scope.searchOpened;
+    $scope.fireEpgAction($scope.searchOpened ? 'open.search' : 'close.search');
   };
   
   $scope.searchForward = function() {
@@ -924,7 +1122,6 @@ epgSearch.controller('EpgSearchController', ['$scope', '$timeout', 'search', fun
   
   $scope.closeSearch = function() {
     $timeout(function() {
-      $scope.fireEpgAction('search');
       document.getElementById('searchBtn').click();
     }, 5);
   };
@@ -979,7 +1176,8 @@ epgSearch.factory('search', ['$http', '$q', function($http, $q) {
     var startTime = new Date();
     var baseUrl = mythlingServices ? '/mythling/media.php?type=guide&' : '/Guide/GetProgramList?';
     baseUrl += 'StartTime=' + startTime.toISOString();
-    console.log('search base url: ' + baseUrl);
+    if (epgDebug)
+      console.log('search base url: ' + baseUrl);
     
     var searches;
     if (mythlingServices) {

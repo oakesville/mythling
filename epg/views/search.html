@@ -3,11 +3,11 @@
     <input id="searchInput" type="text" class="form-control search-input" ng-class="'search-input'" ng-disabled="!guideData.isMyth28 && !guideData.mythlingServices"
       ng-model="searchFilter" ng-model-options="{getterSetter: true}" focus-me="later" on-enter="searchForward()" />
     <button id="searchBackwardBtn" type="button" class="search-button" ng-click="searchBackward()" 
-      ng-disabled="!guideData.isMyth28 || filterVal.length == 0">
+      ng-disabled="(!guideData.isMyth28 && !guideData.mythlingServices) || filterVal.length == 0">
       <img src="images/lft.png" />
     </button>
     <button id="searchForwardBtn" type="button" class="search-button" ng-click="searchForward()" 
-      ng-disabled="!guideData.isMyth28 || filterVal.length == 0">
+      ng-disabled="(!guideData.isMyth28 && !guideData.mythlingServices) || filterVal.length == 0">
       <img src="images/rt.png" />
     </button>
     <img src="images/loading_sm.gif" class="search-loading" ng-if="isSearching()" />

@@ -4,7 +4,7 @@
   <meta http-equiv="x-ua-compatible" content="IE=Edge">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-  <meta name="application-name" content="mythling-epg" data-version="1.2.01">
+  <meta name="application-name" content="mythling-epg" data-version="1.2.1">
   <title>Mythling EPG</title>
   <link rel="stylesheet" href="css/bootstrap.css">
   <link rel="stylesheet" href="css/mythling.css">
@@ -14,7 +14,7 @@
   <script src="js/ng-infinite-scroll-h-fix.min.js"></script>
   <script src="js/mythling-epg.js"></script>
 </head>
-<body ng-app="epgApp" ng-controller="EpgController">
+<body ng-app="epgApp" ng-controller="EpgController" pop-container>
   <div class="guide-status label-width header-height">
     <div class="status-outer">
       <div class="status" ng-controller="EpgCalController">
@@ -44,8 +44,11 @@
     
   <div class="channel-column" stay="left" stay-revert-to-fixed="{{revertLabelsToFixed}}" stay-track="setPosition" ng-style="::{top:headerHeight+'px'}">
     <div class="channel-outer label-width row-height" ng-repeat="channel in guideData.channels">
-      <div class="channel">
+      <div class="channel" ng-if="!showChannelIcons">
         {{::channel.ChanNum}}<br/>{{::channel.CallSign}}
+      </div>
+      <div class="channel-icon" ng-if="showChannelIcons" title="{{::channel.CallSign}}">
+        <img ng-src="{{::channel.IconURL}}" ng-style="::{height:rowHeight-4+'px'}" alt="{{::channel.CallSign}}" />
       </div>
     </div>
   </div>
@@ -59,7 +62,7 @@
       <div class="program-outer" ng-repeat="program in channel.programs">
         <div class="program row-height" popover-template="'views/menu.html'" popover-trigger="popShow" popover-placement="{{popPlace}}"
           pop-click ng-style="{width:program.width+'px'}">
-          <div ng-if="!program.filler" id="{{::program.id}}" class="program-inner" tabIndex="{{::program.index}}" 
+          <div ng-if="!program.filler" id="{{::program.id}}" class="program-inner" tabIndex="{{::program.index}}" pop-hide
             ng-class="{'program-record': program.recStatus.record, 'program-error': program.recStatus.error, 'program-warn': program.recStatus.code == 7}" 
             data-seq="{{::program.seq}}" data-offset="{{::program.offset}}">
             <span class="program-title">{{::program.Title}}</span><br/>{{::program.subTitle}}

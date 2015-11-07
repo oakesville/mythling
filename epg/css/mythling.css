@@ -133,6 +133,15 @@ table {
   border-radius: 3px;
   padding-left: 5px;
 }
+.channel-icon {
+  background-color: #90a4ae;
+}
+.channel-icon > img {
+  border-radius: 3px;
+  width: 88%;
+  margin-left: 6%;
+  opacity: 0.80;
+}
 .channel-row {
   display: -webkit-inline-flex;
   display: inline-flex;
@@ -200,6 +209,15 @@ table {
 }
 .program-details {
   padding-top: 2px;
+}
+.details-icon {
+  float: left;
+  padding: 0 5px 5px 0;
+  padding-bottom: 
+}
+.details-icon > img {
+	height: 70px;
+	max-width: 125px;
 }
 .details-status {
   float: left;
@@ -386,6 +404,9 @@ table {
 }
 .modal-body p {
   margin: 0 0 5px;
+}
+.modal-details {
+	clear: both;
 }
 .modal-footer {
   margin-top: 10px;
