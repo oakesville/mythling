@@ -24,18 +24,6 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.UiModeManager;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
-import android.preference.PreferenceManager;
-
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -50,6 +38,18 @@ import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
+
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
+import android.preference.PreferenceManager;
 
 public class AppSettings {
     public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
@@ -137,6 +137,7 @@ public class AppSettings {
     public static final String MYTHLING_EPG = "mythling-epg";
     public static final String HOSTED_EPG_ROOT = "hosted_epg_root";
     public static final String EPG_CHANNEL_GROUP = "epg_channel_group";
+    public static final String EPG_CHANNEL_ICONS = "epg_channel_icons";
     public static final String EPG_OMB = "epg_omb";
     public static final String EPG_SCALE = "epg_scale";
     public static final String EPG_PARAMS = "epg_params";
@@ -305,6 +306,10 @@ public class AppSettings {
 
     public String getEpgChannelGroup() {
         return getStringPref(EPG_CHANNEL_GROUP, "");
+    }
+
+    public boolean isEpgChannelIcons() {
+        return getBooleanPref(EPG_CHANNEL_ICONS, false);
     }
 
     public boolean isEpgOmb() {

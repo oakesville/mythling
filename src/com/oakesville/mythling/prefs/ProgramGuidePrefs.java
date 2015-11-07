@@ -15,14 +15,14 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.AppSettings;
 
 public class ProgramGuidePrefs extends PreferenceFragment {
     private AppSettings appSettings;
@@ -58,7 +58,16 @@ public class ProgramGuidePrefs extends PreferenceFragment {
         });
         pref.setSummary(appSettings.getEpgChannelGroup());
 
-        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_OMB);
+        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_CHANNEL_ICONS);
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                appSettings.setEpgLastLoad(0); // refresh
+                return super.onPreferenceChange(preference, newValue);
+            }
+        });
+        swPref.setChecked(appSettings.isEpgChannelIcons());
+
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.EPG_OMB);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 appSettings.setEpgLastLoad(0); // refresh

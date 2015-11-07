@@ -131,7 +131,9 @@
         <item>1.5</item>
         <item>2.0</item>
     </string-array>
-    <string name="title_guide_prefs">Guide Options</string>
+    <string name="title_channel_prefs">Channel Display</string>
+    <string name="switch_channel_callsigns">Call Sign</string>
+    <string name="switch_channel_icons">Icon</string>
     <string name="title_epg_channel_group">Channel Group (MythTV 0.28)</string>
     <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28)</string>
     <string name="title_epg_params">Parameters</string>

@@ -218,6 +218,12 @@ public class EpgActivity extends WebViewActivity {
                 else
                     parameters.remove("mythlingServices");
             }
+            if (!parameters.containsKey("showChannelIcons")) { // honor explicitly-set parameter first
+                if (getAppSettings().isEpgChannelIcons())
+                    parameters.put("showChannelIcons", "true");
+                else
+                    parameters.remove("showChannelIcons");
+            }
             String channelGroup = getAppSettings().getEpgChannelGroup();
             if (channelGroup == null || channelGroup.isEmpty()) {
                 parameters.remove("channelGroupId");
