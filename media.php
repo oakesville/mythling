@@ -164,7 +164,8 @@ if ($type->isGuide())
   else
   {
     $where .= "where p.starttime < '" . $endTime . "'" . "\n";
-    $where .= "and p.endtime >= '" . $startTime . "'";
+    $where .= "and p.endtime >= '" . $startTime . "'" . "\n";
+    $where .= "and c.visible = true";
   }
 
   if ($listingsSearch != null)
