@@ -770,6 +770,9 @@ epgApp.factory('GuideData', ['$http', '$timeout', '$window', '$filter', 'ERROR_T
                 prog.seq = 'ch' + chanIdx + 'pr' + channel.progSize;
                 prog.index = this.index++;
                 channel.progOffset += prog.width;
+                
+                if (this.demoMode && channel.IconURL)
+                  channel.IconURL = 'demo/guide-data/icons/' + channel.ChanId + '.png';
               }
             }
             
