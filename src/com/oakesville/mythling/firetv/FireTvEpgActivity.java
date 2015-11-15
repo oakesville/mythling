@@ -324,12 +324,12 @@ public class FireTvEpgActivity extends EpgActivity {
                 }
             }
             else if (getPopups() != null && !getPopups().isEmpty()) {
-                if (getPopups().contains("menu") || getPopups().contains("details")) {
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                        webView.loadUrl("javascript:closePopup()");
-                        return true;
-                    }
-                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    webView.loadUrl("javascript:closePopup()");
+                    return true;
+                }
+                else if (getPopups().contains("menu") || getPopups().contains("details")) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                         return true; // not allowed
                     }
                     else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
@@ -376,6 +376,5 @@ public class FireTvEpgActivity extends EpgActivity {
         }
         return super.dispatchKeyEvent(event);
     }
-
 }
 

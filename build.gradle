@@ -80,7 +80,7 @@ task devCopyJs(type: Copy) {
 
 // Copies epg resources directly from src rather than dist.
 // Does not include stuff that needs to be processed by grunt (mythling-epg.js, guide.html)
-// Run copyEpgDist at least once first.
+// Run grunt and then copyEpgDist at least once first.
 task devCopyEpg(type: Copy) {
 
     dependsOn devCopyJs
