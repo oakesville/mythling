@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
@@ -69,7 +70,10 @@ public class FireTvEpgActivity extends EpgActivity {
     private boolean showGuideHint;
     private boolean showSearchHint;
 
+    private int menuItems;
     private int menuItemFromBtm;
+
+    private String searchFocusItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +165,7 @@ public class FireTvEpgActivity extends EpgActivity {
         });
 
         webView.addJavascriptInterface(new JsHandler(), "jsHandler");
+        webView.addJavascriptInterface(new FireTvJsHandler(), "fireTvJsHandler");
 
         if (BuildConfig.DEBUG) {
             // do not cache in debug
@@ -329,6 +334,32 @@ public class FireTvEpgActivity extends EpgActivity {
                     menuItemFromBtm = 0;
                     return true;
                 }
+                else if (getPopups().contains("search") && !getPopups().contains("menu") && !getPopups().contains("details")) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if (searchFocusItem == null)
+                            webView.loadUrl("javascript:closePopup()");
+                        else if (searchFocusItem.equals("searchInput"))
+                            return true; // not allowed
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        if (searchFocusItem == null)
+                            webView.loadUrl("javascript:closePopup()");
+                        else if (searchFocusItem.equals("searchCloseBtn"))
+                            return true; // not allowed
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                        if (searchFocusItem == null)
+                            webView.loadUrl("javascript:closePopup()");
+                        else
+                            return true; // not allowed
+                    }
+                    else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        if (searchFocusItem == null)
+                            webView.loadUrl("javascript:closePopup()");
+                        else
+                            return true; // not allowed
+                    }
+                }
                 else if (getPopups().contains("menu") || getPopups().contains("details")) {
                     if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                         return true; // not allowed
@@ -376,6 +407,20 @@ public class FireTvEpgActivity extends EpgActivity {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    protected class FireTvJsHandler {
+        public FireTvJsHandler() {}
+
+        @JavascriptInterface
+        public void setMenuItems(int numMenuItems) {
+            menuItems = numMenuItems;
+        }
+
+        @JavascriptInterface
+        public void setSearchFocus(String item) {
+            searchFocusItem = item;
+        }
     }
 }
 

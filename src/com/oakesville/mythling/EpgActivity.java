@@ -78,8 +78,6 @@ public class EpgActivity extends WebViewActivity {
     protected List<String> popups = new ArrayList<String>();
     public List<String> getPopups() { return popups; }
 
-    protected int menuItems;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -506,11 +504,6 @@ public class EpgActivity extends WebViewActivity {
         @JavascriptInterface
         public void popupClosed(String popup) {
             popups.remove(popup);
-        }
-
-        @JavascriptInterface
-        public void setMenuItems(int numMenuItems) {
-            menuItems = numMenuItems;
         }
     }
 
