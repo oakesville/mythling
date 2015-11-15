@@ -326,6 +326,7 @@ public class FireTvEpgActivity extends EpgActivity {
             else if (getPopups() != null && !getPopups().isEmpty()) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                     webView.loadUrl("javascript:closePopup()");
+                    menuItemFromBtm = 0;
                     return true;
                 }
                 else if (getPopups().contains("menu") || getPopups().contains("details")) {
