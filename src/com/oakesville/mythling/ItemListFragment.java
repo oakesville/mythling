@@ -15,6 +15,10 @@
  */
 package com.oakesville.mythling;
 
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
+import com.oakesville.mythling.media.Recording;
+
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Intent;
@@ -28,10 +32,6 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.Recording;
 
 public class ItemListFragment extends ListFragment {
 
@@ -149,6 +149,11 @@ public class ItemListFragment extends ListFragment {
                 mediaActivity.transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(path);
+                mediaActivity.downloadItem(it);
+                return true;
+            } else if (item.getItemId() == 3) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
                 rec.setPath(path);
                 mediaActivity.deleteRecording(rec);

@@ -32,41 +32,6 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
@@ -97,6 +62,43 @@ import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.ServiceFrontendPlayer;
 import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Base class for the different ways to view collections of MythTV media.
@@ -768,6 +770,33 @@ public abstract class MediaActivity extends Activity {
         } catch (Exception ex) {
             stopProgress();
             onResume();
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    protected void downloadItem(final Item item) {
+        try {
+            final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
+            String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
+            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
+            if (item.getStorageGroup() == null)
+                fileUrl += "&StorageGroup=None";
+            else
+                fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
+
+            stopProgress();
+
+            DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            Request request = new Request(Uri.parse(fileUrl));
+            // request.setDestinationUri(Uri.parse(item.getFileName()));
+            dm.enqueue(request);
+            Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            stopProgress();
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
@@ -1546,6 +1575,11 @@ public abstract class MediaActivity extends Activity {
                 transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
+                Item it = (Item)getListView().getItemAtPosition(info.position);
+                it.setPath(getPath());
+                downloadItem(it);
+                return true;
+            } else if (item.getItemId() == 3) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
                 rec.setPath(path);
                 int size = getListables().size();

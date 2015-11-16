@@ -51,7 +51,28 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:contentDescription="@string/play"
-            android:layout_gravity="center|top" />    
+            android:layout_gravity="center|top"
+            android:padding="5dip" />    
+    
+        <ImageButton
+            android:id="@+id/pagerTranscode"
+            android:src="@drawable/queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:contentDescription="@string/transcode"
+            android:layout_gravity="center|top"
+            android:padding="5dip" />
+        
+        <ImageButton
+            android:id="@+id/pagerDownload"
+            android:src="@drawable/down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:contentDescription="@string/download"
+            android:layout_gravity="center|top"
+            android:padding="5dip" />
     
         <ImageButton
             android:id="@+id/pagerDelete"
@@ -60,16 +81,8 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:contentDescription="@string/delete"
-            android:layout_gravity="center|top" />
-        
-        <ImageButton
-            android:id="@+id/pagerTranscode"
-            android:src="@drawable/queue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/transcode"
-            android:layout_gravity="center|top" />
+            android:layout_gravity="center|top"
+            android:padding="5dip" />
     </LinearLayout>    
 
     <ScrollView

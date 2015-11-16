@@ -315,6 +315,7 @@
     <string name="one">1</string>
     <string name="rating">Rating</string>
     <string name="play">Play</string>
+    <string name="download">Download</string>
     <string name="watch">Watch</string>
     <string-array name="video_categorization_entries">
         <item>None</item>
@@ -345,11 +346,13 @@
     <string-array name="item_long_click_menu">
         <item>Play Item</item>
         <item>Initiate Transcode</item>
+        <item>Download</item>
     </string-array>
     <string name="setup_required">"Setup Required"</string>
     <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="error_">Error:\u0020</string>
+    <string name="downloading_">Downloading:\u0020</string>
     <string name="failed_to_load_">Failed to load:\u0020</string>
     <string name="bad_setting_">Bad or missing setting:</string>
     <string name="directed_by_">Directed By:\u0020</string>

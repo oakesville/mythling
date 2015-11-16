@@ -21,6 +21,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.media.ArtworkDescriptor;
+import com.oakesville.mythling.media.Category;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.TvShow;
+import com.oakesville.mythling.media.Video;
+import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.Reporter;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -46,18 +58,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.ArtworkDescriptor;
-import com.oakesville.mythling.media.Category;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.Video;
-import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.Reporter;
 
 public class ItemDetailFragment extends Fragment {
 
@@ -273,6 +273,7 @@ public class ItemDetailFragment extends Fragment {
             ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.pagerPlay);
             ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.pagerDelete);
             ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.pagerTranscode);
+            ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.pagerDownload);
             if (getAppSettings().isTv()) {
                 if (mediaActivity.getListView() != null) {
                     // split view
@@ -291,10 +292,12 @@ public class ItemDetailFragment extends Fragment {
             }
             else {
                 playBtn.setBackgroundColor(Color.TRANSPARENT);
+                downloadBtn.setBackgroundColor(Color.TRANSPARENT);
                 deleteBtn.setBackgroundColor(Color.TRANSPARENT);
                 transcodeBtn.setBackgroundColor(Color.TRANSPARENT);
             }
             playBtn.setVisibility(android.view.View.VISIBLE);
+            downloadBtn.setVisibility(android.view.View.VISIBLE);
             deleteBtn.setVisibility(item.isRecording() ? android.view.View.VISIBLE : android.view.View.GONE);
             transcodeBtn.setVisibility(android.view.View.VISIBLE);
             playBtn.setOnClickListener(new OnClickListener() {
@@ -320,6 +323,12 @@ public class ItemDetailFragment extends Fragment {
                 public void onClick(View v) {
                     Item item = (Item) listable;
                     mediaActivity.transcodeItem(item);
+                }
+            });
+            downloadBtn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    Item item = (Item) listable;
+                    mediaActivity.downloadItem(item);
                 }
             });
 
