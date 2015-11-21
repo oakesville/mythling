@@ -38,3 +38,6 @@ mythling-epg demo:
 http://oakesville.github.io/mythling/epg/guide.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24
 http://192.168.0.69:6544/mythling-epg/dist/guide.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24
 http://192.168.0.70:6544/mythling-epg/guide.html?demoMode=true&startTime=2015-07-12T06:00:00.000Z&guideInterval=24
+
+amazon dev console:
+https://developer.amazon.com/home.html

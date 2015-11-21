@@ -21,18 +21,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.util.LruCache;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
@@ -46,13 +41,19 @@ import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.util.LruCache;
+
 public class AppData {
-    public static final int BUILD_ID = 7;
     private static final String TAG = AppData.class.getSimpleName();
 
     private static final String MEDIA_LIST_JSON_FILE = "mediaList.json";
     private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
     private static final String CHANNEL_GROUPS_JSON_FILE = "channelGroups.json";
+    private static final String DOWNLOADS_JSON_FILE = "downloads.json";
     private static final String QUEUE_FILE_SUFFIX = "Queue.json";
 
     private Context appContext;
@@ -82,6 +83,8 @@ public class AppData {
     public Map<String,ChannelGroup> getChannelGroups() { return channelGroups; }
     public void setChannelGroups(Map<String,ChannelGroup> chgroups) { this.channelGroups = chgroups; }
 
+    private Map<String,Long> downloads;
+
     private SearchResults searchResults;
     public SearchResults getSearchResults() { return searchResults; }
     public void setSearchResults(SearchResults results) { this.searchResults = results; }
@@ -96,6 +99,7 @@ public class AppData {
                 String mediaListJson = new String(readFile(mediaListJsonFile));
                 MediaListParser mediaListParser = appSettings.getMediaListParser(mediaListJson);
                 mediaList = mediaListParser.parseMediaList(mediaType, storageGroups);
+                mediaList.setDownloadIds(readDownloads());
             }
         }
         return mediaList;
@@ -149,6 +153,45 @@ public class AppData {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
         writeFile(jsonFile, json.getBytes());
+    }
+
+    public Map<String,Long> readDownloads() throws IOException, JSONException, ParseException {
+        downloads = new HashMap<String,Long>();
+        File cacheDir = appContext.getCacheDir();
+        File downloadsJsonFile = new File(cacheDir.getPath() + "/" + DOWNLOADS_JSON_FILE);
+        if (downloadsJsonFile.exists()) {
+            String downloadsJson = new String(readFile(downloadsJsonFile));
+            JSONObject downloadsObj = new JSONObject(downloadsJson);
+            Iterator<?> keys = downloadsObj.keys();
+            while (keys.hasNext()) {
+                String itemId = keys.next().toString();
+                downloads.put(itemId, downloadsObj.getLong(itemId));
+            }
+        }
+        return downloads;
+    }
+
+    public void writeDownloads(String json) throws IOException, JSONException {
+        File cacheDir = appContext.getCacheDir();
+        File jsonFile = new File(cacheDir.getPath() + "/" + DOWNLOADS_JSON_FILE);
+        writeFile(jsonFile, json.getBytes());
+    }
+
+    public void addDownload(String itemId, Long downloadId) throws IOException, JSONException {
+        downloads.put(itemId, downloadId);
+        JSONObject downloadsObj = new JSONObject();
+        for (String itId : downloads.keySet())
+            downloadsObj.put(itId, downloads.get(itId));
+        writeDownloads(downloadsObj.toString());
+    }
+
+    public Long removeDownload(String itemId) throws IOException, JSONException {
+        Long downloadId = downloads.remove(itemId);
+        JSONObject downloadsObj = new JSONObject();
+        for (String itId : downloads.keySet())
+            downloadsObj.put(itId, downloads.get(itId));
+        writeDownloads(downloadsObj.toString());
+        return downloadId;
     }
 
     private Map<MediaType,List<Item>> queues = new HashMap<MediaType, List<Item>>();

@@ -129,7 +129,7 @@ public class ItemListFragment extends ListFragment {
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
                 if (item.isRecording())
-                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, 2, 2, getString(R.string.delete));
+                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, 3, 3, getString(R.string.delete));
             }
         }
     }

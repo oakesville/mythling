@@ -647,6 +647,11 @@ public abstract class MediaActivity extends Activity {
             AppSettings appSettings = getAppSettings();
 
             if (appSettings.isDevicePlayback()) {
+                Uri download = getDownload(item);
+                if (download != null) {
+                    playDownload(download);
+                    return;
+                }
 
                 if (item.isMusic()) {
                     String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
@@ -792,9 +797,10 @@ public abstract class MediaActivity extends Activity {
 
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
-            // request.setDestinationUri(Uri.parse(item.getFileName()));
-            dm.enqueue(request);
+            long id = dm.enqueue(request);
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
+            getAppData().addDownload(item.getId(), id);
+            item.setDownloadId(id);
         } catch (Exception ex) {
             stopProgress();
             if (BuildConfig.DEBUG)
@@ -802,6 +808,24 @@ public abstract class MediaActivity extends Activity {
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    protected Uri getDownload(Item item) {
+        if (item.getDownloadId() == null)
+            return null;
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        return dm.getUriForDownloadedFile(item.getDownloadId());
+    }
+
+    protected void playDownload(Uri uri) {
+        stopProgress();
+        if (appSettings.isExternalVideoPlayer()) {
+            Intent toStart = new Intent(Intent.ACTION_VIEW);
+            toStart.setDataAndType(uri, "video/*");
+            startActivity(toStart);
+        } else {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), VideoViewActivity.class));
         }
     }
 
@@ -1147,6 +1171,7 @@ public abstract class MediaActivity extends Activity {
                 try {
                     appData.writeStorageGroups(storageGroupsJson);
                     appData.writeMediaList(mediaListJson);
+                    mediaList.setDownloadIds(appData.readDownloads());
                     stopProgress();
                     populate();
                 } catch (Exception ex) {
@@ -1555,7 +1580,7 @@ public abstract class MediaActivity extends Activity {
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
                 if (item.isRecording())
-                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, 2, 2, getString(R.string.delete));
+                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, 3, 3, getString(R.string.delete));
             }
         }
     }

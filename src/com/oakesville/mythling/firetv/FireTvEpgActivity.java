@@ -57,8 +57,8 @@ public class FireTvEpgActivity extends EpgActivity {
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
     private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
 
-    private static final String SHOW_GUIDE_HINT_PREF = "show_guide_hint";
-    private static final String SHOW_SEARCH_HINT_PREF = "show_search_hint";
+    private static final String SKIP_GUIDE_HINT_PREF = "skip_guide_hint";
+    private static final String SKIP_SEARCH_HINT_PREF = "skip_search_hint";
 
     private static boolean factoryInited = false;
 
@@ -135,8 +135,8 @@ public class FireTvEpgActivity extends EpgActivity {
                                 String title = getString(R.string.epg_hint);
                                 String msg = getString(R.string.epg_ff_rew_hint_) + " " +
                                         getAppSettings().getEpgSkipInterval() + " " + getString(R.string.abbrev_hrs) + ".";
-                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SHOW_GUIDE_HINT_PREF);
-                                hintDlg.show(getFragmentManager(), SHOW_GUIDE_HINT_PREF);
+                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SKIP_GUIDE_HINT_PREF);
+                                hintDlg.show(getFragmentManager());
                             }
                         });
                     }
@@ -147,8 +147,8 @@ public class FireTvEpgActivity extends EpgActivity {
                             public void run() {
                                 String title = getString(R.string.epg_hint);
                                 final String msg = getString(R.string.epg_search_res_hint);
-                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SHOW_SEARCH_HINT_PREF);
-                                hintDlg.show(getFragmentManager(), SHOW_SEARCH_HINT_PREF);
+                                PrefDismissDialog hintDlg = new PrefDismissDialog(getAppSettings(), title, msg, SKIP_SEARCH_HINT_PREF);
+                                hintDlg.show(getFragmentManager());
                             }
                         });
                     }
@@ -201,8 +201,8 @@ public class FireTvEpgActivity extends EpgActivity {
         startTime.set(Calendar.SECOND, 0);
         startTime.set(Calendar.MILLISECOND, 0);
         skipInterval = getAppSettings().getEpgSkipInterval();
-        showGuideHint = getAppSettings().getBooleanPref(SHOW_GUIDE_HINT_PREF, true);
-        showSearchHint = getAppSettings().getBooleanPref(SHOW_SEARCH_HINT_PREF, true);
+        showGuideHint = !getAppSettings().getBooleanPref(SKIP_GUIDE_HINT_PREF, false);
+        showSearchHint = !getAppSettings().getBooleanPref(SKIP_SEARCH_HINT_PREF, false);
 
         load();
     }

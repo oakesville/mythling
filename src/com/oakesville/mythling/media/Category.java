@@ -18,6 +18,7 @@ package com.oakesville.mythling.media;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -79,6 +80,17 @@ public class Category implements Listable, Comparable<Category> {
 
     public boolean hasItems() {
         return items != null && items.size() > 0;
+    }
+
+    public void setDownloadIds(Map<String,Long> downloads) {
+        if (items != null) {
+            for (Item item : items)
+                item.setDownloadId(downloads.get(item.getId()));
+        }
+        if (children != null) {
+            for (Category child : children)
+                child.setDownloadIds(downloads);
+        }
     }
 
     @Override

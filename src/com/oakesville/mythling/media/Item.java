@@ -24,10 +24,10 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public abstract class Item implements Listable {
-    public static final char ARROW = 0x25BA;
+    public static final char ARROW = 0x27A4;
+    public static final char DOWN_ARROW = 0x25BC;
     public static final char STAR = 0x2605;
     public static final char HALF_STAR = 0x00BD;
-    public static final String PREFIX = String.valueOf(ARROW) + " ";
 
     public abstract MediaType getType();
 
@@ -37,6 +37,17 @@ public abstract class Item implements Listable {
 
     private String id;
     public String getId() { return id; }
+
+    public String getPrefix() {
+        if (downloadId != null)
+            return String.valueOf(DOWN_ARROW) + " ";
+        else
+            return String.valueOf(ARROW) + " ";
+    }
+
+    private Long downloadId;
+    public Long getDownloadId() { return downloadId; }
+    public void setDownloadId(Long id) { this.downloadId = id; }
 
     // searchPath is populated for search results
     private String searchPath;
@@ -126,7 +137,7 @@ public abstract class Item implements Listable {
     }
 
     public String getText() {
-        StringBuffer buf = new StringBuffer(PREFIX + getTitle());
+        StringBuffer buf = new StringBuffer(getPrefix() + getTitle());
         buf.append(getExtraText());
         return buf.toString();
     }
@@ -146,7 +157,7 @@ public abstract class Item implements Listable {
     }
 
     public String getSearchResultText() {
-        StringBuffer buf = new StringBuffer(PREFIX);
+        StringBuffer buf = new StringBuffer(getPrefix());
         buf.append("(").append(getTypeLabel()).append(") ");
         buf.append(getTitle());
         buf.append(getExtraText());
