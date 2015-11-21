@@ -15,17 +15,18 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 /**
  * Displays a dialog with a message and a checkbox to permanently dismiss
@@ -36,9 +37,15 @@ public class PrefDismissDialog extends DialogFragment {
 
     private String title;
     private String message;
+    private String checkboxText;
+    public void setCheckboxText(String checkboxText) {
+        this.checkboxText = checkboxText;
+    }
 
     private AppSettings settings;
     private String key;
+
+    private boolean checked;
 
     public PrefDismissDialog(AppSettings settings, String title, String message, String key) {
         this.settings = settings;
@@ -61,16 +68,21 @@ public class PrefDismissDialog extends DialogFragment {
             builder.setMessage(message);
 
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_check);
-        checkBox.setText(getString(R.string.got_it));
+        checkBox.setText(checkboxText == null ? getString(R.string.got_it) : checkboxText);
         checkBox.setChecked(true);
 
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                boolean showAgain = !checkBox.isChecked();
-                settings.setBooleanPref(key, showAgain);
+                checked = checkBox.isChecked();
+                settings.setBooleanPref(key, checked);
             }
         });
 
         return builder.create();
+    }
+
+    public boolean show(FragmentManager manager) {
+        super.show(manager, key);
+        return checked;
     }
 }

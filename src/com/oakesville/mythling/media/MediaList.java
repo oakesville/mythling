@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.oakesville.mythling.app.Localizer;
@@ -27,6 +28,7 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 
 public class MediaList {
+
     private MediaType mediaType;
     public MediaType getMediaType() { return mediaType; }
     public void setMediaType(MediaType mt) { this.mediaType = mt; }
@@ -205,5 +207,16 @@ public class MediaList {
         Collections.sort(category.getChildren());
         for (Category child : category.getChildren())
             sortCategory(child, sort, includeItems);
+    }
+
+    public void setDownloadIds(Map<String,Long> downloads) {
+        if (items != null) {
+            for (Item item : items)
+                item.setDownloadId(downloads.get(item.getId()));
+        }
+        if (categories != null) {
+            for (Category cat : categories)
+                cat.setDownloadIds(downloads);
+        }
     }
 }

@@ -24,8 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
@@ -42,6 +40,8 @@ import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
+
+import android.util.Log;
 
 /**
  * Artist and title may be reversed for some folks
@@ -232,7 +232,6 @@ public class MythlingParser implements MediaListParser {
         } else {
             throw new IllegalArgumentException("Unsupported media type: " + type);
         }
-
 
         if (jsonObj.has("format"))
             item.setFormat(jsonObj.getString("format"));

@@ -28,8 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
@@ -49,6 +47,8 @@ import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.media.Video;
+
+import android.util.Log;
 
 public class MythTvParser implements MediaListParser {
     private static final String TAG = MythTvParser.class.getSimpleName();

@@ -20,12 +20,12 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+
+import android.util.Log;
 
 /**
  * A live or recorded TV show.
@@ -190,7 +190,7 @@ public class TvShow extends Item {
     @Override
     public String getText() {
         if (getType() == MediaType.liveTv) {
-            return PREFIX + getChannelInfo() + " " + getShowTimeInfo() + "\n" + getTitle() + getExtraText();
+            return getPrefix() + getChannelInfo() + " " + getShowTimeInfo() + "\n" + getTitle() + getExtraText();
         } else {
             return super.getText();
         }
@@ -199,7 +199,7 @@ public class TvShow extends Item {
     @Override
     public String getSearchResultText() {
         if (getType() == MediaType.liveTv) {
-            StringBuffer buf = new StringBuffer(PREFIX);
+            StringBuffer buf = new StringBuffer(getPrefix());
             buf.append("(").append(getTypeLabel()).append(") ");
             buf.append(getTitle());
             buf.append(getExtraText());

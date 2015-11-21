@@ -56,7 +56,7 @@ public class Song extends Item {
     }
 
     public String getSearchResultText() {
-        StringBuffer buf = new StringBuffer(PREFIX);
+        StringBuffer buf = new StringBuffer(getPrefix());
         buf.append("(").append(getTypeLabel()).append(") ");
         if (!getSearchPath().isEmpty())
             buf.append(getSearchPath()).append("\n");
