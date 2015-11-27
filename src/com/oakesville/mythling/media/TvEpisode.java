@@ -20,6 +20,7 @@ import java.util.Comparator;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 /**
  * A TV episode from MythVideo.
@@ -43,29 +44,24 @@ public class TvEpisode extends Video {
     }
 
     @Override
-    protected String getExtraText() {
-        StringBuffer buf = new StringBuffer();
-        buf.append(getSeasonEpisodeInfo());
-        if (getSubTitle() != null)
-            buf.append("\n\"").append(getSubTitle()).append("\"");
-        return buf.toString();
+    public String getListSubText() {
+        return new TextBuilder(getSeasonEpisodeInfo()).appendQuotedLine(getSubTitle()).toString();
     }
 
     public String getSummary() {
         if (getSeason() != 0) {
-            StringBuffer sum = new StringBuffer();
-            sum.append(Localizer.getStringRes(R.string.season)).append(getSeason()).append(", ")
-                    .append(Localizer.getStringRes(R.string.episode)).append(" ").append(getEpisode());
-            if (super.getSummary() != null)
-                sum.append("\n").append(super.getSummary());
-            return sum.toString();
+            TextBuilder tb = new TextBuilder();
+            tb.append(Localizer.getStringRes(R.string.season)).append(getSeason()).append(",");
+            tb.append(Localizer.getStringRes(R.string.episode)).append(getEpisode());
+            tb.appendLine(super.getSummary());
+            return tb.toString();
         } else {
             return super.getSummary();
         }
     }
 
     private String getSeasonEpisodeInfo() {
-        return " (" + (getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode() + ")";
+        return new TextBuilder().appendParen((getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode()).toString();
     }
 
     @Override

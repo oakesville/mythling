@@ -22,79 +22,31 @@
     android:layout_marginLeft="5dip">
 
     <LinearLayout
-      android:layout_weight="2"
-      android:orientation="vertical"
-      android:layout_width="0px"
-      android:layout_height="match_parent">
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
   
-    <FrameLayout
-        android:layout_weight="7"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:padding="5dip">
-
-        <com.oakesville.mythling.ImageView
-            android:id="@+id/posterImage"
+        <FrameLayout
+            android:layout_weight="7"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/poster"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="5dip"
-            android:layout_gravity="center" />
-    </FrameLayout>
+            android:layout_height="0dp"
+            android:padding="5dp">
     
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|top">
-    
-        <ImageButton
-            android:id="@+id/pagerPlay"
-            android:src="@drawable/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/play"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
+            <com.oakesville.mythling.ImageView
+                android:id="@+id/posterImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/poster"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:padding="5dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
-        <ImageButton
-            android:id="@+id/pagerTranscode"
-            android:src="@drawable/queue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/transcode"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-        
-        <ImageButton
-            android:id="@+id/pagerDownload"
-            android:src="@drawable/down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/download"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-        
-        <ImageButton
-            android:id="@+id/pagerDelete"
-            android:src="@drawable/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/delete"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-    </LinearLayout>
-    
-    <View
-        android:layout_weight="1" 
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />    
+        <include
+            android:id="@+id/button_bar"
+            layout="@layout/button_bar" />
 
     </LinearLayout>
     
@@ -104,7 +56,8 @@
         android:layout_weight="3"
         android:layout_width="0px"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:background="@color/background_light_blue" >
 
         <include
             android:id="@+id/metadata" 

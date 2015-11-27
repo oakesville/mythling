@@ -29,7 +29,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MythlingTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_categories" >
@@ -55,7 +55,8 @@
         <activity
             android:name=".prefs.PrefsActivity"
             android:label="@string/title_activity_prefs"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/PrefsTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.oakesville.mythling.MainActivity" />
@@ -119,6 +120,7 @@
         </activity>
         <activity
             android:name=".VideoViewActivity"
+            android:theme="@style/NoActionBarTheme"
             android:label="@string/title_activity_video_view"
             android:parentActivityName=".MainActivity"
             android:configChanges="orientation">

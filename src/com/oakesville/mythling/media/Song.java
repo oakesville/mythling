@@ -18,6 +18,7 @@ package com.oakesville.mythling.media;
 import java.io.UnsupportedEncodingException;
 
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 public class Song extends Item {
     public static final String ARTWORK_LEVEL_ALBUM = "albumArtwork";
@@ -56,12 +57,11 @@ public class Song extends Item {
     }
 
     public String getSearchResultText() {
-        StringBuffer buf = new StringBuffer(getPrefix());
-        buf.append("(").append(getTypeLabel()).append(") ");
-        if (!getSearchPath().isEmpty())
-            buf.append(getSearchPath()).append("\n");
-        buf.append(getTitle());
-        return buf.toString();
+        TextBuilder tb = new TextBuilder();
+        tb.appendParen(getTypeLabel());
+        tb.append(getSearchPath());
+        tb.appendLine(getTitle());
+        return tb.toString();
     }
 
 }

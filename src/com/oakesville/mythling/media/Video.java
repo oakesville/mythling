@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 public class Video extends Item {
 
@@ -62,20 +63,17 @@ public class Video extends Item {
 
     @Override
     public String getDialogText() {
-        StringBuffer buf = new StringBuffer(getTitle());
-        if (getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        if (getSubTitle() != null)
-            buf.append("\n\"" + getSubTitle() + "\"");
+        TextBuilder tb = new TextBuilder(getTitle());
+        tb.appendYear(getYear());
+        tb.appendRating(getRating());
+        tb.appendQuotedLine(getSubTitle());
         if (getDirector() != null)
-            buf.append("\n").append(Localizer.getStringRes(R.string.directed_by_)).append(getDirector());
+            tb.appendLine(Localizer.getStringRes(R.string.directed_by_)).append(getDirector());
         if (getActors() != null)
-            buf.append("\n").append(Localizer.getStringRes(R.string.starring_)).append(getActors());
+            tb.appendLine(Localizer.getStringRes(R.string.starring_)).append(getActors());
         if (getSummary() != null)
-            buf.append("\n\n").append(getSummary());
-        return buf.toString();
+            tb.appendLine(getSummary());
+        return tb.toString();
     }
 
     @Override

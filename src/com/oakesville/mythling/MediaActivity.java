@@ -97,7 +97,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -678,7 +677,7 @@ public abstract class MediaActivity extends Activity {
                     }
                 } else {
                     StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
-                    dialog.setMessage(item.getLabel());
+                    dialog.setMessage(item.getDialogTitle());
                     dialog.setListener(new StreamDialogListener() {
                         public void onClickHls() {
                             startProgress();
@@ -837,7 +836,7 @@ public abstract class MediaActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle(getString(R.string.transcode))
-                .setMessage(getString(R.string.begin_transcode) +  ":\n" + item.getLabel())
+                .setMessage(getString(R.string.begin_transcode) +  ":\n" + item.getDialogTitle())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -865,7 +864,7 @@ public abstract class MediaActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
-                .setMessage(getString(R.string.delete_recording) +  ":\n" + recording.getLabel())
+                .setMessage(getString(R.string.delete_recording) +  ":\n" + recording.getDialogTitle())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -954,7 +953,7 @@ public abstract class MediaActivity extends Activity {
                 // prepare for a progress bar dialog
                 countdownDialog = new ProgressDialog(this);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ":\n" + item.getLabel());
+                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ":\n" + item.getDialogTitle());
                 countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 countdownDialog.setProgressPercentFormat(null);
                 countdownDialog.setProgressNumberFormat(null);
@@ -974,7 +973,6 @@ public abstract class MediaActivity extends Activity {
                     }
                 });
                 countdownDialog.setCanceledOnTouchOutside(true);
-                // countdownDialog.setProgressDrawable(getResources().getDrawable(R.drawable.countdown_bar));
                 countdownDialog.show();
                 countdownDialog.setProgress(10);
 
@@ -1443,9 +1441,9 @@ public abstract class MediaActivity extends Activity {
                     View topV = getListView().getChildAt(0);
                     topOffset = (topV == null) ? 0 : topV.getTop();
                     selItemIndex = position;
-                    boolean isItem = getListables().get(position) instanceof Item;
-                    if (isItem) {
-                        Item item = (Item) getListables().get(position);
+                    Listable listable = getListables().get(position);
+                    if (listable instanceof Item) {
+                        Item item = (Item) listable;
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
                             getListView().setItemChecked(selItemIndex, true);
@@ -1462,7 +1460,8 @@ public abstract class MediaActivity extends Activity {
                         }
                     } else {
                         // must be category
-                        String cat = ((TextView)view).getText().toString();
+                        Category category = (Category) listable;
+                        String cat = category.getName();
                         String catpath = "".equals(getPath()) ? cat : getPath() + "/" + cat;
                         if (isSplitView()) {
                             getListAdapter().setSelection(selItemIndex);
@@ -1490,7 +1489,7 @@ public abstract class MediaActivity extends Activity {
                     }
                     else {
                         boolean grab = isSplitView() && getIntent().getBooleanExtra(GRAB_FOCUS, false);
-                        showSubListPane(getPath() + "/" + sel.getLabel(), grab);
+                        showSubListPane(getPath() + "/" + ((Category)sel).getName(), grab);
                     }
                     getIntent().putExtra(GRAB_FOCUS, false);
                 }
@@ -1541,7 +1540,7 @@ public abstract class MediaActivity extends Activity {
             if (preSel instanceof Item)
                 showItemInDetailPane(selItemIndex);
             else
-                showSubListPane(getPath() + "/" + preSel.getLabel());
+                showSubListPane(getPath() + "/" + ((Category)preSel).getName());
         }
     }
 
@@ -1567,7 +1566,7 @@ public abstract class MediaActivity extends Activity {
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
             if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
-                menu.setHeaderTitle(item.getLabel());
+                menu.setHeaderTitle(item.getDialogTitle());
                 if (isSplitView()) {
                     getListView().performItemClick(
                             getListView().getChildAt(info.position), info.position,

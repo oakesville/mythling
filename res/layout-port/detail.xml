@@ -20,11 +20,10 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:padding="5dip"
-        android:layout_marginTop="5dip">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp">
 
         <com.oakesville.mythling.ImageView
             android:id="@+id/posterImage"
@@ -33,69 +32,23 @@
             android:contentDescription="@string/poster"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:padding="5dip"
             android:layout_gravity="center" />
-
     </FrameLayout>
     
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|top">
-    
-        <ImageButton
-            android:id="@+id/pagerPlay"
-            android:src="@drawable/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/play"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />    
-    
-        <ImageButton
-            android:id="@+id/pagerTranscode"
-            android:src="@drawable/queue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/transcode"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-        
-        <ImageButton
-            android:id="@+id/pagerDownload"
-            android:src="@drawable/down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/download"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-    
-        <ImageButton
-            android:id="@+id/pagerDelete"
-            android:src="@drawable/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:contentDescription="@string/delete"
-            android:layout_gravity="center|top"
-            android:padding="5dip" />
-    </LinearLayout>    
+    <include
+        android:id="@+id/button_bar"
+        layout="@layout/button_bar" />
 
     <ScrollView
         android:id="@+id/detailScroll"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center_horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"        
         android:fillViewport="true"
-        android:background="@drawable/textlines">
+        android:background="@color/background_light_blue" >
 
         <include
             android:id="@+id/metadata" 

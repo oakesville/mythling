@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center|top">
+
+    <ImageButton
+        android:id="@+id/btn_play"
+        android:src="@drawable/btn_play"
+        android:contentDescription="@string/play"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:padding="5dp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/btn_transcode"
+        android:src="@drawable/btn_transcode"
+        android:contentDescription="@string/transcode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:padding="5dp"
+        android:visibility="gone" />
+    
+    <ImageButton
+        android:id="@+id/btn_download"
+        android:src="@drawable/btn_download"
+        android:contentDescription="@string/download"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:padding="5dp"
+        android:visibility="gone" />
+        
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:src="@drawable/btn_delete"
+        android:contentDescription="@string/delete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:padding="5dp"
+        android:visibility="gone" />
+        
+</LinearLayout>

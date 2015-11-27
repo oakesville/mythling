@@ -24,6 +24,7 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 import android.util.Log;
 
@@ -112,46 +113,44 @@ public class TvShow extends Item {
     }
 
     public String getShowDateTimeInfo() {
-        StringBuffer buf = new StringBuffer();
+        TextBuilder tb = new TextBuilder();
         try {
-            buf.append(getStartDateTimeFormatted()).append("-");
-            buf.append(getEndTimeFormatted()).append(" ");
+            tb.append(getStartDateTimeFormatted()).append("-");
+            tb.append(getEndTimeFormatted());
         } catch (ParseException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
         }
 
-        return buf.toString();
+        return tb.toString();
     }
 
     public String getShowTimeInfo() {
-        StringBuffer buf = new StringBuffer();
+        TextBuilder tb = new TextBuilder();
         try {
-            buf.append(getStartTimeFormatted()).append("-");
-            buf.append(getEndTimeFormatted()).append(" ");
+            tb.append(getStartTimeFormatted()).append("-");
+            tb.append(getEndTimeFormatted());
         } catch (ParseException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
         }
 
-        return buf.toString();
+        return tb.toString();
     }
 
     public String getChannelInfo() {
-        return new StringBuffer().append(getChannelNumber()).append(" (").append(getCallsign()).append(")").toString();
+        return new TextBuilder().append(getChannelNumber()).appendParen(getCallsign()).toString();
     }
 
     public String getAirDateInfo() {
-        StringBuffer buf = new StringBuffer();
+        TextBuilder tb = new TextBuilder();
         if (isRepeat()) {
             if (isShowMovie())
-                buf.append("(").append(Localizer.getYearFormat().format(originallyAired)).append(")");
+                tb.appendParen(Localizer.getYearFormat().format(originallyAired));
             else
-                buf.append("\n(")
-                        .append(Localizer.getStringRes(R.string.originally_aired))
-                        .append(" ").append(Localizer.getDateFormat().format(originallyAired)).append(")");
+                tb.appendParen(Localizer.getStringRes(R.string.originally_aired) + " " + Localizer.getDateFormat().format(originallyAired));
         }
-        return buf.toString();
+        return tb.toString();
     }
 
     public String getFormat() {
@@ -188,74 +187,78 @@ public class TvShow extends Item {
      * Special display for LiveTV.
      */
     @Override
-    public String getText() {
+    public String getListText() {
         if (getType() == MediaType.liveTv) {
-            return getPrefix() + getChannelInfo() + " " + getShowTimeInfo() + "\n" + getTitle() + getExtraText();
+            return new TextBuilder(getChannelInfo()).append(getShowTimeInfo()).appendLine(getTitle()).toString();
         } else {
-            return super.getText();
+            return super.getListText();
         }
     }
 
     @Override
     public String getSearchResultText() {
         if (getType() == MediaType.liveTv) {
-            StringBuffer buf = new StringBuffer(getPrefix());
-            buf.append("(").append(getTypeLabel()).append(") ");
-            buf.append(getTitle());
-            buf.append(getExtraText());
-            buf.append("\n").append(getChannelInfo());
-            buf.append(" ").append(getShowTimeInfo());
-            return buf.toString();
+            TextBuilder tb = new TextBuilder();
+            tb.appendParen(getTypeLabel());
+            tb.append(getTitle());
+            tb.append(getListSubText());
+            tb.appendLine(getChannelInfo());
+            tb.append(getShowTimeInfo());
+            return tb.toString();
         } else {
             return super.getSearchResultText();
         }
     }
 
     @Override
-    protected String getExtraText() {
-        StringBuffer buf = new StringBuffer();
-        if (isShowMovie() && getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        if (getSubTitle() != null)
-            buf.append("\n\"").append(getSubTitle()).append("\"");
+    public String getListSubText() {
+        TextBuilder tb = new TextBuilder();
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendRating(getRating());
+        tb.appendQuotedLine(getSubTitle());
         if (!isShowMovie() && isRepeat())
-            buf.append(getAirDateInfo());
-        return buf.toString();
+            tb.appendLine(getAirDateInfo());
+        return tb.toString();
     }
 
     @Override
-    public String getLabel() {
-        String label = getTitle();
-        if (isShowMovie() && getYear() > 0)
-            label += " (" + getYear() + ")";
-        if (getSubTitle() != null)
-            label += "\n\"" + getSubTitle() + "\"";
-        return label;
+    public String getDialogTitle() {
+        TextBuilder tb = new TextBuilder(getTitle());
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendDashed(getSubTitle());
+        return tb.toString();
+    }
+
+    @Override
+    public String getSubLabel() {
+        TextBuilder tb = new TextBuilder();
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendQuotedLine(getSubTitle());
+        return tb.toString();
     }
 
     @Override
     public String getDialogText() {
-        StringBuffer buf = new StringBuffer(getTitle());
-        if (isShowMovie() && getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        buf.append("\n").append(getSummary());
-        return buf.toString();
+        TextBuilder tb = new TextBuilder(getTitle());
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendRating(getRating());
+        tb.appendLine(getSummary());
+        return tb.toString();
     }
 
     public String getSummary() {
-        StringBuffer summary = new StringBuffer();
-        summary.append("\n").append(getChannelInfo()).append(" ").append(getShowTimeInfo());
-        if (getSubTitle() != null)
-            summary.append("\n\"").append(getSubTitle()).append("\"");
+        TextBuilder tb = new TextBuilder();
+        tb.appendLine(getChannelInfo()).append(getShowTimeInfo());
+        tb.appendQuotedLine(getSubTitle());
         if (!isShowMovie() && isRepeat())
-            summary.append(getAirDateInfo());
+            tb.appendLine(getAirDateInfo());
         if (getDescription() != null)
-            summary.append("\n").append(getDescription());
-        return summary.toString();
+            tb.appendLine(getDescription());
+        return tb.toString();
     }
 
     @Override
@@ -293,5 +296,4 @@ public class TvShow extends Item {
             }
         };
     }
-
 }

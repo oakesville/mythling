@@ -22,12 +22,9 @@ import java.util.Comparator;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.util.TextBuilder;
 
 public abstract class Item implements Listable {
-    public static final char ARROW = 0x27A4;
-    public static final char DOWN_ARROW = 0x25BC;
-    public static final char STAR = 0x2605;
-    public static final char HALF_STAR = 0x00BD;
 
     public abstract MediaType getType();
 
@@ -38,16 +35,17 @@ public abstract class Item implements Listable {
     private String id;
     public String getId() { return id; }
 
-    public String getPrefix() {
-        if (downloadId != null)
-            return String.valueOf(DOWN_ARROW) + " ";
-        else
-            return String.valueOf(ARROW) + " ";
-    }
-
     private Long downloadId;
     public Long getDownloadId() { return downloadId; }
     public void setDownloadId(Long id) { this.downloadId = id; }
+    public boolean isDownloaded() {
+        return downloadId != null && downloadId > 0;
+    }
+
+    // FIXME: check transcode status during list refresh
+    private boolean transcoded;
+    public boolean isTranscoded() { return transcoded; }
+    public void setTranscoded(boolean transcoded) { this.transcoded = transcoded; }
 
     // searchPath is populated for search results
     private String searchPath;
@@ -129,58 +127,55 @@ public abstract class Item implements Listable {
         return getType() == MediaType.tvSeries;
     }
 
+    /**
+     * Used by ListableListAdapter
+     */
     public String toString() {
         if (isSearchResult())
             return getSearchResultText();
         else
-            return getText();
+            return getListText();
     }
 
-    public String getText() {
-        StringBuffer buf = new StringBuffer(getPrefix() + getTitle());
-        buf.append(getExtraText());
-        return buf.toString();
+    public String getListText() {
+        return getTitle();
     }
 
-    protected String getExtraText() {
-        StringBuffer buf = new StringBuffer();
-        if (getSubTitle() != null)
-            buf.append(" - \"").append(getSubTitle()).append("\"");
-        return buf.toString();
+    public String getListSubText() {
+        if (subTitle == null)
+            return null;
+        return new TextBuilder().appendQuoted(subTitle).toString();
     }
 
-    public String getLabel() {
-        String label = title;
-        if (subTitle != null)
-            label += "\n\"" + subTitle + "\"";
-        return label;
-    }
-
-    public String getSearchResultText() {
-        StringBuffer buf = new StringBuffer(getPrefix());
-        buf.append("(").append(getTypeLabel()).append(") ");
-        buf.append(getTitle());
-        buf.append(getExtraText());
-        return buf.toString();
+    /**
+     * Identifies the item in dialog and context menu title bars.
+     */
+    public String getDialogTitle() {
+        return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 
     public String getDialogText() {
-        return getTitle() + getExtraText();
+        return getTitle() + getListSubText();
+    }
+
+    public String getSubLabel() {
+        return new TextBuilder().appendQuoted(subTitle).toString();
+    }
+
+    public int getIconResourceId() {
+        return 0;
+    }
+
+    public String getSearchResultText() {
+        TextBuilder tb = new TextBuilder();
+        tb.appendParen(getTypeLabel());
+        tb.append(getTitle());
+        tb.appendLine(getListSubText());
+        return tb.toString();
     }
 
     public boolean isSearchResult() {
         return getSearchPath() != null;
-    }
-
-    public String getRatingString(float stars) {
-        String str = "";
-        for (int i = 0; i < stars; i++) {
-            if (i <= stars - 1)
-                str += String.valueOf(STAR);
-            else
-                str += String.valueOf(HALF_STAR);
-        }
-        return str;
     }
 
     /**

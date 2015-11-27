@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
@@ -93,7 +94,9 @@ public class Category implements Listable, Comparable<Category> {
         }
     }
 
-    @Override
+    /**
+     * Used by ListableListAdapter
+     */
     public String toString() {
         return name;
     }
@@ -112,8 +115,12 @@ public class Category implements Listable, Comparable<Category> {
             Collections.sort(items, items.get(0).getComparator(sort));
     }
 
-    public String getLabel() {
-        return name;
+    public String getListSubText() {
+        return null;
+    }
+
+    public int getIconResourceId() {
+        return R.drawable.ic_folder;
     }
 
     @Override

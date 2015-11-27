@@ -419,6 +419,9 @@
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="originally_aired">Originally Aired</string>
+    <string name="item_icon">Icon</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="transcoded">Transcoded</string>
     <!-- individual components of date/time formats are automaticaly localized -->
     <string name="date_format">MMM d yyyy</string> <!-- Apr 15 2015 -->
     <string name="time_format">h:mm a</string> <!-- 10:00 PM -->

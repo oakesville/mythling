@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -39,6 +40,7 @@ public class ItemListFragment extends ListFragment {
     private ListableListAdapter adapter;
     private String path;
     private int preSelIdx = -1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,10 +65,17 @@ public class ItemListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
 
+        // setup similar to the list view in layout/split.xml
+        int padding = mediaActivity.getAppSettings().dpToPx(5);
+        getListView().setDivider(getResources().getDrawable(android.R.color.transparent));
+        getListView().setDividerHeight(padding);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+            getListView().setPadding(padding * 2, padding, padding, padding); // why?
+        else
+            getListView().setPadding(padding, padding, padding, padding);
+
         if (mediaActivity.getAppSettings().isFireTv()) {
             getListView().setSelector(R.drawable.firetv_list_selector);
-            getListView().setDivider(getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
-            getListView().setDividerHeight(1);
         }
 
         if (preSelIdx >= 0) {
@@ -124,7 +133,7 @@ public class ItemListFragment extends ListFragment {
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
             if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
-                menu.setHeaderTitle(item.getLabel());
+                menu.setHeaderTitle(item.getDialogTitle());
                 String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
                 for (int i = 0; i < menuItems.length; i++)
                     menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);

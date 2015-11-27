@@ -18,19 +18,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal"
-    android:showDividers="middle">
-   
+    android:divider="@drawable/divider"
+    android:showDividers="middle"
+    android:dividerPadding="5dp">
+    
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-   
+    
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1">
+       
         <TextView
             android:id="@+id/breadcrumbs"
             android:layout_width="match_parent"
@@ -38,25 +40,30 @@
             android:gravity="top|left"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginBottom="0dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:text="@string/blank"
             android:ellipsize="start"
             android:singleLine="true"
             android:maxLines="1" />   
+        
         <ListView
             android:id="@+id/split_cats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
-            android:dividerHeight="1.5sp" />
-    </LinearLayout>  
-   
+            android:divider="@android:color/transparent"
+            android:dividerHeight="5dp"
+            android:padding="5dp" />
+       
+    </LinearLayout>
+    
     <FrameLayout
         android:id="@+id/detail_container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:visibility="gone"/>    
-</LinearLayout>
+        android:visibility="gone" />    
+    
+</LinearLayout>    

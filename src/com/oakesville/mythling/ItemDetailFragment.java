@@ -129,7 +129,7 @@ public class ItemDetailFragment extends Fragment {
 
         listable = mediaActivity.getListables().get(idx);
 
-        TextView titleView = (TextView) detailView.findViewById(R.id.titleText);
+        TextView titleView = (TextView) detailView.findViewById(R.id.title_text);
         boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
 
         if (listable instanceof Category) {
@@ -155,7 +155,7 @@ public class ItemDetailFragment extends Fragment {
                 artworkView.setClickable(true);
                 artworkView.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        ((ImageView)v).setBackgroundResource(R.drawable.rounded_frame_active);
+                        ((ImageView)v).setBackgroundResource(R.drawable.folder_frame);
                         String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
                         Uri uri = new Uri.Builder().path(path).build();
                         startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
@@ -165,7 +165,13 @@ public class ItemDetailFragment extends Fragment {
         } else if (listable instanceof Item) {
             Item item = (Item) listable;
 
-            titleView.setText(item.getLabel());
+            titleView.setText(item.getTitle());
+
+            String subLabel = item.getSubLabel();
+            if (subLabel != null) {
+                TextView subTitleView = (TextView) detailView.findViewById(R.id.subtitle_text);
+                subTitleView.setText(subLabel);
+            }
 
             // rating
             if (item.getRating() > 0) {
@@ -184,13 +190,13 @@ public class ItemDetailFragment extends Fragment {
             if (item instanceof Video) {
                 Video video = (Video) item;
                 // director
-                TextView tvDir = (TextView) detailView.findViewById(R.id.directorText);
+                TextView tvDir = (TextView) detailView.findViewById(R.id.director_text);
                 if (video.getDirector() != null)
                     tvDir.setText(getString(R.string.directed_by_) + video.getDirector());
                 else
                     tvDir.setVisibility(View.GONE);
 
-                TextView tvAct = (TextView) detailView.findViewById(R.id.actorsText);
+                TextView tvAct = (TextView) detailView.findViewById(R.id.actors_text);
                 // actors
                 if (video.getActors() != null)
                     tvAct.setText(getString(R.string.starring_) + video.getActors());
@@ -199,7 +205,7 @@ public class ItemDetailFragment extends Fragment {
 
                 // summary
                 if (video.getSummary() != null) {
-                    TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
+                    TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
                     String summary = video.getSummary();
                     tv.setText(summary);
                 }
@@ -211,7 +217,7 @@ public class ItemDetailFragment extends Fragment {
                         try {
                             String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
                             URL url = new URL(getAppSettings().getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
-                            TextView tv = (TextView) detailView.findViewById(R.id.customLink);
+                            TextView tv = (TextView) detailView.findViewById(R.id.custom_link);
                             String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
                             tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -241,7 +247,7 @@ public class ItemDetailFragment extends Fragment {
                                 pageUrl = baseUrl + ref;
                             }
                             URL url = new URL(pageUrl);
-                            TextView tv = (TextView) detailView.findViewById(R.id.pageLink);
+                            TextView tv = (TextView) detailView.findViewById(R.id.page_link);
                             String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
                             tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -261,19 +267,19 @@ public class ItemDetailFragment extends Fragment {
                 }
             } else {
                 if (item instanceof TvShow) {
-                    ((TextView) detailView.findViewById(R.id.directorText)).setVisibility(View.GONE);
-                    ((TextView) detailView.findViewById(R.id.actorsText)).setVisibility(View.GONE);
+                    ((TextView) detailView.findViewById(R.id.director_text)).setVisibility(View.GONE);
+                    ((TextView) detailView.findViewById(R.id.actors_text)).setVisibility(View.GONE);
 
                     TvShow tvShow = (TvShow) item;
-                    TextView tv = (TextView) detailView.findViewById(R.id.summaryText);
+                    TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
                     tv.setText(tvShow.getSummary());
                 }
             }
 
-            ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.pagerPlay);
-            ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.pagerDelete);
-            ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.pagerTranscode);
-            ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.pagerDownload);
+            ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.btn_play);
+            ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.btn_transcode);
+            ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.btn_download);
+            ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.btn_delete);
             if (getAppSettings().isTv()) {
                 if (mediaActivity.getListView() != null) {
                     // split view
@@ -322,12 +328,14 @@ public class ItemDetailFragment extends Fragment {
             transcodeBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
+                    item.setPath(mediaActivity.getPath());
                     mediaActivity.transcodeItem(item);
                 }
             });
             downloadBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
+                    item.setPath(mediaActivity.getPath());
                     mediaActivity.downloadItem(item);
                 }
             });

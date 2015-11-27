@@ -15,12 +15,15 @@
  */
 package com.oakesville.mythling;
 
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
-import com.oakesville.mythling.media.Listable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ListableListAdapter extends ArrayAdapter<Listable> {
 
@@ -29,11 +32,32 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
     public void setSelection(int sel) { this.selection = sel;  }
 
     public ListableListAdapter(Context context, Listable[] listables) {
-        super(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, listables);
+        super(context, R.layout.list_item, R.id.item_label, listables);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+        View rowView = super.getView(position, convertView, parent);
+        Listable listable = getItem(position);
+        int imageRes = listable.getIconResourceId();
+        if (imageRes != 0) {
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.item_icon);
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(imageRes);
+        }
+        String subLabel = listable.getListSubText();
+        if (subLabel != null) {
+            TextView subLabelText = (TextView) rowView.findViewById(R.id.item_sublabel);
+            subLabelText.setVisibility(View.VISIBLE);
+            subLabelText.setText(subLabel);
+        }
+        if (listable instanceof Item) {
+            Item item = (Item) listable;
+            if (item.isDownloaded())
+                ((ImageView)rowView.findViewById(R.id.item_downloaded)).setVisibility(View.VISIBLE);
+            if (item.isTranscoded())
+                ((ImageView)rowView.findViewById(R.id.item_transcoded)).setVisibility(View.VISIBLE);
+        }
+        return rowView;
     }
 }

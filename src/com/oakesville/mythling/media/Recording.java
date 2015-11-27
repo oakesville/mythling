@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 public class Recording extends TvShow {
 
@@ -47,44 +48,38 @@ public class Recording extends TvShow {
     }
 
     @Override
-    protected String getExtraText() {
-        StringBuffer buf = new StringBuffer();
-        if (isShowMovie() && getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        if (getSubTitle() != null)
-            buf.append("\n\"").append(getSubTitle()).append("\"");
-        buf.append("\n").append(getShowDateTimeInfo());
-        buf.append(getChannelInfo());
+    public String getListSubText() {
+        TextBuilder tb = new TextBuilder();
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendRating(getRating());
+        tb.appendQuotedLine(getSubTitle());
+        tb.appendLine(getShowDateTimeInfo());
+        tb.append(getChannelInfo());
         if (!isShowMovie() && isRepeat())
-            buf.append(getAirDateInfo());
-        return buf.toString();
+            tb.appendLine(getAirDateInfo());
+        return tb.toString();
     }
 
     @Override
     public String getDialogText() {
-        StringBuffer buf = new StringBuffer(getTitle());
-        if (isShowMovie() && getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        if (getSubTitle() != null)
-            buf.append("\n\"").append(getSubTitle()).append("\" ");
-        buf.append(getSummary());
-        return buf.toString();
+        TextBuilder tb = new TextBuilder(getTitle());
+        if (isShowMovie())
+            tb.appendYear(getYear());
+        tb.appendRating(getRating());
+        tb.appendQuotedLine(getSubTitle());
+        tb.appendLine(getSummary());
+        return tb.toString();
     }
 
     @Override
     public String getSummary() {
-        StringBuffer summary = new StringBuffer();
-        summary.append(getShowDateTimeInfo());
-        summary.append(getChannelInfo());
+        TextBuilder tb = new TextBuilder(getShowDateTimeInfo());
+        tb.append(getChannelInfo());
         if (!isShowMovie() && isRepeat())
-            summary.append(getAirDateInfo());
-        if (getDescription() != null)
-            summary.append("\n").append(getDescription());
-        return summary.toString();
+            tb.appendLine(getAirDateInfo());
+        tb.appendLine(getDescription());
+        return tb.toString();
     }
 
     @Override

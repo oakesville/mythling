@@ -17,8 +17,13 @@ package com.oakesville.mythling;
 
 import java.net.URLDecoder;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.util.Reporter;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnInfoListener;
@@ -35,10 +40,6 @@ import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
-
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.util.Reporter;
 
 public class VideoViewActivity extends Activity {
 
@@ -59,7 +60,10 @@ public class VideoViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video);
-        getActionBar().hide();
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            getActionBar().hide();
+
 
         appSettings = new AppSettings(getApplicationContext());
         if (!Localizer.isInitialized())

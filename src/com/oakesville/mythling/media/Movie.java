@@ -19,6 +19,7 @@ import java.util.Comparator;
 
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.util.TextBuilder;
 
 public class Movie extends Video {
     public Movie(String id, String title) {
@@ -30,21 +31,18 @@ public class Movie extends Video {
     }
 
     @Override
-    public String getLabel() {
-        String label = getTitle();
-        if (getYear() > 0)
-            label += " (" + getYear() + ")";
-        return label;
+    public String getDialogTitle() {
+        return new TextBuilder(getTitle()).appendYear(getYear()).toString();
     }
 
     @Override
-    protected String getExtraText() {
-        StringBuffer buf = new StringBuffer();
-        if (getYear() > 0)
-            buf.append(" (").append(getYear()).append(")");
-        if (getRating() > 0)
-            buf.append(" ").append(getRatingString(getRating()));
-        return buf.toString();
+    public String getSubLabel() {
+        return new TextBuilder().appendYear(getYear()).toString();
+    }
+
+    @Override
+    public String getListSubText() {
+        return new TextBuilder().appendYear(getYear()).appendRating(getRating()).toString();
     }
 
     @Override

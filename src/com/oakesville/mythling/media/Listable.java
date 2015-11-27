@@ -16,5 +16,19 @@
 package com.oakesville.mythling.media;
 
 public interface Listable {
-    public String getLabel();
+
+    /**
+     * Main title.
+     */
+    public String toString();
+
+    /**
+     * Sub info.
+     */
+    public String getListSubText();
+
+    /**
+     * Icon.
+     */
+    public int getIconResourceId();
 }

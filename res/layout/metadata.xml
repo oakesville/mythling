@@ -14,115 +14,135 @@
   limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical|left"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
-
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/blank" />
+    android:baselineAligned="false"
+    android:paddingLeft="10dp">
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/star_1"
-            android:src="@drawable/blank"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:gravity="center_vertical|left">
+    
+        <TextView
+            android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:contentDescription="@string/rating"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/star_2"
-            android:src="@drawable/blank"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+    
+        <TextView
+            android:id="@+id/subtitle_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:contentDescription="@string/rating"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/star_3"
-            android:src="@drawable/blank"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/blank" />
+        
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+    
+            <ImageView
+                android:id="@+id/star_1"
+                android:src="@drawable/blank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:contentDescription="@string/rating"
+                android:visibility="gone" />
+    
+            <ImageView
+                android:id="@+id/star_2"
+                android:src="@drawable/blank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:contentDescription="@string/rating"
+                android:visibility="gone" />
+    
+            <ImageView
+                android:id="@+id/star_3"
+                android:src="@drawable/blank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:contentDescription="@string/rating"
+                android:visibility="gone" />
+    
+            <ImageView
+                android:id="@+id/star_4"
+                android:src="@drawable/blank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:contentDescription="@string/rating"
+                android:visibility="gone" />
+    
+            <ImageView
+                android:id="@+id/star_5"
+                android:src="@drawable/blank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:contentDescription="@string/rating"
+                android:visibility="gone" />
+    
+        </LinearLayout>
+    
+        <TextView
+            android:id="@+id/director_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:contentDescription="@string/rating"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/star_4"
-            android:src="@drawable/blank"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/blank" />
+    
+        <TextView
+            android:id="@+id/actors_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/blank" />
+    
+        <TextView
+            android:id="@+id/summary_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/blank" />
+    
+        <TextView
+            android:id="@+id/custom_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:contentDescription="@string/rating"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/star_5"
-            android:src="@drawable/blank"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/blank" />
+    
+        <TextView
+            android:id="@+id/page_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:contentDescription="@string/rating"
-            android:visibility="gone" />
-
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/blank" />
+        
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/directorText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-
-    <TextView
-        android:id="@+id/actorsText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-
-    <TextView
-        android:id="@+id/summaryText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-
-    <TextView
-        android:id="@+id/customLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
-
-    <TextView
-        android:id="@+id/pageLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/blank" />
+    <include
+        android:id="@+id/status_icons"
+        layout="@layout/status_icons" />
 
 </LinearLayout>

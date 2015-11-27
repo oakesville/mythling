@@ -50,6 +50,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 
 public class AppSettings {
     public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
@@ -1188,4 +1189,9 @@ public class AppSettings {
         return accessed;
     }
 
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = appContext.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
 }
