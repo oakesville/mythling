@@ -20,6 +20,14 @@ import java.text.ParseException;
 
 import org.json.JSONException;
 
+import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.media.Listable;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.util.Reporter;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,14 +36,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
-import com.oakesville.mythling.util.Reporter;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -131,7 +131,7 @@ public class MediaListActivity extends MediaActivity {
             breadCrumbs.setText(bc);
         }
 
-        setListAdapter(new ListableListAdapter(MediaListActivity.this, getListables().toArray(new Listable[0])));
+        setListAdapter(new ListableListAdapter(MediaListActivity.this, getListables().toArray(new Listable[0]), isTv()));
 
         initListViewOnItemClickListener();
         initListViewOnItemSelectedListener();

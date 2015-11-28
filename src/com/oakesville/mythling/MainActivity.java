@@ -152,7 +152,7 @@ public class MainActivity extends MediaActivity {
     public void refresh() {
         super.refresh();
         mediaList = new MediaList();
-        setListAdapter(new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0])));
+        setListAdapter(new ListableListAdapter(this, mediaList.getTopCategoriesAndItems().toArray(new Listable[0]), isTv()));
 
         startProgress();
         getAppSettings().validate();
@@ -183,7 +183,7 @@ public class MainActivity extends MediaActivity {
             return;
         }
 
-        setListAdapter(new ListableListAdapter(MainActivity.this, getListables().toArray(new Listable[0])));
+        setListAdapter(new ListableListAdapter(MainActivity.this, getListables().toArray(new Listable[0]), isTv()));
 
         initListViewOnItemClickListener();
         initListViewOnItemSelectedListener();

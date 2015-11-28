@@ -413,6 +413,10 @@ public abstract class MediaActivity extends Activity {
         return appSettings.getMediaSettings().getViewType() == ViewType.split;
     }
 
+    protected boolean isTv() {
+        return appSettings.isTv();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);

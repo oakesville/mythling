@@ -31,13 +31,18 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
     public int getSelection() { return selection; }
     public void setSelection(int sel) { this.selection = sel;  }
 
-    public ListableListAdapter(Context context, Listable[] listables) {
+    private boolean isTv;
+
+    public ListableListAdapter(Context context, Listable[] listables, boolean isTv) {
         super(context, R.layout.list_item, R.id.item_label, listables);
+        this.isTv = isTv;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = super.getView(position, convertView, parent);
+        if (isTv)
+            rowView.setBackgroundResource(R.drawable.selectable_list_item);
         Listable listable = getItem(position);
 
         // icon

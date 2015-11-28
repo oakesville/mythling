@@ -143,7 +143,7 @@ public class SearchActivity extends MediaActivity {
     private void search() {
         searchResults = new SearchResults();
 
-        adapter = new ListableListAdapter(this, searchResults.getAll().toArray(new Listable[0]));
+        adapter = new ListableListAdapter(this, searchResults.getAll().toArray(new Listable[0]), isTv());
         listView.setAdapter(adapter);
 
         startProgress();
@@ -161,7 +161,7 @@ public class SearchActivity extends MediaActivity {
 
     protected void populate() {
         final List<Item> items = searchResults.getAll();
-        adapter = new ListableListAdapter(this, items.toArray(new Listable[0]));
+        adapter = new ListableListAdapter(this, items.toArray(new Listable[0]), isTv());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

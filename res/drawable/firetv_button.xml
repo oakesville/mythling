@@ -13,9 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <corners android:radius="10dp" />
+    <item android:state_focused="true">
+        <shape>
+          <corners android:radius="5dp" />
+          <solid android:color="#64b5f6"/>
+        </shape>
+    </item>
 
-</shape>
+</selector>

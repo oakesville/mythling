@@ -280,6 +280,13 @@ public class ItemDetailFragment extends Fragment {
             ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.btn_transcode);
             ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.btn_download);
             ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.btn_delete);
+
+            if (getAppSettings().isFireTv()) {
+                playBtn.setBackgroundResource(R.drawable.firetv_button);
+                transcodeBtn.setBackgroundResource(R.drawable.firetv_button);
+                downloadBtn.setBackgroundResource(R.drawable.firetv_button);
+                deleteBtn.setBackgroundResource(R.drawable.firetv_button);
+            }
             if (getAppSettings().isTv()) {
                 if (mediaActivity.getListView() != null) {
                     // split view

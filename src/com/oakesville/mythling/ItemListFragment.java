@@ -57,7 +57,7 @@ public class ItemListFragment extends ListFragment {
     }
 
     private void populate() {
-        adapter = new ListableListAdapter(mediaActivity, mediaActivity.getListables(path).toArray(new Listable[0]));
+        adapter = new ListableListAdapter(mediaActivity, mediaActivity.getListables(path).toArray(new Listable[0]), mediaActivity.isTv());
         setListAdapter(adapter);
     }
 
