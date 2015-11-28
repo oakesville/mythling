@@ -10,6 +10,16 @@
                 android:type="linear" />
         </shape>
     </item>
+    <item android:state_selected="true">
+        <shape>
+          <corners android:radius="5dp" />
+          <gradient
+                android:angle="90"
+                android:startColor="#64b5f6"
+                android:endColor="#bbdefb"
+                android:type="linear" />
+        </shape>
+    </item>
     <item>
         <shape>
           <corners android:radius="5dp" />
