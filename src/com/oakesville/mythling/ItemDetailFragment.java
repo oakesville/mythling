@@ -309,7 +309,6 @@ public class ItemDetailFragment extends Fragment {
             playBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
-                    item.setPath(mediaActivity.getPath());
                     if (getArguments() != null)
                         getArguments().putBoolean(MediaActivity.GRAB_FOCUS, false);
                     mediaActivity.playItem(item);
@@ -318,7 +317,6 @@ public class ItemDetailFragment extends Fragment {
             deleteBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Recording recording = (Recording) listable;
-                    recording.setPath(mediaActivity.getPath());
                     int size = mediaActivity.getListables().size();
                     if (size == 1 || size == mediaActivity.getSelItemIndex() + 1)
                         mediaActivity.setSelItemIndex(mediaActivity.getSelItemIndex() - 1);
@@ -328,14 +326,12 @@ public class ItemDetailFragment extends Fragment {
             transcodeBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
-                    item.setPath(mediaActivity.getPath());
                     mediaActivity.transcodeItem(item);
                 }
             });
             downloadBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Item item = (Item) listable;
-                    item.setPath(mediaActivity.getPath());
                     mediaActivity.downloadItem(item);
                 }
             });
@@ -365,7 +361,6 @@ public class ItemDetailFragment extends Fragment {
                         artworkView.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 Item item = (Item) listable;
-                                item.setPath(mediaActivity.getPath());
                                 mediaActivity.playItem(item);
                             }
                         });

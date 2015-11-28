@@ -149,22 +149,18 @@ public class ItemListFragment extends ListFragment {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             if (item.getItemId() == 0) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(path);
                 mediaActivity.playItem(it);
                 return true;
             } else if (item.getItemId() == 1) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(path);
                 mediaActivity.transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(path);
                 mediaActivity.downloadItem(it);
                 return true;
             } else if (item.getItemId() == 3) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
-                rec.setPath(path);
                 mediaActivity.deleteRecording(rec);
                 return true;
             }

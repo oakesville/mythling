@@ -785,8 +785,7 @@ public abstract class MediaActivity extends Activity {
     protected void downloadItem(final Item item) {
         try {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
-            String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
-            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
+            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
             if (item.getStorageGroup() == null)
                 fileUrl += "&StorageGroup=None";
             else
@@ -796,10 +795,20 @@ public abstract class MediaActivity extends Activity {
 
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
-            long id = dm.enqueue(request);
+            final long id = dm.enqueue(request);
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
             getAppData().addDownload(item.getId(), id);
-            item.setDownloadId(id);
+
+            registerReceiver(new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                        long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                        if (downloadId == id)
+                            item.setDownloadId(downloadId);
+                    }
+                }
+            }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } catch (Exception ex) {
             stopProgress();
             if (BuildConfig.DEBUG)
@@ -832,7 +841,6 @@ public abstract class MediaActivity extends Activity {
      * Starts a transcode without immediately watching.
      */
     protected void transcodeItem(final Item item) {
-        item.setPath("");
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle(getString(R.string.transcode))
@@ -1075,13 +1083,6 @@ public abstract class MediaActivity extends Activity {
         return false;
     }
 
-    protected Transcoder getTranscoder(Item item) {
-        if (item.getStorageGroup() == null)
-            return new Transcoder(getAppSettings(), mediaList.getBasePath());
-        else
-            return new Transcoder(getAppSettings(), item.getStorageGroup());
-    }
-
     private class RefreshTask extends AsyncTask<URL,Integer,Long> {
         private String mediaListJson;
         private String storageGroupsJson;
@@ -1113,7 +1114,7 @@ public abstract class MediaActivity extends Activity {
                     boolean hasMediaStorageGroup = mediaSettings.getType() == MediaType.recordings || mediaSettings.getType() == MediaType.liveTv
                             || (mediaSettings.getType() != MediaType.music && storageGroups.get(appSettings.getVideoStorageGroup()) != null);
                     if (hasMediaStorageGroup) {
-                        mediaList = ((MythTvParser) mediaListParser).parseMediaList(mediaSettings.getType(), storageGroups);
+                        mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), storageGroups);
                     } else {
                         // no storage group for media type
                         URL baseUrl = getAppSettings().getMythTvServicesBaseUrl();
@@ -1131,11 +1132,14 @@ public abstract class MediaActivity extends Activity {
                                 basePath = new MythTvParser(getAppSettings(), new String(downloader.get())).parseMythTvSetting(key);
                             }
                         }
-                        mediaList = ((MythTvParser) mediaListParser).parseMediaList(mediaSettings.getType(), storageGroups, basePath);
+                        mediaList = ((MythTvParser)mediaListParser).parseMediaList(mediaSettings.getType(), storageGroups, basePath);
                     }
                 }
 
                 mediaList.setCharSet(downloader.getCharSet());
+
+                if (getAppSettings().isRetrieveTranscodeStatuses())
+                    updateTranscodeStatuses(mediaList.getAllItems());
 
                 return 0L;
             } catch (Exception ex) {
@@ -1167,9 +1171,9 @@ public abstract class MediaActivity extends Activity {
                 getAppSettings().setLastLoad(System.currentTimeMillis());
 
                 try {
+                    mediaList.setDownloadIds(appData.readDownloads());
                     appData.writeStorageGroups(storageGroupsJson);
                     appData.writeMediaList(mediaListJson);
-                    mediaList.setDownloadIds(appData.readDownloads());
                     stopProgress();
                     populate();
                 } catch (Exception ex) {
@@ -1194,7 +1198,7 @@ public abstract class MediaActivity extends Activity {
 
         protected Long doInBackground(URL... urls) {
             try {
-                Transcoder transcoder = getTranscoder(item);
+                Transcoder transcoder = new Transcoder(getAppSettings());
 
                 // TODO: do this retry for tv playback
                 int ct = 0;
@@ -1253,7 +1257,7 @@ public abstract class MediaActivity extends Activity {
 
         protected Long doInBackground(URL... urls) {
             try {
-                Transcoder transcoder = getTranscoder(item);
+                Transcoder transcoder = new Transcoder(getAppSettings());
                 transcoder.beginTranscode(item);
                 return 0L;
             } catch (Exception ex) {
@@ -1333,7 +1337,7 @@ public abstract class MediaActivity extends Activity {
 
                 if (!raw) {
                     tvShow.setStorageGroup(recorder.getRecording().getStorageGroup());
-                    Transcoder transcoder = getTranscoder(tvShow);
+                    Transcoder transcoder = new Transcoder(getAppSettings());
                     boolean streamAvail = transcoder.beginTranscode(recorder.getRecording());
 
                     streamInfo = transcoder.getStreamInfo();
@@ -1386,14 +1390,37 @@ public abstract class MediaActivity extends Activity {
     }
 
     /**
+     * Must be called from background thread
+     */
+    protected void updateTranscodeStatuses(List<Item> items) throws IOException {
+        URL tcUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Content/GetLiveStreamList");
+        HttpHelper tcDownloader = new HttpHelper(appSettings.getUrls(tcUrl), appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
+        tcDownloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
+        String liveStreamJson = new String(tcDownloader.get(), "UTF-8");
+        List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
+        long startTime = System.currentTimeMillis();
+        for (LiveStreamInfo liveStream : liveStreams) {
+            if (liveStream.isCompleted()) {
+                for (Item item : items) {
+                    if (liveStream.matchesItem(item) && getAppSettings().liveStreamMatchesQuality(liveStream)) {
+                        item.setTranscoded(true);
+                        break;
+                    }
+                }
+            }
+        }
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, " -> transcode status check time: " + (System.currentTimeMillis() - startTime) + " ms");
+    }
+
+    /**
      * Requires MythTV content.cpp patch to work without storage groups (or maybe create
      * a bogus SG called None that points to your backend videos base location).
      */
     private void playRawVideoStream(Item item) {
         try {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
-            String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
-            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(itemPath, "UTF-8");
+            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
             if (item.getStorageGroup() == null)
                 fileUrl += "&StorageGroup=None";
             else
@@ -1449,13 +1476,11 @@ public abstract class MediaActivity extends Activity {
                             getListView().setItemChecked(selItemIndex, true);
                             if (appSettings.isTv()) {
                             	// play the item since already selected
-                            	item.setPath(getPath());
                             	playItem(item);
                             } else {
                                 showItemInDetailPane(position, true);
                             }
                         } else {
-                            item.setPath(getPath());
                             playItem(item);
                         }
                     } else {
@@ -1590,22 +1615,18 @@ public abstract class MediaActivity extends Activity {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             if (item.getItemId() == 0) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(getPath());
                 playItem(it);
                 return true;
             } else if (item.getItemId() == 1) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(getPath());
                 transcodeItem(it);
                 return true;
             } else if (item.getItemId() == 2) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
-                it.setPath(getPath());
                 downloadItem(it);
                 return true;
             } else if (item.getItemId() == 3) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
-                rec.setPath(path);
                 int size = getListables().size();
                 if (size == 1 || size == info.position + 1)
                     setSelItemIndex(getSelItemIndex() - 1);

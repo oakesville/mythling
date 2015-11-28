@@ -42,7 +42,6 @@ public abstract class Item implements Listable {
         return downloadId != null && downloadId > 0;
     }
 
-    // FIXME: check transcode status during list refresh
     private boolean transcoded;
     public boolean isTranscoded() { return transcoded; }
     public void setTranscoded(boolean transcoded) { this.transcoded = transcoded; }
@@ -53,11 +52,16 @@ public abstract class Item implements Listable {
     public void setSearchPath(String searchPath) { this.searchPath = searchPath; }
 
     /**
-     * Path for item playback (set when item is played)
+     * item path (excluding filename)
      */
     private String path;
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
+
+    public String getFilePath() {
+        String itemPath = isSearchResult() ? searchPath : path;
+        return itemPath.isEmpty() ? getFileName() : itemPath + "/" + getFileName();
+    }
 
     private String title;
     public String getTitle() { return title; }
@@ -170,7 +174,6 @@ public abstract class Item implements Listable {
         TextBuilder tb = new TextBuilder();
         tb.appendParen(getTypeLabel());
         tb.append(getTitle());
-        tb.appendLine(getListSubText());
         return tb.toString();
     }
 

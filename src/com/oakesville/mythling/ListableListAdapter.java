@@ -39,24 +39,34 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = super.getView(position, convertView, parent);
         Listable listable = getItem(position);
+
+        // icon
         int imageRes = listable.getIconResourceId();
-        if (imageRes != 0) {
             ImageView imageView = (ImageView) rowView.findViewById(R.id.item_icon);
+        if (imageRes == 0) {
+            imageView.setVisibility(View.GONE);
+        } else {
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(imageRes);
         }
+
+        // sublabel
+        TextView subLabelText = (TextView) rowView.findViewById(R.id.item_sublabel);
         String subLabel = listable.getListSubText();
-        if (subLabel != null) {
-            TextView subLabelText = (TextView) rowView.findViewById(R.id.item_sublabel);
-            subLabelText.setVisibility(View.VISIBLE);
-            subLabelText.setText(subLabel);
-        }
+        subLabelText.setVisibility(subLabelText == null ? View.GONE : View.VISIBLE);
+        subLabelText.setText(subLabel);
+
+        // status icons
+        View transcodedIcon = rowView.findViewById(R.id.item_transcoded);
+        View downloadedIcon = rowView.findViewById(R.id.item_downloaded);
         if (listable instanceof Item) {
             Item item = (Item) listable;
-            if (item.isDownloaded())
-                ((ImageView)rowView.findViewById(R.id.item_downloaded)).setVisibility(View.VISIBLE);
-            if (item.isTranscoded())
-                ((ImageView)rowView.findViewById(R.id.item_transcoded)).setVisibility(View.VISIBLE);
+            transcodedIcon.setVisibility(item.isTranscoded() ? View.VISIBLE : View.GONE);
+            downloadedIcon.setVisibility(item.isDownloaded() ? View.VISIBLE : View.GONE);
+        }
+        else {
+            transcodedIcon.setVisibility(View.GONE);
+            downloadedIcon.setVisibility(View.GONE);
         }
         return rowView;
     }

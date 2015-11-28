@@ -167,6 +167,7 @@ public class MythTvParser implements MediaListParser {
                     } else {
                         mediaList.addItem(recItem);
                     }
+                    recItem.setPath("");
                 } else {
                     mediaList.setCount(mediaList.getCount() - 1); // otherwise reported count will be off
                 }
@@ -180,17 +181,20 @@ public class MythTvParser implements MediaListParser {
             for (int i = 0; i < chans.length(); i++) {
                 JSONObject chanInfo = (JSONObject) chans.get(i);
                 Item show = buildLiveTvItem(chanInfo);
-                if (show != null)
+                if (show != null) {
                     mediaList.addItem(show);
+                    show.setPath("");
+                }
             }
         }
-        if (BuildConfig.DEBUG)
-            Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
         if (sortType != null) {
             startTime = System.currentTimeMillis();
             mediaList.sort(sortType, true);
             if (BuildConfig.DEBUG)
-                Log.d(TAG, " -> media list sort time: " + (System.currentTimeMillis() - startTime) + " ms");
+                Log.d(TAG, " -> media list parse/sort time: " + (System.currentTimeMillis() - startTime) + " ms");
+        } else {
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, " -> media list parse time: " + (System.currentTimeMillis() - startTime) + " ms");
         }
         return mediaList;
     }
@@ -299,6 +303,9 @@ public class MythTvParser implements MediaListParser {
             }
         }
 
+        if (vid.has("transcoded"))
+            item.setTranscoded("true".equalsIgnoreCase(vid.getString("transcoded")));
+
         return item;
     }
 
@@ -308,6 +315,8 @@ public class MythTvParser implements MediaListParser {
         JSONObject recObj = rec.getJSONObject("Recording");
         String startTime = recObj.getString("StartTs").replace('T', ' ');
         String id = chanId + "~" + startTime;
+        if (id.endsWith("Z"))
+            id = id.substring(0, id.length() - 1);
         Recording recording = new Recording(id, rec.getString("Title"));
         recording.setStartTime(parseMythDateTime(startTime));
         if (recObj.has("RecordId"))
@@ -323,6 +332,8 @@ public class MythTvParser implements MediaListParser {
         if (channel.has("CallSign"))
             recording.setCallsign(channel.getString("CallSign"));
         addProgramInfo(recording, rec);
+        if (rec.has("transcoded"))
+            recording.setTranscoded("true".equalsIgnoreCase(rec.getString("transcoded")));
         return recording;
     }
 
@@ -336,12 +347,16 @@ public class MythTvParser implements MediaListParser {
         JSONObject prog = (JSONObject) progs.get(0);
         String startTime = prog.getString("StartTime").replace('T', ' ');
         String id = chanId + "~" + startTime;
+        if (id.endsWith("Z"))
+            id = id.substring(0, id.length() - 1);
         TvShow tvShow = new TvShow(id, prog.getString("Title"));
         tvShow.setStartTime(parseMythDateTime(startTime));
         tvShow.setProgramStart(startTime);
         if (chanInfo.has("CallSign"))
             tvShow.setCallsign(chanInfo.getString("CallSign"));
         addProgramInfo(tvShow, prog);
+        if (prog.has("transcoded"))
+            tvShow.setTranscoded("true".equalsIgnoreCase(prog.getString("transcoded")));
         return tvShow;
     }
 

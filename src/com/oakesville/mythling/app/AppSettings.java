@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
@@ -65,6 +66,7 @@ public class AppSettings {
     public static final String ERROR_REPORTING = "error_reporting";
     public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
     public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
+    public static final String RETRIEVE_TRANSCODE_STATUSES = "retrieve_transcode_statuses";
     public static final String BACKEND_WEB = "backend_web";
     public static final String MYTHLING_MEDIA_SERVICES = "media_services";
     public static final String MYTHLING_WEB_PORT = "mythling_web_port";
@@ -445,6 +447,10 @@ public class AppSettings {
 
     public boolean isHasBackendWeb() {
         return getBooleanPref(BACKEND_WEB, false);
+    }
+
+    public boolean isRetrieveTranscodeStatuses() {
+        return getBooleanPref(RETRIEVE_TRANSCODE_STATUSES, true);
     }
 
     public boolean isMythWebAccessEnabled() {
@@ -884,6 +890,45 @@ public class AppSettings {
 
     public int getHttpReadTimeout() {
         return Integer.parseInt(getStringPref(HTTP_READ_TIMEOUT, "10").trim());
+    }
+
+    /**
+     * Returns false if the stream is closer to an available quality setting
+     * than it is to the desired quality.  This attempts to take into account if
+     * the transcoded stream is slightly off for some reason.  One scenario is
+     * that some external mechanism was used to do the HLS transcode to a quality
+     * that doesn't exactly match any available.
+     */
+    public boolean liveStreamMatchesQuality(LiveStreamInfo liveStream) {
+
+        int streamRes = liveStream.getHeight();
+        int desiredRes = getVideoRes();
+        if (streamRes != desiredRes) {
+            for (int resValue : getVideoResValues()) {
+                if (Math.abs(streamRes - desiredRes) > Math.abs(streamRes - resValue))
+                    return false;
+            }
+        }
+
+        int streamVidBr = liveStream.getVideoBitrate();
+        int desiredVidBr = getVideoBitrate();
+        if (streamVidBr != desiredVidBr) {
+            for (int vidBrValue : getVideoBitrateValues()) {
+                if (Math.abs(streamVidBr - desiredVidBr) > Math.abs(streamVidBr - vidBrValue))
+                    return false;
+            }
+        }
+
+        int streamAudBr = liveStream.getAudioBitrate();
+        int desiredAudBr = getAudioBitrate();
+        if (streamAudBr != desiredAudBr) {
+            for (int audBrValue : getAudioBitrateValues()) {
+                if (Math.abs(streamAudBr - desiredAudBr) > Math.abs(streamAudBr - audBrValue))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     // change these values and recompile to route service calls through a dev-time reverse proxy

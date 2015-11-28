@@ -25,8 +25,6 @@ import java.util.Map;
 
 import org.json.JSONException;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
@@ -39,6 +37,8 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvShow;
+
+import android.util.Log;
 
 public class Recorder {
     private static final String TAG = Recorder.class.getSimpleName();
@@ -146,7 +146,6 @@ public class Recorder {
                 Recording rec = ((Recording) item);
                 if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw())) {
                     recording = rec;
-                    recording.setPath("");
                     return recording;
                 } else if (!"Deleted".equals(rec.getRecordingGroup()) && rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0) {
                     if (rec.getRecordId() != 0) {

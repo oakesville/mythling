@@ -116,5 +116,11 @@ public class SearchResults {
         return all;
     }
 
-
+    public void setDownloadIds(Map<String,Long> downloads) {
+        for (Item item : getAll()) {
+            Long downloadId = downloads.get(item.getId());
+            if (downloadId != null)
+                item.setDownloadId(downloadId);
+        }
+    }
 }

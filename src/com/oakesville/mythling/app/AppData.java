@@ -41,6 +41,7 @@ import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -160,12 +161,15 @@ public class AppData {
         File cacheDir = appContext.getCacheDir();
         File downloadsJsonFile = new File(cacheDir.getPath() + "/" + DOWNLOADS_JSON_FILE);
         if (downloadsJsonFile.exists()) {
+            DownloadManager dm = (DownloadManager) appContext.getSystemService(Context.DOWNLOAD_SERVICE);
             String downloadsJson = new String(readFile(downloadsJsonFile));
             JSONObject downloadsObj = new JSONObject(downloadsJson);
             Iterator<?> keys = downloadsObj.keys();
             while (keys.hasNext()) {
                 String itemId = keys.next().toString();
-                downloads.put(itemId, downloadsObj.getLong(itemId));
+                Long id = downloadsObj.getLong(itemId);
+                if (dm.getUriForDownloadedFile(id) != null) // make sure the file exists
+                    downloads.put(itemId, id);
             }
         }
         return downloads;
@@ -211,6 +215,7 @@ public class AppData {
         JSONObject jsonObj = new JSONObject();
         JSONArray items = new JSONArray();
         for (Item item : itemsList) {
+            // TODO real item serialization
             JSONObject w = new JSONObject();
             w.put("path", item.getPath());
             w.put("title", item.getTitle());

@@ -19,6 +19,16 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
+import com.oakesville.mythling.media.SearchResults;
+import com.oakesville.mythling.media.StorageGroup;
+import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.MythTvParser;
+import com.oakesville.mythling.util.MythlingParser;
+import com.oakesville.mythling.util.Reporter;
+
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,16 +44,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.MythTvParser;
-import com.oakesville.mythling.util.MythlingParser;
-import com.oakesville.mythling.util.Reporter;
-import com.oakesville.mythling.util.Transcoder;
-
 public class SearchActivity extends MediaActivity {
     private static final String TAG = SearchActivity.class.getSimpleName();
 
@@ -53,7 +53,7 @@ public class SearchActivity extends MediaActivity {
     private ListView listView;
     public ListView getListView() { return listView; }
 
-    private ArrayAdapter<Item> adapter;
+    private ArrayAdapter<Listable> adapter;
     private MenuItem resultsMenuItem;
 
     public String getCharSet() {
@@ -143,7 +143,7 @@ public class SearchActivity extends MediaActivity {
     private void search() {
         searchResults = new SearchResults();
 
-        adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, searchResults.getAll().toArray(new Item[0]));
+        adapter = new ListableListAdapter(this, searchResults.getAll().toArray(new Listable[0]));
         listView.setAdapter(adapter);
 
         startProgress();
@@ -161,12 +161,11 @@ public class SearchActivity extends MediaActivity {
 
     protected void populate() {
         final List<Item> items = searchResults.getAll();
-        adapter = new ArrayAdapter<Item>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, items.toArray(new Item[0]));
+        adapter = new ListableListAdapter(this, items.toArray(new Listable[0]));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Item item = items.get(position);
-                item.setPath(item.getSearchPath());
                 playItem(item);
             }
         });
@@ -200,6 +199,9 @@ public class SearchActivity extends MediaActivity {
                 searchResults = new MythlingParser(getAppSettings(), resultsJson).parseSearchResults(storageGroups);
                 searchResults.setCharSet(downloader.getCharSet());
                 searchResults.setStorageGroups(storageGroups);
+                if (getAppSettings().isRetrieveTranscodeStatuses())
+                    updateTranscodeStatuses(searchResults.getAll());
+
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
@@ -219,6 +221,7 @@ public class SearchActivity extends MediaActivity {
                 updateResultsMenuItem();
             } else {
                 try {
+                    searchResults.setDownloadIds(getAppData().readDownloads());
                     populate();
                 } catch (Exception ex) {
                     if (BuildConfig.DEBUG)
@@ -244,18 +247,5 @@ public class SearchActivity extends MediaActivity {
     public void refresh() {
         super.refresh();
         search();
-    }
-
-    @Override
-    protected Transcoder getTranscoder(Item item) {
-        StorageGroup storageGroup = item.getStorageGroup();
-        if (storageGroup == null) {
-            if (item.isMusic())
-                return new Transcoder(getAppSettings(), searchResults.getMusicBase());
-            else
-                return new Transcoder(getAppSettings(), searchResults.getVideoBase());
-        } else {
-            return new Transcoder(getAppSettings(), storageGroup);
-        }
     }
 }

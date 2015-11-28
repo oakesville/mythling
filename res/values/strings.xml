@@ -95,7 +95,7 @@
     <string name="title_video_categorization">Categorization</string>
     <string name="title_video_categorization_dialog">Video Categorization</string>
     <string name="title_categorize_videos">Videos</string>
-    <string name="title_categorize_transcoding">Transcoding</string>
+    <string name="title_categorize_transcoding">Transcoding by File Type</string>
     <string name="title_categorize_internet">Internet</string>
     <string name="title_movie_base_url">Movie Base URL</string>
     <string name="message_movie_base_url">Base URL for Movie detail links</string>
@@ -232,6 +232,7 @@
     <string name="title_directories_movies">Movie Directories</string>
     <string name="title_directories_tv_series">TV Series Directories</string>
     <string name="title_directories_exclude">Excluded Directories</string>
+    <string name="title_retrieve_transcode_statuses">Retrieve Transcode Statuses</string>
     <string name="title_transcode_hls">Transcode to HLS</string>
     <string name="title_stream_raw">Stream Raw File</string>
     <string name="title_error_reporting">Error Reporting</string>

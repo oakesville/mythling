@@ -17,6 +17,7 @@ package com.oakesville.mythling.media;
 
 public class LiveStreamInfo {
 
+    public static final int STATUS_CODE_COMPLETED = 3;
     public static final int STATUS_CODE_STOPPED = 6;
 
     private long id;
@@ -62,4 +63,18 @@ public class LiveStreamInfo {
     private String file;
     public String getFile() { return file; }
     public void setFile(String file) { this.file = file; }
+
+    public boolean isCompleted() {
+        return statusCode == STATUS_CODE_COMPLETED;
+    }
+
+    public boolean matchesItem(Item item) {
+        if (item.getStorageGroup() == null || item.getStorageGroup().getDirectories() == null)
+            return false;
+        for (String dir : item.getStorageGroup().getDirectories()) {
+            if (file.equals(dir + "/" + item.getFilePath()))
+                return true;
+        }
+        return false;
+    }
 }

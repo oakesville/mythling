@@ -111,11 +111,13 @@ public class MediaList {
                     cat = subcat;
                 } else {
                     item.setFileBase(seg);
+                    item.setPath(filepath.substring(0, filepath.length() - seg.length() - 1));
                 }
             }
             cat.addItem(item);
         } else {
             addItem(item);
+            item.setPath("");
         }
     }
 
@@ -218,5 +220,16 @@ public class MediaList {
             for (Category cat : categories)
                 cat.setDownloadIds(downloads);
         }
+    }
+
+    public List<Item> getAllItems() {
+        List<Item> allItems = new ArrayList<Item>();
+        if (items != null)
+            allItems.addAll(items);
+        if (categories != null) {
+            for (Category cat : categories)
+                allItems.addAll(cat.getAllItems());
+        }
+        return allItems;
     }
 }

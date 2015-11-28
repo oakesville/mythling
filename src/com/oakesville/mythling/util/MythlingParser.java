@@ -73,10 +73,12 @@ public class MythlingParser implements MediaListParser {
         if (summary.has("base"))
             mediaList.setBasePath(summary.getString("base"));
         if (list.has("items")) {
-            JSONArray items = list.getJSONArray("items");
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = (JSONObject) items.get(i);
-                mediaList.addItem(buildItem(mediaList.getMediaType(), item, storageGroups));
+            JSONArray its = list.getJSONArray("items");
+            for (int i = 0; i < its.length(); i++) {
+                JSONObject it = (JSONObject) its.get(i);
+                Item item = buildItem(mediaList.getMediaType(), it, storageGroups);
+                item.setPath("");
+                mediaList.addItem(item);
             }
         }
         if (list.has("categories")) {
@@ -113,10 +115,12 @@ public class MythlingParser implements MediaListParser {
             }
         }
         if (cat.has("items")) {
-            JSONArray items = cat.getJSONArray("items");
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject item = (JSONObject) items.get(i);
-                category.addItem(buildItem(type, item, storageGroups));
+            JSONArray its = cat.getJSONArray("items");
+            for (int i = 0; i < its.length(); i++) {
+                JSONObject it = (JSONObject) its.get(i);
+                Item item = buildItem(type, it, storageGroups);
+                item.setPath(category.getPath());
+                category.addItem(item);
             }
         }
         return category;
@@ -241,6 +245,8 @@ public class MythlingParser implements MediaListParser {
             item.setFileBase(jsonObj.getString("file"));
         if (jsonObj.has("subtitle"))
             item.setSubTitle(jsonObj.getString("subtitle"));
+        if (jsonObj.has("transcoded"))
+            item.setTranscoded("true".equalsIgnoreCase(jsonObj.getString("transcoded")));
         return item;
     }
 

@@ -15,12 +15,12 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class ConnectPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +78,9 @@ public class ConnectPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getMythlingWebRoot());
         pref.setEnabled(hasBackendWeb && appSettings.isMythlingMediaServices());
+
+        pref = getPreferenceScreen().findPreference(AppSettings.RETRIEVE_TRANSCODE_STATUSES);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true));
 
         pref = getPreferenceScreen().findPreference(AppSettings.ERROR_REPORTING);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));

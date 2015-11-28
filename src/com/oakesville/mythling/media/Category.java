@@ -67,6 +67,14 @@ public class Category implements Listable, Comparable<Category> {
         return null;
     }
 
+    public String getPath() {
+       if (parent == null)
+           return name;
+       else {
+           return parent.getPath() + "/" + name;
+       }
+    }
+
     private List<Item> items = new ArrayList<Item>();
     public List<Item> getItems() { return items; }
     public void setItems(List<Item> items) { this.items = items; }
@@ -108,6 +116,15 @@ public class Category implements Listable, Comparable<Category> {
         for (Item item : getItems())
             listable.add(item);
         return listable;
+    }
+
+    public List<Item> getAllItems() {
+        List<Item> allItems = new ArrayList<Item>();
+        if (items != null)
+            allItems.addAll(items);
+        for (Category cat : getChildren())
+            allItems.addAll(cat.getAllItems());
+        return allItems;
     }
 
     public void sortItems(SortType sort) {

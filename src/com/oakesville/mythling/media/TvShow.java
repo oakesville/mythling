@@ -201,7 +201,6 @@ public class TvShow extends Item {
             TextBuilder tb = new TextBuilder();
             tb.appendParen(getTypeLabel());
             tb.append(getTitle());
-            tb.append(getListSubText());
             tb.appendLine(getChannelInfo());
             tb.append(getShowTimeInfo());
             return tb.toString();

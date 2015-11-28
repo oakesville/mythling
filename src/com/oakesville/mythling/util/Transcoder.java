@@ -21,8 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
@@ -30,29 +28,20 @@ import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.StorageGroup;
+
+import android.util.Log;
 
 public class Transcoder {
     private static final String TAG = Transcoder.class.getSimpleName();
 
     private AppSettings appSettings;
 
-    // for matching up existing transcodes
-    private StorageGroup storageGroup;
-    private String basePath;
-
     /**
      * transcoder needs to know about the storage group to match-up
      * currently-executing jobs versus the requested playback item
      */
-    public Transcoder(AppSettings appSettings, StorageGroup storageGroup) {
+    public Transcoder(AppSettings appSettings) {
         this.appSettings = appSettings;
-        this.storageGroup = storageGroup;
-    }
-
-    public Transcoder(AppSettings appSettings, String basePath) {
-        this.appSettings = appSettings;
-        this.basePath = basePath;
     }
 
     private LiveStreamInfo streamInfo;
@@ -83,13 +72,13 @@ public class Transcoder {
         int inProgress = 0;
         for (LiveStreamInfo liveStream : liveStreams) {
             if (liveStream.getStatusCode() != LiveStreamInfo.STATUS_CODE_STOPPED
-                    && liveStreamMatchesItemAndQuality(liveStream, item)) {
+                    && liveStream.matchesItem(item) && appSettings.liveStreamMatchesQuality(liveStream)) {
                 streamInfo = liveStream;
                 preExist = true;
                 break;
             } else {
                 if ("Transcoding".equals(liveStream.getMessage())) {
-                    if (liveStreamMatchesItem(liveStream, item)) {
+                    if (liveStream.matchesItem(item)) {
                         // stop and delete in-progress transcoding jobs for same file
                         try {
                             //getDownloader(new URL(baseUrl + "/Content/StopLiveStream?Id=" + liveStream.getId())).retrieve();
@@ -190,57 +179,4 @@ public class Transcoder {
         return downloader;
     }
 
-    private boolean liveStreamMatchesItem(LiveStreamInfo liveStream, Item item) {
-        String itemPath = item.isRecording() || item.getPath().isEmpty() ? item.getFileName() : item.getPath() + "/" + item.getFileName();
-        if (storageGroup == null) {
-            return liveStream.getFile().equals(basePath + "/" + itemPath);
-        } else {
-            for (String dir : storageGroup.getDirectories()) {
-                if (liveStream.getFile().equals(dir + "/" + itemPath))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns false if the stream is closer to an available quality setting
-     * than it is to the desired quality.  This attempts to take into account if
-     * the transcoded stream is slightly off for some reason.  One scenario is
-     * that some external mechanism was used to do the HLS transcode to a quality
-     * that doesn't exactly match any available.
-     */
-    private boolean liveStreamMatchesItemAndQuality(LiveStreamInfo liveStream, Item item) {
-        if (!liveStreamMatchesItem(liveStream, item))
-            return false;
-
-        int streamRes = liveStream.getHeight();
-        int desiredRes = appSettings.getVideoRes();
-        if (streamRes != desiredRes) {
-            for (int resValue : appSettings.getVideoResValues()) {
-                if (Math.abs(streamRes - desiredRes) > Math.abs(streamRes - resValue))
-                    return false;
-            }
-        }
-
-        int streamVidBr = liveStream.getVideoBitrate();
-        int desiredVidBr = appSettings.getVideoBitrate();
-        if (streamVidBr != desiredVidBr) {
-            for (int vidBrValue : appSettings.getVideoBitrateValues()) {
-                if (Math.abs(streamVidBr - desiredVidBr) > Math.abs(streamVidBr - vidBrValue))
-                    return false;
-            }
-        }
-
-        int streamAudBr = liveStream.getAudioBitrate();
-        int desiredAudBr = appSettings.getAudioBitrate();
-        if (streamAudBr != desiredAudBr) {
-            for (int audBrValue : appSettings.getAudioBitrateValues()) {
-                if (Math.abs(streamAudBr - desiredAudBr) > Math.abs(streamAudBr - audBrValue))
-                    return false;
-            }
-        }
-
-        return true;
-    }
 }
