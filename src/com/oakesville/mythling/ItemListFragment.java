@@ -67,16 +67,18 @@ public class ItemListFragment extends ListFragment {
 
         // setup similar to the list view in layout/split.xml
         int padding = mediaActivity.getAppSettings().dpToPx(5);
-        getListView().setDivider(getResources().getDrawable(android.R.color.transparent));
-        getListView().setDividerHeight(padding);
+        if (mediaActivity.getAppSettings().isFireTv()) {
+            getListView().setDivider(getResources().getDrawable(R.color.divider_blue));
+            getListView().setDividerHeight(1);
+        }
+        else {
+            getListView().setDivider(getResources().getDrawable(android.R.color.transparent));
+            getListView().setDividerHeight(padding);
+        }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
             getListView().setPadding(padding * 2, padding, padding, padding); // why?
         else
             getListView().setPadding(padding, padding, padding, padding);
-
-        if (mediaActivity.getAppSettings().isFireTv()) {
-            getListView().setSelector(R.drawable.firetv_list_selector);
-        }
 
         if (preSelIdx >= 0) {
             // only has effect for Fire TV, which is fine
