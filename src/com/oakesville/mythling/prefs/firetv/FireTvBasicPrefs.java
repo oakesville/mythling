@@ -15,14 +15,14 @@
  */
 package com.oakesville.mythling.prefs.firetv;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.prefs.PrefChangeListener;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.prefs.PrefChangeListener;
 
 public class FireTvBasicPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,6 @@ public class FireTvBasicPrefs extends PreferenceFragment {
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
         pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
-        pref.setTitle(AppSettings.getMythlingVersion());
-
-
+        pref.setTitle(AppSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
     }
 }

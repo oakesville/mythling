@@ -1144,6 +1144,10 @@ public class AppSettings {
         return mythlingVersion;
     }
 
+    public static int getAndroidVersion() {
+        return Build.VERSION.SDK_INT;
+    }
+
     private static DevicePrefsSpec devicePrefsSpec;
     public static DevicePrefsSpec getDevicePrefsConstraints() { return devicePrefsSpec; }
     private static boolean devicePrefsSpecsLoaded;

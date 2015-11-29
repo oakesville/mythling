@@ -23,10 +23,10 @@ import java.net.URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
+
+import android.util.Log;
 
 public class Reporter {
     private static final String TAG = Reporter.class.getSimpleName();
@@ -71,7 +71,8 @@ public class Reporter {
         JSONObject json = new JSONObject();
         JSONObject report = new JSONObject();
         json.put("report", report);
-        report.put("source", "Mythling v" + AppSettings.getMythlingVersion());
+        report.put("source", "Mythling v" + AppSettings.getMythlingVersion() +
+                " (sdk " + AppSettings.getAndroidVersion() + ")");
         report.put("message", message == null ? "No message" : message);
         if (throwable != null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();

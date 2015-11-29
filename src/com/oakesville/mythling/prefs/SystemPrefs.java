@@ -15,12 +15,12 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class SystemPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class SystemPrefs extends PreferenceFragment {
         addPreferencesFromResource(R.xml.system_prefs);
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
-        pref.setSummary(AppSettings.getMythlingVersion());
+        pref.setTitle(AppSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 

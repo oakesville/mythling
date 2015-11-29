@@ -35,12 +35,13 @@
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/title_video_player">
-        <com.oakesville.mythling.prefs.SwitchPreference
+        <com.oakesville.mythling.prefs.firetv.FireTvSwitchPreference
             android:key="video_player"
             android:switchTextOn="@string/switch_built_in"
             android:switchTextOff="@string/switch_external_app"
             android:defaultValue="true"
-            android:layout="@layout/sw_pref_inner" />
+            android:layout="@layout/sw_pref_inner" 
+            android:widgetLayout="@layout/prefs_switch" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/title_mythling_version">
