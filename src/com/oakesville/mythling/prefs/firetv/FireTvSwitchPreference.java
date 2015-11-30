@@ -27,6 +27,9 @@ import android.widget.Checkable;
 import android.widget.Switch;
 
 public class FireTvSwitchPreference extends SwitchPreference {
+
+    private View parentView;
+
     public FireTvSwitchPreference(Context context) {
         super(context);
     }
@@ -48,7 +51,7 @@ public class FireTvSwitchPreference extends SwitchPreference {
                 final Switch switchView = (Switch) checkableView;
                 ViewParent vp = switchView.getParent();
                 if (vp instanceof View) {
-                    View parentView = (View)vp;
+                    parentView = (View)vp;
                     parentView.setOnClickListener(new OnClickListener() {
                         public void onClick(View v) {
                             switchView.setChecked(switchView.isChecked());
@@ -60,5 +63,10 @@ public class FireTvSwitchPreference extends SwitchPreference {
         }
 
         super.onBindView(view);
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return isEnabled();
     }
 }

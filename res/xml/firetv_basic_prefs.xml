@@ -48,7 +48,8 @@
       <Preference
           android:key="mythling_version"
           android:title="@string/title_version"
-          android:layout="@layout/pref" />
+          android:layout="@layout/pref"
+          android:selectable="false" />
     </PreferenceCategory>
     
 </PreferenceScreen>

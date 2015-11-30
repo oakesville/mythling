@@ -445,6 +445,12 @@ public class AppSettings {
         return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
     }
 
+    public boolean setMythlingMediaServices(boolean mythlingSvcs) {
+        Editor ed = prefs.edit();
+        ed.putBoolean(MYTHLING_MEDIA_SERVICES, mythlingSvcs);
+        return ed.commit();
+    }
+
     public boolean isHasBackendWeb() {
         return getBooleanPref(BACKEND_WEB, false);
     }

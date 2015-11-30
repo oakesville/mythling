@@ -15,12 +15,12 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class CredentialsPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -86,19 +86,29 @@ public class CredentialsPrefs extends PreferenceFragment {
     }
 
     private void doEnableMythTvAccessCreds(boolean enabled) {
-        getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICES_USER).setEnabled(enabled);
-        getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICES_PASSWORD).setEnabled(enabled);
+        Preference userPref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICES_USER);
+        userPref.setEnabled(enabled);
+        userPref.setSelectable(enabled);  // for Fire TV
+        Preference pwPref = getPreferenceScreen().findPreference(AppSettings.MYTHTV_SERVICES_PASSWORD);
+        pwPref.setEnabled(enabled);
+        pwPref.setSelectable(enabled); // for Fire TV
     }
 
     private void doEnableMythlingAccessCreds(boolean enabled) {
-        getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER).setEnabled(enabled);
-        getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD).setEnabled(enabled);
+        Preference userPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_USER);
+        userPref.setEnabled(enabled);
+        userPref.setSelectable(enabled); // for Fire TV
+        Preference pwPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_PASSWORD);
+        pwPref.setEnabled(enabled);
+        pwPref.setSelectable(enabled);  // for Fire TV
     }
 
     private void doBackendWebCredsEnablement(boolean hasBackendWeb) {
         Preference mythlingAccessCat = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICE_ACCESS_CATEGORY);
         mythlingAccessCat.setEnabled(hasBackendWeb);
-        getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_AUTH_TYPE).setEnabled(hasBackendWeb);
+        Preference authTypePref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_SERVICES_AUTH_TYPE);
+        authTypePref.setEnabled(hasBackendWeb);
+        authTypePref.setSelectable(hasBackendWeb); // for Fire TV
     }
 
 }
