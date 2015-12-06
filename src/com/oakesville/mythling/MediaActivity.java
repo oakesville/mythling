@@ -414,7 +414,8 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected boolean isTv() {
-        return appSettings.isTv();
+        // appSettings can be null during orientation change
+        return appSettings == null ? false : appSettings.isTv();
     }
 
     @Override

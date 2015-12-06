@@ -21,6 +21,7 @@ import com.oakesville.mythling.media.Listable;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,11 +56,16 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
             imageView.setImageResource(imageRes);
         }
 
+
         // sublabel
         TextView subLabelText = (TextView) rowView.findViewById(R.id.item_sublabel);
         String subLabel = listable.getListSubText();
         subLabelText.setVisibility(subLabelText == null ? View.GONE : View.VISIBLE);
         subLabelText.setText(subLabel);
+        if (subLabel == null)
+            subLabelText.getLayoutParams().height = 0;
+        else
+            subLabelText.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
 
         // status icons
         View transcodedIcon = rowView.findViewById(R.id.item_transcoded);
@@ -73,6 +79,7 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
             transcodedIcon.setVisibility(View.GONE);
             downloadedIcon.setVisibility(View.GONE);
         }
+
         return rowView;
     }
 }

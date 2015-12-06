@@ -32,13 +32,15 @@
         android:layout_gravity="center_vertical"
         android:alpha="0.667"
         android:visibility="gone" />
-    
+
     <LinearLayout
+        android:id="@+id/item_layout"
         android:orientation="vertical"
         android:layout_weight="10"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:paddingLeft="5dp" >
         <TextView
             android:id="@+id/item_label"
@@ -50,7 +52,7 @@
         <TextView
             android:id="@+id/item_sublabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:visibility="gone"
             android:includeFontPadding="false" />
@@ -60,5 +62,4 @@
     <include
         android:id="@+id/status_icons"
         layout="@layout/status_icons" />
-    
 </LinearLayout>
