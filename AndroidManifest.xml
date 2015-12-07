@@ -16,14 +16,17 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="26"
-    android:versionName="1.2.08" >
+    android:versionCode="28"
+    android:versionName="1.3.02" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- TODO: Fire TV specific -->
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />    
 
     <application
         android:icon="@drawable/ic_launcher"
