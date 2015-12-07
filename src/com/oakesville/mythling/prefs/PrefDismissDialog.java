@@ -23,6 +23,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +31,7 @@ import android.widget.CheckBox;
 
 /**
  * Displays a dialog with a message and a checkbox to permanently dismiss
- * based on the supplied preference key.  Semantics are such that a pref value
- * of true means keep nagging (checkbox unchecked).  Checkbox defaults to checked.
+ * based on the supplied preference key.
  */
 public class PrefDismissDialog extends DialogFragment {
 
@@ -78,7 +78,14 @@ public class PrefDismissDialog extends DialogFragment {
             }
         });
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new OnShowListener() {
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE).requestFocus();
+            }
+        });
+
+        return dialog;
     }
 
     public boolean show(FragmentManager manager) {
