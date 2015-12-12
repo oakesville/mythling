@@ -80,6 +80,7 @@
     <orderEntry type="library" exported="" name="juniversalchardet-1.0.3" level="project" />
     <orderEntry type="library" exported="" name="awv_interface" level="project" />
     <orderEntry type="library" exported="" name="libvlc-" level="project" />
+    <orderEntry type="library" exported="" name="libvlc-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="android-support-v13" level="project" />
   </component>
 </module>
