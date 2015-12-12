@@ -1437,7 +1437,7 @@ public abstract class MediaActivity extends Activity {
                 toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
                 startActivity(toStart);
             } else {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VideoViewActivity.class));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VlcVideoActivity.class));
             }
         } catch (IOException ex) {
             if (BuildConfig.DEBUG)

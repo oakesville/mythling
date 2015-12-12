@@ -150,8 +150,7 @@ public class VideoViewActivity extends Activity {
             progressBar.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             progressBar.setVisibility(View.GONE);
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
