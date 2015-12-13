@@ -23,6 +23,8 @@ import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
+import org.videolan.libvlc.MediaPlayer.Event;
+import org.videolan.libvlc.MediaPlayer.EventListener;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
@@ -315,7 +317,15 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
 
             Media m = new Media(libvlc, videoUri);
             mediaPlayer.setMedia(m);
-            handler.postDelayed(updateSeekBar, 250);
+            mediaPlayer.setEventListener(new EventListener() {
+                private boolean handleFired;
+                public void onEvent(Event event) {
+                    if (event.type == MediaPlayer.Event.Playing && !handleFired) {
+                        handler.postDelayed(updateSeekBar, 250);
+                        handleFired = true;
+                    }
+                }
+            });
             mediaPlayer.play();
         }
         catch (Exception ex) {
