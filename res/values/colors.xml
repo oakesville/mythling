@@ -17,6 +17,7 @@
     <color name="title_background_white">#ffffff</color>
     <color name="background_blue">#b0bec5</color>
     <color name="background_light_blue">#eceff1</color>
+    <color name="background_translucent_blue">#44ffffff</color>
     <color name="divider_blue">#37474f</color>
     <color name="firetv_focused_blue">#bfe7f5</color>
 </resources>

@@ -182,6 +182,13 @@ public abstract class Item implements Listable {
     }
 
     /**
+     * Item length in ms (-1 if unknown).
+     */
+    public long getLength() {
+        return -1;
+    }
+
+    /**
      * Default supports by title or rating.
      */
     public Comparator<Item> getComparator(SortType sort) {

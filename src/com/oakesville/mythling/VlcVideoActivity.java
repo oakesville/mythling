@@ -24,24 +24,33 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
-import android.app.Activity;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.util.Reporter;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+
 public class VlcVideoActivity extends Activity implements IVLCVout.Callback, LibVLC.HardwareAccelerationError {
+
+    public static final String EXTRA_LENGTH_SECS = "com.oakesville.mythling.EXTRA_LENGTH_SECS";
+
     private static final String TAG = VlcVideoActivity.class.getSimpleName();
 
     private AppSettings appSettings;
@@ -54,10 +63,17 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
     private int videoWidth;
     private int videoHeight;
 
+    // seek
+    private int length; // sec
+    private TextView curPosText;
+    private SeekBar seekBar;
+    private ImageButton playCtrl;
+    private ImageButton pauseCtrl;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.surface);
+        setContentView(R.layout.player);
 
         appSettings = new AppSettings(getApplicationContext());
         if (!Localizer.isInitialized())
@@ -71,6 +87,76 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
 
         try {
             videoUri = Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
+            System.out.println("videoUri: " + videoUri);
+
+            Intent intent = getIntent();
+            length = intent.getExtras().getInt(EXTRA_LENGTH_SECS);
+
+            if (length > 0) {
+                curPosText = (TextView) findViewById(R.id.current_pos);
+                curPosText.setText("00:00");
+                TextView totalLenText = (TextView) findViewById(R.id.total_len);
+                totalLenText.setText(convertTime(length * 1000));
+
+                seekBar = (SeekBar) findViewById(R.id.player_seek);
+                seekBar.setMax(length); // max is length in seconds
+                seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser) {
+                            float pos = progress / (float)(length); // fraction
+                            long curPos = (long)(pos * length * 1000);
+                            curPosText.setText(convertTime(curPos));
+                            mediaPlayer.setPosition(pos);
+                        }
+                    }
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+            }
+
+            playCtrl = (ImageButton) findViewById(R.id.ctrl_play);
+            playCtrl.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    play();
+                }
+            });
+
+            pauseCtrl = (ImageButton) findViewById(R.id.ctrl_pause);
+            pauseCtrl.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    pause();
+                }
+            });
+
+            ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
+            fastBack.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    seek(-600);
+                }
+            });
+
+            ImageButton skipBack = (ImageButton) findViewById(R.id.ctrl_skip_back);
+            skipBack.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    seek(-10);
+                }
+            });
+
+            ImageButton skipFwd = (ImageButton) findViewById(R.id.ctrl_skip_fwd);
+            skipFwd.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    seek(+30);
+                }
+            });
+
+            ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
+            fastFwd.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    seek(+600);
+                }
+            });
         }
         catch (Exception ex) {
             progressBar.setVisibility(View.GONE);
@@ -79,6 +165,61 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void play() {
+        playCtrl.setVisibility(View.GONE);
+        pauseCtrl.setVisibility(View.VISIBLE);
+        handler.postDelayed(updateSeekBar, 250);
+        mediaPlayer.play();
+    }
+
+    private void pause() {
+        pauseCtrl.setVisibility(View.GONE);
+        playCtrl.setVisibility(View.VISIBLE);
+        mediaPlayer.pause();
+    }
+
+    private void seek(int delta) {
+        int pos = (int) (mediaPlayer.getPosition() * length);
+        pos += delta;
+        if (pos > length)
+            pos = length;
+        else if (pos < 0)
+            pos = 0;
+        seekBar.setProgress(pos);
+        mediaPlayer.setPosition((float)pos / (float)length);
+    }
+
+    private String convertTime(long ms) {
+        long mins = 0;
+        long hrs = 0;
+
+        long secs = ms / 1000;
+        if (secs >= 60) {
+          mins = secs / 60;
+          secs = secs % 60;
+        }
+        if (mins >= 60) {
+            hrs = mins / 60;
+            mins = mins % 60;
+        }
+
+        String s = padTwo(mins) + ":" + padTwo(secs);
+        if (hrs > 0)
+            s = hrs + ":" + s;
+
+        System.out.println("converted: " + ms + " ms" );
+        System.out.println("  to: " + s);
+
+        return s;
+    }
+
+    private static String padTwo(long l) {
+        String s = String.valueOf(l);
+        if (s.length() == 1)
+            s = "0" + s;
+        return s;
     }
 
     @Override
@@ -91,6 +232,7 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
     protected void onResume() {
         super.onResume();
         createPlayer(videoUri);
+        System.out.println("help me");
     }
 
     @Override
@@ -173,23 +315,14 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
 
             Media m = new Media(libvlc, videoUri);
             mediaPlayer.setMedia(m);
-
-            String msg = videoUri.toString();
-            long ms = mediaPlayer.getLength();
-            if (ms > -1) {
-//                long s = ms / 1000;
-//                long mins = s / 60;
-//                long secs = s % 60;
-                msg += " (" + ms + " ms)";
-            }
-
-            Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-
+            handler.postDelayed(updateSeekBar, 250);
             mediaPlayer.play();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error creating player!", Toast.LENGTH_LONG).show();
+        }
+        catch (Exception ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+            if (appSettings.isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(getApplicationContext(), "Error creating player: " + ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -269,4 +402,17 @@ public class VlcVideoActivity extends Activity implements IVLCVout.Callback, Lib
         progressBar.setScaleY(0.20f);
         return progressBar;
     }
+
+    private Handler handler = new Handler();
+    private Runnable updateSeekBar = new Runnable() {
+        public void run() {
+            if (mediaPlayer.isPlaying()) {
+                float pos = mediaPlayer.getPosition();
+                long curPos = (long)(pos * length * 1000);
+                curPosText.setText(convertTime(curPos));
+                seekBar.setProgress((int)(pos * length));
+                handler.postDelayed(this, 250);
+            }
+        }
+    };
 }

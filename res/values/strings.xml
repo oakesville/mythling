@@ -316,8 +316,13 @@
     <string name="one">1</string>
     <string name="rating">Rating</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="download">Download</string>
     <string name="watch">Watch</string>
+    <string name="skip_back">Skip Back</string>
+    <string name="skip_fwd">Skip Forward</string>
+    <string name="jump_back">Jump Back</string>
+    <string name="jump_fwd">Jump Forward</string>
     <string-array name="video_categorization_entries">
         <item>None</item>
         <item>Metadata</item>

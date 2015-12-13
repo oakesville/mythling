@@ -1,0 +1,152 @@
+<!--
+  Copyright 2015 Donald Oakes
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <SurfaceView
+            android:id="@+id/surface"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/background_translucent_blue">
+        
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp">
+    
+                <TextView
+                    android:id="@+id/current_pos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="5dp" />
+    
+                <SeekBar
+                    android:id="@+id/player_seek"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:progressDrawable="@drawable/position_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="10" />
+    
+                <TextView
+                    android:id="@+id/total_len"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="5dp" />
+    
+            </LinearLayout>
+            
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp">
+          
+                <ImageButton
+                    android:id="@+id/ctrl_jump_back"
+                    android:src="@drawable/ctrl_jump_back"
+                    android:contentDescription="@string/jump_back"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+              
+                <ImageButton
+                    android:id="@+id/ctrl_skip_back"
+                    android:src="@drawable/ctrl_skip_back"
+                    android:contentDescription="@string/skip_back"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+    
+                <ImageButton
+                    android:id="@+id/ctrl_play"
+                    android:src="@drawable/ctrl_play"
+                    android:contentDescription="@string/play"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:visibility="gone" />
+    
+                <ImageButton
+                    android:id="@+id/ctrl_pause"
+                    android:src="@drawable/ctrl_pause"
+                    android:contentDescription="@string/pause"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+                
+                <ImageButton
+                    android:id="@+id/ctrl_skip_fwd"
+                    android:src="@drawable/ctrl_skip_fwd"
+                    android:contentDescription="@string/skip_fwd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+                
+                <ImageButton
+                    android:id="@+id/ctrl_fast_fwd"
+                    android:src="@drawable/ctrl_jump_fwd"
+                    android:contentDescription="@string/jump_fwd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true"
+        android:layout_gravity="center" />
+    
+    
+</LinearLayout>
