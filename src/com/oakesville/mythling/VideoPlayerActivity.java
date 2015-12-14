@@ -27,6 +27,8 @@ import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -56,7 +58,7 @@ public class VideoPlayerActivity extends Activity {
 
     private ProgressBar progressBar;
     private SurfaceView surface;
-    // private LibVLC libvlc;
+
     private MediaPlayer mediaPlayer;
     private int videoWidth;
     private int videoHeight;
@@ -67,16 +69,26 @@ public class VideoPlayerActivity extends Activity {
     private ImageButton playCtrl;
     private ImageButton pauseCtrl;
 
+    private int hideUiDelay = 1500;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
         if (!Localizer.isInitialized())
             Localizer.initialize(appSettings);
 
         surface = (SurfaceView) findViewById(R.id.surface);
+        surface.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                showUi();
+            }
+        });
 
         createProgressBar();
 
@@ -178,6 +190,11 @@ public class VideoPlayerActivity extends Activity {
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        delayedHideUi(250);
     }
 
     private void showPlay() {
@@ -325,6 +342,37 @@ public class VideoPlayerActivity extends Activity {
             }
         }
     };
+
+    private void delayedHideUi(int delayMs) {
+        hideHandler.removeCallbacks(hideAction);
+        hideHandler.postDelayed(hideAction, delayMs);
+    }
+    private Handler hideHandler = new Handler();
+    private final Runnable hideAction = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            // Delayed removal of status and navigation bar
+
+            // Note that some of these constants are new as of API 16 (Jelly Bean)
+            // and API 19 (KitKat). It is safe to use them, as they are inlined
+            // at compile-time and do nothing on earlier devices.
+            surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+
+    @SuppressLint("InlinedApi")
+    private void showUi() {
+        hideHandler.removeCallbacks(hideAction);
+        surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        delayedHideUi(hideUiDelay);
+    }
 
     protected ProgressBar createProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progress);
