@@ -45,7 +45,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         super(createLibVlc());
         libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
 
-        setMaxPlayRate(16); // TODO pref
+        setMaxPlayRate(64); // TODO pref
         setEventListener(vlcEventListener);
 
         // video output
@@ -95,6 +95,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public void setSeconds(int pos) {
         if (itemLength > 0) {
+            if (pos < 0)
+                pos = 0;
+            else if (pos > itemLength)
+                pos = itemLength;
             float fraction = pos / (float)(itemLength);
             setPosition(fraction);
         }
@@ -167,30 +171,43 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Step up the fast-forward rate by a factor of two
-     * (resets playRate = +1 if maxPlayRate would be exceeded).
+     * (resets playRate = +2 if maxPlayRate would be exceeded).
      * @return the new playRate
      */
     public int stepUpFastForward() {
-        // TODO: mute
+        if (itemLength > 0) {
+            int newPlayRate = 2;
+            if (playRate > 1) {
+                newPlayRate = playRate * 2;
+                if (newPlayRate > maxPlayRate)
+                    newPlayRate = 2;
+            }
 
-        int newPlayRate = 1;
-        if (playRate < 1)
-            newPlayRate = 1;
-        else {
-            newPlayRate = playRate * 2;
-            if (newPlayRate > maxPlayRate)
-                newPlayRate = 1;
+            if (newPlayRate > 1 && playRate <= 1)
+                fastForwardHandler.postDelayed(fastForwardAction, 100);
+
+            playRate = newPlayRate;
+
+            if (isPlaying())
+                super.pause(); // avoid setting playRate = 0 in this.pause()
         }
-
-        playRate = newPlayRate;
-
-        if (playRate == 1)
-            play();
-        else
-            setRate(playRate);
+        else {
+            // TODO: try setRate()?
+        }
 
         return playRate;
     }
+
+    private Handler fastForwardHandler = new Handler();
+    private Runnable fastForwardAction = new Runnable() {
+        public void run() {
+            if (!isReleased() && playRate > 1) {
+                int newPos = seek(playRate);
+                if (newPos < itemLength)
+                    fastForwardHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     /**
      * Step up the rewind rate by a factor of two
@@ -221,17 +238,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private Handler rewindHandler = new Handler();
     private Runnable rewindAction = new Runnable() {
-        private int count = 0;
         public void run() {
             if (!isReleased() && playRate < 0) {
-                if (count >= maxPlayRate) {
-                    seek(-1);
-                    count = 0;
-                }
-                else {
-                    count += -playRate;
-                }
-                rewindHandler.postDelayed(this, 1000/maxPlayRate);
+                int newPos = seek(playRate);
+                if (newPos == 0)
+                    play();
+                else
+                    rewindHandler.postDelayed(this, 1000);
             }
         }
     };

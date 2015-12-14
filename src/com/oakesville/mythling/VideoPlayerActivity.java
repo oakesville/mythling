@@ -277,27 +277,29 @@ public class VideoPlayerActivity extends Activity {
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
+                        progressBar.setVisibility(View.GONE);
                         seekBarHandler.postDelayed(updateSeekBarAction, 100);
                     }
                     else if (event == MediaPlayerEvent.end) {
-                        releasePlayer();
-                        // TODO: return
+                        finish();
                     }
                     else if (event == MediaPlayerEvent.error) {
                         String msg = "Media player error";
                         Log.e(TAG, msg);
-                        releasePlayer();
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                         if (appSettings.isErrorReportingEnabled())
                             new Reporter(msg).send();
+                        finish();
                     }
                 }
             });
 
+            progressBar.setVisibility(View.VISIBLE);
             mediaPlayer.playMedia(videoUri, itemLength);
         }
         catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
+            progressBar.setVisibility(View.GONE);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error creating player: " + ex.getMessage(), Toast.LENGTH_LONG).show();
