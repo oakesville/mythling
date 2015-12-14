@@ -18,6 +18,7 @@ package com.oakesville.mythling.vlc;
 import java.util.ArrayList;
 
 import org.videolan.libvlc.IVLCVout;
+import org.videolan.libvlc.IVLCVout.Callback;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
@@ -42,8 +43,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView) {
         super(createLibVlc());
+        libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
 
-        setMaxPlayRate(8); // TODO pref
+        setMaxPlayRate(16); // TODO pref
         setEventListener(vlcEventListener);
 
         // video output
@@ -51,7 +53,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         vout.setVideoView(videoView);
         if (subtitlesView != null)
             vout.setSubtitlesView(subtitlesView);
-        // TODO vout.addCallback(nativeCallback);
+        vout.addCallback(nativeCallback);
         vout.attachViews();
     }
 
@@ -75,8 +77,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         super.release();
     }
 
-
-
     private static LibVLC libvlc;
     private static LibVLC createLibVlc() {
         // libvlc
@@ -87,7 +87,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         if (BuildConfig.DEBUG)
             options.add("-vvv");
         libvlc = new LibVLC(options);
-        // libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
         return libvlc;
     }
 
@@ -195,30 +194,25 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Step up the rewind rate by a factor of two
-     * (resets playRate = +1 if maxPlayRate would be exceeded).
+     * (resets playRate = -2 if maxPlayRate would be exceeded).
      * @return the new playRate
      */
     public int stepUpRewind() {
         if (itemLength > 0) {
-            int newPlayRate = 1;
+            int newPlayRate = -2;
 
-            if (playRate == 1 || playRate == 0)
-                newPlayRate = -1;
-            else {
+            if (playRate < 0) {
                 newPlayRate = playRate * 2;
                 if (-newPlayRate > maxPlayRate)
-                    newPlayRate = 1;
+                    newPlayRate = -2;
             }
-
 
             if (newPlayRate < 0 && playRate >= 0)
                 rewindHandler.postDelayed(rewindAction, 100);
 
             playRate = newPlayRate;
 
-            if (playRate == 1)
-                play();
-            else if (isPlaying())
+            if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
         }
 
@@ -272,6 +266,32 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         break;
                 }
             }
+        }
+    };
+
+    private LibVLC.HardwareAccelerationError hardwareAccelerationErrorHandler = new LibVLC.HardwareAccelerationError() {
+        public void eventHardwareAccelerationError() {
+            if (eventListener != null)
+                eventListener.onEvent(MediaPlayerEvent.error);
+        }
+    };
+
+    private MediaPlayerLayoutChangeListener layoutChangeListener;
+    public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener) {
+        this.layoutChangeListener = listener;
+    }
+
+    private Callback nativeCallback = new Callback() {
+        public void onNewLayout(IVLCVout vout, int width, int height,
+                int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+            if (layoutChangeListener != null)
+                layoutChangeListener.onLayoutChange(width, height);
+        }
+
+        public void onSurfacesCreated(IVLCVout vout) {
+        }
+
+        public void onSurfacesDestroyed(IVLCVout vout) {
         }
     };
 }

@@ -22,6 +22,7 @@ import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
+import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
@@ -139,14 +140,8 @@ public class VideoPlayerActivity extends Activity {
             rewind.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     int playRate = mediaPlayer.stepUpRewind();
-                    if (playRate == 1) {
-                        showPause();
-                        Toast.makeText(getApplicationContext(), "> x " + playRate, Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        showPlay();
-                        Toast.makeText(getApplicationContext(), "< x " + (-playRate), Toast.LENGTH_SHORT).show();
-                    }
+                    showPlay();
+                    Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -158,7 +153,7 @@ public class VideoPlayerActivity extends Activity {
                         showPause();
                     else
                         showPlay();
-                    Toast.makeText(getApplicationContext(), "> x " + playRate, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -268,35 +263,18 @@ public class VideoPlayerActivity extends Activity {
         try {
             Log.i(TAG, "Playing video: " + videoUri);
 
-            // libvlc
-//            ArrayList<String> options = new ArrayList<String>();
-//            //options.add("--subsdec-encoding <encoding>");
-//            options.add("--aout=opensles");
-//            options.add("--audio-time-stretch"); // time stretching
-//            if (BuildConfig.DEBUG)
-//                options.add("-vvv");
-//            libvlc = new LibVLC(options);
-//            libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
-
-            // media player
             mediaPlayer = new VlcMediaPlayer(surface, null); // TODO subtitles
-//            mediaPlayer.setMaxPlayRate(8); // TODO pref
-//            mediaPlayer.setEventListener(playerListener);
-//
-//            // video output
-//            final IVLCVout vout = mediaPlayer.getVLCVout();
-//            vout.setVideoView(surface);
-//            //vout.setSubtitlesView(mSurfaceSubtitles);
-//            vout.addCallback(nativeCallback);
-//            vout.attachViews();
-//
-//            Media m = new Media(libvlc, videoUri);
-//            mediaPlayer.setMedia(m);
-//            mediaPlayer.play();
-
-
+            mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
+                public void onLayoutChange(int width, int height) {
+                    if (width * height == 0)
+                        return;
+                    // store video size
+                    videoWidth = width;
+                    videoHeight = height;
+                    setSize(videoWidth, videoHeight);
+                }
+            });
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
-                @Override
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
                         seekBarHandler.postDelayed(updateSeekBarAction, 100);
@@ -304,6 +282,14 @@ public class VideoPlayerActivity extends Activity {
                     else if (event == MediaPlayerEvent.end) {
                         releasePlayer();
                         // TODO: return
+                    }
+                    else if (event == MediaPlayerEvent.error) {
+                        String msg = "Media player error";
+                        Log.e(TAG, msg);
+                        releasePlayer();
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        if (appSettings.isErrorReportingEnabled())
+                            new Reporter(msg).send();
                     }
                 }
             });
@@ -318,77 +304,13 @@ public class VideoPlayerActivity extends Activity {
         }
     }
 
-    // TODO: handle this more cleanly
     private void releasePlayer() {
-//        if (libvlc == null)
-//            return;
-//        mediaPlayer.stop();
-//        final IVLCVout vout = mediaPlayer.getVLCVout();
-//        vout.removeCallback(nativeCallback);
-//        vout.detachViews();
-//        libvlc.release();
-//        libvlc = null;
-
         if (mediaPlayer != null)
             mediaPlayer.doRelease();
 
         videoWidth = 0;
         videoHeight = 0;
     }
-
-//    private MediaPlayer.EventListener playerListener = new VlcPlayerListener(this);
-//    private static class VlcPlayerListener implements MediaPlayer.EventListener {
-//        private WeakReference<VlcVideoActivity> owner;
-//
-//        public VlcPlayerListener(VlcVideoActivity owner) {
-//            this.owner = new WeakReference<VlcVideoActivity>(owner);
-//        }
-//
-//        @Override
-//        public void onEvent(MediaPlayer.Event event) {
-//            VlcVideoActivity player = owner.get();
-//
-//            switch(event.type) {
-//                case MediaPlayer.Event.EndReached:
-//                    player.releasePlayer();
-//                    break;
-//                case MediaPlayer.Event.Playing:
-//                    player.seekBarHandler.postDelayed(player.updateSeekBarAction, 100);
-//                    break;
-//                case MediaPlayer.Event.Paused:
-//                case MediaPlayer.Event.Stopped:
-//                default:
-//                    break;
-//            }
-//        }
-//    }
-
-//    private Callback nativeCallback = new Callback() {
-//        public void onNewLayout(IVLCVout vout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
-//            if (width * height == 0)
-//                return;
-//            // store video size
-//            videoWidth = width;
-//            videoHeight = height;
-//            setSize(videoWidth, videoHeight);
-//        }
-//        public void onSurfacesCreated(IVLCVout vout) {
-//        }
-//        public void onSurfacesDestroyed(IVLCVout vout) {
-//        }
-//    };
-//
-//    private LibVLC.HardwareAccelerationError hardwareAccelerationErrorHandler = new LibVLC.HardwareAccelerationError() {
-//        @Override
-//        public void eventHardwareAccelerationError() {
-//            String msg = "Hardware acceleration error";
-//            Log.e(TAG, msg);
-//            releasePlayer();
-//            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-//            if (appSettings.isErrorReportingEnabled())
-//                new Reporter(msg).send();
-//        }
-//    };
 
     private Handler seekBarHandler = new Handler();
     private Runnable updateSeekBarAction = new Runnable() {
@@ -408,5 +330,4 @@ public class VideoPlayerActivity extends Activity {
         progressBar.setScaleY(0.20f);
         return progressBar;
     }
-
 }

@@ -31,6 +31,10 @@ public interface MediaPlayer {
         public void onEvent(MediaPlayerEvent event);
     }
 
+    public interface MediaPlayerLayoutChangeListener {
+        public void onLayoutChange(int width, int height);
+    }
+
     /**
      * @param mediaUri
      * @param itemLength seconds (zero if unknown)
@@ -75,5 +79,7 @@ public interface MediaPlayer {
     public boolean isReleased();
 
     public void setMediaPlayerEventListener(MediaPlayerEventListener listener);
+
+    public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener);
 
 }
