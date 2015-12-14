@@ -127,6 +127,37 @@ public class TextBuilder {
         return this;
     }
 
+    public TextBuilder appendDuration(int seconds) {
+        int mins = 0;
+        int hrs = 0;
+
+        if (seconds >= 60) {
+          mins = seconds / 60;
+          seconds = seconds % 60;
+        }
+        if (mins >= 60) {
+            hrs = mins / 60;
+            mins = mins % 60;
+        }
+
+        if (hrs > 0)
+            stringBuilder.append(hrs).append(":");
+        appendPadTwo(mins);
+        stringBuilder.append(":");
+        appendPadTwo(seconds);
+
+        return this;
+    }
+
+    public TextBuilder appendPadTwo(long l) {
+        String s = String.valueOf(l);
+        if (s.length() == 1)
+            stringBuilder.append("0").append(s);
+        else
+            stringBuilder.append(s);
+        return this;
+    }
+
     /**
      * Returns null if empty.
      */

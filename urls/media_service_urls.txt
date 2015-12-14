@@ -80,6 +80,9 @@ http://192.168.0.69:6544/Dvr/AddDontRecordSchedule?ChanId=1656&StartTime=2015-07
 http://192.168.0.69:6544/Dvr/GetUpcomingList
 http://192.168.0.69:6544/Dvr/GetRecordSchedule?RecordId=181 (not used currently)
 
+# Get Cut List (0.28-only?)
+http://192.168.0.69:6544/Dvr/GetRecordedCutList?RecordedId=261
+
 # MythTV Misc Services
 http://192.168.0.69:6544/Myth/GetHostName
 http://192.168.0.69:6544/Status/GetStatus

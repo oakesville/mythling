@@ -32,7 +32,7 @@
             android:key="video_player"
             android:switchTextOn="@string/switch_built_in"
             android:switchTextOff="@string/switch_external_app"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
     </com.oakesville.mythling.prefs.DisableableCategory>

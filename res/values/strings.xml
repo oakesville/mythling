@@ -319,6 +319,8 @@
     <string name="pause">Pause</string>
     <string name="download">Download</string>
     <string name="watch">Watch</string>
+    <string name="rewind">Rewind</string>
+    <string name="fast_forward">Fast Forward</string>
     <string name="skip_back">Skip Back</string>
     <string name="skip_fwd">Skip Forward</string>
     <string name="jump_back">Jump Back</string>

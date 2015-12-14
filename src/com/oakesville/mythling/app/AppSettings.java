@@ -434,7 +434,7 @@ public class AppSettings {
     }
 
     public boolean isExternalVideoPlayer() {
-        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, false);
+        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, true);
     }
 
     public boolean isExternalMusicPlayer() {
