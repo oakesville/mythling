@@ -53,6 +53,10 @@ public class Video extends Item {
     public String getPageUrl() { return pageUrl; }
     public void setPageUrl(String pageUrl) { this.pageUrl = pageUrl; }
 
+    private int length; // seconds
+    public int getLength() { return length; }
+    public void setLength(int l) { this.length = l; }
+
     public Video(String id, String title) {
         super(id, title);
     }

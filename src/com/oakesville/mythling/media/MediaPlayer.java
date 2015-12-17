@@ -21,6 +21,7 @@ public interface MediaPlayer {
 
     public enum MediaPlayerEvent {
         playing,
+        seekable,
         paused,
         stopped,
         end,
@@ -32,17 +33,23 @@ public interface MediaPlayer {
     }
 
     public interface MediaPlayerLayoutChangeListener {
-        public void onLayoutChange(int width, int height);
+        public void onLayoutChange(int width, int height, int sarNumerator, int sarDenominator);
     }
 
     /**
      * @param mediaUri
-     * @param itemLength seconds (zero if unknown)
      */
-    public void playMedia(Uri mediaUri, int itemLength);
+    public void playMedia(Uri mediaUri);
 
     public void play();
     public void pause();
+
+    /**
+     * @return length in seconds (or zero if unknown)
+     */
+    public int getItemLength();
+
+    public boolean isItemSeekable();
 
     /**
      * @return media position in seconds (or zero if unknown)
@@ -58,7 +65,7 @@ public interface MediaPlayer {
      * Seek forward or backward.
      * @return if successful the new position in seconds, otherwise zero
      */
-    public int seek(int delta);
+    public int skip(int delta);
 
     /**
      * Step up the rewind rate by a factor of two

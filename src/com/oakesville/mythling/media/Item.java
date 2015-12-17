@@ -182,9 +182,9 @@ public abstract class Item implements Listable {
     }
 
     /**
-     * Item length in ms (-1 if unknown).
+     * Item length in secs (-1 if unknown).
      */
-    public long getLength() {
+    public int getLength() {
         return -1;
     }
 

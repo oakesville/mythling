@@ -260,16 +260,6 @@ public class TvShow extends Item {
         return tb.toString();
     }
 
-
-
-    @Override
-    public long getLength() {
-        if (getStartTime() == null || getEndTime() == null)
-            return super.getLength();
-        else
-            return getEndTime().getTime() - getStartTime().getTime();
-    }
-
     @Override
     protected Comparator<Item> getDateComparator() {
         return new Comparator<Item>() {

@@ -15,8 +15,6 @@
  */
 package com.oakesville.mythling;
 
-import java.net.URLDecoder;
-
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaPlayer;
@@ -39,6 +37,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -48,8 +47,6 @@ import android.widget.Toast;
 
 public class VideoPlayerActivity extends Activity {
 
-    public static final String EXTRA_ITEM_LENGTH = "com.oakesville.mythling.EXTRA_ITEM_LENGTH";
-
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
     private AppSettings appSettings;
@@ -58,16 +55,24 @@ public class VideoPlayerActivity extends Activity {
 
     private ProgressBar progressBar;
     private SurfaceView surface;
+    private FrameLayout surfaceFrame;
 
     private MediaPlayer mediaPlayer;
     private int videoWidth;
     private int videoHeight;
 
+    private int screenAspectNumerator;
+    private int screenAspectDenominator;
+
     // seek
-    private TextView curPosText;
+    private TextView totalLengthText;
+    private TextView currentPositionText;
     private SeekBar seekBar;
-    private ImageButton playCtrl;
-    private ImageButton pauseCtrl;
+    private ImageButton playBtn;
+    private ImageButton pauseBtn;
+
+    private int savedPosition;
+    private boolean done;
 
     private int hideUiDelay = 1500;
 
@@ -83,51 +88,49 @@ public class VideoPlayerActivity extends Activity {
         if (!Localizer.isInitialized())
             Localizer.initialize(appSettings);
 
-        surface = (SurfaceView) findViewById(R.id.surface);
+        surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 showUi();
             }
         });
 
+        surfaceFrame = (FrameLayout) findViewById(R.id.player_surface_frame);
+
         createProgressBar();
 
         try {
-            videoUri = Uri.parse(URLDecoder.decode(getIntent().getDataString(), "UTF-8"));
-            itemLength = getIntent().getExtras().getInt(EXTRA_ITEM_LENGTH);
+            videoUri = Uri.parse(getIntent().getDataString());
 
-            if (itemLength > 0) {
-                curPosText = (TextView) findViewById(R.id.current_pos);
-                curPosText.setText(new TextBuilder().appendDuration(0).toString());
-                TextView totalLenText = (TextView) findViewById(R.id.total_len);
-                totalLenText.setText(new TextBuilder().appendDuration(itemLength).toString());
+            currentPositionText = (TextView) findViewById(R.id.current_pos);
+            seekBar = (SeekBar) findViewById(R.id.player_seek);
+            totalLengthText = (TextView) findViewById(R.id.total_len);
 
-                seekBar = (SeekBar) findViewById(R.id.player_seek);
-                seekBar.setMax(itemLength); // max is length in seconds
-                seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (fromUser) {
-                            mediaPlayer.setSeconds(progress);
-                            curPosText.setText(new TextBuilder().appendDuration(progress).toString());
-                        }
-                    }
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                    }
-                });
-            }
+            currentPositionText.setText(new TextBuilder().appendDuration(0).toString());
 
-            playCtrl = (ImageButton) findViewById(R.id.ctrl_play);
-            playCtrl.setOnClickListener(new OnClickListener() {
+            seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (fromUser) {
+                        mediaPlayer.setSeconds(progress);
+                        currentPositionText.setText(new TextBuilder().appendDuration(progress).toString());
+                    }
+                }
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
+            playBtn = (ImageButton) findViewById(R.id.ctrl_play);
+            playBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     mediaPlayer.play();
                     showPause();
                 }
             });
 
-            pauseCtrl = (ImageButton) findViewById(R.id.ctrl_pause);
-            pauseCtrl.setOnClickListener(new OnClickListener() {
+            pauseBtn = (ImageButton) findViewById(R.id.ctrl_pause);
+            pauseBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     mediaPlayer.pause();
                     showPlay();
@@ -137,14 +140,14 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
             fastBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    seek(-600);
+                    skip(-600);
                 }
             });
 
             ImageButton skipBack = (ImageButton) findViewById(R.id.ctrl_skip_back);
             skipBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    seek(-10);
+                    skip(-10);
                 }
             });
 
@@ -172,14 +175,14 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipFwd = (ImageButton) findViewById(R.id.ctrl_skip_fwd);
             skipFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    seek(+30);
+                    skip(+30);
                 }
             });
 
             ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
             fastFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    seek(+600);
+                    skip(+600);
                 }
             });
         }
@@ -198,36 +201,56 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void showPlay() {
-        pauseCtrl.setVisibility(View.GONE);
-        playCtrl.setVisibility(View.VISIBLE);
+        pauseBtn.setVisibility(View.GONE);
+        playBtn.setVisibility(View.VISIBLE);
     }
 
     private void showPause() {
-        playCtrl.setVisibility(View.GONE);
-        pauseCtrl.setVisibility(View.VISIBLE);
+        playBtn.setVisibility(View.GONE);
+        pauseBtn.setVisibility(View.VISIBLE);
     }
 
-    private void seek(int delta) {
-        int newPos = mediaPlayer.seek(delta);
-        curPosText.setText(new TextBuilder().appendDuration(newPos).toString());
+    private void skip(int delta) {
+        int newPos = mediaPlayer.skip(delta);
+        currentPositionText.setText(new TextBuilder().appendDuration(newPos).toString());
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        setSize(videoWidth, videoHeight);
+        changeSurfaceLayout(videoWidth, videoHeight);
     }
 
     @Override
     protected void onResume() {
+        done = false;
         super.onResume();
+        savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
         createPlayer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (done)
+            appSettings.clearVideoPlaybackPosition(videoUri);
+        else
+            appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getSeconds());
         releasePlayer();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedPosition = mediaPlayer.getSeconds();
+        savedInstanceState.putInt(AppSettings.VIDEO_PLAYBACK_POSITION, savedPosition); // TODO per item
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        savedPosition = savedInstanceState.getInt(AppSettings.VIDEO_PLAYBACK_POSITION);
+        // TODO seek to saved position
     }
 
     @Override
@@ -236,43 +259,72 @@ public class VideoPlayerActivity extends Activity {
         releasePlayer();
     }
 
-    private void setSize(int width, int height) {
+    private void changeSurfaceLayout(int width, int height) {
         videoWidth = width;
         videoHeight = height;
-        if (videoWidth * videoHeight <= 1)
-            return;
-        if (surface == null || surface.getHolder() == null)
-            return;
 
         // get screen size
-        int w = getWindow().getDecorView().getWidth();
-        int h = getWindow().getDecorView().getHeight();
-
+        int sw = getWindow().getDecorView().getWidth();
+        int sh = getWindow().getDecorView().getHeight();
+        double dw = sw, dh = sh;
         // getWindow().getDecorView() doesn't always take orientation into account, so correct the values
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        if (w > h && isPortrait || w < h && !isPortrait) {
-            int i = w;
-            w = h;
-            h = i;
+        if (sw > sh && isPortrait || sw < sh && !isPortrait) {
+            dw = sh;
+            dh = sw;
         }
 
-        float videoAR = (float) videoWidth / (float) videoHeight;
-        float screenAR = (float) w / (float) h;
+        // check sanity
+        if (dw * dh == 0 || videoWidth * videoHeight == 0) {
+            String msg = "Invalid surface size";
+            Log.e(TAG, msg);
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            if (appSettings.isErrorReportingEnabled())
+                new Reporter(msg).send();
+            return;
+        }
 
-        if (screenAR < videoAR)
-            h = (int) (w / videoAR);
+        // compute the aspect ratio
+        double ar, vw;
+        if (screenAspectDenominator == screenAspectNumerator) {
+            // no indication about density, assume 1:1
+            vw = width;
+            ar =  (double)width / (double)height;
+        } else {
+            // use the specified aspect ratio
+            vw = width * (double)screenAspectNumerator / screenAspectDenominator;
+            ar = vw / height;
+        }
+
+        // compute the display aspect ratio
+        double dar = dw / dh;
+
+        // case SURFACE_BEST_FIT:
+        if (dar < ar)
+            dh = dw / ar;
         else
-            w = (int) (h * videoAR);
+            dw = dh * ar;
 
-        // force surface buffer size
-        surface.getHolder().setFixedSize(videoWidth, videoHeight);
+        // TODO: subtitles
+        SurfaceView subtitlesSurface = null;
 
         // set display size
         LayoutParams lp = surface.getLayoutParams();
-        lp.width = w;
-        lp.height = h;
+        lp.width  = (int) dw;
+        lp.height = (int) dh;
         surface.setLayoutParams(lp);
+        if (subtitlesSurface != null)
+            subtitlesSurface.setLayoutParams(lp);
+
+        // set frame size (crop if necessary)
+        lp = surfaceFrame.getLayoutParams();
+        lp.width = (int) Math.floor(dw);
+        lp.height = (int) Math.floor(dh);
+        surfaceFrame.setLayoutParams(lp);
+
         surface.invalidate();
+        if (subtitlesSurface != null)
+            subtitlesSurface.invalidate();
     }
 
     private void createPlayer() {
@@ -282,13 +334,12 @@ public class VideoPlayerActivity extends Activity {
 
             mediaPlayer = new VlcMediaPlayer(surface, null); // TODO subtitles
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
-                public void onLayoutChange(int width, int height) {
+                public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
                     if (width * height == 0)
                         return;
-                    // store video size
-                    videoWidth = width;
-                    videoHeight = height;
-                    setSize(videoWidth, videoHeight);
+                    screenAspectNumerator = sarNum;
+                    screenAspectDenominator = sarDen;
+                    changeSurfaceLayout(width, height);
                 }
             });
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
@@ -298,6 +349,8 @@ public class VideoPlayerActivity extends Activity {
                         seekBarHandler.postDelayed(updateSeekBarAction, 100);
                     }
                     else if (event == MediaPlayerEvent.end) {
+                        savedPosition = 0;
+                        done = true;
                         finish();
                     }
                     else if (event == MediaPlayerEvent.error) {
@@ -308,11 +361,22 @@ public class VideoPlayerActivity extends Activity {
                             new Reporter(msg).send();
                         finish();
                     }
+                    else if (event == MediaPlayerEvent.seekable) {
+                        if (mediaPlayer.getItemLength() != itemLength) {
+                            itemLength = mediaPlayer.getItemLength();
+                            totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
+                            seekBar.setMax(itemLength); // max is length in seconds
+                        }
+                        if (savedPosition > 0) {
+                            mediaPlayer.setSeconds(savedPosition);
+                            savedPosition = 0;
+                        }
+                    }
                 }
             });
 
             progressBar.setVisibility(View.VISIBLE);
-            mediaPlayer.playMedia(videoUri, itemLength);
+            mediaPlayer.playMedia(videoUri);
         }
         catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
@@ -335,10 +399,12 @@ public class VideoPlayerActivity extends Activity {
     private Runnable updateSeekBarAction = new Runnable() {
         public void run() {
             if (!mediaPlayer.isReleased()) {
-                int curPos = mediaPlayer.getSeconds();
-                curPosText.setText(new TextBuilder().appendDuration(curPos).toString());
-                seekBar.setProgress(curPos);
-                seekBarHandler.postDelayed(this, 100);
+                if (mediaPlayer.isItemSeekable()) {
+                    int curPos = mediaPlayer.getSeconds();
+                    currentPositionText.setText(new TextBuilder().appendDuration(curPos).toString());
+                    seekBar.setProgress(curPos);
+                }
+                seekBarHandler.postDelayed(this, 250);
             }
         }
     };
@@ -352,11 +418,7 @@ public class VideoPlayerActivity extends Activity {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
+            // safe to use these constants as they're inlined at compile-time and do nothing on earlier devices
             surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -371,6 +433,8 @@ public class VideoPlayerActivity extends Activity {
         hideHandler.removeCallbacks(hideAction);
         surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+
         delayedHideUi(hideUiDelay);
     }
 

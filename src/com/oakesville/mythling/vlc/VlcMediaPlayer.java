@@ -38,8 +38,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private int itemLength; // seconds
     public int getItemLength() {
-        return itemLength; // TODO inferred for HLS?
+        return itemLength;
     }
+
+    public boolean isItemSeekable() {
+        return itemLength > 0;
+    }
+
+    private boolean lengthDetermined; // libvlc knows the media length
 
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView) {
         super(createLibVlc());
@@ -57,9 +63,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         vout.attachViews();
     }
 
-    public void playMedia(Uri mediaUri, int itemLength) {
+    public void playMedia(Uri mediaUri) {
         this.mediaUri = mediaUri;
-        this.itemLength = itemLength;
         Media m = new Media(libvlc, mediaUri);
         setMedia(m);
         play();
@@ -120,7 +125,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * Seek forward or backward.
      * @return if successful the new position in seconds, otherwise zero
      */
-    public int seek(int delta) {
+    public int skip(int delta) {
         if (itemLength > 0) {
             int newPos = getSeconds() + delta;
             setSeconds(newPos);
@@ -129,7 +134,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         else {
             return 0;
         }
-
     }
 
     private int maxPlayRate = 1;
@@ -202,7 +206,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate > 1) {
-                int newPos = seek(playRate);
+                int newPos = skip(playRate);
                 if (newPos < itemLength)
                     fastForwardHandler.postDelayed(this, 1000);
             }
@@ -240,7 +244,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate < 0) {
-                int newPos = seek(playRate);
+                int newPos = skip(playRate);
                 if (newPos == 0)
                     play();
                 else
@@ -275,6 +279,19 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     case MediaPlayer.Event.EncounteredError:
                         eventListener.onEvent(MediaPlayerEvent.error);
                         break;
+                    case MediaPlayer.Event.Opening:
+                        System.out.println("OPENING: " + event);
+                        break;
+                    case MediaPlayer.Event.TimeChanged:
+                        if (!lengthDetermined) {
+                            long len = getLength();
+                            if (len > 0) {
+                                itemLength = (int)(len / 1000);
+                                lengthDetermined = true;
+                                eventListener.onEvent(MediaPlayerEvent.seekable);
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -298,7 +315,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void onNewLayout(IVLCVout vout, int width, int height,
                 int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
             if (layoutChangeListener != null)
-                layoutChangeListener.onLayoutChange(width, height);
+                layoutChangeListener.onLayoutChange(width, height, sarNum, sarDen);
         }
 
         public void onSurfacesCreated(IVLCVout vout) {

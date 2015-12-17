@@ -140,8 +140,13 @@ public class MythTvParser implements MediaListParser {
                 }
 
                 if (type == mediaType) {
-                    mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, storageGroups));
-                    count++;
+                    try {
+                        mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, storageGroups));
+                        count++;
+                    }
+                    catch (NumberFormatException ex) {
+                        Log.e(TAG, "NumberFormatException for " + type + " at index: " + count);
+                    }
                 }
             }
             mediaList.setCount(count);
@@ -153,23 +158,28 @@ public class MythTvParser implements MediaListParser {
             JSONArray recs = infoList.getJSONArray("Programs");
             for (int i = 0; i < recs.length(); i++) {
                 JSONObject rec = (JSONObject) recs.get(i);
-                Recording recItem = buildRecordingItem(rec, storageGroups);
-                if (!"Deleted".equals(recItem.getRecordingGroup())) {
-                    ViewType viewType = appSettings.getMediaSettings().getViewType();
-                    if ((viewType == ViewType.list || viewType == ViewType.split) && (sortType == null || sortType == SortType.byTitle)) {
-                        // categorize by title
-                        Category cat = mediaList.getCategory(recItem.getTitle());
-                        if (cat == null) {
-                            cat = new Category(recItem.getTitle(), MediaType.recordings);
-                            mediaList.addCategory(cat);
+                try {
+                    Recording recItem = buildRecordingItem(rec, storageGroups);
+                    if (!"Deleted".equals(recItem.getRecordingGroup())) {
+                        ViewType viewType = appSettings.getMediaSettings().getViewType();
+                        if ((viewType == ViewType.list || viewType == ViewType.split) && (sortType == null || sortType == SortType.byTitle)) {
+                            // categorize by title
+                            Category cat = mediaList.getCategory(recItem.getTitle());
+                            if (cat == null) {
+                                cat = new Category(recItem.getTitle(), MediaType.recordings);
+                                mediaList.addCategory(cat);
+                            }
+                            cat.addItem(recItem);
+                        } else {
+                            mediaList.addItem(recItem);
                         }
-                        cat.addItem(recItem);
+                        recItem.setPath("");
                     } else {
-                        mediaList.addItem(recItem);
+                        mediaList.setCount(mediaList.getCount() - 1); // otherwise reported count will be off
                     }
-                    recItem.setPath("");
-                } else {
-                    mediaList.setCount(mediaList.getCount() - 1); // otherwise reported count will be off
+                }
+                catch (NumberFormatException ex) {
+                    Log.e(TAG, "NumberFormatException for recording at index: " + i);
                 }
             }
         } else if (list.has("ProgramGuide")) {
@@ -180,10 +190,15 @@ public class MythTvParser implements MediaListParser {
             JSONArray chans = infoList.getJSONArray("Channels");
             for (int i = 0; i < chans.length(); i++) {
                 JSONObject chanInfo = (JSONObject) chans.get(i);
-                Item show = buildLiveTvItem(chanInfo);
-                if (show != null) {
-                    mediaList.addItem(show);
-                    show.setPath("");
+                try {
+                    Item show = buildLiveTvItem(chanInfo);
+                    if (show != null) {
+                        mediaList.addItem(show);
+                        show.setPath("");
+                    }
+                }
+                catch (NumberFormatException ex) {
+                    Log.e(TAG, "NumberFormatException for live TV at index: " + i);
                 }
             }
         }
@@ -269,7 +284,9 @@ public class MythTvParser implements MediaListParser {
             if (!rating.isEmpty() && !rating.equals("0"))
                 item.setRating(Float.parseFloat(rating) / 2);
         }
-
+        if (vid.has("Length")) {
+            item.setLength(Integer.parseInt(vid.getString("Length")) * 60);
+        }
         if (vid.has("Artwork")) {
             StorageGroup artworkStorageGroup = storageGroups == null ? null : storageGroups.get(appSettings.getArtworkStorageGroup(type));
             if (artworkStorageGroup != null) {

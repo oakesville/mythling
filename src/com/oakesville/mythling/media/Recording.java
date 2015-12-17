@@ -110,4 +110,14 @@ public class Recording extends TvShow {
             }
         };
     }
+
+    @Override
+    public int getLength() {
+        if (getStartTime() == null || getEndTime() == null)
+            return super.getLength();
+        else
+            return (int)((getEndTime().getTime() - getStartTime().getTime()) / 1000);
+    }
+
+
 }

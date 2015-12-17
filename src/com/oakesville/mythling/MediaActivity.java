@@ -833,13 +833,11 @@ public abstract class MediaActivity extends Activity {
 
     protected void playDownload(Uri uri) {
         stopProgress();
-        if (appSettings.isExternalVideoPlayer()) {
-            Intent toStart = new Intent(Intent.ACTION_VIEW);
-            toStart.setDataAndType(uri, "video/*");
-            startActivity(toStart);
-        } else {
-            startActivity(new Intent(Intent.ACTION_VIEW, uri, getApplicationContext(), VideoViewActivity.class));
-        }
+        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+        videoIntent.setDataAndType(uri, "video/*");
+        if (!appSettings.isExternalVideoPlayer())
+            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+        startActivity(videoIntent);
     }
 
     /**
@@ -1419,8 +1417,7 @@ public abstract class MediaActivity extends Activity {
     }
 
     /**
-     * Requires MythTV content.cpp patch to work without storage groups (or maybe create
-     * a bogus SG called None that points to your backend videos base location).
+     * Requires MythTV content.cpp patch to work without storage groups.
      */
     private void playRawVideoStream(Item item) {
         try {
@@ -1432,18 +1429,11 @@ public abstract class MediaActivity extends Activity {
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
 
             stopProgress();
-            if (appSettings.isExternalVideoPlayer()) {
-                Intent toStart = new Intent(Intent.ACTION_VIEW);
-                toStart.setDataAndType(Uri.parse(fileUrl), "video/*");
-                startActivity(toStart);
-            } else {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl), getApplicationContext(), VideoPlayerActivity.class);
-                long lengthMs = item.getLength();
-                if (lengthMs > 0)
-                    intent.putExtra(VideoPlayerActivity.EXTRA_ITEM_LENGTH, (int) lengthMs / 1000);
-
-                startActivity(intent);
-            }
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(Uri.parse(fileUrl), "video/*");
+            if (!appSettings.isExternalVideoPlayer())
+                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+            startActivity(videoIntent);
         } catch (IOException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);
@@ -1461,13 +1451,13 @@ public abstract class MediaActivity extends Activity {
         streamUrl = streamUrl.substring(0, lastDot) + ".av" + streamUrl.substring(lastDot);
 
         stopProgress();
-        if (appSettings.isExternalVideoPlayer()) {
-            Intent toStart = new Intent(Intent.ACTION_VIEW);
-            toStart.setDataAndType(Uri.parse(streamUrl), "video/*");
-            startActivity(toStart);
-        } else {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(streamUrl), getApplicationContext(), VideoViewActivity.class));
-        }
+
+        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+        videoIntent.setDataAndType(Uri.parse(streamUrl), "video/*");
+        if (!appSettings.isExternalVideoPlayer())
+            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+
+        startActivity(videoIntent);
     }
 
     void initListViewOnItemClickListener() {
