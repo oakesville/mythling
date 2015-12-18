@@ -15,14 +15,15 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class PlaybackPrefs extends PreferenceFragment {
     @Override
@@ -45,12 +46,34 @@ public class PlaybackPrefs extends PreferenceFragment {
         doCategoryEnablement(appSettings.isDevicePlayback());
 
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_VIDEO_PLAYER);
-        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                doInternalPlayerEnablement(Boolean.valueOf(newValue.toString()));
+                return true;
+            }
+        });
+        doInternalPlayerEnablement(!appSettings.isExternalVideoPlayer());
+
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getSkipBackInterval() + " " + getString(R.string.seconds));
+
+        pref = getPreferenceScreen().findPreference(AppSettings.SKIP_FORWARD_INTERVAL);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getSkipForwardInterval() + " " + getString(R.string.seconds));
+
+        pref = getPreferenceScreen().findPreference(AppSettings.JUMP_INTERVAL);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getJumpInterval() + " " + getString(R.string.seconds));
+
+        pref = getPreferenceScreen().findPreference(AppSettings.COMMERCIAL_SKIP);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary(appSettings.getCommercialSkip());
 
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_MUSIC_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getFrontendHost());
 
@@ -71,5 +94,18 @@ public class PlaybackPrefs extends PreferenceFragment {
 
         Preference frontendCat = getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK_CATEGORY);
         frontendCat.setEnabled(!isDevice);
+    }
+
+    private void doInternalPlayerEnablement(boolean isInternalPlayer) {
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
+        pref.setEnabled(isInternalPlayer);
+        pref = getPreferenceScreen().findPreference(AppSettings.SKIP_FORWARD_INTERVAL);
+        pref.setEnabled(isInternalPlayer);
+        pref = getPreferenceScreen().findPreference(AppSettings.JUMP_INTERVAL);
+        pref.setEnabled(isInternalPlayer);
+        ListPreference lPref = (ListPreference) getPreferenceScreen().findPreference(AppSettings.COMMERCIAL_SKIP);
+        if (!isInternalPlayer)
+            lPref.setValue(AppSettings.COMMERCIAL_SKIP_OFF);
+        lPref.setEnabled(isInternalPlayer);
     }
 }

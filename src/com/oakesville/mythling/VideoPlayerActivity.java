@@ -60,6 +60,7 @@ public class VideoPlayerActivity extends Activity {
     private Uri videoUri;
     private int itemLength; // this will be zero if not known definitively
     private List<Cut> cutList;
+    private String commercialSkip;
 
     private ProgressBar progressBar;
     private SurfaceView surface;
@@ -151,14 +152,14 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
             fastBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    skip(-600);
+                    skip(-appSettings.getJumpInterval());
                 }
             });
 
             ImageButton skipBack = (ImageButton) findViewById(R.id.ctrl_skip_back);
             skipBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    skip(-10);
+                    skip(-appSettings.getSkipBackInterval());
                 }
             });
 
@@ -186,14 +187,14 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipFwd = (ImageButton) findViewById(R.id.ctrl_skip_fwd);
             skipFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    skip(+30);
+                    skip(appSettings.getSkipForwardInterval());
                 }
             });
 
             ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
             fastFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    skip(+600);
+                    skip(appSettings.getJumpInterval());
                 }
             });
         }
@@ -237,6 +238,7 @@ public class VideoPlayerActivity extends Activity {
         done = false;
         super.onResume();
         savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
+        commercialSkip = appSettings.getCommercialSkip();
         createPlayer();
     }
 
@@ -385,8 +387,15 @@ public class VideoPlayerActivity extends Activity {
                         if (cutList != null) {
                             int pos = mediaPlayer.getSeconds();
                             for (Cut cut : cutList) {
-                                if (cut.start <= pos && cut.end > pos) {
-                                    mediaPlayer.setSeconds(cut.end);
+                                if (cut.start <= pos && cut.end > pos && pos - cut.start < 1000) {
+                                    if (AppSettings.COMMERCIAL_SKIP_NOTIFY.equals(commercialSkip)) {
+//                                        TextBuilder tb = new TextBuilder(getString(R.string.title_commercial_skip)).append(": ");
+//                                        tb.appendDuration(cut.end - cut.start);
+//                                        Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    else if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
+                                        mediaPlayer.setSeconds(cut.end);
+                                    }
                                     break;
                                 }
                             }
@@ -442,19 +451,19 @@ public class VideoPlayerActivity extends Activity {
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                skip(-10);
+                skip(-appSettings.getSkipBackInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                skip(30);
+                skip(appSettings.getSkipForwardInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                skip(-600);
+                skip(-appSettings.getJumpInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                skip(600);
+                skip(appSettings.getJumpInterval());
                 return true;
             }
         }

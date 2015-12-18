@@ -149,6 +149,13 @@ public class AppSettings {
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
+    public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
+    public static final String SKIP_BACK_INTERVAL = "skip_back_interval";
+    public static final String JUMP_INTERVAL = "jump_interval";
+    public static final String COMMERCIAL_SKIP = "commercial_skip";
+    public static final String COMMERCIAL_SKIP_OFF = "off";
+    public static final String COMMERCIAL_SKIP_ON = "on";
+    public static final String COMMERCIAL_SKIP_NOTIFY = "notify";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -442,6 +449,22 @@ public class AppSettings {
 
     public boolean isExternalVideoPlayer() {
         return !getBooleanPref(INTERNAL_VIDEO_PLAYER, true);
+    }
+
+    public int getSkipBackInterval() {
+        return Integer.parseInt(getStringPref(SKIP_BACK_INTERVAL, "10"));
+    }
+
+    public int getSkipForwardInterval() {
+        return Integer.parseInt(getStringPref(SKIP_FORWARD_INTERVAL, "30"));
+    }
+
+    public int getJumpInterval() {
+        return Integer.parseInt(getStringPref(JUMP_INTERVAL, "600"));
+    }
+
+    public String getCommercialSkip() {
+        return getStringPref(COMMERCIAL_SKIP, COMMERCIAL_SKIP_OFF);
     }
 
     public boolean isExternalMusicPlayer() {

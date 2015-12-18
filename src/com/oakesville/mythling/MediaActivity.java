@@ -1329,20 +1329,17 @@ public abstract class MediaActivity extends Activity {
         protected void onPostExecute(Long result) {
             stopProgress();
             if (result != 0L) {
-                if (ex != null)
-                    Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+               Toast.makeText(getApplicationContext(), "Unable to retrieve cut list (MythTV 0.27?)", Toast.LENGTH_LONG).show();
                 onResume();
             }
-            else {
-                Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-                videoIntent.setDataAndType(Uri.parse(playbackUrl.toString()), "video/*");
-                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-                if (recording.isLengthKnown())
-                    videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
-                if (recording.hasCommercialCutList())
-                    videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCommercialCutList());
-                startActivity(videoIntent);
-            }
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(Uri.parse(playbackUrl.toString()), "video/*");
+            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+            if (recording.isLengthKnown())
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
+            if (recording.hasCommercialCutList())
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCommercialCutList());
+            startActivity(videoIntent);
         }
     }
 
@@ -1491,7 +1488,7 @@ public abstract class MediaActivity extends Activity {
             else
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
 
-            boolean useCutList = false;
+            boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
             if (item.isRecording() && useCutList && !appSettings.isExternalVideoPlayer()) {
                 new PlayWithCutListTask((Recording)item).execute(new URL(fileUrl));
             }

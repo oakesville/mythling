@@ -79,6 +79,23 @@
     <string name="title_quality_settings">HLS Video Quality Settings</string>
     <string name="title_cache_settings">Data Cache Settings</string>
     <string name="title_system_settings">System Settings</string>
+    <string name="title_skip_forward_interval">Skip Forward Interval</string>
+    <string name="message_skip_forward_interval">Seconds to skip ahead when the Skip Forward button is pressed.</string>
+    <string name="title_skip_back_interval">Skip Back Interval</string>
+    <string name="message_skip_back_interval">Seconds to skip backward when the Skip Back button is pressed</string>
+    <string name="title_jump_interval">Jump Interval</string>
+    <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
+    <string name="title_commercial_skip">Skip Commercials (Experimental)</string>
+    <string-array name="commercial_skip_entries">
+        <item>Auto-Skip Off</item>
+        <item>Auto-Skip Notify</item>
+        <item>Auto-Skip On</item>
+    </string-array>
+    <string-array name="commercial_skip_values">
+        <item>off</item>
+        <item>notify</item>
+        <item>on</item>
+    </string-array>    
     <string name="title_frontend_host">Host</string>
     <string name="title_frontend_host_dialog">Frontend Host</string>
     <string name="message_frontend_host">Host name or IP address for frontend playback</string>
