@@ -39,6 +39,10 @@ public class Recording extends TvShow {
     public String getRecordingGroup() { return recordingGroup; }
     public void setRecordingGroup(String recGroup) { this.recordingGroup = recGroup; }
 
+    private boolean recorded; // recording completed
+    public boolean isRecorded() { return recorded; }
+    public void setRecorded(boolean recorded) { this.recorded = recorded; }
+
     public Recording(String id, String title) {
         super(id, title);
     }
@@ -119,5 +123,9 @@ public class Recording extends TvShow {
             return (int)((getEndTime().getTime() - getStartTime().getTime()) / 1000);
     }
 
-
+    @Override
+    public boolean isLengthKnown() {
+        int length = getLength();
+        return length > 0 && isRecorded();
+    }
 }

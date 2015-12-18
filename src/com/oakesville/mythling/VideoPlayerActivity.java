@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,11 +48,13 @@ import android.widget.Toast;
 
 public class VideoPlayerActivity extends Activity {
 
+    public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
+
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
     private AppSettings appSettings;
     private Uri videoUri;
-    private int itemLength;
+    private int itemLength; // this will be zero if not known definitively
 
     private ProgressBar progressBar;
     private SurfaceView surface;
@@ -101,6 +104,7 @@ public class VideoPlayerActivity extends Activity {
 
         try {
             videoUri = Uri.parse(getIntent().getDataString());
+            itemLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
 
             currentPositionText = (TextView) findViewById(R.id.current_pos);
             seekBar = (SeekBar) findViewById(R.id.player_seek);
@@ -240,20 +244,6 @@ public class VideoPlayerActivity extends Activity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedPosition = mediaPlayer.getSeconds();
-        savedInstanceState.putInt(AppSettings.VIDEO_PLAYBACK_POSITION, savedPosition); // TODO per item
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        savedPosition = savedInstanceState.getInt(AppSettings.VIDEO_PLAYBACK_POSITION);
-        // TODO seek to saved position
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         releasePlayer();
@@ -346,7 +336,18 @@ public class VideoPlayerActivity extends Activity {
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
                         progressBar.setVisibility(View.GONE);
-                        seekBarHandler.postDelayed(updateSeekBarAction, 100);
+                        if (itemLength != 0) {
+                            // length is already known -- don't wait for seekability determination
+                            mediaPlayer.setItemLength(itemLength);
+                            totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
+                            seekBar.setMax(itemLength); // max is length in seconds
+                            if (savedPosition > 0) {
+                                mediaPlayer.setSeconds(savedPosition);
+                                savedPosition = 0;
+                            }
+                        }
+                        seekCheckHandlerHasRun = false;
+                        seekCheckHandler.postDelayed(seekCheckAction, 100);
                     }
                     else if (event == MediaPlayerEvent.end) {
                         savedPosition = 0;
@@ -363,6 +364,7 @@ public class VideoPlayerActivity extends Activity {
                     }
                     else if (event == MediaPlayerEvent.seekable) {
                         if (mediaPlayer.getItemLength() != itemLength) {
+                            // now the length is known definitively
                             itemLength = mediaPlayer.getItemLength();
                             totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
                             seekBar.setMax(itemLength); // max is length in seconds
@@ -395,16 +397,87 @@ public class VideoPlayerActivity extends Activity {
         videoHeight = 0;
     }
 
-    private Handler seekBarHandler = new Handler();
-    private Runnable updateSeekBarAction = new Runnable() {
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (appSettings.isTv() && event.getAction() == KeyEvent.ACTION_DOWN && !mediaPlayer.isReleased()) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                else
+                    mediaPlayer.play();
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                mediaPlayer.play();
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                mediaPlayer.pause();
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
+                mediaPlayer.stepUpRewind();
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
+                mediaPlayer.stepUpFastForward();
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                skip(-10);
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                skip(30);
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                skip(-600);
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                skip(600);
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+
+    private boolean seekCheckHandlerHasRun;
+    private Handler seekCheckHandler = new Handler();
+    private Runnable seekCheckAction = new Runnable() {
+        int calcInterval = 5; // every 5 cycles
+        int correctableDelta = 5;  // don't update if off by less than this
+        int minSampleLength = 2;
+        int cycles = 0;
         public void run() {
             if (!mediaPlayer.isReleased()) {
+                if (itemLength == 0 && mediaPlayer.getSeconds() > minSampleLength && cycles % calcInterval == 0) {
+                    int prevLen = mediaPlayer.getItemLength();
+                    int len = mediaPlayer.inferItemLength();
+                    if (Math.abs(len - prevLen) > correctableDelta) {
+                        if (!seekCheckHandlerHasRun) {
+                            String msg = getString(R.string.estimating_video_length);
+                            if (savedPosition > 0) {
+                                msg = getString(R.string.restoring_saved_position);
+                                mediaPlayer.setSeconds(savedPosition);
+                                savedPosition = 0;
+                            }
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                            seekCheckHandlerHasRun = true;
+                        }
+                        totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
+                        seekBar.setMax(len);
+                    }
+                }
                 if (mediaPlayer.isItemSeekable()) {
                     int curPos = mediaPlayer.getSeconds();
                     currentPositionText.setText(new TextBuilder().appendDuration(curPos).toString());
                     seekBar.setProgress(curPos);
                 }
-                seekBarHandler.postDelayed(this, 250);
+                cycles++;
+                seekCheckHandler.postDelayed(this, 250);
             }
         }
     };

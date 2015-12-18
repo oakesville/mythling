@@ -189,6 +189,13 @@ public abstract class Item implements Listable {
     }
 
     /**
+     * This means known definitively for the purpose of seeking.
+     */
+    public boolean isLengthKnown() {
+        return false;
+    }
+
+    /**
      * Default supports by title or rating.
      */
     public Comparator<Item> getComparator(SortType sort) {

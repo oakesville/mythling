@@ -1431,8 +1431,11 @@ public abstract class MediaActivity extends Activity {
             stopProgress();
             Intent videoIntent = new Intent(Intent.ACTION_VIEW);
             videoIntent.setDataAndType(Uri.parse(fileUrl), "video/*");
-            if (!appSettings.isExternalVideoPlayer())
+            if (!appSettings.isExternalVideoPlayer()) {
                 videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+                if (item.isLengthKnown())
+                    videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
+            }
             startActivity(videoIntent);
         } catch (IOException ex) {
             if (BuildConfig.DEBUG)
@@ -1454,8 +1457,10 @@ public abstract class MediaActivity extends Activity {
 
         Intent videoIntent = new Intent(Intent.ACTION_VIEW);
         videoIntent.setDataAndType(Uri.parse(streamUrl), "video/*");
-        if (!appSettings.isExternalVideoPlayer())
+        if (!appSettings.isExternalVideoPlayer()) {
             videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+            // videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, i)
+        }
 
         startActivity(videoIntent);
     }

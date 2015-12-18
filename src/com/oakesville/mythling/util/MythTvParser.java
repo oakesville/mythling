@@ -342,6 +342,10 @@ public class MythTvParser implements MediaListParser {
             recording.setStorageGroup(storageGroups.get(recObj.getString("StorageGroup")));
         if (recObj.has("RecGroup"))
             recording.setRecordingGroup(recObj.getString("RecGroup"));
+        if (recObj.has("Status")) {
+            String status = recObj.getString("Status");
+            recording.setRecorded(status.equals("-3") || status.equals("Recorded"));
+        }
         String filename = rec.getString("FileName");
         int lastdot = filename.lastIndexOf('.');
         recording.setFileBase(filename.substring(0, lastdot));
@@ -349,7 +353,7 @@ public class MythTvParser implements MediaListParser {
         if (channel.has("CallSign"))
             recording.setCallsign(channel.getString("CallSign"));
         addProgramInfo(recording, rec);
-        if (rec.has("transcoded"))
+        if (rec.has("transcoded")) // from stored JSON
             recording.setTranscoded("true".equalsIgnoreCase(rec.getString("transcoded")));
         return recording;
     }

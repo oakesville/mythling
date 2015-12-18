@@ -41,6 +41,8 @@ public interface MediaPlayer {
      */
     public void playMedia(Uri mediaUri);
 
+    public boolean isPlaying();
+
     public void play();
     public void pause();
 
@@ -48,6 +50,12 @@ public interface MediaPlayer {
      * @return length in seconds (or zero if unknown)
      */
     public int getItemLength();
+    public void setItemLength(int secs);
+
+    /**
+     * Calculate item length based on position/time.
+     */
+    public int inferItemLength();
 
     public boolean isItemSeekable();
 

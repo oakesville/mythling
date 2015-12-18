@@ -40,12 +40,23 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public int getItemLength() {
         return itemLength;
     }
+    public void setItemLength(int secs) {
+        this.itemLength = secs;
+    }
 
     public boolean isItemSeekable() {
         return itemLength > 0;
     }
 
-    private boolean lengthDetermined; // libvlc knows the media length
+    private boolean lengthDetermined; // libvlc knows the media length (not inferred)
+
+    public int inferItemLength() {
+        float p = getPosition();
+        if (p > 0) {
+            itemLength = (int)(getTime() / (p * 1000));
+        }
+        return itemLength;
+    }
 
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView) {
         super(createLibVlc());
@@ -117,7 +128,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             return (int)(getPosition() * itemLength);
         }
         else {
-            return 0;
+            // maybe libvlc knows anyway
+            return (int)(getTime()/1000);
         }
     }
 
