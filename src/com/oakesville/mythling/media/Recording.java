@@ -16,6 +16,7 @@
 package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -42,6 +43,13 @@ public class Recording extends TvShow {
     private boolean recorded; // recording completed
     public boolean isRecorded() { return recorded; }
     public void setRecorded(boolean recorded) { this.recorded = recorded; }
+
+    private ArrayList<Cut> commercialCutList;
+    public ArrayList<Cut> getCommercialCutList() { return commercialCutList; }
+    public void setCommercialCutList(ArrayList<Cut> cutList) { this.commercialCutList = cutList; }
+    public boolean hasCommercialCutList() {
+        return commercialCutList != null && commercialCutList.size() > 0;
+    }
 
     public Recording(String id, String title) {
         super(id, title);

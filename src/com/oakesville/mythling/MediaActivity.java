@@ -40,6 +40,7 @@ import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.AllTunersInUseException;
 import com.oakesville.mythling.media.Category;
+import com.oakesville.mythling.media.Cut;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.LiveStreamInfo;
@@ -1283,6 +1284,68 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    /**
+     * Uses internal video player.
+     */
+    protected class PlayWithCutListTask extends AsyncTask<URL,Integer,Long> {
+        private Recording recording;
+        private Exception ex;
+
+        private URL playbackUrl;
+
+        public PlayWithCutListTask(Recording rec) {
+            this.recording = rec;
+        }
+
+        protected Long doInBackground(URL... urls) {
+            this.playbackUrl = urls[0];
+            try {
+                AppSettings appSettings = getAppSettings();
+                URL url = new URL(appSettings.getCommercialCutListBaseUrl() + "ChanId=" + recording.getChannelId() +
+                        "&StartTime=" + recording.getStartTimeParam());
+                boolean mythlingServices = appSettings.isMythlingMediaServices();
+                String authType = mythlingServices ? appSettings.getMythlingServicesAuthType() : appSettings.getMythTvServicesAuthType();
+                HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), authType, appSettings.getPrefs());
+                if (mythlingServices)
+                    downloader.setCredentials(appSettings.getMythlingServicesUser(), appSettings.getMythlingServicesPassword());
+                else
+                    downloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
+
+                String cutListJson = new String(downloader.get());
+                // use mythtv parser since services are compatible
+                ArrayList<Cut> cutList = new MythTvParser(appSettings, cutListJson).parseCutList();
+                recording.setCommercialCutList(cutList);
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            stopProgress();
+            if (result != 0L) {
+                if (ex != null)
+                    Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+                onResume();
+            }
+            else {
+                Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+                videoIntent.setDataAndType(Uri.parse(playbackUrl.toString()), "video/*");
+                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+                if (recording.isLengthKnown())
+                    videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
+                if (recording.hasCommercialCutList())
+                    videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCommercialCutList());
+                startActivity(videoIntent);
+            }
+        }
+    }
+
     protected class DeleteRecordingTask extends AsyncTask<URL,Integer,Long> {
         private Recording recording;
         private Exception ex;
@@ -1428,15 +1491,21 @@ public abstract class MediaActivity extends Activity {
             else
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
 
-            stopProgress();
-            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-            videoIntent.setDataAndType(Uri.parse(fileUrl), "video/*");
-            if (!appSettings.isExternalVideoPlayer()) {
-                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-                if (item.isLengthKnown())
-                    videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
+            boolean useCutList = false;
+            if (item.isRecording() && useCutList && !appSettings.isExternalVideoPlayer()) {
+                new PlayWithCutListTask((Recording)item).execute(new URL(fileUrl));
             }
-            startActivity(videoIntent);
+            else {
+                stopProgress();
+                Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+                videoIntent.setDataAndType(Uri.parse(fileUrl), "video/*");
+                if (!appSettings.isExternalVideoPlayer()) {
+                    videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+                    if (item.isLengthKnown())
+                        videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
+                }
+                startActivity(videoIntent);
+            }
         } catch (IOException ex) {
             if (BuildConfig.DEBUG)
                 Log.e(TAG, ex.getMessage(), ex);

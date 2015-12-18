@@ -33,6 +33,7 @@ import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.ChannelGroup;
+import com.oakesville.mythling.media.Cut;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
@@ -173,7 +174,6 @@ public class MythTvParser implements MediaListParser {
                         } else {
                             mediaList.addItem(recItem);
                         }
-                        recItem.setPath("");
                     } else {
                         mediaList.setCount(mediaList.getCount() - 1); // otherwise reported count will be off
                     }
@@ -567,6 +567,23 @@ public class MythTvParser implements MediaListParser {
         JSONObject frontendStatus = new JSONObject(json).getJSONObject("FrontendStatus");
         JSONObject stateObj = frontendStatus.getJSONObject("State");
         return stateObj.getString("state");
+    }
+
+    public ArrayList<Cut> parseCutList() throws JSONException {
+        ArrayList<Cut> cuts = new ArrayList<Cut>();
+        JSONObject cutList = new JSONObject(json).getJSONObject("CutList");
+        JSONArray cuttings = cutList.getJSONArray("Cuttings");
+        int curCutStart = -1;
+        for (int i = 0; i < cuttings.length(); i++) {
+            JSONObject cutting = cuttings.getJSONObject(i);
+            int mark = Integer.parseInt(cutting.getString("Mark"));
+            long offset = Long.parseLong(cutting.getString("Offset"));
+            if (mark == 4)
+                curCutStart = (int)(offset / 1000);
+            else if (mark == 5)
+                cuts.add(new Cut(curCutStart, (int)(offset / 1000)));
+        }
+        return cuts;
     }
 
     public String parseString() throws JSONException {

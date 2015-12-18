@@ -15,8 +15,11 @@
  */
 package com.oakesville.mythling;
 
+import java.util.List;
+
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.media.Cut;
 import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
@@ -49,12 +52,14 @@ import android.widget.Toast;
 public class VideoPlayerActivity extends Activity {
 
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
+    public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
     private AppSettings appSettings;
     private Uri videoUri;
     private int itemLength; // this will be zero if not known definitively
+    private List<Cut> cutList;
 
     private ProgressBar progressBar;
     private SurfaceView surface;
@@ -79,6 +84,7 @@ public class VideoPlayerActivity extends Activity {
 
     private int hideUiDelay = 1500;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +111,7 @@ public class VideoPlayerActivity extends Activity {
         try {
             videoUri = Uri.parse(getIntent().getDataString());
             itemLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
+            cutList = (List<Cut>) getIntent().getSerializableExtra(ITEM_CUT_LIST);
 
             currentPositionText = (TextView) findViewById(R.id.current_pos);
             seekBar = (SeekBar) findViewById(R.id.player_seek);
@@ -372,6 +379,17 @@ public class VideoPlayerActivity extends Activity {
                         if (savedPosition > 0) {
                             mediaPlayer.setSeconds(savedPosition);
                             savedPosition = 0;
+                        }
+                    }
+                    else if (event == MediaPlayerEvent.position) {
+                        if (cutList != null) {
+                            int pos = mediaPlayer.getSeconds();
+                            for (Cut cut : cutList) {
+                                if (cut.start <= pos && cut.end > pos) {
+                                    mediaPlayer.setSeconds(cut.end);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

@@ -58,6 +58,11 @@ public class TvShow extends Item {
     public String getProgramStart() { return programStart; }
     public void setProgramStart(String programStart) { this.programStart = programStart; }
 
+    @Override
+    public String getFilePath() {
+        return getFileName();  // logical category path should not be used for file access
+    }
+
     public int getChannelId() {
         return Integer.parseInt(getId().substring(0, getId().indexOf('~')));
     }

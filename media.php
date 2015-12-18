@@ -71,6 +71,15 @@ if ($type->isGuide())
   else
     $channelGroupId = null;
 }
+if ($type->isCutList())
+{
+  $chanId = $_REQUEST['ChanId'];
+  if ($chanId == null)
+    die(error("Missing cutList parameter: ChanId"));
+  $startTime = $_REQUEST['StartTime'];
+  if ($startTime == null)
+    die(error("Missing cutList parameter: StartTime"));
+}
 
 $categorizeUsingDirs = false;
 $categorizeUsingMetadata = false;
@@ -271,6 +280,59 @@ if ($type->isGuide())
 
   mysql_close();
   
+}
+else if ($type->isCutList())
+{
+  // currently only comm flags supported
+  $baseWhere = "where chanid = " . $chanId . "\n";
+  $baseWhere .= "and starttime = '" . $startTime . "'\n";
+  $where = $baseWhere . "and type in (4, 5)";
+  
+  $orderBy = "order by mark, type";
+  
+  $query = "select type, mark from recordedmarkup" . "\n";
+  $query .= $where . "\n" . $orderBy;
+  
+  if (isShowQuery())
+    echo "query:\n" . $query . "\n\n";
+  mysql_set_charset("utf8");
+  $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
+  $num = mysql_numrows($res);
+  
+  header("Content-type:application/json");
+  echo '{' . "\n";
+  echo '  "CutList": {';
+  echo ' "AsOf": "' . substr(date(DATE_ISO8601), 0, -5) . 'Z", "Version": "' . $MYTHTV_VERSION . '", ';
+  echo ' "Count": "' . $num . '",' . "\n";
+  echo '    "Cuttings":' . "\n" . '    [' . "\n";
+    
+  $i = 0;
+  while ($i < $num)
+  {
+    $markType = mysql_result($res, $i, "type"); // 4 or 5
+    $frame = mysql_result($res, $i, "mark");
+    
+    $innerWhere = $baseWhere . "and type = 33 and mark <= " . $frame;
+    $innerOrderBy = "order by chanid desc, starttime desc, type desc, mark desc LIMIT 1";
+    $innerQuery = "select offset from recordedseek" . "\n" . $innerWhere . "\n" . $innerOrderBy;
+    if (isShowQuery())
+      echo "inner query:\n" . $innerQuery . "\n\n";
+    $innerRes = mysql_query($innerQuery) or die(error("Query failed: " . mysql_error()));
+    if (mysql_numrows($innerRes) == 1)
+    {
+      $offset = mysql_result($innerRes, 0, "offset");
+      printCutting($markType, $offset);
+    if ($i < $num - 1)
+      echo ', ' . "\n";
+    }
+    $i++;
+  }
+  
+  echo '    ]' . "\n";
+  echo '  }' . "\n";
+  echo '}';
+  
+  mysql_close();
 }
 else if ($type->isSearch())
 {
@@ -490,7 +552,9 @@ else if ($type->isSearch())
   echo "  ],\n";
   
   // recordings
-  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime from recorded r, channel c, recordedprogram rp where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
+  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime, orec.recstatus";
+  $rQuery .= " from channel c, recordedprogram rp, recorded r left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid";
+  $rQuery .= " and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";
   $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
@@ -522,7 +586,8 @@ else if ($type->isSearch())
         $airdate = null;
     }
     $endtime = mysql_result($rRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $i < $rNum - 1);
+    $recstatus = mysql_result($rRes, $i, "recstatus");
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $recstatus, $i < $rNum - 1);
     $i++;
   }
   echo "  ]\n}";
@@ -622,7 +687,8 @@ else
   }
   else if ($type->isRecordings())
   {
-    $where = "inner join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid) where r.recgroup != 'Deleted'";
+    $where = "left outer join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
+    $where .= " left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted'";
     if ($sort == "date")
     {
       $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
@@ -638,7 +704,8 @@ else
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = !$flatten;
     }
-    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup from recorded r " . $where . " " . $orderBy;
+    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup, orec.recstatus";
+    $query .= " from recorded r " . $where . " " . $orderBy;
   }
   
   if (isShowQuery())
@@ -666,6 +733,7 @@ else
       $recordids = array();
       $storagegroups = array();
       $recgroups = array();
+      $recstatuses = array();
     }
   }
   else if ($type->isMovies() || $type->isTvSeries())
@@ -760,6 +828,7 @@ else
         $inr = mysql_result($result, $i, "inetref");
         $sg = mysql_result($result, $i, "storagegroup");
         $rg = mysql_result($result, $i, "recgroup");
+        $rstat = mysql_result($result, $i, "recstatus");
       }
     }
     else
@@ -831,6 +900,7 @@ else
         $recordids[$id] = $rid;
         $storagegroups[$id] = $sg;
         $recgroups[$id] = $rg;
+        $recstatuses[$id] = $rstat;
       }
     }
     else if ($type->isMovies() || $type->isTvSeries())
@@ -1030,7 +1100,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $storagegroups, $recgroups, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
+  global $type, $fileIds, $progstarts, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $storagegroups, $recgroups, $recstatuses, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
 
   echo indent($depth * 4 + 2);
 
@@ -1098,6 +1168,8 @@ function printItem($path, $file, $depth, $more)
         echo ', "storageGroup": "' . $storagegroups[$id] . '"';
       if ($recgroups[$id] != null)
         echo ', "recGroup": "' . $recgroups[$id] . '"';
+      if ($recgroups[$id] != null)
+        echo ', "recStatus": "' . $recstatuses[$id] . '"';
     }
   }
   else if ($type->isMovies() || $type->isTvSeries())
@@ -1155,7 +1227,7 @@ function printSearchResult($id, $path, $file, $more)
   echo "\n";
 }
 
-function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $more)
+function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $recstatus, $more)
 {
   echo "    { ";
   echo '"id": "' . $id . '"';
@@ -1183,6 +1255,8 @@ function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, 
     echo ', "airdate": "' . $airdate . '"';
   if ($endtime)
     echo ', "endtime": "' . $endtime . '"';
+  if ($recstatus)
+    echo ', "recStatus": "' . $recstatus . '"';
   echo " }";
   if ($more)
     echo ",";
@@ -1272,6 +1346,14 @@ function printProgram($type, $category, $startTime, $endTime, $title, $subTitle,
   echo ', "Title": "' . $title . '"';
   if ($chanId != null)
     echo ', "Channel": { "ChanId": "' . $chanId . '", "CallSign": "' . $callSign . '", "ChanNum": "' . $chanNum . '" }';
+  echo ' }';
+}
+
+function printCutting($markType, $offset)
+{
+  echo '          { ';
+  echo '"Mark": "' . $markType . '"';
+  echo ', "Offset": "' . $offset . '"';
   echo ' }';
 }
 
@@ -1433,6 +1515,7 @@ class Type
   const RECORDINGS = "recordings";
   const SEARCH = "search";
   const GUIDE = "guide";
+  const CUT_LIST = "cutList";
 
   function __construct($type)
   {
@@ -1471,6 +1554,10 @@ class Type
   {
     return $this->type == Type::GUIDE;
   }
+  function isCutList()
+  {
+    return $this->type == Type::CUT_LIST;
+  }  
   function isValid()
   {
     return $this->isVideos()
@@ -1480,7 +1567,8 @@ class Type
         || $this->isLiveTv()
         || $this->isRecordings()
         || $this->isSearch()
-        || $this->isGuide();
+        || $this->isGuide()
+        || $this->isCutList();
   }
   function isSpecified()
   {

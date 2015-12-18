@@ -22,6 +22,7 @@ public interface MediaPlayer {
     public enum MediaPlayerEvent {
         playing,
         seekable,
+        position,
         paused,
         stopped,
         end,

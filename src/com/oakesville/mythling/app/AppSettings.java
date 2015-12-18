@@ -203,6 +203,13 @@ public class AppSettings {
         return new URL(url);
     }
 
+    public URL getCommercialCutListBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
+        if (isMythlingMediaServices())
+            return new URL(getMythlingWebBaseUrl() + "/media.php?type=cutList&");
+        else
+            return new URL(getMythTvServicesBaseUrl() + "/Dvr/GetRecordedCommBreak?");
+    }
+
     public URL getMediaListUrl() throws MalformedURLException, UnsupportedEncodingException {
         return getMediaListUrl(getMediaSettings().getType());
     }

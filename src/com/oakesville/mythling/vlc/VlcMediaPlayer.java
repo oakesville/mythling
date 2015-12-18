@@ -291,9 +291,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     case MediaPlayer.Event.EncounteredError:
                         eventListener.onEvent(MediaPlayerEvent.error);
                         break;
-                    case MediaPlayer.Event.Opening:
-                        System.out.println("OPENING: " + event);
-                        break;
                     case MediaPlayer.Event.TimeChanged:
                         if (!lengthDetermined) {
                             long len = getLength();
@@ -303,6 +300,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                 eventListener.onEvent(MediaPlayerEvent.seekable);
                             }
                         }
+                        break;
+                    case MediaPlayer.Event.PositionChanged:
+                        if (itemLength > 0)
+                            eventListener.onEvent(MediaPlayerEvent.position);
                         break;
                     default:
                         break;

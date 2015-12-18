@@ -229,6 +229,10 @@ public class MythlingParser implements MediaListParser {
                 ((Recording) item).setRecordingGroup(jsonObj.getString("recGroup"));
             if (jsonObj.has("internetRef"))
                 ((Recording) item).setInternetRef(jsonObj.getString("internetRef"));
+            if (jsonObj.has("recStatus")) {
+                String recStatus = jsonObj.getString("recStatus");
+                ((Recording) item).setRecorded(recStatus.equals("-3") || recStatus.equals("Recorded"));
+            }
         } else if (type == MediaType.music) {
             item = new Song(jsonObj.getString("id"), jsonObj.getString("title"));
             if (jsonObj.has("albumArtId"))
