@@ -26,4 +26,8 @@ public class Cut implements Serializable {
         this.start = start;
         this.end = end;
     }
+
+    public boolean equals(Cut other) {
+        return other != null && other.start == this.start && other.end == this.end;
+    }
 }

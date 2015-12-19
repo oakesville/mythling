@@ -22,7 +22,7 @@ public interface MediaPlayer {
     public enum MediaPlayerEvent {
         playing,
         seekable,
-        position,
+        time,
         paused,
         stopped,
         end,
@@ -71,10 +71,9 @@ public interface MediaPlayer {
     public void setSeconds(int pos);
 
     /**
-     * Seek forward or backward.
-     * @return if successful the new position in seconds, otherwise zero
+     * Skip forward or backward.
      */
-    public int skip(int delta);
+    public void skip(int delta);
 
     /**
      * Step up the rewind rate by a factor of two

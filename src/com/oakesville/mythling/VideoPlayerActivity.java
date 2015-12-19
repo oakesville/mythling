@@ -59,8 +59,9 @@ public class VideoPlayerActivity extends Activity {
     private AppSettings appSettings;
     private Uri videoUri;
     private int itemLength; // this will be zero if not known definitively
-    private List<Cut> cutList;
     private String commercialSkip;
+    private List<Cut> cutList;
+    private Cut currentCut;
 
     private ProgressBar progressBar;
     private SurfaceView surface;
@@ -223,8 +224,7 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void skip(int delta) {
-        int newPos = mediaPlayer.skip(delta);
-        currentPositionText.setText(new TextBuilder().appendDuration(newPos).toString());
+        mediaPlayer.skip(delta);
     }
 
     @Override
@@ -383,22 +383,31 @@ public class VideoPlayerActivity extends Activity {
                             savedPosition = 0;
                         }
                     }
-                    else if (event == MediaPlayerEvent.position) {
+                    else if (event == MediaPlayerEvent.time) {
                         if (cutList != null) {
                             int pos = mediaPlayer.getSeconds();
+                            boolean inCut = false;
                             for (Cut cut : cutList) {
-                                if (cut.start <= pos && cut.end > pos && pos - cut.start < 1000) {
-                                    if (AppSettings.COMMERCIAL_SKIP_NOTIFY.equals(commercialSkip)) {
-//                                        TextBuilder tb = new TextBuilder(getString(R.string.title_commercial_skip)).append(": ");
-//                                        tb.appendDuration(cut.end - cut.start);
-//                                        Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
+                                if (cut.start <= pos && cut.end > pos) {
+                                    if (!cut.equals(currentCut)) {
+                                        if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
+                                            int skip = (cut.end - pos);
+                                            if (skip > 0)
+                                              mediaPlayer.skip(skip);
+                                        }
+                                        if (!AppSettings.COMMERCIAL_SKIP_OFF.equals(commercialSkip)) {
+                                            TextBuilder tb = new TextBuilder(getString(R.string.title_commercial_skip)).append(": ");
+                                            tb.appendDuration(cut.end - cut.start);
+                                            Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                    else if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
-                                        mediaPlayer.setSeconds(cut.end);
-                                    }
+                                    inCut = true;
+                                    currentCut = cut;
                                     break;
                                 }
                             }
+                            if (!inCut)
+                                currentCut = null;
                         }
                     }
                 }

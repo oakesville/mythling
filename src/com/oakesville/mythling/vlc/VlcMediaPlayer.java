@@ -31,6 +31,8 @@ import android.view.SurfaceView;
 
 public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythling.media.MediaPlayer {
 
+    private static final String TAG = VlcMediaPlayer.class.getSimpleName();
+
     private Uri mediaUri;
     public Uri getMediaUri() {
         return mediaUri;
@@ -86,7 +88,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             return;
         stop();
         final IVLCVout vout = getVLCVout();
-        // TODO: vout.removeCallback(nativeCallback);
+        vout.removeCallback(nativeCallback);
         vout.detachViews();
         libvlc.release();
         libvlc = null;
@@ -108,14 +110,16 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Set current position.
+     * Note: skip() is more accurate.
      */
     public void setSeconds(int pos) {
         if (itemLength > 0) {
+            // libvlc setTime() does not always work, so use setPosition()
             if (pos < 0)
                 pos = 0;
             else if (pos > itemLength)
                 pos = itemLength;
-            float fraction = pos / (float)(itemLength);
+            float fraction = (float)pos/(float)(itemLength);
             setPosition(fraction);
         }
     }
@@ -124,27 +128,20 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * Get current position.  Zero if unknown.
      */
     public int getSeconds() {
-        if (itemLength > 0) {
-            return (int)(getPosition() * itemLength);
-        }
-        else {
-            // maybe libvlc knows anyway
-            return (int)(getTime()/1000);
-        }
+        long time = getTime();
+        return time == -1 ? 0 : (int)(getTime()/1000);
     }
 
     /**
      * Seek forward or backward.
      * @return if successful the new position in seconds, otherwise zero
      */
-    public int skip(int delta) {
+    public void skip(int delta) {
         if (itemLength > 0) {
-            int newPos = getSeconds() + delta;
-            setSeconds(newPos);
-            return newPos;
-        }
-        else {
-            return 0;
+            // setSeconds() is inaccurate for short intervals
+            float curPos = getPosition();
+            float newPos = curPos + (float)delta/(float)itemLength;
+            setPosition(newPos);
         }
     }
 
@@ -207,9 +204,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
         }
-        else {
-            // TODO: try setRate()?
-        }
 
         return playRate;
     }
@@ -218,9 +212,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate > 1) {
-                int newPos = skip(playRate);
-                if (newPos < itemLength)
-                    fastForwardHandler.postDelayed(this, 1000);
+                skip(playRate);
+                // TODO
+//                int newPos = skip(playRate);
+//                if (newPos < itemLength)
+//                    fastForwardHandler.postDelayed(this, 1000);
             }
         }
     };
@@ -256,11 +252,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate < 0) {
-                int newPos = skip(playRate);
-                if (newPos == 0)
-                    play();
-                else
-                    rewindHandler.postDelayed(this, 1000);
+                skip(playRate);
+                // TODO
+//                int newPos = skip(playRate);
+//                if (newPos == 0)
+//                    play();
+//                else
+//                    rewindHandler.postDelayed(this, 1000);
             }
         }
     };
@@ -300,10 +298,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                 eventListener.onEvent(MediaPlayerEvent.seekable);
                             }
                         }
-                        break;
-                    case MediaPlayer.Event.PositionChanged:
-                        if (itemLength > 0)
-                            eventListener.onEvent(MediaPlayerEvent.position);
+                        eventListener.onEvent(MediaPlayerEvent.time);
                         break;
                     default:
                         break;
