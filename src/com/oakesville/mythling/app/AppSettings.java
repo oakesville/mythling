@@ -148,14 +148,14 @@ public class AppSettings {
     public static final String EPG_LAST_LOAD = "epg_last_load";
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
-    public static final String VIDEO_PLAYBACK_POSITION = "video_playback_position";
+    public static final String VIDEO_SAVED_POSITION = "video_saved_position";
     public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
     public static final String SKIP_BACK_INTERVAL = "skip_back_interval";
     public static final String JUMP_INTERVAL = "jump_interval";
     public static final String COMMERCIAL_SKIP = "commercial_skip";
-    public static final String COMMERCIAL_SKIP_OFF = "off";
-    public static final String COMMERCIAL_SKIP_ON = "on";
-    public static final String COMMERCIAL_SKIP_NOTIFY = "notify";
+    public static final String COMMERCIAL_SKIP_OFF = "Auto-Skip Off";
+    public static final String COMMERCIAL_SKIP_ON = "Auto-Skip On";
+    public static final String COMMERCIAL_SKIP_NOTIFY = "Auto-Skip Notify";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -719,19 +719,19 @@ public class AppSettings {
         return stringArrayToIntArray(appContext.getResources().getStringArray(R.array.audio_bitrate_values));
     }
 
-    public int getVideoPlaybackPosition(Uri uri) {
-        return getIntPref(VIDEO_PLAYBACK_POSITION + "_" + uri, 0);
+    public float getVideoPlaybackPosition(Uri uri) {
+        return getFloatPref(VIDEO_SAVED_POSITION + "_" + uri, 0);
     }
 
-    public boolean setVideoPlaybackPosition(Uri uri, int position) {
+    public boolean setVideoPlaybackPosition(Uri uri, float position) {
         Editor ed = prefs.edit();
-        ed.putInt(VIDEO_PLAYBACK_POSITION + "_" + uri, position);
+        ed.putFloat(VIDEO_SAVED_POSITION + "_" + uri, position);
         return ed.commit();
     }
 
     public boolean clearVideoPlaybackPosition(Uri uri) {
         Editor ed = prefs.edit();
-        ed.remove(VIDEO_PLAYBACK_POSITION + "_" + uri);
+        ed.remove(VIDEO_SAVED_POSITION + "_" + uri);
         return ed.commit();
     }
 
@@ -1238,6 +1238,16 @@ public class AppSettings {
                 deviceDefault = (Integer)val;
         }
         return prefs.getInt(key, deviceDefault);
+    }
+
+    public float getFloatPref(String key, int defValue) {
+        float deviceDefault = defValue;
+        if (devicePrefsSpec != null) {
+            Object val = devicePrefsSpec.getDefaultValues().get(key);
+            if (val != null)
+                deviceDefault = (Float)val;
+        }
+        return prefs.getFloat(key, deviceDefault);
     }
 
     public String getStringPref(String key, String defValue) {
