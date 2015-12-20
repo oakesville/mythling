@@ -72,8 +72,9 @@ public interface MediaPlayer {
 
     /**
      * Skip forward or backward.
+     * @return past end
      */
-    public void skip(int delta);
+    public boolean skip(int delta);
 
     /**
      * Step up the rewind rate by a factor of two

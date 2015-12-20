@@ -134,15 +134,27 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Seek forward or backward.
-     * @return if successful the new position in seconds, otherwise zero
+     * @return past end
      */
-    public void skip(int delta) {
+    public boolean skip(int delta) {
         if (itemLength > 0) {
             // setSeconds() is inaccurate for short intervals
             float curPos = getPosition();
             float newPos = curPos + (float)delta/(float)itemLength;
-            setPosition(newPos);
+            if (newPos < 0) {
+                setPosition(0);
+                return true;
+            }
+            else if (newPos > 1) {
+                setPosition(1);
+                return true;
+            }
+            else {
+                setPosition(newPos);
+                return false;
+            }
         }
+        return false;
     }
 
     private int maxPlayRate = 1;
@@ -189,6 +201,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public int stepUpFastForward() {
         if (itemLength > 0) {
+            if (isPlaying())
+                super.pause(); // avoid setting playRate = 0 in this.pause()
+
             int newPlayRate = 2;
             if (playRate > 1) {
                 newPlayRate = playRate * 2;
@@ -201,8 +216,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
             playRate = newPlayRate;
 
-            if (isPlaying())
-                super.pause(); // avoid setting playRate = 0 in this.pause()
         }
 
         return playRate;
@@ -213,10 +226,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void run() {
             if (!isReleased() && playRate > 1) {
                 skip(playRate);
-                // TODO
-//                int newPos = skip(playRate);
-//                if (newPos < itemLength)
-//                    fastForwardHandler.postDelayed(this, 1000);
+                fastForwardHandler.postDelayed(this, 1000);
             }
         }
     };
@@ -228,6 +238,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public int stepUpRewind() {
         if (itemLength > 0) {
+            if (isPlaying())
+                super.pause(); // avoid setting playRate = 0 in this.pause()
+
             int newPlayRate = -2;
 
             if (playRate < 0) {
@@ -240,9 +253,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                 rewindHandler.postDelayed(rewindAction, 100);
 
             playRate = newPlayRate;
-
-            if (isPlaying())
-                super.pause(); // avoid setting playRate = 0 in this.pause()
         }
 
         return playRate;
@@ -252,13 +262,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate < 0) {
-                skip(playRate);
-                // TODO
-//                int newPos = skip(playRate);
-//                if (newPos == 0)
-//                    play();
-//                else
-//                    rewindHandler.postDelayed(this, 1000);
+                boolean begin = skip(playRate);
+                if (begin)
+                    play();
+                else
+                    rewindHandler.postDelayed(this, 1000);
             }
         }
     };
