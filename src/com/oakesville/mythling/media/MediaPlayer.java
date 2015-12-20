@@ -23,6 +23,7 @@ public interface MediaPlayer {
         playing,
         seekable,
         time,
+        position,
         paused,
         stopped,
         end,
@@ -31,6 +32,10 @@ public interface MediaPlayer {
 
     public interface MediaPlayerEventListener {
         public void onEvent(MediaPlayerEvent event);
+    }
+
+    public interface MediaPlayerShiftListener {
+        public void onShift(int delta);
     }
 
     public interface MediaPlayerLayoutChangeListener {
@@ -95,7 +100,7 @@ public interface MediaPlayer {
     public boolean isReleased();
 
     public void setMediaPlayerEventListener(MediaPlayerEventListener listener);
-
+    public void setMediaPlayerShiftListener(MediaPlayerShiftListener listener);
     public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener);
 
 }

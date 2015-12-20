@@ -31,8 +31,6 @@ import android.view.SurfaceView;
 
 public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythling.media.MediaPlayer {
 
-    private static final String TAG = VlcMediaPlayer.class.getSimpleName();
-
     private Uri mediaUri;
     public Uri getMediaUri() {
         return mediaUri;
@@ -226,6 +224,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void run() {
             if (!isReleased() && playRate > 1) {
                 skip(playRate);
+                if (shiftListener != null)
+                    shiftListener.onShift(playRate);
                 fastForwardHandler.postDelayed(this, 1000);
             }
         }
@@ -263,10 +263,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void run() {
             if (!isReleased() && playRate < 0) {
                 boolean begin = skip(playRate);
-                if (begin)
+                if (begin) {
                     play();
-                else
+                }
+                else {
+                    if (shiftListener != null)
+                        shiftListener.onShift(playRate);
                     rewindHandler.postDelayed(this, 1000);
+
+                }
             }
         }
     };
@@ -277,6 +282,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.eventListener = listener;
     }
 
+    // TODO only instantiate this when eventListener is set
     private MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
         @Override
         public void onEvent(MediaPlayer.Event event) {
@@ -308,12 +314,20 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         }
                         eventListener.onEvent(MediaPlayerEvent.time);
                         break;
+                    case MediaPlayer.Event.PositionChanged:
+                        eventListener.onEvent(MediaPlayerEvent.position);
+                        break;
                     default:
                         break;
                 }
             }
         }
     };
+
+    private MediaPlayerShiftListener shiftListener;
+    public void setMediaPlayerShiftListener(MediaPlayerShiftListener listener) {
+        this.shiftListener = listener;
+    }
 
     private LibVLC.HardwareAccelerationError hardwareAccelerationErrorHandler = new LibVLC.HardwareAccelerationError() {
         public void eventHardwareAccelerationError() {

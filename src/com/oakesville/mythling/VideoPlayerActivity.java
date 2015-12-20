@@ -24,6 +24,7 @@ import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
+import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
 import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
@@ -167,21 +168,16 @@ public class VideoPlayerActivity extends Activity {
             ImageButton rewind = (ImageButton) findViewById(R.id.ctrl_rewind);
             rewind.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    int playRate = mediaPlayer.stepUpRewind();
+                    rewind();
                     showPlay();
-                    Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
                 }
             });
 
             ImageButton ffwd = (ImageButton) findViewById(R.id.ctrl_ffwd);
             ffwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    int playRate = mediaPlayer.stepUpFastForward();
-                    if (playRate == 1)
-                        showPause();
-                    else
-                        showPlay();
-                    Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
+                    fastForward();
+                    showPlay();
                 }
             });
 
@@ -225,6 +221,16 @@ public class VideoPlayerActivity extends Activity {
 
     private void skip(int delta) {
         mediaPlayer.skip(delta);
+    }
+
+    private void fastForward() {
+        int playRate = mediaPlayer.stepUpFastForward();
+        Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
+    }
+
+    private void rewind() {
+        int playRate = mediaPlayer.stepUpRewind();
+        Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -355,8 +361,6 @@ public class VideoPlayerActivity extends Activity {
                                 savedPosition = 0;
                             }
                         }
-                        seekCheckHandlerHasRun = false;
-                        seekCheckHandler.postDelayed(seekCheckAction, 100);
                     }
                     else if (event == MediaPlayerEvent.end) {
                         savedPosition = 0;
@@ -386,6 +390,33 @@ public class VideoPlayerActivity extends Activity {
                     else if (event == MediaPlayerEvent.time) {
                         if (cutList != null) {
                             int pos = mediaPlayer.getSeconds();
+                            // TODO infer length
+//                            if (itemLength == 0 && mediaPlayer.getSeconds() > minSampleLength && cycles % calcInterval == 0) {
+//                                int prevLen = mediaPlayer.getItemLength();
+//                                int len = mediaPlayer.inferItemLength();
+//                                if (Math.abs(len - prevLen) > correctableDelta) {
+//                                    if (!seekCheckHandlerHasRun) {
+//                                        String msg = getString(R.string.estimating_video_length);
+//                                        if (savedPosition > 0) {
+//                                            msg = getString(R.string.restoring_saved_position);
+//                                            mediaPlayer.setSeconds(savedPosition);
+//                                            savedPosition = 0;
+//                                        }
+//                                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+//                                        seekCheckHandlerHasRun = true;
+//                                    }
+//                                    totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
+//                                    seekBar.setMax(len);
+//                                }
+//                            }
+                            if (mediaPlayer.isItemSeekable()) {
+                                currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
+                                seekBar.setProgress(pos);
+                            }
+//                            cycles++;
+
+
+
                             boolean inCut = false;
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {
@@ -409,6 +440,20 @@ public class VideoPlayerActivity extends Activity {
                             if (!inCut)
                                 currentCut = null;
                         }
+                    }
+                }
+            });
+
+            mediaPlayer.setMediaPlayerShiftListener( new MediaPlayerShiftListener() {
+                int pos; // seconds
+                public void onShift(int delta) {
+                    if (delta == 0) {
+                        pos = mediaPlayer.getSeconds();
+                    }
+                    else {
+                        pos += delta;
+                        currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
+                        seekBar.setProgress(pos);
                     }
                 }
             });
@@ -452,11 +497,11 @@ public class VideoPlayerActivity extends Activity {
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                mediaPlayer.stepUpRewind();
+                rewind();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                mediaPlayer.stepUpFastForward();
+                fastForward();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -478,45 +523,6 @@ public class VideoPlayerActivity extends Activity {
         }
         return super.dispatchKeyEvent(event);
     }
-
-
-    private boolean seekCheckHandlerHasRun;
-    private Handler seekCheckHandler = new Handler();
-    private Runnable seekCheckAction = new Runnable() {
-        int calcInterval = 5; // every 5 cycles
-        int correctableDelta = 5;  // don't update if off by less than this
-        int minSampleLength = 2;
-        int cycles = 0;
-        public void run() {
-            if (!mediaPlayer.isReleased()) {
-                if (itemLength == 0 && mediaPlayer.getSeconds() > minSampleLength && cycles % calcInterval == 0) {
-                    int prevLen = mediaPlayer.getItemLength();
-                    int len = mediaPlayer.inferItemLength();
-                    if (Math.abs(len - prevLen) > correctableDelta) {
-                        if (!seekCheckHandlerHasRun) {
-                            String msg = getString(R.string.estimating_video_length);
-                            if (savedPosition > 0) {
-                                msg = getString(R.string.restoring_saved_position);
-                                mediaPlayer.setSeconds(savedPosition);
-                                savedPosition = 0;
-                            }
-                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-                            seekCheckHandlerHasRun = true;
-                        }
-                        totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
-                        seekBar.setMax(len);
-                    }
-                }
-                if (mediaPlayer.isItemSeekable()) {
-                    int curPos = mediaPlayer.getSeconds();
-                    currentPositionText.setText(new TextBuilder().appendDuration(curPos).toString());
-                    seekBar.setProgress(curPos);
-                }
-                cycles++;
-                seekCheckHandler.postDelayed(this, 250);
-            }
-        }
-    };
 
     private void delayedHideUi(int delayMs) {
         hideHandler.removeCallbacks(hideAction);
