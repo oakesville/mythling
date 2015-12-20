@@ -66,14 +66,15 @@ public interface MediaPlayer {
     public boolean isItemSeekable();
 
     /**
-     * @return media position in seconds (or zero if unknown)
+     * @return video position in seconds (or zero if unknown)
      */
     public int getSeconds();
 
+    public float getPosition();
     /**
-     * Set the media position (only works if seekable).
+     * Set the video position (only works if seekable).
      */
-    public void setSeconds(int pos);
+    public void setPosition(float pos);
 
     /**
      * Skip forward or backward.

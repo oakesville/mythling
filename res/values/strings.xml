@@ -86,17 +86,12 @@
     <string name="title_jump_interval">Jump Interval</string>
     <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
     <string name="title_commercial_skip">Skip Commercials\n(Experimental, MythTV 0.28)</string>
-    <string name="notify_commercial_skip">Skip Commercials</string>
-    <string-array name="commercial_skip_entries">
+    <string name="notify_commercial_skip_">Skip Commercials:\u0020</string>
+    <string-array name="commercial_skip_values">
         <item>Auto-Skip Off</item>
         <item>Auto-Skip Notify</item>
         <item>Auto-Skip On</item>
     </string-array>
-    <string-array name="commercial_skip_values">
-        <item>off</item>
-        <item>notify</item>
-        <item>on</item>
-    </string-array>    
     <string name="title_frontend_host">Host</string>
     <string name="title_frontend_host_dialog">Frontend Host</string>
     <string name="message_frontend_host">Host name or IP address for frontend playback</string>
@@ -427,7 +422,7 @@
     <string name="epg_search_res_hint">While the search box is open, use the >> and &lt;&lt; keys on the remote to move to next/previous search results.</string>
     <string name="got_it">Got it.  Don\u0027t show me this again.</string>
     <string name="estimating_video_length">Estimating video length&#8230;</string>
-    <string name="restoring_saved_position">Restoring saved position&#8230;</string>
+    <string name="restoring_saved_position">Restoring saved position</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>

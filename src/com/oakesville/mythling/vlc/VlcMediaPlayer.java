@@ -108,17 +108,16 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Set current position.
-     * Note: skip() is more accurate.
+     * Note: skip() is more accurate for time-based positioning.
      */
-    public void setSeconds(int pos) {
+    @Override
+    public void setPosition(float pos) {
         if (itemLength > 0) {
-            // libvlc setTime() does not always work, so use setPosition()
             if (pos < 0)
                 pos = 0;
-            else if (pos > itemLength)
-                pos = itemLength;
-            float fraction = (float)pos/(float)(itemLength);
-            setPosition(fraction);
+            else if (pos > 1)
+                pos = 1;
+            super.setPosition(pos);
         }
     }
 
@@ -131,12 +130,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     /**
-     * Seek forward or backward.
+     * Seek forward or backward delta seconds.
      * @return past end
      */
     public boolean skip(int delta) {
+
         if (itemLength > 0) {
-            // setSeconds() is inaccurate for short intervals
+            // libvlc setTime() seems to hardly ever work, so use setPosition()
             float curPos = getPosition();
             float newPos = curPos + (float)delta/(float)itemLength;
             if (newPos < 0) {
@@ -209,8 +209,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     newPlayRate = 2;
             }
 
-            if (newPlayRate > 1 && playRate <= 1)
+            if (newPlayRate > 1 && playRate <= 1) {
+                if (shiftListener != null)
+                    shiftListener.onShift(0);
                 fastForwardHandler.postDelayed(fastForwardAction, 100);
+            }
 
             playRate = newPlayRate;
 
@@ -249,8 +252,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     newPlayRate = -2;
             }
 
-            if (newPlayRate < 0 && playRate >= 0)
+            if (newPlayRate < 0 && playRate >= 0) {
+                if (shiftListener != null)
+                    shiftListener.onShift(0);
                 rewindHandler.postDelayed(rewindAction, 100);
+            }
 
             playRate = newPlayRate;
         }
@@ -288,6 +294,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void onEvent(MediaPlayer.Event event) {
             if (eventListener != null) {
                 switch(event.type) {
+                    case MediaPlayer.Event.Opening:
+                        lengthDetermined = false;
+                        break;
                     case MediaPlayer.Event.Playing:
                         eventListener.onEvent(MediaPlayerEvent.playing);
                         break;

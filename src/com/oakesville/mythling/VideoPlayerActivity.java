@@ -82,7 +82,7 @@ public class VideoPlayerActivity extends Activity {
     private ImageButton playBtn;
     private ImageButton pauseBtn;
 
-    private int savedPosition;
+    private float savedPosition;
     private boolean done;
 
     private int hideUiDelay = 1500;
@@ -124,9 +124,8 @@ public class VideoPlayerActivity extends Activity {
 
             seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (fromUser) {
-                        mediaPlayer.setSeconds(progress);
-                        currentPositionText.setText(new TextBuilder().appendDuration(progress).toString());
+                    if (fromUser && mediaPlayer.isItemSeekable()) {
+                        mediaPlayer.setPosition((float)progress/(float)(itemLength));
                     }
                 }
                 public void onStartTrackingTouch(SeekBar seekBar) {
@@ -254,7 +253,7 @@ public class VideoPlayerActivity extends Activity {
         if (done)
             appSettings.clearVideoPlaybackPosition(videoUri);
         else
-            appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getSeconds());
+            appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getPosition());
         releasePlayer();
     }
 
@@ -348,18 +347,22 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
+
+                private int minSampleLength = 3;
+                private int correctableDelta = 5;  // don't update if off by less than this
+                private boolean lengthEstimationNotified;
+                private boolean lengthEstimated;
+
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
                         progressBar.setVisibility(View.GONE);
+                        lengthEstimationNotified = false;
+                        lengthEstimated = false;
                         if (itemLength != 0) {
                             // length is already known -- don't wait for seekability determination
                             mediaPlayer.setItemLength(itemLength);
                             totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
                             seekBar.setMax(itemLength); // max is length in seconds
-                            if (savedPosition > 0) {
-                                mediaPlayer.setSeconds(savedPosition);
-                                savedPosition = 0;
-                            }
                         }
                     }
                     else if (event == MediaPlayerEvent.end) {
@@ -382,41 +385,50 @@ public class VideoPlayerActivity extends Activity {
                             totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
                             seekBar.setMax(itemLength); // max is length in seconds
                         }
-                        if (savedPosition > 0) {
-                            mediaPlayer.setSeconds(savedPosition);
-                            savedPosition = 0;
-                        }
                     }
                     else if (event == MediaPlayerEvent.time) {
-                        if (cutList != null) {
-                            int pos = mediaPlayer.getSeconds();
-                            // TODO infer length
-//                            if (itemLength == 0 && mediaPlayer.getSeconds() > minSampleLength && cycles % calcInterval == 0) {
-//                                int prevLen = mediaPlayer.getItemLength();
-//                                int len = mediaPlayer.inferItemLength();
-//                                if (Math.abs(len - prevLen) > correctableDelta) {
-//                                    if (!seekCheckHandlerHasRun) {
-//                                        String msg = getString(R.string.estimating_video_length);
+
+                        // TODO: pass pos?
+                        int pos = mediaPlayer.getSeconds();
+
+                        // infer length if needed
+                        if (itemLength == 0) {
+                            if (!lengthEstimationNotified) {
+                                Toast.makeText(getApplicationContext(), getString(R.string.estimating_video_length), Toast.LENGTH_LONG).show();
+                                lengthEstimationNotified = true;
+                            }
+                            if (pos > minSampleLength) {
+                                int prevLen = mediaPlayer.getItemLength();
+                                int len = mediaPlayer.inferItemLength();
+                                if (Math.abs(len - prevLen) > correctableDelta) {
+//                                    if (!lengthEstimated) {
 //                                        if (savedPosition > 0) {
-//                                            msg = getString(R.string.restoring_saved_position);
-//                                            mediaPlayer.setSeconds(savedPosition);
+//                                            Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_LONG).show();
+//                                            mediaPlayer.setPosition(savedPosition);
 //                                            savedPosition = 0;
 //                                        }
-//                                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-//                                        seekCheckHandlerHasRun = true;
+//                                        lengthEstimated = true;
 //                                    }
-//                                    totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
-//                                    seekBar.setMax(len);
-//                                }
-//                            }
-                            if (mediaPlayer.isItemSeekable()) {
-                                currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
-                                seekBar.setProgress(pos);
+                                    totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
+                                    seekBar.setMax(len);
+                                }
                             }
-//                            cycles++;
+                        }
 
+                        // update seek bar
+                        currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
+                        seekBar.setProgress(pos);
+                        // restore saved position
+                        if (mediaPlayer.isItemSeekable()) {
+                            if (savedPosition > 0) {
+                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_LONG).show();
+                                mediaPlayer.setPosition(savedPosition);
+                                savedPosition = 0;
+                            }
+                        }
 
-
+                        // commercial skip
+                        if (cutList != null) {
                             boolean inCut = false;
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {
@@ -427,7 +439,7 @@ public class VideoPlayerActivity extends Activity {
                                               mediaPlayer.skip(skip);
                                         }
                                         if (!AppSettings.COMMERCIAL_SKIP_OFF.equals(commercialSkip)) {
-                                            TextBuilder tb = new TextBuilder(getString(R.string.title_commercial_skip)).append(": ");
+                                            TextBuilder tb = new TextBuilder(getString(R.string.notify_commercial_skip_));
                                             tb.appendDuration(cut.end - cut.start);
                                             Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
                                         }

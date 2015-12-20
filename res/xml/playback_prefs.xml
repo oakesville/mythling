@@ -62,7 +62,7 @@
         <ListPreference
             android:key="commercial_skip"
             android:title="@string/title_commercial_skip"
-            android:entries="@array/commercial_skip_entries"
+            android:entries="@array/commercial_skip_values"
             android:entryValues="@array/commercial_skip_values"
             android:defaultValue="off"
             android:layout="@layout/pref" />
