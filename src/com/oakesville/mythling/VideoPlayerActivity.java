@@ -172,7 +172,7 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            ImageButton ffwd = (ImageButton) findViewById(R.id.ctrl_ffwd);
+            ImageButton ffwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
             ffwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     fastForward();
@@ -187,7 +187,7 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
+            ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_jump_fwd);
             fastFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     skip(appSettings.getJumpInterval());

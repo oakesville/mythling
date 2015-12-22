@@ -14,8 +14,8 @@
   limitations under the License.
 -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false" android:drawable="@drawable/sw_thumb_disabled_holo_light" />
-    <item android:state_pressed="true" android:drawable="@drawable/sw_thumb_pressed_holo_light" />
-    <item android:state_checked="true" android:drawable="@drawable/sw_thumb_activated_holo_light" />
-    <item android:drawable="@drawable/sw_thumb_activated_holo_light" />
+    <item android:state_enabled="false" android:drawable="@drawable/sw_thumb_disabled" />
+    <item android:state_pressed="true" android:drawable="@drawable/sw_thumb_pressed" />
+    <item android:state_checked="true" android:drawable="@drawable/sw_thumb_activated" />
+    <item android:drawable="@drawable/sw_thumb_activated" />
 </selector>
