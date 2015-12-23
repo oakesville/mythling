@@ -20,6 +20,15 @@ import java.text.ParseException;
 
 import org.json.JSONException;
 
+import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.firetv.FireTvViewPager;
+import com.oakesville.mythling.firetv.FireTvViewPager.DpadMediaKeyHandler;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
+import com.oakesville.mythling.media.MediaSettings.SortType;
+import com.oakesville.mythling.util.Reporter;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -37,15 +46,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.firetv.FireTvViewPager;
-import com.oakesville.mythling.firetv.FireTvViewPager.DpadMediaKeyHandler;
-import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.util.Reporter;
 
 /**
  * Activity for side-scrolling through paged detail views of MythTV media w/artwork.
@@ -94,8 +94,7 @@ public class MediaPagerActivity extends MediaActivity {
             else
                 populate();
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();

@@ -18,6 +18,11 @@ package com.oakesville.mythling.prefs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.WebViewActivity;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,12 +33,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
 import android.widget.Toast;
-
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.WebViewActivity;
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.util.Reporter;
 
 public class PrefsActivity extends PreferenceActivity {
     public static final String BACK_TO = "back_to";
@@ -102,8 +101,7 @@ public class PrefsActivity extends PreferenceActivity {
                 return;
             }
             catch (Exception ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
                     new Reporter(ex).send();
                 Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();

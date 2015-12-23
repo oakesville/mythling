@@ -21,15 +21,14 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.util.Reporter;
+
+import android.content.Context;
+import android.util.Log;
 
 /**
  * Note: initialize() had better have been run before accessing any static methods.
@@ -117,8 +116,7 @@ public class Localizer {
             abbrevPm = getStringRes(R.string.abbrev_pm);
             initialized = true;
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
         }

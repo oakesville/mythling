@@ -100,8 +100,7 @@ public class SearchActivity extends MediaActivity {
             else
                 populate();
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -151,8 +150,7 @@ public class SearchActivity extends MediaActivity {
         try {
             new SearchTask().execute(getAppSettings().getUrls(getAppSettings().getSearchUrl(searchQuery)));
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
@@ -205,8 +203,7 @@ public class SearchActivity extends MediaActivity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -224,8 +221,7 @@ public class SearchActivity extends MediaActivity {
                     searchResults.setDownloadIds(getAppData().readDownloads());
                     populate();
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();

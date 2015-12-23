@@ -91,8 +91,7 @@ public class EpgActivity extends WebViewActivity {
                 appData.clearChannelGroups(); // force re-retrieve
         }
         catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             appData.clearChannelGroups();
@@ -123,8 +122,7 @@ public class EpgActivity extends WebViewActivity {
                                         responseStream = getHostedGuide(new ByteArrayInputStream(helper.get()));
                                     }
                                     catch (Exception ex) {
-                                        if (BuildConfig.DEBUG)
-                                            Log.e(TAG, ex.getMessage(), ex);
+                                        Log.e(TAG, ex.getMessage(), ex);
                                         if (getAppSettings().isErrorReportingEnabled())
                                             new Reporter(ex).send();
                                         return response;
@@ -245,8 +243,7 @@ public class EpgActivity extends WebViewActivity {
                 parameters.put("epgDebug", "true");
         }
         catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -396,8 +393,7 @@ public class EpgActivity extends WebViewActivity {
             return new ByteArrayInputStream(strBuf.toString().getBytes());
         }
         catch (IOException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             return null;
@@ -424,8 +420,7 @@ public class EpgActivity extends WebViewActivity {
             return new ByteArrayInputStream(strBuf.toString().getBytes());
         }
         catch (IOException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             return null;
@@ -437,8 +432,7 @@ public class EpgActivity extends WebViewActivity {
             return getAssets().open(path, AssetManager.ACCESS_STREAMING);
         }
         catch (IOException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             return null;
@@ -478,8 +472,7 @@ public class EpgActivity extends WebViewActivity {
                 catch (Exception ex2) {
                     this.ex = ex2;
                 }
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, this.ex.getMessage(), this.ex);
+                Log.e(TAG, this.ex.getMessage(), this.ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(this.ex).send();
                 return -1L;

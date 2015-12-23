@@ -55,8 +55,7 @@ public class MainActivity extends MediaActivity {
         try {
             getAppSettings().initialize();
         } catch (NameNotFoundException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
@@ -127,8 +126,7 @@ public class MainActivity extends MediaActivity {
             stopProgress();
             Toast.makeText(getApplicationContext(), getString(R.string.bad_setting_) + "\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             stopProgress();

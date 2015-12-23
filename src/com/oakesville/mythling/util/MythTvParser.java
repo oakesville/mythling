@@ -445,8 +445,7 @@ public class MythTvParser implements MediaListParser {
             if (BuildConfig.DEBUG)
                 Log.d(TAG, " -> live stream info parse time: " + (System.currentTimeMillis() - startTime) + " ms");
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
@@ -462,8 +461,7 @@ public class MythTvParser implements MediaListParser {
                 Log.d(TAG, " -> live stream info parse time: " + (System.currentTimeMillis() - startTime) + " ms");
             return info;
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
             return new LiveStreamInfo();

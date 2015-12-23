@@ -85,8 +85,7 @@ public class Transcoder {
                             getServiceDownloader(new URL(baseUrl + "/Content/RemoveLiveStream?Id=" + liveStream.getId())).get();
                         } catch (Exception ex) {
                             // don't let this stop us
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
+                            Log.e(TAG, ex.getMessage(), ex);
                             if (appSettings.isErrorReportingEnabled())
                                 new Reporter(ex).send();
                         }

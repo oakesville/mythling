@@ -21,17 +21,16 @@ import java.net.URLEncoder;
 
 import org.json.JSONException;
 
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
+
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 public class ServiceFrontendPlayer implements FrontendPlayer {
     private static final String TAG = ServiceFrontendPlayer.class.getSimpleName();
@@ -56,8 +55,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 Thread.sleep(100);
                 timeout -= 100;
             } catch (InterruptedException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
             }
@@ -88,8 +86,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -129,8 +126,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -155,8 +151,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;

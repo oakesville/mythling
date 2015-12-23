@@ -582,8 +582,7 @@ public abstract class MediaActivity extends Activity {
             stopProgress();
             Toast.makeText(getApplicationContext(), getString(R.string.bad_setting_) + "\n" + ex.getMessage(), Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             stopProgress();
@@ -780,8 +779,7 @@ public abstract class MediaActivity extends Activity {
         } catch (Exception ex) {
             stopProgress();
             onResume();
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -817,8 +815,7 @@ public abstract class MediaActivity extends Activity {
             }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } catch (Exception ex) {
             stopProgress();
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -855,8 +852,7 @@ public abstract class MediaActivity extends Activity {
                             new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
                         } catch (MalformedURLException ex) {
                             stopProgress();
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
+                            Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -897,8 +893,7 @@ public abstract class MediaActivity extends Activity {
                             }
                         } catch (MalformedURLException ex) {
                             stopProgress();
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
+                            Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -990,8 +985,7 @@ public abstract class MediaActivity extends Activity {
 
                 tick();
             } catch (Exception ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 stopTimer();
@@ -1148,8 +1142,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1182,8 +1175,7 @@ public abstract class MediaActivity extends Activity {
                     populate();
                 } catch (Exception ex) {
                     stopProgress();
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }
@@ -1223,8 +1215,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1241,8 +1232,7 @@ public abstract class MediaActivity extends Activity {
                 try {
                     playLiveStream(streamInfo);
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
@@ -1266,8 +1256,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1318,8 +1307,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1358,8 +1346,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1412,8 +1399,7 @@ public abstract class MediaActivity extends Activity {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -1442,8 +1428,7 @@ public abstract class MediaActivity extends Activity {
                     else
                         playLiveStream(streamInfo);
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
@@ -1504,8 +1489,7 @@ public abstract class MediaActivity extends Activity {
                 startActivity(videoIntent);
             }
         } catch (IOException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -1646,8 +1630,7 @@ public abstract class MediaActivity extends Activity {
             setPath(newPath == null ? "" : URLDecoder.decode(newPath, "UTF-8"));
         }
         catch (UnsupportedEncodingException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();

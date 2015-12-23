@@ -20,6 +20,12 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.prefs.PrefsActivity;
+import com.oakesville.mythling.util.Reporter;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -35,12 +41,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.prefs.PrefsActivity;
-import com.oakesville.mythling.util.Reporter;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class WebViewActivity extends Activity {
@@ -137,8 +137,7 @@ public class WebViewActivity extends Activity {
                         webView.loadUrl(url);
                     }
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (appSettings.isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -208,8 +207,7 @@ public class WebViewActivity extends Activity {
                     return;
                 }
                 catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (new AppSettings(getApplicationContext()).isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();

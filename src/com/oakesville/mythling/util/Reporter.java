@@ -23,7 +23,6 @@ import java.net.URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 
 import android.util.Log;
@@ -60,8 +59,7 @@ public class Reporter {
                     if (!"success".equals(status))
                         throw new IOException("Error response from reporting site: " + reportResponse.getString("message"));
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                 }
             }
         }).start();

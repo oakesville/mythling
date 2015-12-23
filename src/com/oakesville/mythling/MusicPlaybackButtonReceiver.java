@@ -15,14 +15,14 @@
  */
 package com.oakesville.mythling;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.KeyEvent;
-
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.util.Reporter;
 
 /**
  * Only used for music.
@@ -56,8 +56,7 @@ public class MusicPlaybackButtonReceiver extends BroadcastReceiver {
                         }
                     }
                     catch (Exception ex) {
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
+                        Log.e(TAG, ex.getMessage(), ex);
                         if (new AppSettings(context).isErrorReportingEnabled())
                             new Reporter(ex).send();
                     }

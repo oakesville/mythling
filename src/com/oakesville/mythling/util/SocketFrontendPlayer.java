@@ -25,16 +25,16 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.TvShow;
+
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Does not work with video storage groups.  Only used for features not supported by ServiceFrontendPlayer
@@ -69,8 +69,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 Thread.sleep(100);
                 timeout -= 100;
             } catch (InterruptedException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
             }
@@ -111,8 +110,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -120,8 +118,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 try {
                     close();
                 } catch (IOException ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (appSettings.isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }
@@ -152,8 +149,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -161,8 +157,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 try {
                     close();
                 } catch (IOException ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (appSettings.isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }
@@ -188,8 +183,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (appSettings.isErrorReportingEnabled())
                     new Reporter(ex).send();
                 return -1L;
@@ -197,8 +191,7 @@ public class SocketFrontendPlayer implements FrontendPlayer {
                 try {
                     close();
                 } catch (IOException ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (appSettings.isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }

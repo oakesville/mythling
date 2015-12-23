@@ -227,8 +227,7 @@ public class ItemDetailFragment extends Fragment {
                                 }
                             });
                         } catch (IOException ex) {
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
+                            Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                         }
@@ -257,8 +256,7 @@ public class ItemDetailFragment extends Fragment {
                                 }
                             });
                         } catch (MalformedURLException ex) {
-                            if (BuildConfig.DEBUG)
-                                Log.e(TAG, ex.getMessage(), ex);
+                            Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
                             Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
@@ -375,8 +373,7 @@ public class ItemDetailFragment extends Fragment {
                         artworkView.setFocusable(false);
                     }
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                     Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
@@ -414,16 +411,14 @@ public class ItemDetailFragment extends Fragment {
                         MediaActivity.getAppData().writeImage(filepath, imageBytes);
                     } catch (IOException ex) {
                         // fail silently
-                        if (BuildConfig.DEBUG)
-                            Log.e(TAG, ex.getMessage(), ex);
+                        Log.e(TAG, ex.getMessage(), ex);
                     }
                 }
 
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (reportErrors)
                     new Reporter(ex).send();
                 return -1L;
@@ -433,8 +428,7 @@ public class ItemDetailFragment extends Fragment {
         protected void onPostExecute(Long result) {
             if (result != 0L) {
                 if (ex != null) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (reportErrors)
                         new Reporter(ex).send();
                     if (getActivity() != null) // activity might be null in this thread
@@ -444,8 +438,7 @@ public class ItemDetailFragment extends Fragment {
                 try {
                     artworkView.setImageBitmap(MediaActivity.getAppData().readImageBitmap(filepath));
                 } catch (Exception ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }

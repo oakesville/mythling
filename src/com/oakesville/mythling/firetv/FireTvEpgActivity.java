@@ -211,8 +211,7 @@ public class FireTvEpgActivity extends EpgActivity {
         try {
             webView.loadUrl(getUrl() + getParams());
         } catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
@@ -275,8 +274,7 @@ public class FireTvEpgActivity extends EpgActivity {
             return new ByteArrayInputStream(strBuf.toString().getBytes());
         }
         catch (IOException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             return null;
@@ -288,8 +286,7 @@ public class FireTvEpgActivity extends EpgActivity {
             return url != null && url.startsWith(getAppSettings().getGuideServiceUrl().toString());
         }
         catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();

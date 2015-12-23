@@ -47,15 +47,15 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.ByteArrayBuffer;
 import org.mozilla.universalchardet.UniversalDetector;
 
+import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.http.AndroidHttpClient;
 import android.os.Debug;
 import android.util.Base64;
 import android.util.Log;
-
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.app.AppSettings;
 
 public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
@@ -186,8 +186,7 @@ public class HttpHelper {
             try {
                 response = httpClient.execute(host, job, getDigestAuthContext(url.getHost(), url.getPort(), user, password));
             } catch (IOException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (ipRetrieval != null) {
                     // try and retrieve the backend IP
                     String ip = retrieveBackendIp();
@@ -211,8 +210,7 @@ public class HttpHelper {
                 if (httpClient != null)
                     httpClient.close();
             } catch (IOException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
             }
         }
     }
@@ -241,8 +239,7 @@ public class HttpHelper {
                     writeRequestBytes(conn.getOutputStream());
                 is = conn.getInputStream();
             } catch (IOException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
                 if (ipRetrieval != null) {
                     // try and retrieve the backend IP
                     String ip = retrieveBackendIp();
@@ -265,8 +262,7 @@ public class HttpHelper {
                 if (is != null)
                     is.close();
             } catch (IOException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
             }
         }
     }
@@ -341,8 +337,7 @@ public class HttpHelper {
                 if (br != null)
                     br.close();
             } catch (IOException ex) {
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, ex.getMessage(), ex);
+                Log.e(TAG, ex.getMessage(), ex);
             }
         }
     }

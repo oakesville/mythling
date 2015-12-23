@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
-import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -123,8 +122,7 @@ public class TvShow extends Item {
             tb.append(getStartDateTimeFormatted()).append("-");
             tb.append(getEndTimeFormatted());
         } catch (ParseException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
         }
 
         return tb.toString();
@@ -136,8 +134,7 @@ public class TvShow extends Item {
             tb.append(getStartTimeFormatted()).append("-");
             tb.append(getEndTimeFormatted());
         } catch (ParseException ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
         }
 
         return tb.toString();

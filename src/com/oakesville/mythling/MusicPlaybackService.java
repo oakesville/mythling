@@ -15,6 +15,9 @@
  */
 package com.oakesville.mythling;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
+
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,41 +34,38 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.util.Reporter;
-
 public class MusicPlaybackService extends Service {
-    
+
     private static final String TAG = MusicPlaybackService.class.getSimpleName();
-    
+
     public static final String EXTRA_MESSENGER = "com.oakesville.mythling.EXTRA_MUSIC_PLAYBACK_MESSENGER";
     public static final int MESSAGE_PLAYER_PREPARED = 0;
     public static final int MESSAGE_PLAYBACK_STOPPED = 1; // different from action (callback to initiator)
-    
+
     public static final String ACTION_PLAYBACK_STOPPED = "com.oakesville.mythling.PLAYBACK_STOPPED";
-    
+
     public static final String ACTION_PLAY = "com.oakesville.mythling.PLAY";
     public static final String ACTION_STOP = "com.oakesville.mythling.STOP";
     public static final String ACTION_PLAY_PAUSE = "com.oakesville.mythling.PLAY_PAUSE";
-    
+
     private AppSettings appSettings;
     private MediaPlayer mediaPlayer;
     private Messenger playbackMessenger;
     private OnAudioFocusChangeListener audioFocusListener;
-    
+
     private boolean isPaused;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        
-        try { 
+
+        try {
             appSettings = new AppSettings(this);
-            
+
             Bundle extras = intent.getExtras();
-            
+
             if (extras != null)
                 playbackMessenger = (Messenger)extras.get(EXTRA_MESSENGER);
-    
+
             if (intent.getAction().equals(ACTION_PLAY)) {
                 if (audioFocusListener == null) {
                     audioFocusListener = new OnAudioFocusChangeListener() {
@@ -90,8 +90,8 @@ public class MusicPlaybackService extends Service {
                     } else if (isPaused) {
                         mediaPlayer.reset();
                     }
-                    
-                    
+
+
                     mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
                         public void onPrepared(MediaPlayer mp) {
                             mediaPlayer.start();
@@ -102,8 +102,7 @@ public class MusicPlaybackService extends Service {
                                     playbackMessenger.send(msg);
                                 }
                                 catch (RemoteException ex) {
-                                    if (BuildConfig.DEBUG)
-                                        Log.e(TAG, ex.getMessage(), ex);
+                                    Log.e(TAG, ex.getMessage(), ex);
                                     if (appSettings.isErrorReportingEnabled())
                                         new Reporter(ex).send();
                                 }
@@ -115,7 +114,7 @@ public class MusicPlaybackService extends Service {
                             stopPlayback();
                         }
                     });
-                    
+
                     mediaPlayer.setDataSource(this, intent.getData());
                     mediaPlayer.prepareAsync();
                 }
@@ -137,15 +136,14 @@ public class MusicPlaybackService extends Service {
             }
         }
         catch (Exception ex) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
 
         return START_NOT_STICKY;
     }
-    
+
     private void stopPlayback() {
         stopSelf();
         if (mediaPlayer != null) {
@@ -163,15 +161,14 @@ public class MusicPlaybackService extends Service {
                     playbackMessenger.send(msg);
                 }
                 catch (RemoteException ex) {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, ex.getMessage(), ex);
+                    Log.e(TAG, ex.getMessage(), ex);
                     if (appSettings.isErrorReportingEnabled())
                         new Reporter(ex).send();
                 }
             }
-        }       
+        }
     }
-    
+
     private void releasePlayer() {
         isPaused = false;
         if (mediaPlayer != null) {
@@ -180,7 +177,7 @@ public class MusicPlaybackService extends Service {
             mediaPlayer = null;
         }
     }
-    
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
