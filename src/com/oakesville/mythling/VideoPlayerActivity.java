@@ -351,13 +351,11 @@ public class VideoPlayerActivity extends Activity {
                 private int minSampleLength = 3;
                 private int correctableDelta = 5;  // don't update if off by less than this
                 private boolean lengthEstimationNotified;
-                private boolean lengthEstimated;
 
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
                         progressBar.setVisibility(View.GONE);
                         lengthEstimationNotified = false;
-                        lengthEstimated = false;
                         if (itemLength != 0) {
                             // length is already known -- don't wait for seekability determination
                             mediaPlayer.setItemLength(itemLength);
@@ -388,7 +386,6 @@ public class VideoPlayerActivity extends Activity {
                     }
                     else if (event == MediaPlayerEvent.time) {
 
-                        // TODO: pass pos?
                         int pos = mediaPlayer.getSeconds();
 
                         // infer length if needed
@@ -401,14 +398,6 @@ public class VideoPlayerActivity extends Activity {
                                 int prevLen = mediaPlayer.getItemLength();
                                 int len = mediaPlayer.inferItemLength();
                                 if (Math.abs(len - prevLen) > correctableDelta) {
-//                                    if (!lengthEstimated) {
-//                                        if (savedPosition > 0) {
-//                                            Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_LONG).show();
-//                                            mediaPlayer.setPosition(savedPosition);
-//                                            savedPosition = 0;
-//                                        }
-//                                        lengthEstimated = true;
-//                                    }
                                     totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
                                     seekBar.setMax(len);
                                 }
