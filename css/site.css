@@ -92,3 +92,8 @@ body {
   background-color: #b0bec5;
   border-radius: 3px;
 }
+.copyable {
+  width: 375px;
+  padding-left: 5px;
+  border-radius: 5px;	
+}
