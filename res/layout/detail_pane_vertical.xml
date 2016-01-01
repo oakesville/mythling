@@ -17,13 +17,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_plain">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:padding="5dp">
 
         <com.oakesville.mythling.ImageView
             android:id="@+id/posterImage"
@@ -48,7 +50,7 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:fillViewport="true"
-        android:background="@color/background_light_blue" >
+        android:background="@color/background_blue" >
 
         <include
             android:id="@+id/metadata" 
