@@ -50,7 +50,7 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:fillViewport="true"
-        android:background="@color/background_blue" >
+        android:background="@color/background_pale_blue" >
 
         <include
             android:id="@+id/metadata" 
