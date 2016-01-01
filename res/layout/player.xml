@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/background_translucent_blue">
+            android:background="@color/overlay_black">
         
             <LinearLayout
                 android:orientation="horizontal"
@@ -63,7 +63,8 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"
                     android:layout_gravity="right"
-                    android:layout_marginRight="5dp" />
+                    android:layout_marginRight="5dp"
+                    android:textColor="@android:color/white" />
     
                 <SeekBar
                     android:id="@+id/player_seek"
@@ -81,7 +82,8 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textStyle="bold"
                     android:layout_gravity="left"
-                    android:layout_marginLeft="5dp" />
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/white" />
     
             </LinearLayout>
             
@@ -95,7 +97,7 @@
           
                 <ImageButton
                     android:id="@+id/ctrl_jump_back"
-                    android:src="@drawable/ic_jump_back_black"
+                    android:src="@drawable/ic_jump_back_white"
                     android:contentDescription="@string/jump_back"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -104,7 +106,7 @@
               
                 <ImageButton
                     android:id="@+id/ctrl_skip_back"
-                    android:src="@drawable/ic_skip_back_black"
+                    android:src="@drawable/ic_skip_back_white"
                     android:contentDescription="@string/skip_back"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -113,7 +115,7 @@
     
                 <ImageButton
                     android:id="@+id/ctrl_rewind"
-                    android:src="@drawable/ic_rewind_black"
+                    android:src="@drawable/ic_rewind_white"
                     android:contentDescription="@string/rewind"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -122,7 +124,7 @@
                 
                 <ImageButton
                     android:id="@+id/ctrl_play"
-                    android:src="@drawable/ic_play_black"
+                    android:src="@drawable/ic_play_white"
                     android:contentDescription="@string/play"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -132,7 +134,7 @@
 
                 <ImageButton
                     android:id="@+id/ctrl_pause"
-                    android:src="@drawable/ic_pause_black"
+                    android:src="@drawable/ic_pause_white"
                     android:contentDescription="@string/pause"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -141,7 +143,7 @@
 
                 <ImageButton
                     android:id="@+id/ctrl_fast_fwd"
-                    android:src="@drawable/ic_fast_fwd_black"
+                    android:src="@drawable/ic_fast_fwd_white"
                     android:contentDescription="@string/fast_forward"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -150,7 +152,7 @@
                 
                 <ImageButton
                     android:id="@+id/ctrl_skip_fwd"
-                    android:src="@drawable/ic_skip_fwd_black"
+                    android:src="@drawable/ic_skip_fwd_white"
                     android:contentDescription="@string/skip_fwd"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -159,7 +161,7 @@
                 
                 <ImageButton
                     android:id="@+id/ctrl_jump_fwd"
-                    android:src="@drawable/ic_jump_fwd_black"
+                    android:src="@drawable/ic_jump_fwd_white"
                     android:contentDescription="@string/jump_fwd"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
