@@ -56,9 +56,10 @@
         android:id="@+id/detailScroll"
         android:layout_weight="3"
         android:layout_width="0px"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:fillViewport="true"
-        android:background="@color/background_blue" >
+        android:background="@color/background_plain" >
 
         <include
             android:id="@+id/metadata" 
