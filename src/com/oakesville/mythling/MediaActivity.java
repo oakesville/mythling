@@ -916,16 +916,14 @@ public abstract class MediaActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
-
                             // remove in this same thread to avoid confusing user
-                            String remPath = recording.getPath();
-                            if (remPath.startsWith("/"))
-                                remPath = remPath.substring(1);
-                            boolean removed = false;
-                            if (remPath.equals(""))
-                                removed = mediaList.removeItem(recording);
-                            else
-                                removed = mediaList.getCategory(remPath).removeItem(recording);
+                            boolean removed = mediaList.removeItem(recording);
+                            if (!removed) {
+                                // must be categorized
+                                Category cat = mediaList.getCategory(recording.getTitle());
+                                if (cat != null)
+                                    removed = cat.removeItem(recording);
+                            }
                             if (removed) {
                                 mediaList.setCount(mediaList.getCount() - 1);
                                 onResume();
