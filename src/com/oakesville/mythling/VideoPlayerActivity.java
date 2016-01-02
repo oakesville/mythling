@@ -25,6 +25,7 @@ import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
+import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
@@ -54,6 +55,7 @@ public class VideoPlayerActivity extends Activity {
 
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
+    private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
@@ -86,6 +88,8 @@ public class VideoPlayerActivity extends Activity {
     private boolean done;
 
     private int hideUiDelay = 1500;
+
+    private boolean showTvControlsHint;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -244,6 +248,17 @@ public class VideoPlayerActivity extends Activity {
         super.onResume();
         savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
         commercialSkip = appSettings.getCommercialSkip();
+
+        if (appSettings.isTv()) {
+            showTvControlsHint = !appSettings.getBooleanPref(SKIP_TV_PLAYER_HINT_PREF, false);
+            if (showTvControlsHint) {
+                String title = getString(R.string.title_tv_player_hint);
+                String msg = getString(R.string.tv_player_hint);
+                PrefDismissDialog hintDlg = new PrefDismissDialog(appSettings, title, msg, SKIP_TV_PLAYER_HINT_PREF);
+                hintDlg.show(getFragmentManager());
+            }
+        }
+
         createPlayer();
     }
 

@@ -422,6 +422,8 @@
     <string name="epg_hint">Mythling EPG Hint</string>
     <string name="epg_ff_rew_hint_">Use the >> and &lt;&lt; keys on the remote to skip forward and backward</string>
     <string name="epg_search_res_hint">While the search box is open, use the >> and &lt;&lt; keys on the remote to move to next/previous search results.</string>
+    <string name="title_tv_player_hint">Mythling Player Hint</string>
+    <string name="tv_player_hint">Skip and Jump forward/back are triggered by the DPAD directional controls.</string>
     <string name="got_it">Got it.  Don\u0027t show me this again.</string>
     <string name="estimating_video_length">Estimating video length&#8230;</string>
     <string name="restoring_saved_position">Restoring saved position</string>

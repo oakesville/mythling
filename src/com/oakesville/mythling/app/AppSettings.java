@@ -1257,16 +1257,6 @@ public class AppSettings {
         return set;
     }
 
-    /**
-     * returns false only once (when epg first accessed)
-     */
-    public boolean isEpgInitiallyAccessed() {
-        boolean accessed = prefs.getBoolean(EPG_INITIALLY_ACCESSED, false);
-        if (!accessed)
-            prefs.edit().putBoolean(EPG_INITIALLY_ACCESSED, true).commit();
-        return accessed;
-    }
-
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = appContext.getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
