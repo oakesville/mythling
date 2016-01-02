@@ -233,6 +233,14 @@ public class MythlingParser implements MediaListParser {
                 String recStatus = jsonObj.getString("recStatus");
                 ((Recording) item).setRecorded(recStatus.equals("-3") || recStatus.equals("Recorded"));
             }
+            if (jsonObj.has("season")) {
+                String season = jsonObj.getString("season");
+                ((Recording) item).setSeason(Integer.parseInt(season));
+            }
+            if (jsonObj.has("episode")) {
+                String episode = jsonObj.getString("episode");
+                ((Recording) item).setEpisode(Integer.parseInt(episode));
+            }
         } else if (type == MediaType.music) {
             item = new Song(jsonObj.getString("id"), jsonObj.getString("title"));
             if (jsonObj.has("albumArtId"))

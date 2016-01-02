@@ -193,6 +193,10 @@ public class MediaList {
         return mediaType != MediaType.liveTv;
     }
 
+    public boolean supportsTranscode() {
+        return mediaType == MediaType.recordings || mediaType == MediaType.movies || mediaType == MediaType.tvSeries;
+    }
+
     public void sort(SortType sortType, boolean includeItems) {
         if (includeItems && !items.isEmpty())
             Collections.sort(items, items.get(0).getComparator(sortType));

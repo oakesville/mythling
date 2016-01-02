@@ -36,6 +36,10 @@ public class Recording extends TvShow {
     public int getSeason() { return season; }
     public void setSeason(int season) { this.season = season; }
 
+    private int episode;
+    public int getEpisode() { return episode; }
+    public void setEpisode(int episode) { this.episode = episode; }
+
     private String recordingGroup;
     public String getRecordingGroup() { return recordingGroup; }
     public void setRecordingGroup(String recGroup) { this.recordingGroup = recGroup; }
@@ -68,8 +72,16 @@ public class Recording extends TvShow {
         tb.appendQuotedLine(getSubTitle());
         tb.appendLine(getShowDateTimeInfo());
         tb.append(getChannelInfo());
-        if (!isShowMovie() && isRepeat())
-            tb.appendLine(getAirDateInfo());
+        if (!isShowMovie()) {
+            if (season > 0 && episode > 0) {
+                tb.appendLine().appendSeasonEpisode(season, episode);
+                if (isRepeat())
+                    tb.append(getAirDateInfo());
+            }
+            else if (isRepeat()) {
+                tb.appendLine(getAirDateInfo());
+            }
+        }
         return tb.toString();
     }
 
@@ -88,8 +100,16 @@ public class Recording extends TvShow {
     public String getSummary() {
         TextBuilder tb = new TextBuilder(getShowDateTimeInfo());
         tb.append(getChannelInfo());
-        if (!isShowMovie() && isRepeat())
-            tb.appendLine(getAirDateInfo());
+        if (!isShowMovie()) {
+            if (season > 0 && episode > 0) {
+                tb.appendLine().appendSeasonEpisode(season, episode);
+                if (isRepeat())
+                    tb.append(getAirDateInfo());
+            }
+            else if (isRepeat()) {
+                tb.appendLine(getAirDateInfo());
+            }
+        }
         tb.appendLine(getDescription());
         return tb.toString();
     }

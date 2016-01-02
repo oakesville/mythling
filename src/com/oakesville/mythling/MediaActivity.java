@@ -1149,7 +1149,7 @@ public abstract class MediaActivity extends Activity {
 
                 mediaList.setCharSet(downloader.getCharSet());
 
-                if (getAppSettings().isRetrieveTranscodeStatuses())
+                if (mediaList.supportsTranscode() && getAppSettings().isRetrieveTranscodeStatuses())
                     updateTranscodeStatuses(mediaList.getAllItems());
 
                 return 0L;

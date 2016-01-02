@@ -58,6 +58,10 @@ public class TextBuilder {
         return this;
     }
 
+    public TextBuilder appendLine() {
+        return appendLine(""); // just the \n
+    }
+
     public TextBuilder appendLine(String s) {
         if (s != null) {
             if (stringBuilder.length() > 0)
@@ -146,6 +150,12 @@ public class TextBuilder {
         stringBuilder.append(":");
         appendPadTwo(seconds);
 
+        return this;
+    }
+
+    public TextBuilder appendSeasonEpisode(int season, int episode) {
+        if (season > 0 && episode > 0)
+            stringBuilder.append("S").append(season).append("E").append(episode);
         return this;
     }
 

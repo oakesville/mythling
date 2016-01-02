@@ -424,6 +424,11 @@ public class MythTvParser implements MediaListParser {
                 if (!season.isEmpty() && !season.equals("0"))
                     ((Recording) tvShow).setSeason(Integer.parseInt(season));
             }
+            if (jsonObj.has("Episode")) {
+                String episode = jsonObj.getString("Episode");
+                if (!episode.isEmpty() && !episode.equals("0"))
+                    ((Recording) tvShow).setEpisode(Integer.parseInt(episode));
+            }
         }
     }
 

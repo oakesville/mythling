@@ -546,13 +546,13 @@ else if ($type->isSearch())
         $airdate = null;
     }
     $endtime = mysql_result($tRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, $endtime, $i < $tNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, null, null, $endtime, null, $i < $tNum - 1);
     $i++;
   }
   echo "  ],\n";
   
   // recordings
-  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.endtime, orec.recstatus";
+  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.endtime, orec.recstatus";
   $rQuery .= " from channel c, recordedprogram rp, recorded r left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid";
   $rQuery .= " and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
@@ -585,9 +585,11 @@ else if ($type->isSearch())
       else
         $airdate = null;
     }
+    $season = mysql_result($rRes, $i, "season");
+    $episode = mysql_result($rRes, $i, "episode");
     $endtime = mysql_result($rRes, $i, "endtime");
     $recstatus = mysql_result($rRes, $i, "recstatus");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $recstatus, $i < $rNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $i < $rNum - 1);
     $i++;
   }
   echo "  ]\n}";
@@ -704,7 +706,7 @@ else
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = !$flatten;
     }
-    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.recordid, r.storagegroup, r.recgroup, orec.recstatus";
+    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.recordid, r.storagegroup, r.recgroup, orec.recstatus";
     $query .= " from recorded r " . $where . " " . $orderBy;
   }
   
@@ -734,6 +736,8 @@ else
       $storagegroups = array();
       $recgroups = array();
       $recstatuses = array();
+      $seasons = array();
+      $episodes = array();
     }
   }
   else if ($type->isMovies() || $type->isTvSeries())
@@ -829,6 +833,8 @@ else
         $sg = mysql_result($result, $i, "storagegroup");
         $rg = mysql_result($result, $i, "recgroup");
         $rstat = mysql_result($result, $i, "recstatus");
+        $seas = mysql_result($result, $i, "season");
+        $ep = mysql_result($result, $i, "episode");
       }
     }
     else
@@ -901,6 +907,8 @@ else
         $storagegroups[$id] = $sg;
         $recgroups[$id] = $rg;
         $recstatuses[$id] = $rstat;
+        $seasons[$id] = $seas;
+        $episodes[$id] = $ep;
       }
     }
     else if ($type->isMovies() || $type->isTvSeries())
@@ -1168,6 +1176,10 @@ function printItem($path, $file, $depth, $more)
         echo ', "storageGroup": "' . $storagegroups[$id] . '"';
       if ($recgroups[$id] != null)
         echo ', "recGroup": "' . $recgroups[$id] . '"';
+      if ($seasons[$id] != null && $seasons[$id] != '0')
+        echo ', "season": "' . $seasons[$id] . '"';
+      if ($episodes[$id] != null && $episodes[$id] != '0')
+        echo ', "episode": "' . $episodes[$id] . '"';
       if ($recgroups[$id] != null)
         echo ', "recStatus": "' . $recstatuses[$id] . '"';
     }
@@ -1227,7 +1239,7 @@ function printSearchResult($id, $path, $file, $more)
   echo "\n";
 }
 
-function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $endtime, $recstatus, $more)
+function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $more)
 {
   echo "    { ";
   echo '"id": "' . $id . '"';
@@ -1253,6 +1265,10 @@ function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, 
     echo ', "storageGroup": "' . $storagegroup . '"';
   if ($airdate)
     echo ', "airdate": "' . $airdate . '"';
+  if ($season && $season != '0')
+    echo ', "season": "' . $season . '"';
+  if ($episode && $episode != '0')
+    echo ', "episode": "' . $episode . '"';  
   if ($endtime)
     echo ', "endtime": "' . $endtime . '"';
   if ($recstatus)
