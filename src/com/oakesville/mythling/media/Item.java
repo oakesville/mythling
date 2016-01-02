@@ -17,7 +17,9 @@ package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -70,6 +72,20 @@ public abstract class Item implements Listable {
     private StorageGroup storageGroup;
     public StorageGroup getStorageGroup() { return storageGroup; }
     public void setStorageGroup(StorageGroup storageGroup) { this.storageGroup = storageGroup; }
+
+    /**
+     * Returns the list of possible storage group paths for this item.
+     */
+    public List<String> getStorageGroupPaths() {
+        List<String> sgPaths = null;
+        if (storageGroup != null || storageGroup.getDirectories() != null) {
+            sgPaths = new ArrayList<String>();
+            String filepath = getFilePath();
+            for (String dir : storageGroup.getDirectories())
+                sgPaths.add(dir + "/" + filepath);
+        }
+        return sgPaths;
+    }
 
     public String getEncodedTitle() {
         try {

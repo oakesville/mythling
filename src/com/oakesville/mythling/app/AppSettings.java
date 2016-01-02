@@ -25,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oakesville.mythling.R;
-import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
@@ -707,16 +706,25 @@ public class AppSettings {
         return Integer.parseInt(getStringPref(EXTERNAL_AUDIO_BITRATE, "64000"));
     }
 
+    private int[] videoResValues;
     public int[] getVideoResValues() {
-        return stringArrayToIntArray(appContext.getResources().getStringArray(R.array.video_res_values));
+        if (videoResValues == null)
+            videoResValues = stringArrayToIntArray(appContext.getResources().getStringArray(R.array.video_res_values));
+        return videoResValues;
     }
 
+    private int[] videoBitrateValues;
     public int[] getVideoBitrateValues() {
-        return stringArrayToIntArray(appContext.getResources().getStringArray(R.array.video_bitrate_values));
+        if (videoBitrateValues == null)
+            videoBitrateValues = stringArrayToIntArray(appContext.getResources().getStringArray(R.array.video_bitrate_values));
+        return videoBitrateValues;
     }
 
+    private int[] audioBitrateValues;
     public int[] getAudioBitrateValues() {
-        return stringArrayToIntArray(appContext.getResources().getStringArray(R.array.audio_bitrate_values));
+        if (audioBitrateValues == null)
+            audioBitrateValues = stringArrayToIntArray(appContext.getResources().getStringArray(R.array.audio_bitrate_values));
+        return audioBitrateValues;
     }
 
     public float getVideoPlaybackPosition(Uri uri) {
@@ -926,45 +934,6 @@ public class AppSettings {
 
     public int getHttpReadTimeout() {
         return Integer.parseInt(getStringPref(HTTP_READ_TIMEOUT, "10").trim());
-    }
-
-    /**
-     * Returns false if the stream is closer to an available quality setting
-     * than it is to the desired quality.  This attempts to take into account if
-     * the transcoded stream is slightly off for some reason.  One scenario is
-     * that some external mechanism was used to do the HLS transcode to a quality
-     * that doesn't exactly match any available.
-     */
-    public boolean liveStreamMatchesQuality(LiveStreamInfo liveStream) {
-
-        int streamRes = liveStream.getHeight();
-        int desiredRes = getVideoRes();
-        if (streamRes != desiredRes) {
-            for (int resValue : getVideoResValues()) {
-                if (Math.abs(streamRes - desiredRes) > Math.abs(streamRes - resValue))
-                    return false;
-            }
-        }
-
-        int streamVidBr = liveStream.getVideoBitrate();
-        int desiredVidBr = getVideoBitrate();
-        if (streamVidBr != desiredVidBr) {
-            for (int vidBrValue : getVideoBitrateValues()) {
-                if (Math.abs(streamVidBr - desiredVidBr) > Math.abs(streamVidBr - vidBrValue))
-                    return false;
-            }
-        }
-
-        int streamAudBr = liveStream.getAudioBitrate();
-        int desiredAudBr = getAudioBitrate();
-        if (streamAudBr != desiredAudBr) {
-            for (int audBrValue : getAudioBitrateValues()) {
-                if (Math.abs(streamAudBr - desiredAudBr) > Math.abs(streamAudBr - audBrValue))
-                    return false;
-            }
-        }
-
-        return true;
     }
 
     // change these values and recompile to route service calls through a dev-time reverse proxy

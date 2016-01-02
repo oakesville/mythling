@@ -70,9 +70,16 @@ public class Transcoder {
         String liveStreamJson = new String(getServiceDownloader(streamListUrl).get(), "UTF-8");
         List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
         int inProgress = 0;
+        int desiredRes = appSettings.getVideoRes();
+        int desiredVidBr = appSettings.getVideoBitrate();
+        int desiredAudBr = appSettings.getAudioBitrate();
+        int[] resValues = appSettings.getVideoResValues();
+        int[] vidBrValues = appSettings.getVideoBitrateValues();
+        int[] audBrValues = appSettings.getAudioBitrateValues();
+
         for (LiveStreamInfo liveStream : liveStreams) {
             if (liveStream.getStatusCode() != LiveStreamInfo.STATUS_CODE_STOPPED
-                    && liveStream.matchesItem(item) && appSettings.liveStreamMatchesQuality(liveStream)) {
+                    && liveStream.matchesItem(item) && liveStream.matchesQuality(desiredRes, desiredVidBr, desiredAudBr, resValues, vidBrValues, audBrValues)) {
                 streamInfo = liveStream;
                 preExist = true;
                 break;

@@ -1278,7 +1278,6 @@ public abstract class MediaActivity extends Activity {
      */
     protected class PlayWithCutListTask extends AsyncTask<URL,Integer,Long> {
         private Recording recording;
-        private Exception ex;
 
         private URL playbackUrl;
 
@@ -1306,7 +1305,6 @@ public abstract class MediaActivity extends Activity {
                 recording.setCommercialCutList(cutList);
                 return 0L;
             } catch (Exception ex) {
-                this.ex = ex;
                 Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
@@ -1317,7 +1315,7 @@ public abstract class MediaActivity extends Activity {
         protected void onPostExecute(Long result) {
             stopProgress();
             if (result != 0L) {
-               Toast.makeText(getApplicationContext(), "Unable to retrieve cut list (MythTV 0.27?)", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Unable to retrieve cut list (MythTV 0.27?)", Toast.LENGTH_LONG).show();
                 onResume();
             }
             Intent videoIntent = new Intent(Intent.ACTION_VIEW);
@@ -1446,17 +1444,35 @@ public abstract class MediaActivity extends Activity {
         tcDownloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
         String liveStreamJson = new String(tcDownloader.get(), "UTF-8");
         List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
+
+        // ugly performance-optimized code follows
         long startTime = System.currentTimeMillis();
-        for (LiveStreamInfo liveStream : liveStreams) {
-            if (liveStream.isCompleted()) {
-                for (Item item : items) {
-                    if (liveStream.matchesItem(item) && getAppSettings().liveStreamMatchesQuality(liveStream)) {
-                        item.setTranscoded(true);
-                        break;
+        int desiredRes = getAppSettings().getVideoRes();
+        int desiredVidBr = getAppSettings().getVideoBitrate();
+        int desiredAudBr = getAppSettings().getAudioBitrate();
+        int[] resValues = getAppSettings().getVideoResValues();
+        int[] vidBrValues = getAppSettings().getVideoBitrateValues();
+        int[] audBrValues = getAppSettings().getAudioBitrateValues();
+        for (Item item : items) {
+            List<String> sgPaths = item.getStorageGroupPaths();
+            for (LiveStreamInfo liveStream : liveStreams) {
+                if (liveStream.isCompleted()) {
+                    if (sgPaths != null) {
+                        for (String sgPath : sgPaths) {
+                            if (liveStream.getFile().equals(sgPath)) {
+                                if (liveStream.matchesQuality(desiredRes, desiredVidBr, desiredAudBr, resValues, vidBrValues, audBrValues)) {
+                                    item.setTranscoded(true);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
+                if (item.isTranscoded())
+                    break; // match already found
             }
         }
+
         if (BuildConfig.DEBUG)
             Log.d(TAG, " -> transcode status check time: " + (System.currentTimeMillis() - startTime) + " ms");
     }

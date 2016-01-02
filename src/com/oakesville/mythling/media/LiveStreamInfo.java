@@ -71,10 +71,46 @@ public class LiveStreamInfo {
     public boolean matchesItem(Item item) {
         if (item.getStorageGroup() == null || item.getStorageGroup().getDirectories() == null)
             return false;
+        String filepath = item.getFilePath();
         for (String dir : item.getStorageGroup().getDirectories()) {
-            if (file.equals(dir + "/" + item.getFilePath()))
+            if (file.equals(dir + "/" + filepath))
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Returns false if this stream is closer to another available quality setting
+     * than it is to the desired quality.  This attempts to take into account if
+     * the transcoded stream is slightly off for some reason.  One scenario is
+     * that some external mechanism was used to do the HLS transcode to a quality
+     * that doesn't exactly match any available.
+     */
+    public boolean matchesQuality(int desiredRes, int desiredVidBr, int desiredAudBr, int[] resValues, int[] vidBrValues, int[] audBrValues) {
+        int streamRes = getHeight();
+        if (streamRes != desiredRes) {
+            for (int resValue : resValues) {
+                if (Math.abs(streamRes - desiredRes) > Math.abs(streamRes - resValue))
+                    return false;
+            }
+        }
+
+        int streamVidBr = getVideoBitrate();
+        if (streamVidBr != desiredVidBr) {
+            for (int vidBrValue : vidBrValues) {
+                if (Math.abs(streamVidBr - desiredVidBr) > Math.abs(streamVidBr - vidBrValue))
+                    return false;
+            }
+        }
+
+        int streamAudBr = getAudioBitrate();
+        if (streamAudBr != desiredAudBr) {
+            for (int audBrValue : audBrValues) {
+                if (Math.abs(streamAudBr - desiredAudBr) > Math.abs(streamAudBr - audBrValue))
+                    return false;
+            }
+        }
+
+        return true;
     }
 }
