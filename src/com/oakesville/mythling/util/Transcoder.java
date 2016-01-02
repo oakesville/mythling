@@ -34,6 +34,7 @@ import android.util.Log;
 public class Transcoder {
     private static final String TAG = Transcoder.class.getSimpleName();
 
+
     private AppSettings appSettings;
 
     /**
@@ -50,10 +51,14 @@ public class Transcoder {
         return streamInfo;
     }
 
+    public boolean beginTranscode(Item item) throws IOException {
+        return beginTranscode(item, null);
+    }
+
     /**
      * Returns true if a matching live stream already existed.  Must be called from a background thread.
      */
-    public boolean beginTranscode(Item item) throws IOException {
+    public boolean beginTranscode(Item item, String videoQuality) throws IOException {
         URL baseUrl = appSettings.getMythTvServicesBaseUrl();
 
         boolean preExist = false;
@@ -69,13 +74,32 @@ public class Transcoder {
 
         String liveStreamJson = new String(getServiceDownloader(streamListUrl).get(), "UTF-8");
         List<LiveStreamInfo> liveStreams = new MythTvParser(appSettings, liveStreamJson).parseStreamInfoList();
-        int inProgress = 0;
-        int desiredRes = appSettings.getVideoRes();
-        int desiredVidBr = appSettings.getVideoBitrate();
-        int desiredAudBr = appSettings.getAudioBitrate();
+
+
         int[] resValues = appSettings.getVideoResValues();
         int[] vidBrValues = appSettings.getVideoBitrateValues();
         int[] audBrValues = appSettings.getAudioBitrateValues();
+
+        int desiredRes;
+        int desiredVidBr;
+        int desiredAudBr;
+        if (AppSettings.EXTERNAL_VIDEO_QUALITY.equals(videoQuality)) {
+            desiredRes = appSettings.getExternalVideoRes();
+            desiredVidBr = appSettings.getExternalVideoBitrate();
+            desiredAudBr = appSettings.getExternalAudioBitrate();
+        }
+        else if (AppSettings.INTERNAL_VIDEO_QUALITY.equals(videoQuality)) {
+            desiredRes = appSettings.getInternalVideoRes();
+            desiredVidBr = appSettings.getInternalVideoBitrate();
+            desiredAudBr = appSettings.getInternalAudioBitrate();
+        }
+        else {
+            desiredRes = appSettings.getVideoRes();
+            desiredVidBr = appSettings.getVideoBitrate();
+            desiredAudBr = appSettings.getAudioBitrate();
+        }
+
+        int inProgress = 0;
 
         for (LiveStreamInfo liveStream : liveStreams) {
             if (liveStream.getStatusCode() != LiveStreamInfo.STATUS_CODE_STOPPED
@@ -86,7 +110,7 @@ public class Transcoder {
             } else {
                 if ("Transcoding".equals(liveStream.getMessage())) {
                     if (liveStream.matchesItem(item)) {
-                        // stop and delete in-progress transcoding jobs for same file
+                        // stop and delete in-progress transcoding jobs for same file (why did I think this was necessary?)
                         try {
                             //getDownloader(new URL(baseUrl + "/Content/StopLiveStream?Id=" + liveStream.getId())).retrieve();
                             getServiceDownloader(new URL(baseUrl + "/Content/RemoveLiveStream?Id=" + liveStream.getId())).get();
@@ -110,15 +134,15 @@ public class Transcoder {
             // add the stream
             URL addStreamUrl;
             if (item.isRecording())
-                addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?" + ((Recording) item).getChanIdStartTimeParams() + "&" + appSettings.getVideoQualityParams());
+                addStreamUrl = new URL(baseUrl + "/Content/AddRecordingLiveStream?" + ((Recording) item).getChanIdStartTimeParams() + "&" + appSettings.getVideoQualityParams(videoQuality));
             else
-                addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams());
+                addStreamUrl = new URL(baseUrl + "/Content/AddVideoLiveStream?Id=" + item.getId() + "&" + appSettings.getVideoQualityParams(videoQuality));
             String addStreamJson = new String(getServiceDownloader(addStreamUrl).get(), "UTF-8");
             streamInfo = new MythTvParser(appSettings, addStreamJson).parseStreamInfo();
 
             // get the actual streamInfo versus requested
             try {
-                // occasionally the follow-up request comes too soon, especially with multiple transcode running on slower systems
+                // occasionally the follow-up request comes too soon, especially with multiple transcodes running on slower systems
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
             }

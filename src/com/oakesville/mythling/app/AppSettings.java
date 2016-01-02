@@ -155,6 +155,9 @@ public class AppSettings {
     public static final String COMMERCIAL_SKIP_OFF = "Auto-Skip Off";
     public static final String COMMERCIAL_SKIP_ON = "Auto-Skip On";
     public static final String COMMERCIAL_SKIP_NOTIFY = "Auto-Skip Notify";
+    public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
+    public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
+
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -679,7 +682,16 @@ public class AppSettings {
     }
 
     public String getVideoQualityParams() {
-        return "Height=" + getVideoRes() + "&Bitrate=" + getVideoBitrate() + "&AudioBitrate=" + getAudioBitrate();
+        return getVideoQualityParams(null);
+    }
+
+    public String getVideoQualityParams(String videoQuality) {
+        if (EXTERNAL_VIDEO_QUALITY.equals(videoQuality))
+            return "Height=" + getExternalVideoRes() + "&Bitrate=" + getExternalVideoBitrate() + "&AudioBitrate=" + getExternalAudioBitrate();
+        else if (INTERNAL_VIDEO_QUALITY.equals(videoQuality))
+            return "Height=" + getInternalVideoRes() + "&Bitrate=" + getInternalVideoBitrate() + "&AudioBitrate=" + getInternalAudioBitrate();
+        else
+            return "Height=" + getVideoRes() + "&Bitrate=" + getVideoBitrate() + "&AudioBitrate=" + getAudioBitrate();
     }
 
     public int getInternalVideoRes() {

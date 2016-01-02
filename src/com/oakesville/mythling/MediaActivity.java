@@ -844,12 +844,25 @@ public abstract class MediaActivity extends Activity {
     protected void transcodeItem(final Item item) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle(getString(R.string.transcode))
-                .setMessage(getString(R.string.begin_transcode) +  ":\n" + item.getDialogTitle())
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.hls_transcode))
+                .setMessage(getString(R.string.begin_transcode) +  ":\n" + item.getDialogTitle() + "\n" + getString(R.string.with_video_quality))
+                .setPositiveButton(getString(R.string.internal), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            new TranscodeVideoTask(item).execute(getAppSettings().getMythTvServicesBaseUrl());
+                            new TranscodeVideoTask(item, false).execute(getAppSettings().getMythTvServicesBaseUrl());
+                        } catch (MalformedURLException ex) {
+                            stopProgress();
+                            Log.e(TAG, ex.getMessage(), ex);
+                            if (getAppSettings().isErrorReportingEnabled())
+                                new Reporter(ex).send();
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNeutralButton(getString(R.string.external), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            new TranscodeVideoTask(item, true).execute(getAppSettings().getMythTvServicesBaseUrl());
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             Log.e(TAG, ex.getMessage(), ex);
@@ -1243,16 +1256,18 @@ public abstract class MediaActivity extends Activity {
 
     protected class TranscodeVideoTask extends AsyncTask<URL,Integer,Long> {
         private Item item;
+        private boolean externalVideoQuality; // false means internal
         private Exception ex;
 
-        public TranscodeVideoTask(Item item) {
+        public TranscodeVideoTask(Item item, boolean externalVideoQuality) {
             this.item = item;
+            this.externalVideoQuality = externalVideoQuality;
         }
 
         protected Long doInBackground(URL... urls) {
             try {
                 Transcoder transcoder = new Transcoder(getAppSettings());
-                transcoder.beginTranscode(item);
+                transcoder.beginTranscode(item, externalVideoQuality ? AppSettings.EXTERNAL_VIDEO_QUALITY : AppSettings.INTERNAL_VIDEO_QUALITY);
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;

@@ -445,6 +445,10 @@
     <string name="item_icon">Icon</string>
     <string name="downloaded">Downloaded</string>
     <string name="transcoded">Transcoded</string>
+    <string name="hls_transcode">HLS Transcode</string>
+    <string name="internal">Internal</string>
+    <string name="external">External</string>
+    <string name="with_video_quality">With these video quality settings:</string>
     <!-- individual components of date/time formats are automaticaly localized -->
     <string name="date_format">MMM d yyyy</string> <!-- Apr 15 2015 -->
     <string name="time_format">h:mm a</string> <!-- 10:00 PM -->
