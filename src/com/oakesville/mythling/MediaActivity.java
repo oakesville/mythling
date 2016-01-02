@@ -358,12 +358,26 @@ public abstract class MediaActivity extends Activity {
             if (show) {
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
                 sortMenuItem.setTitle(Localizer.getSortLabel(mediaSettings.getSortType()));
-                if (mediaSettings.getSortType() == SortType.byDate)
-                    sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setChecked(true);
-                else if (mediaSettings.getSortType() == SortType.byRating)
-                    sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setChecked(true);
-                else
-                    sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setChecked(true);
+                boolean isLiveTv = mediaSettings.getType() == MediaType.liveTv;
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setVisible(!isLiveTv);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setVisible(!isLiveTv);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setVisible(!isLiveTv);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byChannel).setVisible(isLiveTv);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setVisible(isLiveTv);
+                if (isLiveTv) {
+                    if (mediaSettings.getSortType() == SortType.byCallsign)
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setChecked(true);
+                    else
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byChannel).setChecked(true);
+                }
+                else {
+                    if (mediaSettings.getSortType() == SortType.byDate)
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setChecked(true);
+                    else if (mediaSettings.getSortType() == SortType.byRating)
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setChecked(true);
+                    else
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setChecked(true);
+                }
             }
             sortMenuItem.setEnabled(show);
             sortMenuItem.setVisible(show);
@@ -534,6 +548,18 @@ public abstract class MediaActivity extends Activity {
                 appSettings.setSortType(SortType.byRating);
                 item.setChecked(true);
                 sortMenuItem.setTitle(R.string.menu_byRating);
+                sort();
+                return true;
+            } else if (item.getItemId() == R.id.sort_byChannel) {
+                appSettings.setSortType(SortType.byChannel);
+                item.setChecked(true);
+                sortMenuItem.setTitle(R.string.menu_byChannel);
+                sort();
+                return true;
+            } else if (item.getItemId() == R.id.sort_byCallsign) {
+                appSettings.setSortType(SortType.byCallsign);
+                item.setChecked(true);
+                sortMenuItem.setTitle(R.string.menu_byCallsign);
                 sort();
                 return true;
             } else if (item.getItemId() == R.id.view_list) {

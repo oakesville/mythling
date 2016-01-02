@@ -33,6 +33,8 @@
     <string name="menu_byTitle">By Title</string>
     <string name="menu_byDate">By Date</string>
     <string name="menu_byRating">By Rating</string>
+    <string name="menu_byChannel">By Channel</string>
+    <string name="menu_byCallsign">By Callsign</string>    
     <string name="menu_help">Help</string>
     <string name="menu_guide">Program Guide</string>
     <string name="menu_mythweb">MythWeb</string>
@@ -439,6 +441,8 @@
     <string name="by_date">By Date</string>
     <string name="by_rating">By Rating</string>
     <string name="by_title">By Title</string>
+    <string name="by_channel">By Channel</string>
+    <string name="by_callsign">By Callsign</string>
     <string name="season">Season</string>
     <string name="episode">Episode</string>
     <string name="originally_aired">Originally Aired</string>

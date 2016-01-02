@@ -33,6 +33,10 @@ import android.util.Log;
 public class TvShow extends Item {
     private static final String TAG = TvShow.class.getSimpleName();
 
+    private String channelNumber;
+    public String getChannelNumber() { return channelNumber; }
+    public void setChannelNumber(String channum) { this.channelNumber = channum; }
+
     private String callsign;
     public String getCallsign() { return callsign; }
     public void setCallsign(String callsign) { this.callsign = callsign; }
@@ -64,10 +68,6 @@ public class TvShow extends Item {
 
     public int getChannelId() {
         return Integer.parseInt(getId().substring(0, getId().indexOf('~')));
-    }
-
-    public int getChannelNumber() {
-        return Integer.parseInt(getId().substring(1, getId().indexOf('~')));
     }
 
     public String getStartTimeParam() {
@@ -291,9 +291,28 @@ public class TvShow extends Item {
     protected Comparator<Item> getChannelNumberComparator() {
         return new Comparator<Item>() {
             public int compare(Item item1, Item item2) {
-                TvShow show1 = (TvShow) item1;
-                TvShow show2 = (TvShow) item2;
-                return show1.getChannelNumber() - show2.getChannelNumber();
+                String chan1 = ((TvShow)item1).getChannelNumber();
+                String chan2 = ((TvShow)item2).getChannelNumber();
+                // try to sort as numbers
+                try {
+                    int c1 = Integer.parseInt(chan1);
+                    int c2 = Integer.parseInt(chan2);
+                    return c1 - c2;
+                }
+                catch (NumberFormatException ex) {
+                    return chan1.compareToIgnoreCase(chan2);
+                }
+            }
+        };
+    }
+
+    @Override
+    protected Comparator<Item> getCallsignComparator() {
+        return new Comparator<Item>() {
+            public int compare(Item item1, Item item2) {
+                TvShow show1 = (TvShow)item1;
+                TvShow show2 = (TvShow)item2;
+                return show1.getCallsign().compareToIgnoreCase(show2.getCallsign());
             }
         };
     }

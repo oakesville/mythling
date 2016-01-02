@@ -264,6 +264,8 @@ public class MythlingParser implements MediaListParser {
 
     private void addProgramInfo(TvShow item, JSONObject jsonObj) throws JSONException, ParseException {
         item.setStartTime(Localizer.SERVICE_DATE_TIME_RAW_FORMAT.parse(item.getId().substring(item.getId().indexOf('~') + 1)));
+        if (jsonObj.has("channel"))
+            item.setChannelNumber(jsonObj.getString("channel"));
         if (jsonObj.has("callsign"))
             item.setCallsign(jsonObj.getString("callsign"));
         if (jsonObj.has("description"))

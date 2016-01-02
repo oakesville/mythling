@@ -194,6 +194,8 @@ public class AppSettings {
                 url += "&sort=date";
             else if (mediaSettings.getSortType() == SortType.byRating)
                 url += "&sort=rating";
+            else if (mediaSettings.getSortType() == SortType.byCallsign)
+                url += "&sort=callsign";
             else if (mediaType == MediaType.recordings && getMediaSettings().getViewType() == ViewType.detail)
                 url += "&flatten=true";
         } else {
@@ -772,7 +774,7 @@ public class AppSettings {
             mediaSettings.setTypeDeterminer(typeDeterminer);
             String viewType = getStringPref(VIEW_TYPE + ":" + mediaSettings.getType().toString(), getDefaultViewType(mediaSettings.getType()).toString());
             mediaSettings.setViewType(viewType);
-            String sortType = getStringPref(SORT_TYPE + ":" + mediaSettings.getType().toString(), "byTitle");
+            String sortType = getStringPref(SORT_TYPE + ":" + mediaSettings.getType().toString(), mediaSettings.isLiveTv() ? "byChannel" : "byTitle");
             mediaSettings.setSortType(sortType);
         }
         return mediaSettings;

@@ -68,6 +68,13 @@
                 <item
                     android:id="@+id/sort_byRating"
                     android:title="@string/menu_byRating" />
+                <!-- for live tv -->
+                <item
+                    android:id="@+id/sort_byChannel"
+                    android:title="@string/menu_byChannel" />
+                <item
+                    android:id="@+id/sort_byCallsign"
+                    android:title="@string/menu_byCallsign" />
             </group>
         </menu>
     </item>

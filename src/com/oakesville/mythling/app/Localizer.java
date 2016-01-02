@@ -166,6 +166,10 @@ public class Localizer {
             return getStringRes(R.string.by_date);
         else if (sortType == SortType.byRating)
             return getStringRes(R.string.by_rating);
+        else if (sortType == SortType.byCallsign)
+            return getStringRes(R.string.by_callsign);
+        else if (sortType == SortType.byChannel)
+            return getStringRes(R.string.by_channel);
         else
             return getStringRes(R.string.by_title);
     }

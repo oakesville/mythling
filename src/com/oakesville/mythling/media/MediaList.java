@@ -186,7 +186,7 @@ public class MediaList {
     }
 
     public boolean supportsSort() {
-        return mediaType != MediaType.liveTv && mediaType != MediaType.music;
+        return mediaType != MediaType.music;
     }
 
     public boolean canHaveArtwork() {

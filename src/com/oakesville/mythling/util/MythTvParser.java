@@ -350,6 +350,8 @@ public class MythTvParser implements MediaListParser {
         int lastdot = filename.lastIndexOf('.');
         recording.setFileBase(filename.substring(0, lastdot));
         recording.setFormat(filename.substring(lastdot + 1));
+        if (channel.has("ChanNum"))
+            recording.setChannelNumber(channel.getString("ChanNum"));
         if (channel.has("CallSign"))
             recording.setCallsign(channel.getString("CallSign"));
         addProgramInfo(recording, rec);
@@ -373,6 +375,8 @@ public class MythTvParser implements MediaListParser {
         TvShow tvShow = new TvShow(id, prog.getString("Title"));
         tvShow.setStartTime(parseMythDateTime(startTime));
         tvShow.setProgramStart(startTime);
+        if (chanInfo.has("ChanNum"))
+            tvShow.setChannelNumber(chanInfo.getString("ChanNum"));
         if (chanInfo.has("CallSign"))
             tvShow.setCallsign(chanInfo.getString("CallSign"));
         addProgramInfo(tvShow, prog);

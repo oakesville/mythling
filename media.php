@@ -516,7 +516,7 @@ else if ($type->isSearch())
   }
   
   // liveTv
-  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
+  $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.channum, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
   if (isShowQuery())
     echo "tQuery: " . $tQuery . "\n\n";
   $tRes = mysql_query($tQuery) or die(error("Query failed: " . mysql_error()));
@@ -527,6 +527,7 @@ else if ($type->isSearch())
   {
     $id = mysql_result($tRes, $i, "id");
     $progstart = null; // always identifed by id
+    $channum = mysql_result($tRes, $i, "channum");
     $callsign = mysql_result($tRes, $i, "callsign");
     $title = cleanup(mysql_result($tRes, $i, "title"));
     $subtitle = cleanup(mysql_result($tRes, $i, "subtitle"));
@@ -546,13 +547,13 @@ else if ($type->isSearch())
         $airdate = null;
     }
     $endtime = mysql_result($tRes, $i, "endtime");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, null, null, $endtime, null, $i < $tNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $channum, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, null, null, $endtime, null, $i < $tNum - 1);
     $i++;
   }
   echo "  ],\n";
   
   // recordings
-  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.endtime, orec.recstatus";
+  $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.channum, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.endtime, orec.recstatus";
   $rQuery .= " from channel c, recordedprogram rp, recorded r left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid";
   $rQuery .= " and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
@@ -565,6 +566,7 @@ else if ($type->isSearch())
   {
     $id = mysql_result($rRes, $i, "id");
     $progstart = mysql_result($rRes, $i, "progstart");
+    $channum = mysql_result($rRes, $i, "channum");
     $callsign = mysql_result($rRes, $i, "callsign");
     $title = cleanup(mysql_result($rRes, $i, "title"));
     $basename = mysql_result($rRes, $i, "basename");
@@ -589,7 +591,7 @@ else if ($type->isSearch())
     $episode = mysql_result($rRes, $i, "episode");
     $endtime = mysql_result($rRes, $i, "endtime");
     $recstatus = mysql_result($rRes, $i, "recstatus");
-    printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $i < $rNum - 1);
+    printSearchResultRecordingOrLiveTv($id, $progstart, $channum, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $i < $rNum - 1);
     $i++;
   }
   echo "  ]\n}";
@@ -684,8 +686,11 @@ else
   {
     $where = "where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp()";
     $groupBy = "group by p.programid"; // avoid dups when multiple recording sources
-    $orderBy = "order by cast(c.channum as unsigned)";
-    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
+    if ($sort == "callsign")
+      $orderBy = "order by c.callsign";
+    else
+      $orderBy = "order by cast(c.channum as unsigned)";
+    $query = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.channum, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c " . $where . " " . $groupBy . " " . $orderBy;
   }
   else if ($type->isRecordings())
   {
@@ -706,7 +711,7 @@ else
       $orderBy = "order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
       $groupRecordingsByTitle = !$flatten;
     }
-    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.recordid, r.storagegroup, r.recgroup, orec.recstatus";
+    $query = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.channum, c.callsign, r.endtime, r.title, r.basename, r.subtitle, r.description, r.stars, r.inetref, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.recordid, r.storagegroup, r.recgroup, orec.recstatus";
     $query .= " from recorded r " . $where . " " . $orderBy;
   }
   
@@ -722,6 +727,7 @@ else
   {
     $progstarts = array();
     $titles = array();
+    $channums = array();
     $callsigns = array();
     $basenames = array();
     $subtitles = array();
@@ -799,6 +805,7 @@ else
         $progst = mysql_result($result, $i, "progstart");
       else
         $progst = null;
+      $cn = mysql_result($result, $i, "channum");
       $cs = mysql_result($result, $i, "callsign");
       $tit = cleanup(mysql_result($result, $i, "title"));
       if ($type->isRecordings() && $groupRecordingsByTitle)
@@ -893,6 +900,7 @@ else
     {
       $progstarts[$id] = $progst;
       $titles[$id] = $tit;
+      $channums[$id] = $cn;
       $callsigns[$id] = $cs;
       $basenames[$id] = $bn;
       $subtitles[$id] = $subtit;
@@ -1108,7 +1116,7 @@ function printItemsBegin($depth)
 
 function printItem($path, $file, $depth, $more)
 {
-  global $type, $fileIds, $progstarts, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $storagegroups, $recgroups, $recstatuses, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
+  global $type, $fileIds, $progstarts, $channums, $callsigns, $basenames, $titles, $subtitles, $descriptions, $airdates, $endtimes, $recordids, $storagegroups, $recgroups, $recstatuses, $subtitles, $inetrefs, $homepages, $seasons, $episodes, $years, $ratings, $directors, $actors, $summaries, $artworks;
 
   echo indent($depth * 4 + 2);
 
@@ -1146,6 +1154,8 @@ function printItem($path, $file, $depth, $more)
   {
     if ($progstarts[$id] != null)
       echo ', "programStart": "' . $progstarts[$id] . '"';
+    if ($channums[$id] != null)
+      echo ', "channel": "' . $channums[$id] . '"';
     if ($callsigns[$id] != null)
       echo ', "callsign": "' . $callsigns[$id] . '"';
     if ($basenames[$id] != null)
@@ -1239,13 +1249,15 @@ function printSearchResult($id, $path, $file, $more)
   echo "\n";
 }
 
-function printSearchResultRecordingOrLiveTv($id, $progstart, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $more)
+function printSearchResultRecordingOrLiveTv($id, $progstart, $channum, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $more)
 {
   echo "    { ";
   echo '"id": "' . $id . '"';
   if ($progstart != null)
     echo ', "programStart": "' . $progstart . '"';
   echo ', "title": "' . $title . '"';
+  if ($channum)
+    echo ', "channel": "' . $channum . '"'; 
   if ($callsign)
     echo ', "callsign": "' . $callsign . '"'; 
   if ($basename)

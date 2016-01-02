@@ -43,7 +43,9 @@ public class MediaSettings {
     public enum SortType {
         byTitle,
         byDate,
-        byRating
+        byRating,
+        byChannel,
+        byCallsign
     }
 
     private MediaType type = MediaType.videos;

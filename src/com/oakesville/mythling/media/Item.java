@@ -215,14 +215,20 @@ public abstract class Item implements Listable {
      * Default supports by title or rating.
      */
     public Comparator<Item> getComparator(SortType sort) {
-        if (isLiveTv())
-            return getChannelNumberComparator();
-        else if (sort == SortType.byRating)
-            return getRatingComparator();
-        else if (sort == SortType.byDate)
-            return getDateComparator();
-        else
-            return getTitleComparator();
+        if (isLiveTv()) {
+            if (sort == SortType.byCallsign)
+                return getCallsignComparator();
+            else
+              return getChannelNumberComparator();
+        }
+        else {
+            if (sort == SortType.byRating)
+                return getRatingComparator();
+            else if (sort == SortType.byDate)
+                return getDateComparator();
+            else
+                return getTitleComparator();
+        }
     }
 
     protected Comparator<Item> getTitleComparator() {
@@ -257,6 +263,10 @@ public abstract class Item implements Listable {
     }
 
     protected Comparator<Item> getChannelNumberComparator() {
+        return getTitleComparator(); // supported only for specific types
+    }
+
+    protected Comparator<Item> getCallsignComparator() {
         return getTitleComparator(); // supported only for specific types
     }
 
