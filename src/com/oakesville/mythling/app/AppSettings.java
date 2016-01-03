@@ -452,7 +452,15 @@ public class AppSettings {
     }
 
     public boolean isExternalVideoPlayer() {
-        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, true);
+        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, isCpuCompatibleWithInternalPlayer());
+    }
+
+    public boolean isCpuCompatibleWithInternalPlayer() {
+        for (String cpu : getSupportedCpus()) {
+            if (cpu.equals("armeabi-v7a"))
+                return true;
+        }
+        return false;
     }
 
     public int getSkipBackInterval() {
@@ -1165,6 +1173,10 @@ public class AppSettings {
 
     public static int getAndroidVersion() {
         return Build.VERSION.SDK_INT;
+    }
+
+    public static String[] getSupportedCpus() {
+        return Build.SUPPORTED_ABIS;
     }
 
     private static DevicePrefsSpec devicePrefsSpec;
