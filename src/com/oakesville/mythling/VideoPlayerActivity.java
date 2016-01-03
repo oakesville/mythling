@@ -120,6 +120,9 @@ public class VideoPlayerActivity extends Activity {
 
         navControls = (LinearLayout) findViewById(R.id.nav_controls);
 
+        if (appSettings.isTv())
+            findViewById(R.id.nav_touch_controls).setVisibility(View.GONE);
+
         createProgressBar();
 
         try {
@@ -522,6 +525,7 @@ public class VideoPlayerActivity extends Activity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (appSettings.isTv() && event.getAction() == KeyEvent.ACTION_DOWN && !mediaPlayer.isReleased()) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                showUi();
                 if (mediaPlayer.isPlaying())
                     mediaPlayer.pause();
                 else
@@ -529,34 +533,42 @@ public class VideoPlayerActivity extends Activity {
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                showUi();
                 mediaPlayer.play();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                showUi();
                 mediaPlayer.pause();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
+                showUi();
                 rewind();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
+                showUi();
                 fastForward();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                showUi();
                 skip(-appSettings.getSkipBackInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                showUi();
                 skip(appSettings.getSkipForwardInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                showUi();
                 skip(-appSettings.getJumpInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                showUi();
                 skip(appSettings.getJumpInterval());
                 return true;
             }

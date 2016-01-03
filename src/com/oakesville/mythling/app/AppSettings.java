@@ -1175,8 +1175,19 @@ public class AppSettings {
         return Build.VERSION.SDK_INT;
     }
 
+    @SuppressWarnings("deprecation")
     public static String[] getSupportedCpus() {
-        return Build.SUPPORTED_ABIS;
+        try {
+            try {
+                return new String[] { Build.CPU_ABI, Build.CPU_ABI2 };
+            }
+            catch (NoSuchFieldError er) {
+                return new String[] { Build.CPU_ABI };
+            }
+        }
+        catch (Throwable th) {
+            return new String[0];
+        }
     }
 
     private static DevicePrefsSpec devicePrefsSpec;
