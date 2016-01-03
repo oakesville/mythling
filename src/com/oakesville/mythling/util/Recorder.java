@@ -30,7 +30,6 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.AllTunersInUseException;
-import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
@@ -141,16 +140,14 @@ public class Recorder {
         MediaList recordingsList = jsonParser.parseMediaList(MediaType.recordings, storageGroups);
         Date now = new Date();
         int tunersInUse = 0;
-        for (Category cat : recordingsList.getCategories()) {
-            for (Item item : cat.getItems()) {
-                Recording rec = ((Recording) item);
-                if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw())) {
-                    recording = rec;
-                    return recording;
-                } else if (!"Deleted".equals(rec.getRecordingGroup()) && rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0) {
-                    if (rec.getRecordId() != 0) {
-                        tunersInUse++;
-                    }
+        for (Item item : recordingsList.getAllItems()) {
+            Recording rec = ((Recording) item);
+            if (rec.getChannelId() == tvShow.getChannelId() && rec.getProgramStart().equals(tvShow.getStartTimeRaw())) {
+                recording = rec;
+                return recording;
+            } else if (!"Deleted".equals(rec.getRecordingGroup()) && rec.getStartTime().compareTo(now) <= 0 && rec.getEndTime().compareTo(now) >= 0) {
+                if (rec.getRecordId() != 0) {
+                    tunersInUse++;
                 }
             }
         }

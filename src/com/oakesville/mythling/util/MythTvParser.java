@@ -369,9 +369,9 @@ public class MythTvParser implements MediaListParser {
             return null;
         JSONObject prog = (JSONObject) progs.get(0);
         String startTime = prog.getString("StartTime").replace('T', ' ');
+        if (startTime.endsWith("Z"))
+            startTime = startTime.substring(0, startTime.length() - 1);
         String id = chanId + "~" + startTime;
-        if (id.endsWith("Z"))
-            id = id.substring(0, id.length() - 1);
         TvShow tvShow = new TvShow(id, prog.getString("Title"));
         tvShow.setStartTime(parseMythDateTime(startTime));
         tvShow.setProgramStart(startTime);
@@ -403,8 +403,11 @@ public class MythTvParser implements MediaListParser {
         }
         if (jsonObj.has("StartTime")) {
             String startTime = jsonObj.getString("StartTime");
-            if (!startTime.isEmpty())
+            if (!startTime.isEmpty()) {
+                if (startTime.endsWith("Z"))
+                    startTime = startTime.substring(0, startTime.length() - 1);
                 tvShow.setProgramStart(startTime.replace('T', ' '));
+            }
         }
         if (jsonObj.has("EndTime")) {
             String endtime = jsonObj.getString("EndTime");
