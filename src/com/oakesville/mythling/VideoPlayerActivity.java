@@ -47,6 +47,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -57,9 +58,12 @@ public class VideoPlayerActivity extends Activity {
 
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
-    private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
+    private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
+
+    private static int HIDE_UI_INITIAL_DELAY = 1000;
+    private static int HIDE_UI_POST_TOUCH_DELAY = 2500;
 
     private AppSettings appSettings;
     private Uri videoUri;
@@ -71,6 +75,7 @@ public class VideoPlayerActivity extends Activity {
     private ProgressBar progressBar;
     private SurfaceView surface;
     private FrameLayout surfaceFrame;
+    private LinearLayout navControls;
 
     private MediaPlayer mediaPlayer;
     private int videoWidth;
@@ -88,8 +93,6 @@ public class VideoPlayerActivity extends Activity {
 
     private float savedPosition;
     private boolean done;
-
-    private int hideUiDelay = 1500;
 
     private boolean showTvControlsHint;
 
@@ -115,6 +118,8 @@ public class VideoPlayerActivity extends Activity {
 
         surfaceFrame = (FrameLayout) findViewById(R.id.player_surface_frame);
 
+        navControls = (LinearLayout) findViewById(R.id.nav_controls);
+
         createProgressBar();
 
         try {
@@ -130,8 +135,10 @@ public class VideoPlayerActivity extends Activity {
 
             seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (fromUser && mediaPlayer.isItemSeekable()) {
-                        mediaPlayer.setPosition((float)progress/(float)(itemLength));
+                    if (fromUser) {
+                        showUi();
+                        if (mediaPlayer.isItemSeekable())
+                            mediaPlayer.setPosition((float)progress/(float)(itemLength));
                     }
                 }
                 public void onStartTrackingTouch(SeekBar seekBar) {
@@ -143,6 +150,7 @@ public class VideoPlayerActivity extends Activity {
             playBtn = (ImageButton) findViewById(R.id.ctrl_play);
             playBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     mediaPlayer.play();
                     showPause();
                 }
@@ -151,6 +159,7 @@ public class VideoPlayerActivity extends Activity {
             pauseBtn = (ImageButton) findViewById(R.id.ctrl_pause);
             pauseBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     mediaPlayer.pause();
                     showPlay();
                 }
@@ -159,6 +168,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
             fastBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     skip(-appSettings.getJumpInterval());
                 }
             });
@@ -166,6 +176,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipBack = (ImageButton) findViewById(R.id.ctrl_skip_back);
             skipBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     skip(-appSettings.getSkipBackInterval());
                 }
             });
@@ -173,6 +184,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton rewind = (ImageButton) findViewById(R.id.ctrl_rewind);
             rewind.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     rewind();
                     showPlay();
                 }
@@ -181,6 +193,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton ffwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
             ffwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     fastForward();
                     showPlay();
                 }
@@ -189,6 +202,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipFwd = (ImageButton) findViewById(R.id.ctrl_skip_fwd);
             skipFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     skip(appSettings.getSkipForwardInterval());
                 }
             });
@@ -196,6 +210,7 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_jump_fwd);
             fastFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
+                    showUi();
                     skip(appSettings.getJumpInterval());
                 }
             });
@@ -211,7 +226,7 @@ public class VideoPlayerActivity extends Activity {
 
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        delayedHideUi(250);
+        delayedHideUi(HIDE_UI_INITIAL_DELAY);
     }
 
     private void showPlay() {
@@ -367,12 +382,10 @@ public class VideoPlayerActivity extends Activity {
 
                 private int minSampleLength = 3;
                 private int correctableDelta = 5;  // don't update if off by less than this
-                private boolean lengthEstimationNotified;
 
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
                         progressBar.setVisibility(View.GONE);
-                        lengthEstimationNotified = false;
                         if (itemLength != 0) {
                             // length is already known -- don't wait for seekability determination
                             mediaPlayer.setItemLength(itemLength);
@@ -407,10 +420,7 @@ public class VideoPlayerActivity extends Activity {
 
                         // infer length if needed
                         if (itemLength == 0) {
-                            if (!lengthEstimationNotified) {
-                                Toast.makeText(getApplicationContext(), getString(R.string.estimating_video_length), Toast.LENGTH_LONG).show();
-                                lengthEstimationNotified = true;
-                            }
+                            Log.i(TAG, "Estimating video length");
                             if (pos > minSampleLength) {
                                 int prevLen = mediaPlayer.getItemLength();
                                 int len = mediaPlayer.inferItemLength();
@@ -427,9 +437,10 @@ public class VideoPlayerActivity extends Activity {
                         // restore saved position
                         if (mediaPlayer.isItemSeekable()) {
                             if (savedPosition > 0) {
-                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
                                 mediaPlayer.setPosition(savedPosition);
                                 savedPosition = 0;
+                                showUi();
                             }
                         }
 
@@ -439,15 +450,17 @@ public class VideoPlayerActivity extends Activity {
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {
                                     if (!cut.equals(currentCut)) {
-                                        if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
-                                            int skip = (cut.end - pos);
-                                            if (skip > 0)
-                                              mediaPlayer.skip(skip);
-                                        }
                                         if (!AppSettings.COMMERCIAL_SKIP_OFF.equals(commercialSkip)) {
                                             TextBuilder tb = new TextBuilder(getString(R.string.notify_commercial_skip_));
                                             tb.appendDuration(cut.end - cut.start);
                                             Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
+                                        }
+                                        if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
+                                            int skip = (cut.end - pos);
+                                            if (skip > 0) {
+                                                showUi();
+                                                mediaPlayer.skip(skip);
+                                            }
                                         }
                                     }
                                     inCut = true;
@@ -567,6 +580,9 @@ public class VideoPlayerActivity extends Activity {
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+            // hide playback controls
+            navControls.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -576,8 +592,9 @@ public class VideoPlayerActivity extends Activity {
         surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
+        navControls.setVisibility(View.VISIBLE);
 
-        delayedHideUi(hideUiDelay);
+        delayedHideUi(HIDE_UI_POST_TOUCH_DELAY);
     }
 
     protected ProgressBar createProgressBar() {

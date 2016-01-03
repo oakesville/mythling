@@ -28,20 +28,20 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" >
           
-	    <FrameLayout
-	        android:id="@+id/player_surface_frame"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:layout_gravity="center">
-	        <SurfaceView
-	            android:id="@+id/player_surface"
-	            android:layout_width="fill_parent"
-	            android:layout_height="fill_parent"
-	            android:layout_gravity="center" />
-	
-	    </FrameLayout>
+	      <FrameLayout
+	          android:id="@+id/player_surface_frame"
+	          android:layout_width="match_parent"
+	          android:layout_height="match_parent"
+	          android:layout_gravity="center">
+	          <SurfaceView
+	              android:id="@+id/player_surface"
+	              android:layout_width="fill_parent"
+	              android:layout_height="fill_parent"
+	              android:layout_gravity="center" />
+	      </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/nav_controls"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,6 +49,7 @@
             android:background="@color/overlay_black">
         
             <LinearLayout
+                android:id="@+id/prog_bar_controls"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
