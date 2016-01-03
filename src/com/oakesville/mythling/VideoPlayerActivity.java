@@ -15,6 +15,7 @@
  */
 package com.oakesville.mythling;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.oakesville.mythling.app.AppSettings;
@@ -37,6 +38,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
@@ -475,7 +477,16 @@ public class VideoPlayerActivity extends Activity {
             });
 
             progressBar.setVisibility(View.VISIBLE);
-            mediaPlayer.playMedia(videoUri);
+
+            if (videoUri.getScheme().equals("content")) {
+                ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
+                if (pfd == null)
+                    throw new IOException("Unable to open file descriptor for: " + videoUri);
+                mediaPlayer.playMedia(pfd.getFileDescriptor());
+            }
+            else {
+                mediaPlayer.playMedia(videoUri);
+            }
         }
         catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);

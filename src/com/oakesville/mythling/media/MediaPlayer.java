@@ -15,6 +15,8 @@
  */
 package com.oakesville.mythling.media;
 
+import java.io.FileDescriptor;
+
 import android.net.Uri;
 
 public interface MediaPlayer {
@@ -46,6 +48,8 @@ public interface MediaPlayer {
      * @param mediaUri
      */
     public void playMedia(Uri mediaUri);
+
+    public void playMedia(FileDescriptor fileDescriptor);
 
     public boolean isPlaying();
 

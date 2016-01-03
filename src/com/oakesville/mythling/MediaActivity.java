@@ -829,6 +829,7 @@ public abstract class MediaActivity extends Activity {
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
             getAppData().addDownload(item.getId(), id);
 
+            // TODO: this reciever will be leaked
             registerReceiver(new BroadcastReceiver() {
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();

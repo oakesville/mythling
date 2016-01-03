@@ -15,6 +15,7 @@
  */
 package com.oakesville.mythling.vlc;
 
+import java.io.FileDescriptor;
 import java.util.ArrayList;
 
 import org.videolan.libvlc.IVLCVout;
@@ -30,11 +31,6 @@ import android.os.Handler;
 import android.view.SurfaceView;
 
 public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythling.media.MediaPlayer {
-
-    private Uri mediaUri;
-    public Uri getMediaUri() {
-        return mediaUri;
-    }
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -75,9 +71,12 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void playMedia(Uri mediaUri) {
-        this.mediaUri = mediaUri;
-        Media m = new Media(libvlc, mediaUri);
-        setMedia(m);
+        setMedia(new Media(libvlc, mediaUri));
+        play();
+    }
+
+    public void playMedia(FileDescriptor fd) {
+        setMedia(new Media(libvlc, fd));
         play();
     }
 
