@@ -218,7 +218,7 @@ public class AppSettings {
         if (isMythlingMediaServices())
             return new URL(getMythlingWebBaseUrl() + "/media.php?type=cutList&");
         else
-            return new URL(getMythTvServicesBaseUrl() + "/Dvr/GetRecordedCommBreak?");
+            return new URL(getMythTvServicesBaseUrl() + "/Dvr/GetRecordedCommBreak?OffsetType=Duration&");
     }
 
     public URL getMediaListUrl() throws MalformedURLException, UnsupportedEncodingException {

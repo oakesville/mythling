@@ -71,12 +71,17 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void playMedia(Uri mediaUri) {
-        setMedia(new Media(libvlc, mediaUri));
+        Media media = new Media(libvlc, mediaUri);
+        media.setHWDecoderEnabled(true, true);
+        media.addOption(":network-caching=2500");
+        setMedia(media);
         play();
     }
 
     public void playMedia(FileDescriptor fd) {
-        setMedia(new Media(libvlc, fd));
+        Media media = new Media(libvlc, fd);
+        media.setHWDecoderEnabled(true, true);
+        setMedia(media);
         play();
     }
 
@@ -97,11 +102,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         // libvlc
         ArrayList<String> options = new ArrayList<String>();
         //options.add("--subsdec-encoding <encoding>");
-        options.add("--aout=opensles");
-        options.add("--audio-time-stretch"); // time stretching
+//        options.add("--aout=opensles");
+//        options.add("--audio-time-stretch"); // time stretching
+        options.add("--ffmpeg-hw");
         if (BuildConfig.DEBUG)
             options.add("-vvv");
         libvlc = new LibVLC(options);
+
         return libvlc;
     }
 

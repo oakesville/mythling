@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar', exclude: 'libvlc-3.0.0.jar' )
     compile(name:'libvlc', ext:'aar')
     // compile 'com.android.support:support-v4:21.0.3'
 }
@@ -52,7 +52,21 @@ android {
     
     lintOptions {
         abortOnError false
-    }    
+    }
+    
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("OAKESVILLE_KEYSTORE_FILE"))
+            storePassword System.getenv("OAKESVILLE_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("OAKESVILLE_KEY_ALIAS")
+            keyPassword System.getenv("OAKESVILLE_KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 // Note: On win8 grunt fails with "ENOTSUP, operation not supported on socket"
@@ -72,7 +86,7 @@ task copyEpgDist(type: Copy) {
 }
 
 task getMythlingEpg() {
-    dependsOn(buildMythlingEpg, copyEpgDist)
+    dependsOn(/*buildMythlingEpg,*/copyEpgDist)
 }
 
 task devCopyJs(type: Copy) {
