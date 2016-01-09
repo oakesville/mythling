@@ -168,9 +168,13 @@ public class ItemDetailFragment extends Fragment {
             titleView.setText(item.getTitle());
 
             String subLabel = item.getSubLabel();
-            if (subLabel != null) {
-                TextView subTitleView = (TextView) detailView.findViewById(R.id.subtitle_text);
+            TextView subTitleView = (TextView) detailView.findViewById(R.id.subtitle_text);
+            if (subLabel == null) {
+                subTitleView.setVisibility(View.GONE);
+            }
+            else {
                 subTitleView.setText(subLabel);
+                subTitleView.setVisibility(View.VISIBLE);
             }
 
             // rating
@@ -232,6 +236,9 @@ public class ItemDetailFragment extends Fragment {
                                 new Reporter(ex).send();
                         }
                     }
+                    else {
+                        detailView.findViewById(R.id.custom_link).setVisibility(View.GONE); // no gap before std link
+                    }
 
                     // page link
                     if (video.getPageUrl() != null || video.getInternetRef() != null) {
@@ -259,7 +266,6 @@ public class ItemDetailFragment extends Fragment {
                             Log.e(TAG, ex.getMessage(), ex);
                             if (getAppSettings().isErrorReportingEnabled())
                                 new Reporter(ex).send();
-                            Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                         }
                     }
                 }
