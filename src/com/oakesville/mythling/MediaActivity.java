@@ -1355,7 +1355,7 @@ public abstract class MediaActivity extends Activity {
         protected void onPostExecute(Long result) {
             stopProgress();
             if (result != 0L) {
-                Toast.makeText(getApplicationContext(), "Unable to retrieve cut list (MythTV 0.27?)", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.unable_to_retrieve_cutlist), Toast.LENGTH_LONG).show();
                 onResume();
             }
             Intent videoIntent = new Intent(Intent.ACTION_VIEW);

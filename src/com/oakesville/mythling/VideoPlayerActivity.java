@@ -72,7 +72,7 @@ public class VideoPlayerActivity extends Activity {
     private List<Cut> cutList;
     private Cut currentCut;
 
-    private ProgressBar progressBar;
+    private FrameLayout progressFrame;
     private SurfaceView surface;
     private FrameLayout surfaceFrame;
     private LinearLayout navControls;
@@ -123,7 +123,8 @@ public class VideoPlayerActivity extends Activity {
         if (appSettings.isTv())
             findViewById(R.id.nav_touch_controls).setVisibility(View.GONE);
 
-        createProgressBar();
+        progressFrame = createProgressBar();
+        progressFrame.setVisibility(View.VISIBLE);
 
         try {
             videoUri = Uri.parse(getIntent().getDataString());
@@ -219,7 +220,7 @@ public class VideoPlayerActivity extends Activity {
             });
         }
         catch (Exception ex) {
-            progressBar.setVisibility(View.GONE);
+            progressFrame.setVisibility(View.GONE);
             Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
@@ -388,7 +389,7 @@ public class VideoPlayerActivity extends Activity {
 
                 public void onEvent(MediaPlayerEvent event) {
                     if (event == MediaPlayerEvent.playing) {
-                        progressBar.setVisibility(View.GONE);
+                        progressFrame.setVisibility(View.GONE);
                         if (itemLength != 0) {
                             // length is already known -- don't wait for seekability determination
                             mediaPlayer.setItemLength(itemLength);
@@ -492,8 +493,6 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            progressBar.setVisibility(View.VISIBLE);
-
             if (videoUri.getScheme().equals("content")) {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
                 if (pfd == null)
@@ -506,7 +505,7 @@ public class VideoPlayerActivity extends Activity {
         }
         catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
-            progressBar.setVisibility(View.GONE);
+            progressFrame.setVisibility(View.GONE);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), "Error creating player: " + ex.getMessage(), Toast.LENGTH_LONG).show();
@@ -609,10 +608,11 @@ public class VideoPlayerActivity extends Activity {
         delayedHideUi(HIDE_UI_POST_TOUCH_DELAY);
     }
 
-    protected ProgressBar createProgressBar() {
-        progressBar = (ProgressBar) findViewById(R.id.progress);
+    private FrameLayout createProgressBar() {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar.setScaleX(0.20f);
         progressBar.setScaleY(0.20f);
-        return progressBar;
+        return (FrameLayout) findViewById(R.id.progress_frame);
     }
+
 }

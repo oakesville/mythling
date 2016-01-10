@@ -40,7 +40,20 @@
 	              android:layout_gravity="center" />
 	      </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/progress_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="true"
+                android:layout_gravity="center" />
+        </FrameLayout>
+        
+	      <LinearLayout
             android:id="@+id/nav_controls"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -172,13 +185,4 @@
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:indeterminate="true"
-        android:layout_gravity="center" />
-    
-    
 </LinearLayout>
