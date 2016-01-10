@@ -179,6 +179,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private int playRate = 1;
+    public int getPlayRate() { return playRate; }
 
     @Override
     public void play() {

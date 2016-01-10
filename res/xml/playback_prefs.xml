@@ -64,7 +64,7 @@
             android:title="@string/title_commercial_skip"
             android:entries="@array/commercial_skip_values"
             android:entryValues="@array/commercial_skip_values"
-            android:defaultValue="off"
+            android:defaultValue="Auto-Skip Off"
             android:layout="@layout/pref" />
     </com.oakesville.mythling.prefs.DisableableCategory>
 

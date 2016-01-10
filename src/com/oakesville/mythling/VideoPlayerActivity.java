@@ -62,8 +62,8 @@ public class VideoPlayerActivity extends Activity {
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int HIDE_UI_INITIAL_DELAY = 1000;
-    private static int HIDE_UI_POST_TOUCH_DELAY = 2500;
+    private static int HIDE_UI_INITIAL_DELAY = 2000;
+    private static int HIDE_UI_POST_TOUCH_DELAY = 3000;
 
     private AppSettings appSettings;
     private Uri videoUri;
@@ -449,7 +449,7 @@ public class VideoPlayerActivity extends Activity {
                         }
 
                         // commercial skip
-                        if (cutList != null) {
+                        if (cutList != null && mediaPlayer.getPlayRate() == 1) {
                             boolean inCut = false;
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {
@@ -482,6 +482,7 @@ public class VideoPlayerActivity extends Activity {
             mediaPlayer.setMediaPlayerShiftListener( new MediaPlayerShiftListener() {
                 int pos; // seconds
                 public void onShift(int delta) {
+                    showUi();
                     if (delta == 0) {
                         pos = mediaPlayer.getSeconds();
                     }

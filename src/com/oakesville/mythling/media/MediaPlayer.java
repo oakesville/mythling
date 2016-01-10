@@ -98,6 +98,8 @@ public interface MediaPlayer {
      */
     public int stepUpFastForward();
 
+    public int getPlayRate();
+
     /**
      * Release player and associated native stuff.
      */
