@@ -267,7 +267,10 @@ public class VideoPlayerActivity extends Activity {
     protected void onResume() {
         done = false;
         super.onResume();
-        savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
+        if (appSettings.isSavePositionOnExit())
+            savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
+        else
+            savedPosition = 0;
         commercialSkip = appSettings.getCommercialSkip();
 
         if (appSettings.isTv()) {
@@ -286,7 +289,7 @@ public class VideoPlayerActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (done)
+        if (done || !appSettings.isSavePositionOnExit())
             appSettings.clearVideoPlaybackPosition(videoUri);
         else
             appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getPosition());

@@ -35,6 +35,11 @@
             android:defaultValue="true"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
+        <CheckBoxPreference
+            android:key="save_position_on_exit"
+            android:title="@string/title_save_position_on_exit"
+            android:defaultValue="true"
+            android:layout="@layout/pref" />
         <EditTextPreference
             android:key="skip_forward_interval"
             android:title="@string/title_skip_forward_interval"
@@ -65,6 +70,12 @@
             android:entries="@array/commercial_skip_values"
             android:entryValues="@array/commercial_skip_values"
             android:defaultValue="Auto-Skip Off"
+            android:layout="@layout/pref" />
+        <EditTextPreference
+            android:key="libvlc_parameters"
+            android:title="@string/title_libvlc_parameters"
+            android:dialogTitle="@string/title_libvlc_parameters"
+            android:dialogMessage="@string/message_libvlc_parameters"
             android:layout="@layout/pref" />
     </com.oakesville.mythling.prefs.DisableableCategory>
 

@@ -70,6 +70,10 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getCommercialSkip());
 
+        pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary(appSettings.getLibVlcParameters());
+
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_MUSIC_PLAYER);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
 
@@ -97,7 +101,9 @@ public class PlaybackPrefs extends PreferenceFragment {
     }
 
     private void doInternalPlayerEnablement(boolean isInternalPlayer) {
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.SAVE_POSITION_ON_EXIT);
+        pref.setEnabled(isInternalPlayer);
+        pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
         pref.setEnabled(isInternalPlayer);
         pref = getPreferenceScreen().findPreference(AppSettings.SKIP_FORWARD_INTERVAL);
         pref.setEnabled(isInternalPlayer);
@@ -107,5 +113,7 @@ public class PlaybackPrefs extends PreferenceFragment {
         if (!isInternalPlayer)
             lPref.setValue(AppSettings.COMMERCIAL_SKIP_OFF);
         lPref.setEnabled(isInternalPlayer);
+        pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
+        pref.setEnabled(isInternalPlayer);
     }
 }

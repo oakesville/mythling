@@ -1332,7 +1332,7 @@ public abstract class MediaActivity extends Activity {
                 URL url = new URL(appSettings.getCommercialCutListBaseUrl() + "ChanId=" + recording.getChannelId() +
                         "&StartTime=" + recording.getStartTimeParam());
                 boolean mythlingServices = appSettings.isMythlingMediaServices();
-                String authType = mythlingServices ? appSettings.getMythlingServicesAuthType() : appSettings.getMythTvServicesAuthType();
+                String authType = mythlingServices ? appSettings.getBackendWebAuthType() : appSettings.getMythTvServicesAuthType();
                 HttpHelper downloader = new HttpHelper(appSettings.getUrls(url), authType, appSettings.getPrefs());
                 if (mythlingServices)
                     downloader.setCredentials(appSettings.getMythlingServicesUser(), appSettings.getMythlingServicesPassword());

@@ -147,6 +147,7 @@ public class AppSettings {
     public static final String EPG_LAST_LOAD = "epg_last_load";
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
+    public static final String SAVE_POSITION_ON_EXIT = "save_position_on_exit";
     public static final String VIDEO_SAVED_POSITION = "video_saved_position";
     public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
     public static final String SKIP_BACK_INTERVAL = "skip_back_interval";
@@ -155,9 +156,9 @@ public class AppSettings {
     public static final String COMMERCIAL_SKIP_OFF = "Auto-Skip Off";
     public static final String COMMERCIAL_SKIP_ON = "Auto-Skip On";
     public static final String COMMERCIAL_SKIP_NOTIFY = "Auto-Skip Notify";
+    public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
-
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -477,6 +478,14 @@ public class AppSettings {
 
     public String getCommercialSkip() {
         return getStringPref(COMMERCIAL_SKIP, COMMERCIAL_SKIP_OFF);
+    }
+
+    public boolean isSavePositionOnExit() {
+        return getBooleanPref(SAVE_POSITION_ON_EXIT, true);
+    }
+
+    public String getLibVlcParameters() {
+        return getStringPref(LIBVLC_PARAMETERS, "");
     }
 
     public boolean isExternalMusicPlayer() {
