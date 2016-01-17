@@ -45,7 +45,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public boolean isItemSeekable() {
-        return itemLength > 0;
+        return itemLength > 0 && proxy == null; // proxied seek awaits issue #65
     }
 
     private boolean lengthDetermined; // libvlc knows the media length (not inferred)
@@ -144,7 +144,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     @Override
     public void setPosition(float pos) {
-        if (itemLength > 0) {
+        if (isItemSeekable()) {
             if (pos < 0)
                 pos = 0;
             else if (pos > 1)
@@ -167,7 +167,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public boolean skip(int delta) {
 
-        if (itemLength > 0) {
+        if (isItemSeekable()) {
             // libvlc setTime() seems to hardly ever work, so use setPosition()
             float curPos = getPosition();
             float newPos = curPos + (float)delta/(float)itemLength;
@@ -192,7 +192,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * Max multiplier for fast-forward and rewind.
      */
     public int getMaxPlayRate() {
-        if (itemLength > 0)
+        if (isItemSeekable())
             return maxPlayRate;
         else
             return 1;
@@ -234,7 +234,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * @return the new playRate
      */
     public int stepUpFastForward() {
-        if (itemLength > 0) {
+        if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
 
@@ -276,7 +276,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * @return the new playRate
      */
     public int stepUpRewind() {
-        if (itemLength > 0) {
+        if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
 

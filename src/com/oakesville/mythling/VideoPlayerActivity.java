@@ -196,7 +196,8 @@ public class VideoPlayerActivity extends Activity {
                 public void onClick(View v) {
                     showUi();
                     rewind();
-                    showPlay();
+                    if (mediaPlayer.getPlayRate() != 1)
+                      showPlay();
                 }
             });
 
@@ -205,7 +206,8 @@ public class VideoPlayerActivity extends Activity {
                 public void onClick(View v) {
                     showUi();
                     fastForward();
-                    showPlay();
+                    if (mediaPlayer.getPlayRate() != 1)
+                      showPlay();
                 }
             });
 
@@ -458,7 +460,7 @@ public class VideoPlayerActivity extends Activity {
                         }
 
                         // commercial skip
-                        if (cutList != null && mediaPlayer.getPlayRate() == 1) {
+                        if (cutList != null && mediaPlayer.isItemSeekable() && mediaPlayer.getPlayRate() == 1) {
                             boolean inCut = false;
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {

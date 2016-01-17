@@ -206,6 +206,7 @@ public class MediaStreamProxy implements Runnable {
             // otherwise assume basic
             String credentials = Base64.encodeToString((proxyInfo.user + ":" + proxyInfo.password).getBytes(), Base64.DEFAULT);
             request.setHeader("Authorization", "Basic " + credentials);
+            response = httpClient.execute(host, request);
         }
         Log.d(TAG, "Proxy response downloaded");
         return response;
