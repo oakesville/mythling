@@ -145,13 +145,13 @@ public class HttpHelper {
     }
 
     private byte[] retrieveWithNoAuth() throws IOException {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String,String> headers = new HashMap<String,String>();
         headers.put("Accept", "application/json");
         return retrieve(headers);
     }
 
     private byte[] retrieveWithBasicAuth() throws IOException {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String,String> headers = new HashMap<String,String>();
         headers.put("Accept", "application/json");
         String credentials = Base64.encodeToString((user + ":" + password).getBytes(), Base64.DEFAULT);
         headers.put("Authorization", "Basic " + credentials);
@@ -215,7 +215,7 @@ public class HttpHelper {
         }
     }
 
-    private HttpContext getDigestAuthContext(String host, int port, String user, String password) {
+    public static HttpContext getDigestAuthContext(String host, int port, String user, String password) {
         CredentialsProvider cp = new BasicCredentialsProvider();
         AuthScope scope = new AuthScope(host, port);
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials(user, password);
@@ -225,7 +225,7 @@ public class HttpHelper {
         return credContext;
     }
 
-    private byte[] retrieve(Map<String, String> headers) throws IOException {
+    private byte[] retrieve(Map<String,String> headers) throws IOException {
         HttpURLConnection conn = null;
         InputStream is = null;
 
@@ -267,7 +267,7 @@ public class HttpHelper {
         }
     }
 
-    private void prepareConnection(URLConnection conn, Map<String, String> headers) throws IOException {
+    private void prepareConnection(URLConnection conn, Map<String,String> headers) throws IOException {
         conn.setConnectTimeout(getConnectTimeout());
         conn.setReadTimeout(getReadTimeout());
         for (String key : headers.keySet())

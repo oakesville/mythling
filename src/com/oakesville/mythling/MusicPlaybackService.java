@@ -16,6 +16,9 @@
 package com.oakesville.mythling;
 
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
+import com.oakesville.mythling.util.MediaStreamProxy;
+import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 import com.oakesville.mythling.util.Reporter;
 
 import android.app.Service;
@@ -27,6 +30,7 @@ import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -54,6 +58,8 @@ public class MusicPlaybackService extends Service {
     private OnAudioFocusChangeListener audioFocusListener;
 
     private boolean isPaused;
+
+    private MediaStreamProxy proxy;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -87,6 +93,8 @@ public class MusicPlaybackService extends Service {
                     } else if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
                         mediaPlayer.reset();
+                        if (proxy != null)
+                            proxy.stop();
                     } else if (isPaused) {
                         mediaPlayer.reset();
                     }
@@ -115,7 +123,22 @@ public class MusicPlaybackService extends Service {
                         }
                     });
 
-                    mediaPlayer.setDataSource(this, intent.getData());
+                    Uri uri = intent.getData();
+                    ProxyInfo proxyInfo = MediaStreamProxy.needsProxy(uri);
+                    if (proxyInfo == null) {
+                        mediaPlayer.setDataSource(this, uri);
+                    }
+                    else {
+                        // needs proxying to support authentication (see issue #55)
+                        proxy = new MediaStreamProxy(proxyInfo, AuthType.valueOf(appSettings.getMythTvServicesAuthType()));
+                        proxy.init();
+                        proxy.start();
+                        String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + uri.getPath();
+                        if (uri.getQuery() != null)
+                            playUrl += "?" + uri.getQuery();
+                        mediaPlayer.setDataSource(this, Uri.parse(playUrl));
+                    }
+
                     mediaPlayer.prepareAsync();
                 }
             }
@@ -152,6 +175,8 @@ public class MusicPlaybackService extends Service {
                 sendBroadcast(new Intent(ACTION_PLAYBACK_STOPPED));
                 releasePlayer();
             }
+            if (proxy != null)
+                proxy.stop();
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.abandonAudioFocus(audioFocusListener);
             if (playbackMessenger != null) {

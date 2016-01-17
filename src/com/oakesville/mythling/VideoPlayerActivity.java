@@ -27,6 +27,7 @@ import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
@@ -56,6 +57,7 @@ import android.widget.Toast;
 
 public class VideoPlayerActivity extends Activity {
 
+    public static final String AUTH_TYPE = "com.oakesville.mythling.AUTH_TYPE";
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
 
@@ -67,6 +69,8 @@ public class VideoPlayerActivity extends Activity {
 
     private AppSettings appSettings;
     private Uri videoUri;
+    private AuthType authType;
+
     private int itemLength; // this will be zero if not known definitively
     private String commercialSkip;
     private List<Cut> cutList;
@@ -127,7 +131,9 @@ public class VideoPlayerActivity extends Activity {
         progressFrame.setVisibility(View.VISIBLE);
 
         try {
-            videoUri = Uri.parse(getIntent().getDataString());
+            videoUri = getIntent().getData();
+            String at = getIntent().getStringExtra(AUTH_TYPE);
+            authType = at == null ? null : AuthType.valueOf(at);
             itemLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
             cutList = (List<Cut>) getIntent().getSerializableExtra(ITEM_CUT_LIST);
 
@@ -504,7 +510,7 @@ public class VideoPlayerActivity extends Activity {
                 mediaPlayer.playMedia(pfd.getFileDescriptor());
             }
             else {
-                mediaPlayer.playMedia(videoUri);
+                mediaPlayer.playMedia(videoUri, authType);
             }
         }
         catch (Exception ex) {

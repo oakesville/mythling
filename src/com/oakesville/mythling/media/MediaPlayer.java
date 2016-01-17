@@ -16,6 +16,9 @@
 package com.oakesville.mythling.media;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
+
+import com.oakesville.mythling.util.HttpHelper.AuthType;
 
 import android.net.Uri;
 
@@ -47,9 +50,9 @@ public interface MediaPlayer {
     /**
      * @param mediaUri
      */
-    public void playMedia(Uri mediaUri);
+    public void playMedia(Uri mediaUri, AuthType authType) throws IOException;
 
-    public void playMedia(FileDescriptor fileDescriptor);
+    public void playMedia(FileDescriptor fileDescriptor) throws IOException;
 
     public boolean isPlaying();
 

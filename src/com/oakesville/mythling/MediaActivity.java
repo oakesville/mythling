@@ -56,6 +56,7 @@ import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
@@ -1536,11 +1537,15 @@ public abstract class MediaActivity extends Activity {
             else {
                 stopProgress();
                 Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-                videoIntent.setDataAndType(Uri.parse(fileUrl), "video/*");
+                Uri playUri = Uri.parse(fileUrl);
+                videoIntent.setDataAndType(playUri, "video/*");
                 if (!appSettings.isExternalVideoPlayer()) {
                     videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
                     if (item.isLengthKnown())
                         videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
+                    String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
+                    if (streamingAuthType != AuthType.None.toString())
+                        videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
                 }
                 startActivity(videoIntent);
             }

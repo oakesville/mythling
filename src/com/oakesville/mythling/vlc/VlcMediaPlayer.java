@@ -16,6 +16,7 @@
 package com.oakesville.mythling.vlc;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.videolan.libvlc.IVLCVout;
@@ -25,6 +26,9 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
+import com.oakesville.mythling.util.MediaStreamProxy;
+import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 
 import android.net.Uri;
 import android.os.Handler;
@@ -45,6 +49,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private boolean lengthDetermined; // libvlc knows the media length (not inferred)
+
+    /**
+     * Proxy is needed for Digest and Basic auth since libVLC doesn't support.
+     */
+    private MediaStreamProxy proxy;
 
     public int inferItemLength() {
         float p = getPosition();
@@ -70,8 +79,23 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         vout.attachViews();
     }
 
-    public void playMedia(Uri mediaUri) {
-        Media media = new Media(libvlc, mediaUri);
+    public void playMedia(Uri mediaUri, AuthType authType) throws IOException {
+        ProxyInfo proxyInfo = MediaStreamProxy.needsProxy(mediaUri);
+        Media media;
+        if (proxyInfo == null) {
+            media = new Media(libvlc, mediaUri);
+        }
+        else {
+            // libvlc needs proxying to support authentication
+            proxy = new MediaStreamProxy(proxyInfo, authType);
+            proxy.init();
+            proxy.start();
+            String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getPath();
+            if (mediaUri.getQuery() != null)
+                playUrl += "?" + mediaUri.getQuery();
+            media = new Media(libvlc, Uri.parse(playUrl));
+        }
+
         media.setHWDecoderEnabled(true, true);
         media.addOption(":network-caching=2500");
         setMedia(media);
@@ -86,6 +110,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void doRelease() {
+        if (proxy != null)
+            proxy.stop();
         if (libvlc == null)
             return;
         stop();
@@ -195,8 +221,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     @Override
     public void pause() {
         playRate = 0;
-        if (isPlaying())
+        if (isPlaying()) {
             super.pause();
+            if (proxy != null)
+                proxy.stop();
+        }
     }
 
     /**
@@ -315,6 +344,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         break;
                     case MediaPlayer.Event.EndReached:
                         eventListener.onEvent(MediaPlayerEvent.end);
+                        if (proxy != null)
+                            proxy.stop();
                         break;
                     case MediaPlayer.Event.EncounteredError:
                         eventListener.onEvent(MediaPlayerEvent.error);
