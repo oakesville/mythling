@@ -55,6 +55,7 @@ public interface MediaPlayer {
     public void playMedia(FileDescriptor fileDescriptor) throws IOException;
 
     public boolean isPlaying();
+    public boolean isProxying();
 
     public void play();
     public void pause();

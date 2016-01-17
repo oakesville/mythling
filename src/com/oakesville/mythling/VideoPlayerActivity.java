@@ -169,9 +169,15 @@ public class VideoPlayerActivity extends Activity {
             pauseBtn = (ImageButton) findViewById(R.id.ctrl_pause);
             pauseBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
-                    mediaPlayer.pause();
-                    showPlay();
+                    if (mediaPlayer.isProxying()) {
+                        // pending issue #65
+                        finish();
+                    }
+                    else {
+                        showUi();
+                        mediaPlayer.pause();
+                        showPlay();
+                    }
                 }
             });
 

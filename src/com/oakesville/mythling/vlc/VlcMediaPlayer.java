@@ -54,6 +54,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * Proxy is needed for Digest and Basic auth since libVLC doesn't support.
      */
     private MediaStreamProxy proxy;
+    public boolean isProxying() {
+        return proxy != null;
+    }
 
     public int inferItemLength() {
         float p = getPosition();
@@ -221,11 +224,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     @Override
     public void pause() {
         playRate = 0;
-        if (isPlaying()) {
+        if (isPlaying())
             super.pause();
-            if (proxy != null)
-                proxy.stop();
-        }
     }
 
     /**
