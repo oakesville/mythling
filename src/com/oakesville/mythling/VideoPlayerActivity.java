@@ -64,8 +64,8 @@ public class VideoPlayerActivity extends Activity {
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int HIDE_UI_INITIAL_DELAY = 2000;
-    private static int HIDE_UI_POST_TOUCH_DELAY = 3000;
+    private static int showUiShort = 2000;  // for use when showing for user interaction
+    private static int showUiLong = 3000;   // for skip since this can take some time
 
     private AppSettings appSettings;
     private Uri videoUri;
@@ -113,10 +113,15 @@ public class VideoPlayerActivity extends Activity {
         if (!Localizer.isInitialized())
             Localizer.initialize(appSettings);
 
+        if (appSettings.isTv()) {
+            showUiShort = 3500;
+            showUiLong = 6000;
+        }
+
         surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                showUi();
+                showUi(false);
             }
         });
 
@@ -146,7 +151,7 @@ public class VideoPlayerActivity extends Activity {
             seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if (fromUser) {
-                        showUi();
+                        showUi(false);
                         if (mediaPlayer.isItemSeekable())
                             mediaPlayer.setPosition((float)progress/(float)(itemLength));
                     }
@@ -160,8 +165,7 @@ public class VideoPlayerActivity extends Activity {
             playBtn = (ImageButton) findViewById(R.id.ctrl_play);
             playBtn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
-                    mediaPlayer.play();
+                    play();
                     showPause();
                 }
             });
@@ -174,8 +178,7 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else {
-                        showUi();
-                        mediaPlayer.pause();
+                        pause();
                         showPlay();
                     }
                 }
@@ -184,7 +187,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
             fastBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     skip(-appSettings.getJumpInterval());
                 }
             });
@@ -192,7 +194,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipBack = (ImageButton) findViewById(R.id.ctrl_skip_back);
             skipBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     skip(-appSettings.getSkipBackInterval());
                 }
             });
@@ -200,7 +201,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton rewind = (ImageButton) findViewById(R.id.ctrl_rewind);
             rewind.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     rewind();
                     if (mediaPlayer.getPlayRate() != 1)
                       showPlay();
@@ -210,7 +210,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton ffwd = (ImageButton) findViewById(R.id.ctrl_fast_fwd);
             ffwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     fastForward();
                     if (mediaPlayer.getPlayRate() != 1)
                       showPlay();
@@ -220,7 +219,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton skipFwd = (ImageButton) findViewById(R.id.ctrl_skip_fwd);
             skipFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     skip(appSettings.getSkipForwardInterval());
                 }
             });
@@ -228,7 +226,6 @@ public class VideoPlayerActivity extends Activity {
             ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_jump_fwd);
             fastFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showUi();
                     skip(appSettings.getJumpInterval());
                 }
             });
@@ -244,7 +241,7 @@ public class VideoPlayerActivity extends Activity {
 
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        delayedHideUi(HIDE_UI_INITIAL_DELAY);
+        delayedHideUi(showUiShort);
     }
 
     private void showPlay() {
@@ -257,16 +254,29 @@ public class VideoPlayerActivity extends Activity {
         pauseBtn.setVisibility(View.VISIBLE);
     }
 
+    private void play() {
+        showUi(false);
+        mediaPlayer.play();
+    }
+
+    private void pause() {
+        showUi(false);
+        mediaPlayer.pause();
+    }
+
     private void skip(int delta) {
+        showUi(true);
         mediaPlayer.skip(delta);
     }
 
     private void fastForward() {
+        showUi(false);
         int playRate = mediaPlayer.stepUpFastForward();
         Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
     }
 
     private void rewind() {
+        showUi(false);
         int playRate = mediaPlayer.stepUpRewind();
         Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
     }
@@ -458,10 +468,10 @@ public class VideoPlayerActivity extends Activity {
                         // restore saved position
                         if (mediaPlayer.isItemSeekable()) {
                             if (savedPosition > 0) {
+                                showUi(true);
                                 Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
                                 mediaPlayer.setPosition(savedPosition);
                                 savedPosition = 0;
-                                showUi();
                             }
                         }
 
@@ -479,8 +489,7 @@ public class VideoPlayerActivity extends Activity {
                                         if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
                                             int skip = (cut.end - pos);
                                             if (skip > 0) {
-                                                showUi();
-                                                mediaPlayer.skip(skip);
+                                                skip(skip);
                                             }
                                         }
                                     }
@@ -499,7 +508,7 @@ public class VideoPlayerActivity extends Activity {
             mediaPlayer.setMediaPlayerShiftListener( new MediaPlayerShiftListener() {
                 int pos; // seconds
                 public void onShift(int delta) {
-                    showUi();
+                    showUi(false);
                     if (delta == 0) {
                         pos = mediaPlayer.getSeconds();
                     }
@@ -542,50 +551,41 @@ public class VideoPlayerActivity extends Activity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (appSettings.isTv() && event.getAction() == KeyEvent.ACTION_DOWN && !mediaPlayer.isReleased()) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                showUi();
                 if (mediaPlayer.isPlaying())
-                    mediaPlayer.pause();
+                    pause();
                 else
-                    mediaPlayer.play();
+                    play();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
-                showUi();
-                mediaPlayer.play();
+                play();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                showUi();
-                mediaPlayer.pause();
+                pause();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                showUi();
                 rewind();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                showUi();
                 fastForward();
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                showUi();
                 skip(-appSettings.getSkipBackInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                showUi();
                 skip(appSettings.getSkipForwardInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                showUi();
                 skip(-appSettings.getJumpInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                showUi();
                 skip(appSettings.getJumpInterval());
                 return true;
             }
@@ -616,14 +616,17 @@ public class VideoPlayerActivity extends Activity {
     };
 
     @SuppressLint("InlinedApi")
-    private void showUi() {
+    private void showUi(boolean longDuration) {
         hideHandler.removeCallbacks(hideAction);
         surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
         navControls.setVisibility(View.VISIBLE);
 
-        delayedHideUi(HIDE_UI_POST_TOUCH_DELAY);
+        if (longDuration)
+            delayedHideUi(showUiLong);
+        else
+            delayedHideUi(showUiShort);
     }
 
     private FrameLayout createProgressBar() {
