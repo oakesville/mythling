@@ -32,6 +32,7 @@
         android:layout_weight="1" />
 
     <LinearLayout
+        android:id="@+id/pager_button_bar"
         style="?android:attr/buttonBarButtonStyle"
         android:orientation="horizontal"
         android:gravity="center"
@@ -40,7 +41,7 @@
         android:background="#dddddd">
 
         <ImageButton
-            android:id="@+id/gotoFirst"
+            android:id="@+id/pager_go_first"
             style="?android:attr/buttonBarButtonStyle"
             android:src="@drawable/btn_first"
             android:contentDescription="@string/first"
@@ -50,14 +51,17 @@
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/currentItem"
+            android:id="@+id/pager_current_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:text="@string/one" />
+            android:text="@string/one"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:paddingLeft="5dp" />
 
         <SeekBar
-            android:id="@+id/pagerPosition"
+            android:id="@+id/pager_position"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:progressDrawable="@drawable/position_bar"
             android:layout_width="wrap_content"
@@ -68,14 +72,16 @@
             android:layout_weight="10" />
 
         <TextView
-            android:id="@+id/lastItem"
+            android:id="@+id/pager_last_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:text="@string/blank" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:paddingRight="5dp" />
 
         <ImageButton
-            android:id="@+id/gotoLast"
+            android:id="@+id/pager_go_last"
             style="?android:attr/buttonBarButtonStyle"
             android:src="@drawable/btn_last"
             android:contentDescription="@string/last"

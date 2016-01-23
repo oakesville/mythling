@@ -22,8 +22,7 @@ import org.json.JSONException;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.firetv.FireTvViewPager;
-import com.oakesville.mythling.firetv.FireTvViewPager.DpadMediaKeyHandler;
+import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
@@ -38,6 +37,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -66,10 +66,7 @@ public class MediaPagerActivity extends MediaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getAppSettings().isFireTv())
-            setContentView(R.layout.firetv_pager);
-        else
-            setContentView(R.layout.pager);
+        setContentView(R.layout.pager);
 
         createProgressBar();
 
@@ -126,7 +123,7 @@ public class MediaPagerActivity extends MediaActivity {
             public void onPageSelected(int position) {
                 setSelItemIndex(position);
                 positionBar.setProgress(getSelItemIndex() + 1);
-                TextView curItemView = (TextView) findViewById(R.id.currentItem);
+                TextView curItemView = (TextView) findViewById(R.id.pager_current_item);
                 curItemView.setText(String.valueOf(getSelItemIndex() + 1));
             }
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -135,13 +132,14 @@ public class MediaPagerActivity extends MediaActivity {
             }
         });
 
-        positionBar = (SeekBar) findViewById(R.id.pagerPosition);
+        positionBar = (SeekBar) findViewById(R.id.pager_position);
         positionBar.setMax(getListables().size());
         positionBar.setProgress(1);
         positionBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser)
+                if (fromUser) {
                     setSelItemIndex(progress);
+                }
             }
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
@@ -150,37 +148,32 @@ public class MediaPagerActivity extends MediaActivity {
             }
         });
 
-        if (getAppSettings().isFireTv()) {
-            ((FireTvViewPager)pager).setDpadMediaKeyHandler(new DpadMediaKeyHandler() {
-                public boolean handleFastForward() {
-                    pager.setCurrentItem(getListables().size() - 1);
-                    positionBar.setProgress(getListables().size());
-                    return true;
-                }
-                public boolean handleRewind() {
+        ImageButton button = (ImageButton) findViewById(R.id.pager_go_first);
+        if (getAppSettings().isTv()) {
+            button.setVisibility(View.GONE);
+        }
+        else {
+            button.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
                     pager.setCurrentItem(0);
                     positionBar.setProgress(1);
-                    return true;
+                }
+            });
+        }
+        button = (ImageButton) findViewById(R.id.pager_go_last);
+        if (getAppSettings().isTv()) {
+            button.setVisibility(View.GONE);
+        }
+        else {
+            button.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    pager.setCurrentItem(getListables().size() - 1);
+                    positionBar.setProgress(getListables().size());
                 }
             });
         }
 
-        ImageButton button = (ImageButton) findViewById(R.id.gotoFirst);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                pager.setCurrentItem(0);
-                positionBar.setProgress(1);
-            }
-        });
-        button = (ImageButton) findViewById(R.id.gotoLast);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                pager.setCurrentItem(getListables().size() - 1);
-                positionBar.setProgress(getListables().size());
-            }
-        });
-
-        TextView tv = (TextView) findViewById(R.id.lastItem);
+        TextView tv = (TextView) findViewById(R.id.pager_last_item);
         tv.setText(String.valueOf(getListables().size()));
 
         updateActionMenu();
@@ -190,9 +183,11 @@ public class MediaPagerActivity extends MediaActivity {
 
         pager.setCurrentItem(getSelItemIndex());
         positionBar.setProgress(getSelItemIndex());
-        TextView curItemView = (TextView) findViewById(R.id.currentItem);
+        TextView curItemView = (TextView) findViewById(R.id.pager_current_item);
         if (curItemView != null)
             curItemView.setText(String.valueOf(getSelItemIndex() + 1));
+
+        positionBar.requestFocus();
     }
 
     public void refresh() {
@@ -268,7 +263,6 @@ public class MediaPagerActivity extends MediaActivity {
             Fragment frag = new ItemDetailFragment();
             Bundle args = new Bundle();
             args.putInt(SEL_ITEM_INDEX, position);
-            args.putBoolean(GRAB_FOCUS, true);
             frag.setArguments(args);
             return frag;
         }
@@ -279,5 +273,54 @@ public class MediaPagerActivity extends MediaActivity {
         super.sort();
         pager.setCurrentItem(0);
         positionBar.setProgress(1);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    if (getCurrentFocus().getParent() instanceof View &&
+                            ((View)getCurrentFocus().getParent()).getId() == R.id.button_bar) {
+                        findViewById(R.id.pager_position).requestFocus();
+                        return true;
+                    }
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    if (getCurrentFocus().getId() == R.id.pager_position) {
+                        if (pager.getCurrentItem() < getListables().size() - 1) {
+                            pager.setCurrentItem(pager.getCurrentItem() + 1);
+                            positionBar.setProgress(pager.getCurrentItem() + 1);
+                            return true;
+                        }
+                    }
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    if (getCurrentFocus().getId() == R.id.pager_position) {
+                        if (pager.getCurrentItem() > 0) {
+                            pager.setCurrentItem(pager.getCurrentItem() - 1);
+                            positionBar.setProgress(pager.getCurrentItem() + 1);
+                            return true;
+                        }
+                    }
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
+                    pager.setCurrentItem(getListables().size() - 1);
+                    positionBar.setProgress(getListables().size());
+                    return true;
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
+                    pager.setCurrentItem(0);
+                    positionBar.setProgress(1);
+                    return true;
+                }
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ||
+                         event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                    playItem((Item)getListables().get(pager.getCurrentItem()));
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 }
