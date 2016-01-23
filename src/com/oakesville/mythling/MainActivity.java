@@ -60,7 +60,7 @@ public class MainActivity extends MediaActivity {
                 new Reporter(ex).send();
         }
 
-        if (!getAppSettings().isPrefsInitiallySet()) {
+        if (getAppSettings().isFirstRun()) {
             String msg = getString(R.string.access_network_settings);
             if (getAppSettings().isTv()) {
                 new AlertDialog.Builder(this)

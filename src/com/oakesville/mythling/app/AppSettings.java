@@ -1304,17 +1304,13 @@ public class AppSettings {
     }
 
     /**
-     * returns false only once (when newly installed)
+     * returns true only once (when newly installed)
      */
-    public boolean isPrefsInitiallySet() {
+    public boolean isFirstRun() {
         boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
-        if (!set) {
-            // for mythling 1.0 users who've set their prefs
-            set = !"192.168.0.69".equals(getMythlingServiceHost());
-            if (!set)
-                prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
-        }
-        return set;
+        if (!set)
+            prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
+        return !set;
     }
 
     public int dpToPx(int dp) {
