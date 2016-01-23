@@ -368,7 +368,7 @@
     <string name="mythling">Mythling</string>
     <string name="mythtv">MythTV</string>
     <string name="pref_header_icon">Pref Icon</string>
-    <string name="title_activity_video_view">Mythling Player</string>
+    <string name="title_activity_video_player">Mythling Player</string>
     <string-array name="item_long_click_menu">
         <item>Play Item</item>
         <item>Initiate Transcode</item>
