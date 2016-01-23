@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Mythling</string>
     <string name="menu_videos">Videos</string>
     <string name="menu_music">Music</string>
@@ -96,7 +96,7 @@
         <item>Auto-Skip On</item>
     </string-array>
     <string name="title_libvlc_parameters">LibVLC Parameters</string>
-    <string name="message_libvlc_parameters">Comma-separated list of raw parameters to pass to LibVLC engine (eg: --audio-time-stretch,:network-caching=2500)</string>
+    <string name="message_libvlc_parameters" tools:ignore="TypographyDashes">Whitespace-separated list of raw engine and media options to pass to LibVLC\n(eg: --audio-time-stretch --audio-time-stretch :network-caching=2500 :codec=all)</string>
     <string name="title_frontend_host">Host</string>
     <string name="title_frontend_host_dialog">Frontend Host</string>
     <string name="message_frontend_host">Host name or IP address for frontend playback</string>

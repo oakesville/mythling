@@ -18,6 +18,7 @@ package com.oakesville.mythling.vlc;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.IVLCVout.Callback;
@@ -66,8 +67,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         return itemLength;
     }
 
-    public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView) {
-        super(createLibVlc());
+    public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
+        super(createLibVlc(libVlcOptions));
         libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
 
         setMaxPlayRate(64); // TODO pref
@@ -82,7 +83,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         vout.attachViews();
     }
 
-    public void playMedia(Uri mediaUri, AuthType authType) throws IOException {
+    public void playMedia(Uri mediaUri, AuthType authType, List<String> mediaOptions) throws IOException {
         ProxyInfo proxyInfo = MediaStreamProxy.needsProxy(mediaUri);
         Media media;
         if (proxyInfo == null) {
@@ -99,15 +100,27 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
-        media.setHWDecoderEnabled(true, true);
-        media.addOption(":network-caching=2500");
+        if (mediaOptions == null) {
+            media.setHWDecoderEnabled(true, false);
+            media.addOption(":network-caching=2500");
+        }
+        else {
+            for (String mediaOption : mediaOptions)
+                media.addOption(mediaOption);
+        }
         setMedia(media);
         play();
     }
 
-    public void playMedia(FileDescriptor fd) {
+    public void playMedia(FileDescriptor fd, List<String> mediaOptions) {
         Media media = new Media(libvlc, fd);
-        media.setHWDecoderEnabled(true, true);
+        if (mediaOptions == null) {
+            media.setHWDecoderEnabled(true, false);
+        }
+        else {
+            for (String mediaOption : mediaOptions)
+                media.addOption(mediaOption);
+        }
         setMedia(media);
         play();
     }
@@ -127,17 +140,16 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private static LibVLC libvlc;
-    private static LibVLC createLibVlc() {
+    private static LibVLC createLibVlc(List<String> mediaOptions) {
         // libvlc
         ArrayList<String> options = new ArrayList<String>();
-        //options.add("--subsdec-encoding <encoding>");
-//        options.add("--aout=opensles");
-//        options.add("--audio-time-stretch"); // time stretching
-        options.add("--ffmpeg-hw");
-        if (BuildConfig.DEBUG)
+        if (mediaOptions != null)
+            options.addAll(mediaOptions);
+        else
+            options.add("--ffmpeg-hw");
+        if (BuildConfig.DEBUG && !options.contains("-vvv"))
             options.add("-vvv");
         libvlc = new LibVLC(options);
-
         return libvlc;
     }
 

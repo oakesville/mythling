@@ -19,7 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -486,6 +488,32 @@ public class AppSettings {
 
     public String getLibVlcParameters() {
         return getStringPref(LIBVLC_PARAMETERS, "");
+    }
+
+    public List<String> getVlcOptions() {
+        List<String> options = null;
+        String params = getLibVlcParameters();
+        for (String param : params.split("\\s+")) {
+            if (param.startsWith("--")) {
+                if (options == null)
+                    options = new ArrayList<String>();
+                options.add(param);
+            }
+        }
+        return options;
+    }
+
+    public List<String> getVlcMediaOptions() {
+        List<String> options = null;
+        String params = getLibVlcParameters();
+        for (String param : params.split("\\s+")) {
+            if (param.startsWith(":")) {
+                if (options == null)
+                    options = new ArrayList<String>();
+                options.add(param);
+            }
+        }
+        return options;
     }
 
     public boolean isExternalMusicPlayer() {

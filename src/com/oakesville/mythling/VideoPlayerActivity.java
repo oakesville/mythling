@@ -389,7 +389,7 @@ public class VideoPlayerActivity extends Activity {
         try {
             Log.i(TAG, "Playing video: " + videoUri);
 
-            mediaPlayer = new VlcMediaPlayer(surface, null); // TODO subtitles
+            mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
                     if (width * height == 0)
@@ -515,10 +515,10 @@ public class VideoPlayerActivity extends Activity {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
                 if (pfd == null)
                     throw new IOException("Unable to open file descriptor for: " + videoUri);
-                mediaPlayer.playMedia(pfd.getFileDescriptor());
+                mediaPlayer.playMedia(pfd.getFileDescriptor(), appSettings.getVlcMediaOptions());
             }
             else {
-                mediaPlayer.playMedia(videoUri, authType);
+                mediaPlayer.playMedia(videoUri, authType, appSettings.getVlcMediaOptions());
             }
         }
         catch (Exception ex) {

@@ -17,6 +17,7 @@ package com.oakesville.mythling.media;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.List;
 
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 
@@ -50,9 +51,9 @@ public interface MediaPlayer {
     /**
      * @param mediaUri
      */
-    public void playMedia(Uri mediaUri, AuthType authType) throws IOException;
+    public void playMedia(Uri mediaUri, AuthType authType, List<String> options) throws IOException;
 
-    public void playMedia(FileDescriptor fileDescriptor) throws IOException;
+    public void playMedia(FileDescriptor fileDescriptor, List<String> options) throws IOException;
 
     public boolean isPlaying();
     public boolean isProxying();
