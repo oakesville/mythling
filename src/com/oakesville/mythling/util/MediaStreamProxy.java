@@ -76,7 +76,7 @@ public class MediaStreamProxy implements Runnable {
         socket = new ServerSocket(port, 0, localhost);
         socket.setSoTimeout(5000);
         port = socket.getLocalPort();
-        Log.d(TAG, "port " + port + " obtained");
+        Log.i(TAG, "Media stream proxying thru " + localhost.getHostAddress() + ":" + port);
     }
 
     public void start() {
