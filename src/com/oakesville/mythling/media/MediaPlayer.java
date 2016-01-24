@@ -48,6 +48,8 @@ public interface MediaPlayer {
         public void onLayoutChange(int width, int height, int sarNumerator, int sarDenominator);
     }
 
+    public String getVersion();
+
     /**
      * @param mediaUri
      */

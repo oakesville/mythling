@@ -145,12 +145,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         ArrayList<String> options = new ArrayList<String>();
         if (mediaOptions != null)
             options.addAll(mediaOptions);
-        else
-            options.add("--ffmpeg-hw");
         if (BuildConfig.DEBUG && !options.contains("-vvv"))
             options.add("-vvv");
         libvlc = new LibVLC(options);
+
         return libvlc;
+    }
+
+    public String getVersion() {
+        return libvlc.version();
     }
 
     /**

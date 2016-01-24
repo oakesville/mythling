@@ -397,9 +397,9 @@ public class VideoPlayerActivity extends Activity {
     private void createPlayer() {
         releasePlayer();
         try {
-            Log.i(TAG, "Playing video: " + videoUri);
-
             mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
+            Log.i(TAG, "LibVLC version: " + mediaPlayer.getVersion());
+
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
                     if (width * height == 0)
@@ -409,6 +409,7 @@ public class VideoPlayerActivity extends Activity {
                     changeSurfaceLayout(width, height);
                 }
             });
+
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
 
                 private int minSampleLength = 3;
@@ -519,6 +520,8 @@ public class VideoPlayerActivity extends Activity {
                     }
                 }
             });
+
+            Log.i(TAG, "Playing video: " + videoUri);
 
             if (videoUri.getScheme().equals("content")) {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
