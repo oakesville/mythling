@@ -33,9 +33,12 @@ import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.SurfaceView;
 
 public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythling.media.MediaPlayer {
+
+    private static final String TAG = VlcMediaPlayer.class.getSimpleName();
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -97,6 +100,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getPath();
             if (mediaUri.getQuery() != null)
                 playUrl += "?" + mediaUri.getQuery();
+            Log.i(TAG, "Media proxy URL: " + playUrl);
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
