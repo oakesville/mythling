@@ -78,7 +78,7 @@ public abstract class Item implements Listable {
      */
     public List<String> getStorageGroupPaths() {
         List<String> sgPaths = null;
-        if (storageGroup != null || storageGroup.getDirectories() != null) {
+        if (storageGroup != null && storageGroup.getDirectories() != null) {
             sgPaths = new ArrayList<String>();
             String filepath = getFilePath();
             for (String dir : storageGroup.getDirectories())

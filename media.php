@@ -554,7 +554,7 @@ else if ($type->isSearch())
   
   // recordings
   $rQuery = "select distinct concat(concat(r.chanid,'~'),r.starttime) as id, r.progstart, c.channum, c.callsign, r.title, r.basename, r.subtitle, r.description, r.stars, r.storagegroup, convert(r.originalairdate using utf8) as oad, rp.airdate, r.season, r.episode, r.endtime, orec.recstatus";
-  $rQuery .= " from channel c, recordedprogram rp, recorded r left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.chanid = c.chanid and r.programid = rp.programid";
+  $rQuery .= " from channel c, recordedprogram rp, recorded r left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.recgroup != 'LiveTV' and r.chanid = c.chanid and r.programid = rp.programid";
   $rQuery .= " and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";
@@ -695,7 +695,7 @@ else
   else if ($type->isRecordings())
   {
     $where = "left outer join channel c on (r.chanid = c.chanid) inner join recordedprogram rp on (r.programid = rp.programid) left outer join record rr on (rr.chanid = r.chanid and rr.programid = r.programid)";
-    $where .= " left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted'";
+    $where .= " left outer join oldrecorded orec on (orec.chanid = r.chanid and orec.starttime = r.progstart) where r.recgroup != 'Deleted' and r.recgroup != 'LiveTV'";
     if ($sort == "date")
     {
       $orderBy = "order by r.starttime desc, trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title)))";
