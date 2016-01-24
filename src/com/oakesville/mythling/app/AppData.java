@@ -45,8 +45,11 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class AppData {
     private static final String TAG = AppData.class.getSimpleName();
@@ -293,7 +296,15 @@ public class AppData {
         if (imageFile.exists()) {
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "reading image from file: " + imageFile);
-            return BitmapFactory.decodeFile(imageFile.getPath());
+            // avoid out-of-memory errors by checking image dimensions
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageFile.getPath(), options);
+            // calculate sample size (based on screen size)
+            options.inSampleSize = calculateImageSampleSize(options.outWidth, options.outHeight, getScreenSize().x, getScreenSize().y);
+            options.inJustDecodeBounds = false;
+            // TODO: save resampled image to save disk space
+            return BitmapFactory.decodeFile(imageFile.getPath(), options);
         } else {
             return null;
         }
@@ -309,5 +320,31 @@ public class AppData {
         if (BuildConfig.DEBUG)
             Log.d(TAG, "writing image to file: " + imageFile);
         writeFile(imageFile, bytes);
+    }
+
+    private static Point screenSize;
+    public Point getScreenSize() {
+        if (screenSize == null) {
+            WindowManager wm = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            screenSize = new Point();
+            display.getSize(screenSize);
+        }
+        return screenSize;
+    }
+
+    public int calculateImageSampleSize(int width, int height, int reqWidth, int reqHeight) {
+        int sampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            // get the largest sample size that's a power of 2 and keeps both
+            // height and width larger than the requested height and width
+            while ((halfHeight / sampleSize) > reqHeight
+                    && (halfWidth / sampleSize) > reqWidth) {
+                sampleSize *= 2;
+            }
+        }
+        return sampleSize;
     }
 }

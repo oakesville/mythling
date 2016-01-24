@@ -33,7 +33,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -250,7 +250,7 @@ public class MediaPagerActivity extends MediaActivity {
         }
     }
 
-    private class MediaPagerAdapter extends FragmentPagerAdapter {
+    private class MediaPagerAdapter extends FragmentStatePagerAdapter {
         public MediaPagerAdapter(FragmentManager fm) {
             super(fm);
         }
