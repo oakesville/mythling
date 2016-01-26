@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar', exclude: 'libvlc-3.0.0.jar' )
-    compile(name:'libvlc', ext:'aar')
+    compile(name:'libvlc-3.0.0', ext:'aar')
     // compile 'com.android.support:support-v4:21.0.3'
 }
 
