@@ -9,16 +9,8 @@ buildscript {
     }
 }
 
-repositories {
-    flatDir {
-        dirs './aars'
-    }
-}
-
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar', exclude: 'libvlc-3.0.0.jar' )
-    compile(name:'libvlc-3.0.0', ext:'aar')
-    // compile 'com.android.support:support-v4:21.0.3'
+    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 android {
@@ -34,6 +26,7 @@ android {
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
         }
 
         // Move the build types to build-types/<type>

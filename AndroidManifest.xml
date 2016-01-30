@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015 Donald Oakes
+  Copyright 2016 Donald Oakes
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     
     <!-- TODO: Fire TV specific -->
     <!-- 
