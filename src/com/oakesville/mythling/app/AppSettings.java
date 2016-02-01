@@ -786,13 +786,16 @@ public class AppSettings {
         return audioBitrateValues;
     }
 
-    public float getVideoPlaybackPosition(Uri uri) {
-        return getFloatPref(VIDEO_SAVED_POSITION + "_" + uri, 0);
+    /**
+     * seconds
+     */
+    public int getVideoPlaybackPosition(Uri uri) {
+        return getIntPref(VIDEO_SAVED_POSITION + "_" + uri, 0);
     }
 
-    public boolean setVideoPlaybackPosition(Uri uri, float position) {
+    public boolean setVideoPlaybackPosition(Uri uri, int position) {
         Editor ed = prefs.edit();
-        ed.putFloat(VIDEO_SAVED_POSITION + "_" + uri, position);
+        ed.putInt(VIDEO_SAVED_POSITION + "_" + uri, position);
         return ed.commit();
     }
 

@@ -124,7 +124,7 @@ public class MusicPlaybackService extends Service {
                     });
 
                     Uri uri = intent.getData();
-                    ProxyInfo proxyInfo = MediaStreamProxy.needsProxy(uri);
+                    ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(uri);
                     if (proxyInfo == null) {
                         mediaPlayer.setDataSource(this, uri);
                     }

@@ -201,10 +201,13 @@ public class MediaStreamProxy implements Runnable {
             HttpContext context = HttpHelper.getDigestAuthContext(netUrl.getHost(), netUrl.getPort(), proxyInfo.user, proxyInfo.password);
             response = httpClient.execute(host, request, context);
         }
-        else {
+        else if (authType == AuthType.Basic) {
             // otherwise assume basic
             String credentials = Base64.encodeToString((proxyInfo.user + ":" + proxyInfo.password).getBytes(), Base64.DEFAULT);
             request.setHeader("Authorization", "Basic " + credentials);
+            response = httpClient.execute(host, request);
+        }
+        else {
             response = httpClient.execute(host, request);
         }
         Log.d(TAG, "Proxy response downloaded");
@@ -214,6 +217,7 @@ public class MediaStreamProxy implements Runnable {
     public static class ProxyInfo {
         private URL netUrl;
         public URL getNetUrl() { return netUrl; }
+        public void setNetUrl(URL url) { this.netUrl = url; }
 
         private String user;
         private String password;
@@ -222,7 +226,7 @@ public class MediaStreamProxy implements Runnable {
     /**
      * Returns ProxyInfo if proxy is needed, null otherwise.
      */
-    public static ProxyInfo needsProxy(Uri mediaUri) throws MalformedURLException {
+    public static ProxyInfo needsAuthProxy(Uri mediaUri) throws MalformedURLException {
         ProxyInfo proxyInfo = null;
         String userInfo = mediaUri.getUserInfo();
         int colon = userInfo == null ? -1 : userInfo.indexOf(':');
@@ -230,13 +234,17 @@ public class MediaStreamProxy implements Runnable {
             proxyInfo = new ProxyInfo();
             proxyInfo.user = userInfo.substring(0, colon);
             proxyInfo.password = userInfo.substring(colon + 1);
-            String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
-            netUrl += mediaUri.getPath();
-            if (mediaUri.getQuery() != null)
-                netUrl += "?" + mediaUri.getQuery();
-            proxyInfo.netUrl = new URL(netUrl);
+            proxyInfo.netUrl = getNetUrl(mediaUri);
         }
 
         return proxyInfo;
+    }
+
+    public static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
+        String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
+        netUrl += mediaUri.getPath();
+        if (mediaUri.getQuery() != null)
+            netUrl += "?" + mediaUri.getQuery();
+        return new URL(netUrl);
     }
 }

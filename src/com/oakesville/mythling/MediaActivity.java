@@ -131,10 +131,12 @@ public abstract class MediaActivity extends Activity {
     protected void setPath(String path) { this.path = path; }
 
     protected List<Listable> getListables() {
+        if (mediaList == null)  // FIXME: issue #68
+            return new ArrayList<Listable>();
         return mediaList.getListables(getPath());
     }
     protected List<Listable> getListables(String path) {
-        if (mediaList == null)  // TODO: how can mediaList be null?
+        if (mediaList == null)  // FIXME: issue #68
             return new ArrayList<Listable>();
         return mediaList.getListables(path);
     }
@@ -648,6 +650,7 @@ public abstract class MediaActivity extends Activity {
         arguments.putInt(SEL_ITEM_INDEX, position);
         arguments.putBoolean(GRAB_FOCUS, grabFocus);
         detailFragment.setArguments(arguments);
+        // FIXME: Issue #69
         getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT).commit();
     }
 
@@ -1269,6 +1272,8 @@ public abstract class MediaActivity extends Activity {
                 onResume();
             } else {
                 try {
+                    if (item.isLengthKnown())
+                        streamInfo.setItemLength(item.getLength());
                     playLiveStream(streamInfo);
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
@@ -1570,7 +1575,8 @@ public abstract class MediaActivity extends Activity {
         videoIntent.setDataAndType(Uri.parse(streamUrl), "video/*");
         if (!appSettings.isExternalVideoPlayer()) {
             videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-            // videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, i)
+            if (streamInfo.getItemLength() > 0)
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, streamInfo.getItemLength());
         }
 
         startActivity(videoIntent);

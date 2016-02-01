@@ -25,11 +25,22 @@ import android.net.Uri;
 
 public interface MediaPlayer {
 
-    public enum MediaPlayerEvent {
+    public class MediaPlayerEvent {
+        public MediaPlayerEvent(MediaPlayerEventType type) {
+            this.type = type;
+        }
+
+        public MediaPlayerEventType type;
+        public int position;
+        public String message;
+    }
+
+    public enum MediaPlayerEventType {
         playing,
         seekable,
         time,
         position,
+        buffered,
         paused,
         stopped,
         end,
@@ -81,17 +92,15 @@ public interface MediaPlayer {
      */
     public int getSeconds();
 
-    public float getPosition();
     /**
      * Set the video position (only works if seekable).
      */
-    public void setPosition(float pos);
+    public void setSeconds(int secs);
 
     /**
      * Skip forward or backward.
-     * @return past end
      */
-    public boolean skip(int delta);
+    public void skip(int delta);
 
     /**
      * Step up the rewind rate by a factor of two

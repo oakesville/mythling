@@ -401,8 +401,8 @@
     <string name="file">File</string>
     <string name="always_do_this_for">Always do this for</string>
     <string name="files">files</string>
-    <string name="transcode_to_hls">Transcode to HLS</string>
-    <string name="stream_raw_file">Stream Raw File</string>
+    <string name="transcode_to_hls">Stream HLS</string>
+    <string name="stream_raw_file">Stream File</string>
     <string name="unable_to_create_directories_">Unable to create directories:</string>
     <string name="needed_for_mythling_svcs">Needed for Mythling Media Services</string>
     <string name="minutes">Minutes</string>
@@ -431,6 +431,7 @@
     <string name="estimating_video_length">Estimating video length&#8230;</string>
     <string name="restoring_saved_position">Restoring saved position</string>
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
+    <string name="media_player_error_">Media player error:\u0020</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>

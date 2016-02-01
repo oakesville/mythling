@@ -87,7 +87,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void playMedia(Uri mediaUri, AuthType authType, List<String> mediaOptions) throws IOException {
-        ProxyInfo proxyInfo = MediaStreamProxy.needsProxy(mediaUri);
+        ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
         Media media;
         if (proxyInfo == null) {
             media = new Media(libvlc, mediaUri);
@@ -183,11 +183,19 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         return time == -1 ? 0 : (int)(getTime()/1000);
     }
 
+    public void setSeconds(int secs) {
+        setPosition((float)secs/(float)(itemLength));
+    }
+
+    public void skip(int delta) {
+        doSkip(delta);
+    }
+
     /**
      * Seek forward or backward delta seconds.
      * @return past end
      */
-    public boolean skip(int delta) {
+    public float doSkip(int delta) {
 
         if (isItemSeekable()) {
             // libvlc setTime() seems to hardly ever work, so use setPosition()
@@ -195,18 +203,18 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             float newPos = curPos + (float)delta/(float)itemLength;
             if (newPos < 0) {
                 setPosition(0);
-                return true;
+                return 0;
             }
             else if (newPos > 1) {
                 setPosition(1);
-                return true;
+                return 1;
             }
             else {
                 setPosition(newPos);
-                return false;
+                return newPos;
             }
         }
-        return false;
+        return -1;
     }
 
     private int maxPlayRate = 1;
@@ -323,8 +331,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate < 0) {
-                boolean begin = skip(playRate);
-                if (begin) {
+                float begin = doSkip(playRate);
+                if (begin == 0) {
                     play();
                 }
                 else {
@@ -353,21 +361,21 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         lengthDetermined = false;
                         break;
                     case MediaPlayer.Event.Playing:
-                        eventListener.onEvent(MediaPlayerEvent.playing);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
                         break;
                     case MediaPlayer.Event.Paused:
-                        eventListener.onEvent(MediaPlayerEvent.paused);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.paused));
                         break;
                     case MediaPlayer.Event.Stopped:
-                        eventListener.onEvent(MediaPlayerEvent.stopped);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.stopped));
                         break;
                     case MediaPlayer.Event.EndReached:
-                        eventListener.onEvent(MediaPlayerEvent.end);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
                         if (proxy != null)
                             proxy.stop();
                         break;
                     case MediaPlayer.Event.EncounteredError:
-                        eventListener.onEvent(MediaPlayerEvent.error);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.error));
                         break;
                     case MediaPlayer.Event.TimeChanged:
                         if (!lengthDetermined) {
@@ -375,13 +383,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             if (len > 0) {
                                 itemLength = (int)(len / 1000);
                                 lengthDetermined = true;
-                                eventListener.onEvent(MediaPlayerEvent.seekable);
+                                eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seekable));
                             }
                         }
-                        eventListener.onEvent(MediaPlayerEvent.time);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
                         break;
                     case MediaPlayer.Event.PositionChanged:
-                        eventListener.onEvent(MediaPlayerEvent.position);
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.position));
                         break;
                     default:
                         break;
@@ -397,8 +405,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private LibVLC.HardwareAccelerationError hardwareAccelerationErrorHandler = new LibVLC.HardwareAccelerationError() {
         public void eventHardwareAccelerationError() {
-            if (eventListener != null)
-                eventListener.onEvent(MediaPlayerEvent.error);
+            if (eventListener != null){
+                MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
+                event.message = LibVLC.HardwareAccelerationError.class.getName();
+                eventListener.onEvent(event);
+            }
         }
     };
 

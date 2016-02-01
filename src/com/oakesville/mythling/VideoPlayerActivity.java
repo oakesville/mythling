@@ -20,10 +20,12 @@ import java.util.List;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.media.AndroidMediaPlayer;
 import com.oakesville.mythling.media.Cut;
 import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
+import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventType;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
@@ -57,11 +59,12 @@ import android.widget.Toast;
 
 public class VideoPlayerActivity extends Activity {
 
+    private static final String TAG = VideoPlayerActivity.class.getSimpleName();
+
     public static final String AUTH_TYPE = "com.oakesville.mythling.AUTH_TYPE";
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
 
-    private static final String TAG = VideoPlayerActivity.class.getSimpleName();
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
     private static int showUiShort = 3000;  // for use when showing for user interaction
@@ -95,7 +98,7 @@ public class VideoPlayerActivity extends Activity {
     private ImageButton playBtn;
     private ImageButton pauseBtn;
 
-    private float savedPosition;
+    private int savedPosition;
     private boolean done;
 
     private boolean showTvControlsHint;
@@ -153,7 +156,7 @@ public class VideoPlayerActivity extends Activity {
                     if (fromUser) {
                         showUi(false);
                         if (mediaPlayer.isItemSeekable())
-                            mediaPlayer.setPosition((float)progress/(float)(itemLength));
+                            mediaPlayer.setSeconds(progress);
                     }
                 }
                 public void onStartTrackingTouch(SeekBar seekBar) {
@@ -316,7 +319,7 @@ public class VideoPlayerActivity extends Activity {
         if (done || !appSettings.isSavePositionOnExit())
             appSettings.clearVideoPlaybackPosition(videoUri);
         else
-            appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getPosition());
+            appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getSeconds());
         releasePlayer();
     }
 
@@ -397,7 +400,10 @@ public class VideoPlayerActivity extends Activity {
     private void createPlayer() {
         releasePlayer();
         try {
-            mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
+            if (videoUri.toString().endsWith(".m3u8"))
+                mediaPlayer = new AndroidMediaPlayer(getApplicationContext(), surface);
+            else
+                mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
             Log.i(TAG, "LibVLC version: " + mediaPlayer.getVersion());
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
@@ -416,7 +422,7 @@ public class VideoPlayerActivity extends Activity {
                 private int correctableDelta = 5;  // don't update if off by less than this
 
                 public void onEvent(MediaPlayerEvent event) {
-                    if (event == MediaPlayerEvent.playing) {
+                    if (event.type == MediaPlayerEventType.playing) {
                         progressFrame.setVisibility(View.GONE);
                         if (itemLength != 0) {
                             // length is already known -- don't wait for seekability determination
@@ -425,20 +431,25 @@ public class VideoPlayerActivity extends Activity {
                             seekBar.setMax(itemLength); // max is length in seconds
                         }
                     }
-                    else if (event == MediaPlayerEvent.end) {
+                    else if (event.type == MediaPlayerEventType.end) {
                         savedPosition = 0;
                         done = true;
                         finish();
                     }
-                    else if (event == MediaPlayerEvent.error) {
-                        String msg = "Media player error";
+                    else if (event.type == MediaPlayerEventType.error) {
+                        final String msg = getString(R.string.media_player_error_) + event.message;
                         Log.e(TAG, msg);
-                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        // seems this doesn't always happen on the ui thread
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                              Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                            }
+                          });
                         if (appSettings.isErrorReportingEnabled())
                             new Reporter(msg).send();
                         finish();
                     }
-                    else if (event == MediaPlayerEvent.seekable) {
+                    else if (event.type == MediaPlayerEventType.seekable) {
                         if (mediaPlayer.getItemLength() != itemLength) {
                             // now the length is known definitively
                             itemLength = mediaPlayer.getItemLength();
@@ -446,11 +457,11 @@ public class VideoPlayerActivity extends Activity {
                             seekBar.setMax(itemLength); // max is length in seconds
                         }
                     }
-                    else if (event == MediaPlayerEvent.time) {
+                    else if (event.type == MediaPlayerEventType.time) {
 
                         int pos = mediaPlayer.getSeconds();
 
-                        // infer length if needed
+                        // infer length if needed // TODO: for android player?
                         if (itemLength == 0) {
                             Log.i(TAG, "Estimating video length");
                             if (pos > minSampleLength) {
@@ -471,7 +482,7 @@ public class VideoPlayerActivity extends Activity {
                             if (savedPosition > 0) {
                                 showUi(true);
                                 Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
-                                mediaPlayer.setPosition(savedPosition);
+                                mediaPlayer.setSeconds(savedPosition);
                                 savedPosition = 0;
                             }
                         }
@@ -502,6 +513,9 @@ public class VideoPlayerActivity extends Activity {
                             if (!inCut)
                                 currentCut = null;
                         }
+                    }
+                    else if (event.type == MediaPlayerEventType.buffered) {
+                        seekBar.setSecondaryProgress(event.position);
                     }
                 }
             });
