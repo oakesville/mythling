@@ -35,14 +35,23 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     private Context context;
     private SurfaceView videoView;
+    private int lengthOffset; // known item length - getDuration() in ms
 
     private int itemLength; // seconds
     public int getItemLength() {
-        int d = getDuration(); // prefer this if known
-        return d == -1 ? itemLength : d / 1000;
+        // prefer designated itemLength if known since getDuration() is inaccurate for HLS
+        if (itemLength > 0)
+            return itemLength;
+        int d = getDuration();
+        return d == -1 ? 0 : d / 1000;
     }
     public void setItemLength(int secs) {
         this.itemLength = secs;
+        if (itemLength > 0) {
+            int duration = getDuration();
+            if (duration > 0)
+                lengthOffset = (itemLength * 1000) - duration;
+        }
     }
 
     public int inferItemLength() {
@@ -71,12 +80,14 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void playMedia(Uri mediaUri, AuthType authType, List<String> options) throws IOException {
+        lengthOffset = 0;
         setDataSource(context, mediaUri);
         prepare();
         start();
     }
 
     public void playMedia(FileDescriptor fileDescriptor, List<String> options) throws IOException {
+        lengthOffset = 0;
         setDataSource(fileDescriptor);
         prepare();
         start();
@@ -108,11 +119,20 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void setSeconds(int secs) {
-        seekTo(secs * 1000);
+        // use skip() to handle lengthOffset
+        int delta = secs - getSeconds();
+        skip(delta);
     }
 
     public void skip(int delta) {
-        int newPos = getCurrentPosition() + (delta * 1000);
+        int curPos = getCurrentPosition();
+        int newPos = curPos + (delta * 1000);
+
+        if (lengthOffset != 0) {
+            // correct for inaccurate duration (more off toward end of stream)
+            int correctionMs = (int) (((float)newPos/(float)(itemLength*1000))*(lengthOffset));
+            newPos = curPos + (delta * 1000) - correctionMs;
+        }
 
         if (newPos < 0) {
             newPos = 0;
@@ -122,9 +142,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             if (newPos > lenMs)
                 newPos = lenMs - 1;
         }
-        pause();
+
         seekTo(newPos);
-        start();
     }
 
     @Override
