@@ -60,14 +60,6 @@ public class FireTvCategoriesPrefs extends PreferenceFragment {
         pref = getPreferenceScreen().findPreference(AppSettings.VIDEO_EXCLUDE_DIRECTORIES);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getVideoExcludeDirectories());
-
-        pref = getPreferenceScreen().findPreference(AppSettings.HLS_FILE_EXTENSIONS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getHlsFileExtensions());
-
-        pref = getPreferenceScreen().findPreference(AppSettings.STREAM_RAW_FILE_EXTENSIONS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getStreamRawFileExtensions());
     }
 
     private void doEnablement(MediaTypeDeterminer determiner) {

@@ -1,0 +1,85 @@
+// Same format as the playback_options preference string.
+// Any property named "default" is treated as the fallback
+// in case the named parameter is not found (except for
+// stream/player, where the default combo is a subprop).
+{
+// "recordings":
+  "default":
+  {
+    "mpg":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "file": "libvlc"
+        }
+      },
+      "external":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "hls": "android"
+        }
+      },
+      "download":
+      {
+        "file": "libvlc"
+      }
+    },
+    "ts":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "file": "libvlc"
+        }
+      },
+      "external":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "hls": "android"
+        }
+      },
+      "download":
+      {
+        "file": "libvlc"
+      }
+    },
+    "default":
+    {
+      "internal":
+      {
+        "file": "android",
+        "hls": "android",
+        "default":
+        {
+          "file": "android"
+        }
+      },
+      "external":
+      {
+        "file": "android",
+        "hls": "android",
+        "default":
+        {
+          "hls": "android"
+        }
+      },
+      "download":
+      {
+        "file": "android"
+      }
+    }
+  }
+}

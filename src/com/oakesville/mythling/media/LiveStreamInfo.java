@@ -113,10 +113,4 @@ public class LiveStreamInfo {
 
         return true;
     }
-
-    private int itemLength; // if known (for internal player)
-    public int getItemLength() { return itemLength; }
-    public void setItemLength(int length) { this.itemLength = length; }
-
-
 }

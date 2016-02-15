@@ -28,6 +28,7 @@ import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventType;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
+import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.Reporter;
@@ -61,6 +62,7 @@ public class VideoPlayerActivity extends Activity {
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
+    public static final String PLAYER = "com.oakesville.mythling.PLAYER";
     public static final String AUTH_TYPE = "com.oakesville.mythling.AUTH_TYPE";
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
@@ -72,6 +74,7 @@ public class VideoPlayerActivity extends Activity {
 
     private AppSettings appSettings;
     private Uri videoUri;
+    private String playerOption;
     private AuthType authType;
 
     private int itemLength; // this will be zero if not known definitively
@@ -140,6 +143,9 @@ public class VideoPlayerActivity extends Activity {
 
         try {
             videoUri = getIntent().getData();
+            playerOption = getIntent().getStringExtra(PLAYER);
+            if (playerOption == null)
+                playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
             authType = at == null ? null : AuthType.valueOf(at);
             itemLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
@@ -244,7 +250,7 @@ public class VideoPlayerActivity extends Activity {
 
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        delayedHideUi(showUiShort);
+        // delayedHideUi(showUiShort);
     }
 
     private void showPlay() {
@@ -400,10 +406,12 @@ public class VideoPlayerActivity extends Activity {
     private void createPlayer() {
         releasePlayer();
         try {
-            if (videoUri.toString().endsWith(".m3u8"))
+            if (playerOption.equals(PlaybackOptions.PLAYER_ANDROID))
                 mediaPlayer = new AndroidMediaPlayer(getApplicationContext(), surface);
-            else
+            else if (playerOption.equals(PlaybackOptions.PLAYER_LIBVLC))
                 mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
+            else
+                throw new IllegalArgumentException("Unsupported player option: " + playerOption);
             Log.i(TAG, "LibVLC version: " + mediaPlayer.getVersion());
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
@@ -536,6 +544,7 @@ public class VideoPlayerActivity extends Activity {
             });
 
             Log.i(TAG, "Playing video: " + videoUri);
+            Log.i(TAG, "Using: " + mediaPlayer.getClass() + " v" + mediaPlayer.getVersion());
 
             if (videoUri.getScheme().equals("content")) {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");

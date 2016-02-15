@@ -174,6 +174,10 @@ public abstract class Item implements Listable {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 
+    public String getDownloadTitle() {
+        return new TextBuilder(title).appendDashed(getSubLabel()).toString();
+    }
+
     public String getDialogText() {
         return getTitle() + getListSubText();
     }

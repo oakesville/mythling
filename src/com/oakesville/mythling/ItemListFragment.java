@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -136,11 +137,11 @@ public class ItemListFragment extends ListFragment {
             if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
                 Item item = (Item)listable;
                 menu.setHeaderTitle(item.getDialogTitle());
-                String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
-                for (int i = 0; i < menuItems.length; i++)
-                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
-                if (item.isRecording())
-                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, 3, 3, getString(R.string.delete));
+                SparseArray<String> menuItems = mediaActivity.getLongClickMenuItems(item);
+                for (int i = 0; i < menuItems.size(); i++) {
+                    int id = menuItems.keyAt(i);
+                    menu.add(MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID, id, id, menuItems.get(id));
+                }
             }
         }
     }
@@ -149,19 +150,19 @@ public class ItemListFragment extends ListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getGroupId() == MediaActivity.LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            if (item.getItemId() == 0) {
+            if (item.getItemId() == MediaActivity.LONG_CLICK_MENU_PLAY) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 mediaActivity.playItem(it);
                 return true;
-            } else if (item.getItemId() == 1) {
+            } else if (item.getItemId() == MediaActivity.LONG_CLICK_MENU_TRANSCODE) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 mediaActivity.transcodeItem(it);
                 return true;
-            } else if (item.getItemId() == 2) {
+            } else if (item.getItemId() == MediaActivity.LONG_CLICK_MENU_DOWNLOAD) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 mediaActivity.downloadItem(it);
                 return true;
-            } else if (item.getItemId() == 3) {
+            } else if (item.getItemId() == MediaActivity.LONG_CLICK_MENU_DELETE) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
                 mediaActivity.deleteRecording(rec);
                 return true;

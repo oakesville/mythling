@@ -41,16 +41,4 @@
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/title_categorize_transcoding">
-        <EditTextPreference
-            android:key="hls_file_extensions"
-            android:title="@string/title_transcode_hls"
-            android:dialogMessage="@string/message_transcode_hls"
-            android:layout="@layout/pref" />
-        <EditTextPreference
-            android:key="stream_raw_file_extensions"
-            android:title="@string/title_stream_raw"
-            android:dialogMessage="@string/message_stream_raw"
-            android:layout="@layout/pref" />
-    </PreferenceCategory>
 </PreferenceScreen>

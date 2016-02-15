@@ -373,6 +373,7 @@
         <item>Play Item</item>
         <item>Initiate Transcode</item>
         <item>Download</item>
+        <item>Delete</item>
     </string-array>
     <string name="setup_required">"Setup Required"</string>
     <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
@@ -400,9 +401,25 @@
     <string name="tv">TV</string>
     <string name="file">File</string>
     <string name="always_do_this_for">Always do this for</string>
+    <string name="remember_this_for">Remember this for</string>
     <string name="files">files</string>
     <string name="transcode_to_hls">Stream HLS</string>
     <string name="stream_raw_file">Stream File</string>
+    <string name="on_internal_network">on Internal network</string>
+    <string name="on_external_network">on External network</string>
+    <string name="title_stream_mode">Stream</string>
+    <string name="switch_stream_file">Stream File</string>
+    <string name="switch_stream_hls">Stream HLS</string>
+    <string-array name="player_entries">
+        <item>Using Built-In LibVLC Player</item>
+        <item>Using Built-In Android Player</item>
+        <item>Using External App</item>
+    </string-array>
+    <string-array name="player_values">
+        <item>libvlc</item>
+        <item>android</item>
+        <item>app</item>
+    </string-array>
     <string name="unable_to_create_directories_">Unable to create directories:</string>
     <string name="needed_for_mythling_svcs">Needed for Mythling Media Services</string>
     <string name="minutes">Minutes</string>
@@ -459,6 +476,9 @@
     <string name="hls_transcode">HLS Transcode</string>
     <string name="internal">Internal</string>
     <string name="external">External</string>
+    <string name="using_">using:\u0020</string>
+    <string name="via">via</string>
+    <string name="player">player</string>
     <string name="with_video_quality">With these video quality settings:</string>
     <!-- individual components of date/time formats are automaticaly localized -->
     <string name="date_format">MMM d yyyy</string> <!-- Apr 15 2015 -->

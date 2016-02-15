@@ -32,6 +32,7 @@ import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.prefs.DevicePrefsSpec;
 import com.oakesville.mythling.prefs.firetv.FireTvPrefsSpec;
@@ -40,6 +41,7 @@ import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
+import com.oakesville.mythling.util.Reporter;
 
 import android.app.UiModeManager;
 import android.content.Context;
@@ -53,6 +55,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 public class AppSettings {
     public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
@@ -88,8 +91,6 @@ public class AppSettings {
     public static final String MOVIE_DIRECTORIES = "movie_directories";
     public static final String TV_SERIES_DIRECTORIES = "tv_series_directories";
     public static final String VIDEO_EXCLUDE_DIRECTORIES = "video_exclude_directories";
-    public static final String HLS_FILE_EXTENSIONS = "hls_file_extensions";
-    public static final String STREAM_RAW_FILE_EXTENSIONS = "stream_raw_file_extensions";
     public static final String ARTWORK_SG_VIDEOS = "artwork_sg_videos";
     public static final String ARTWORK_SG_RECORDINGS = "artwork_sg_recordings";
     public static final String ARTWORK_SG_MOVIES = "artwork_sg_movies";
@@ -161,6 +162,7 @@ public class AppSettings {
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
+    public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -454,7 +456,10 @@ public class AppSettings {
         return !getBooleanPref(FRONTEND_PLAYBACK, false);
     }
 
-    public boolean isExternalVideoPlayer() {
+    /**
+     * Only for TV devices (eg: FireTv)
+     */
+    public boolean isExternalVideoPlayerx() {
         return !getBooleanPref(INTERNAL_VIDEO_PLAYER, isCpuCompatibleWithInternalPlayer());
     }
 
@@ -516,6 +521,16 @@ public class AppSettings {
         return options;
     }
 
+    public String getPlaybackOptionsJson() {
+        return getStringPref(PLAYBACK_OPTIONS_JSON, "{}");
+    }
+
+    public boolean setPlaybackOptionsJson(String json) {
+        Editor ed = prefs.edit();
+        ed.putString(PLAYBACK_OPTIONS_JSON, json);
+        return ed.commit();
+    }
+
     public boolean isExternalMusicPlayer() {
         return !getBooleanPref(INTERNAL_MUSIC_PLAYER, true);
     }
@@ -544,6 +559,12 @@ public class AppSettings {
 
     public boolean isErrorReportingEnabled() {
         return getBooleanPref(ERROR_REPORTING, false);
+    }
+
+    public void logAndReport(String tag, Throwable t) {
+        Log.e(tag, t.getMessage(), t);
+        if (isErrorReportingEnabled())
+            new Reporter(t).send();
     }
 
     public boolean isExternalNetwork() {
@@ -595,52 +616,6 @@ public class AppSettings {
                 vidExcludeDirs[i] += "/";
         }
         return vidExcludeDirs;
-    }
-
-    public String getHlsFileExtensions() {
-        return getStringPref(HLS_FILE_EXTENSIONS, "");
-    }
-
-    public boolean isPreferHls(String fileExtension) {
-        String[] hlsFileExtensions = getHlsFileExtensions().split(",");
-        for (int i = 0; i < hlsFileExtensions.length; i++) {
-            if (hlsFileExtensions[i].equals(fileExtension) || hlsFileExtensions.equals("." + fileExtension))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean setPreferHls(String fileExtension) {
-        String hlsFileExtensions = getHlsFileExtensions();
-        if (!hlsFileExtensions.isEmpty())
-            hlsFileExtensions += ",";
-        hlsFileExtensions += fileExtension;
-        Editor ed = prefs.edit();
-        ed.putString(HLS_FILE_EXTENSIONS, hlsFileExtensions);
-        return ed.commit();
-    }
-
-    public String getStreamRawFileExtensions() {
-        return getStringPref(STREAM_RAW_FILE_EXTENSIONS, "");
-    }
-
-    public boolean isPreferStreamRaw(String fileExtension) {
-        String[] streamRawFileExtensionss = getStreamRawFileExtensions().split(",");
-        for (int i = 0; i < streamRawFileExtensionss.length; i++) {
-            if (streamRawFileExtensionss[i].equals(fileExtension) || streamRawFileExtensionss[i].equals("." + fileExtension))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean setPreferStreamRaw(String fileExtension) {
-        String streamRawFileExtensions = getStreamRawFileExtensions();
-        if (!streamRawFileExtensions.isEmpty())
-            streamRawFileExtensions += ",";
-        streamRawFileExtensions += fileExtension;
-        Editor ed = prefs.edit();
-        ed.putString(STREAM_RAW_FILE_EXTENSIONS, streamRawFileExtensions);
-        return ed.commit();
     }
 
     public String getMovieBaseUrl() {
@@ -1228,6 +1203,20 @@ public class AppSettings {
         catch (Throwable th) {
             return new String[0];
         }
+    }
+
+    public String getPlaybackNetwork() {
+        if (isExternalNetwork())
+            return PlaybackOptions.NETWORK_EXTERNAL;
+        else
+            return PlaybackOptions.NETWORK_INTERNAL;
+    }
+
+    private PlaybackOptions playbackOptions;
+    public PlaybackOptions getPlaybackOptions() {
+        if (playbackOptions == null)
+            playbackOptions = new PlaybackOptions(this);
+        return playbackOptions;
     }
 
     private static DevicePrefsSpec devicePrefsSpec;

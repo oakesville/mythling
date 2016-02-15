@@ -15,15 +15,15 @@
  */
 package com.oakesville.mythling.prefs;
 
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
+
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
 
 public class CategoriesPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -59,14 +59,6 @@ public class CategoriesPrefs extends PreferenceFragment {
         pref = getPreferenceScreen().findPreference(AppSettings.VIDEO_EXCLUDE_DIRECTORIES);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getVideoExcludeDirectories());
-
-        pref = getPreferenceScreen().findPreference(AppSettings.HLS_FILE_EXTENSIONS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getHlsFileExtensions());
-
-        pref = getPreferenceScreen().findPreference(AppSettings.STREAM_RAW_FILE_EXTENSIONS);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getStreamRawFileExtensions());
 
         pref = getPreferenceScreen().findPreference(AppSettings.MOVIE_BASE_URL);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));

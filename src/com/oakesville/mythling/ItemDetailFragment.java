@@ -222,6 +222,7 @@ public class ItemDetailFragment extends Fragment {
                             String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
                             URL url = new URL(getAppSettings().getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
                             TextView tv = (TextView) detailView.findViewById(R.id.custom_link);
+                            tv.setVisibility(View.VISIBLE);
                             String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
                             tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -254,6 +255,7 @@ public class ItemDetailFragment extends Fragment {
                             }
                             URL url = new URL(pageUrl);
                             TextView tv = (TextView) detailView.findViewById(R.id.page_link);
+                            tv.setVisibility(View.VISIBLE);
                             String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
                             tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -268,6 +270,9 @@ public class ItemDetailFragment extends Fragment {
                                 new Reporter(ex).send();
                         }
                     }
+                    else {
+                        detailView.findViewById(R.id.page_link).setVisibility(View.GONE);
+                    }
                 }
             } else {
                 if (item instanceof TvShow) {
@@ -279,6 +284,12 @@ public class ItemDetailFragment extends Fragment {
                     tv.setText(tvShow.getSummary());
                 }
             }
+
+            // status icons
+            ImageView transcodedIcon = (ImageView) detailView.findViewById(R.id.item_transcoded);
+            transcodedIcon.setVisibility(item.isTranscoded() ? View.VISIBLE : View.GONE);
+            ImageView downloadedIcon = (ImageView) detailView.findViewById(R.id.item_downloaded);
+            downloadedIcon.setVisibility(item.isDownloaded() ? View.VISIBLE : View.GONE);
 
             ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.btn_play);
             ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.btn_transcode);

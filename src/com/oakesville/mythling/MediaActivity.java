@@ -32,7 +32,7 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 
-import com.oakesville.mythling.StreamVideoDialog.StreamDialogListener;
+import com.oakesville.mythling.VideoPlaybackDialog.StreamDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
@@ -49,6 +49,8 @@ import com.oakesville.mythling.media.MediaSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
+import com.oakesville.mythling.media.PlaybackOptions;
+import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
 import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
@@ -86,6 +88,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -111,6 +114,13 @@ public abstract class MediaActivity extends Activity {
     static final String LIST_FRAGMENT = "listFragment";
     static final int MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID = 1;
     static final int LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID = 2;
+    /**
+     * from R.array.item_long_click_menu
+     */
+    static final int LONG_CLICK_MENU_PLAY = 0;
+    static final int LONG_CLICK_MENU_TRANSCODE = 1;
+    static final int LONG_CLICK_MENU_DOWNLOAD = 2;
+    static final int LONG_CLICK_MENU_DELETE = 3;
 
     static final String PATH = "path";
     static final String SEL_ITEM_INDEX = "idx";
@@ -678,27 +688,23 @@ public abstract class MediaActivity extends Activity {
 
     protected void playItem(final Item item) {
         try {
-            AppSettings appSettings = getAppSettings();
-
             if (appSettings.isDevicePlayback()) {
-                Uri download = getDownload(item);
-                if (download != null) {
-                    playDownload(download);
-                    return;
-                }
-
                 if (item.isMusic()) {
-                    String musicUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId();
+                    Uri uri;
+                    if (item.isDownloaded())
+                        uri = getDownload(item);
+                    else
+                        uri = Uri.parse(appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId());
                     if (appSettings.isExternalMusicPlayer()) {
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.parse(musicUrl), "audio/*");
+                        intent.setDataAndType(uri, "audio/*");
                         startActivity(intent);
                     }
                     else {
                         startProgress();
                         Toast.makeText(getApplicationContext(), getString(R.string.playing) + ": " + item.getTitle(), Toast.LENGTH_LONG).show();
                         Intent playMusic = new Intent(this, MusicPlaybackService.class);
-                        playMusic.setData(Uri.parse(musicUrl));
+                        playMusic.setData(uri);
                         playMusic.putExtra(MusicPlaybackService.EXTRA_MESSENGER, new Messenger(new Handler() {
                             public void handleMessage(Message msg) {
                                 if (msg.what == MusicPlaybackService.MESSAGE_PLAYER_PREPARED) {
@@ -711,31 +717,8 @@ public abstract class MediaActivity extends Activity {
                         startService(playMusic);
                     }
                 } else {
-                    StreamVideoDialog dialog = new StreamVideoDialog(getAppSettings(), item);
-                    dialog.setMessage(item.getDialogTitle());
-                    dialog.setListener(new StreamDialogListener() {
-                        public void onClickHls() {
-                            startProgress();
-                            if (item.isLiveTv())
-                                new StreamTvTask((TvShow) item, false).execute();
-                            else
-                                new StreamHlsTask(item).execute();
-                        }
-
-                        public void onClickStream() {
-                            startProgress();
-                            if (item.isLiveTv())
-                                new StreamTvTask((TvShow) item, true).execute();
-                            else
-                                playRawVideoStream(item);
-                        }
-
-                        public void onClickCancel() {
-                            stopProgress();
-                            // onResume();
-                        }
-                    });
-
+                    String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
+                    PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork);
                     if (appSettings.getMediaSettings().getViewType() == ViewType.list) {
                         // list mode - show info dialog
                         String dialogMessage = item.getDialogText();
@@ -753,17 +736,20 @@ public abstract class MediaActivity extends Activity {
                             }
                             dialogMessage += "\n\n" + getString(R.string.recording_will_be_scheduled);
                         }
+                        VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
                         dialog.setMessage(dialogMessage);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
                     } else  {
-                        // detail or split mode -- no dialog unless preferred stream is unknown
-                        if (appSettings.isPreferHls(item.getFormat())) {
+                        // detail or split mode -- no dialog if stream mode pref is set
+                        if (playbackOption.isAlways()) {
                             startProgress();
-                            new StreamHlsTask(item).execute((URL) null);
-                        } else if (appSettings.isPreferStreamRaw(item.getFormat())) {
-                            startProgress();
-                            playRawVideoStream(item);
-                        } else {
+                            if (playbackOption.isHls())
+                                new StreamHlsTask(item).execute((URL) null);
+                            else
+                                playRawVideoStream(item);
+                        }
+                        else {
+                            VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
                             dialog.show(getFragmentManager(), "StreamVideoDialog");
                         }
                     }
@@ -829,18 +815,22 @@ public abstract class MediaActivity extends Activity {
 
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
+            request.setTitle(item.getDownloadTitle());
             final long id = dm.enqueue(request);
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
             getAppData().addDownload(item.getId(), id);
 
-            // TODO: this reciever will be leaked
+            // TODO: this receiver could be leaked if view is refreshed before download is complete
             registerReceiver(new BroadcastReceiver() {
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
                     if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                         long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                        if (downloadId == id)
+                        if (downloadId == id) {
                             item.setDownloadId(downloadId);
+                            unregisterReceiver(this);
+                            onResume();
+                        }
                     }
                 }
             }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
@@ -853,20 +843,18 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
-    protected Uri getDownload(Item item) {
+    protected Uri getDownload(Item item) throws IOException {
         if (item.getDownloadId() == null)
             return null;
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        return dm.getUriForDownloadedFile(item.getDownloadId());
-    }
-
-    protected void playDownload(Uri uri) {
-        stopProgress();
-        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-        videoIntent.setDataAndType(uri, "video/*");
-        if (!appSettings.isExternalVideoPlayer())
-            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-        startActivity(videoIntent);
+        Uri uri = dm.getUriForDownloadedFile(item.getDownloadId());
+        if (uri == null) {
+            item.setDownloadId(null);
+            throw new IOException("Cannot find download for: " + item);
+        }
+        else {
+            return uri;
+        }
     }
 
     /**
@@ -1272,9 +1260,7 @@ public abstract class MediaActivity extends Activity {
                 onResume();
             } else {
                 try {
-                    if (item.isLengthKnown())
-                        streamInfo.setItemLength(item.getLength());
-                    playLiveStream(streamInfo);
+                    playLiveStream(streamInfo, item);
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
@@ -1324,15 +1310,16 @@ public abstract class MediaActivity extends Activity {
      */
     protected class PlayWithCutListTask extends AsyncTask<URL,Integer,Long> {
         private Recording recording;
+        private Uri playbackUri;
+        private PlaybackOption playbackOption;
 
-        private URL playbackUrl;
-
-        public PlayWithCutListTask(Recording rec) {
+        public PlayWithCutListTask(Uri uri, Recording rec, PlaybackOption opt) {
+            this.playbackUri = uri;
             this.recording = rec;
+            this.playbackOption = opt;
         }
 
         protected Long doInBackground(URL... urls) {
-            this.playbackUrl = urls[0];
             try {
                 AppSettings appSettings = getAppSettings();
                 URL url = new URL(appSettings.getCommercialCutListBaseUrl() + "ChanId=" + recording.getChannelId() +
@@ -1365,8 +1352,9 @@ public abstract class MediaActivity extends Activity {
                 onResume();
             }
             Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-            videoIntent.setDataAndType(Uri.parse(playbackUrl.toString()), "video/*");
+            videoIntent.setDataAndType(playbackUri, "video/*");
             videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+            videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
             if (recording.isLengthKnown())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
             if (recording.hasCommercialCutList())
@@ -1470,7 +1458,7 @@ public abstract class MediaActivity extends Activity {
                     if (raw)
                         playRawVideoStream(recording);
                     else
-                        playLiveStream(streamInfo);
+                        playLiveStream(streamInfo, recording);
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
                     if (getAppSettings().isErrorReportingEnabled())
@@ -1526,43 +1514,49 @@ public abstract class MediaActivity extends Activity {
     /**
      * Requires MythTV content.cpp patch to work without storage groups.
      */
-    private void playRawVideoStream(Item item) {
-        try {
+    private void playRawVideoStream(Item item) throws IOException, JSONException {
+
+        Uri uri;
+        if (item.isDownloaded()) {
+            uri = getDownload(item);
+        }
+        else {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
             String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
             if (item.getStorageGroup() == null)
                 fileUrl += "&StorageGroup=None";
             else
                 fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
+            uri = Uri.parse(fileUrl);
+        }
 
-            boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
-            if (item.isRecording() && useCutList && !appSettings.isExternalVideoPlayer()) {
-                new PlayWithCutListTask((Recording)item).execute(new URL(fileUrl));
-            }
-            else {
-                stopProgress();
-                Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-                Uri playUri = Uri.parse(fileUrl);
-                videoIntent.setDataAndType(playUri, "video/*");
-                if (!appSettings.isExternalVideoPlayer()) {
-                    videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+
+        PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_FILE);
+        boolean isExternalPlayer = playbackOption.isAppPlayer();
+        boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
+        if (item.isRecording() && useCutList && !isExternalPlayer) {
+            new PlayWithCutListTask(uri, (Recording)item, playbackOption).execute();
+        }
+        else {
+            stopProgress();
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(uri, "video/*");
+            if (!isExternalPlayer) {
+                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+                videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
+                if (!item.isDownloaded()) {
                     if (item.isLengthKnown())
                         videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
                     String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
                     if (streamingAuthType != AuthType.None.toString())
                         videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
                 }
-                startActivity(videoIntent);
             }
-        } catch (IOException ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            startActivity(videoIntent);
         }
     }
 
-    protected void playLiveStream(LiveStreamInfo streamInfo) throws IOException {
+    protected void playLiveStream(LiveStreamInfo streamInfo, Item item) throws IOException, JSONException {
         String streamUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + streamInfo.getRelativeUrl();
 
         // avoid retrieving unnecessary audio-only streams
@@ -1571,15 +1565,23 @@ public abstract class MediaActivity extends Activity {
 
         stopProgress();
 
-        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-        videoIntent.setDataAndType(Uri.parse(streamUrl), "video/*");
-        if (!appSettings.isExternalVideoPlayer()) {
-            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-            if (streamInfo.getItemLength() > 0)
-                videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, streamInfo.getItemLength());
+        PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_HLS);
+        boolean isExternalPlayer = playbackOption.isAppPlayer();
+        boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
+        if (item.isRecording() && useCutList && !isExternalPlayer) {
+            new PlayWithCutListTask(Uri.parse(streamUrl), (Recording)item, playbackOption).execute();
         }
-
-        startActivity(videoIntent);
+        else {
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(Uri.parse(streamUrl), "video/*");
+            if (!playbackOption.isAppPlayer()) {
+                videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+                videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
+                if (item.isLengthKnown())
+                    videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
+            }
+            startActivity(videoIntent);
+        }
     }
 
     void initListViewOnItemClickListener() {
@@ -1705,12 +1707,52 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    protected PlaybackOption getPlaybackOption(Item item, String streamType) throws IOException, JSONException {
+        String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
+        return appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork, streamType);
+    }
+
+    protected VideoPlaybackDialog getVideoPlaybackDialog(Item item) {
+        VideoPlaybackDialog dialog = new VideoPlaybackDialog(getAppSettings(), item);
+        dialog.setMessage(item.getDialogTitle());
+        dialog.setListener(new StreamDialogListener() {
+            public void onClickPlay(Item item, PlaybackOption option) {
+                startProgress();
+                if (item.isLiveTv()) {
+                    new StreamTvTask((TvShow)item, !option.isHls()).execute();
+                }
+                else {
+                    if (option.isHls()) {
+                        new StreamHlsTask(item).execute();
+                    }
+                    else {
+                        try {
+                            playRawVideoStream(item);
+                        } catch (Exception ex) {
+                            stopProgress();
+                            onResume();
+                            Log.e(TAG, ex.getMessage(), ex);
+                            if (getAppSettings().isErrorReportingEnabled())
+                                new Reporter(ex).send();
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+            public void onClickCancel() {
+                stopProgress();
+                // onResume();
+            }
+        });
+        return dialog;
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         if (v == getListView()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             Listable listable = (Listable)getListView().getItemAtPosition(info.position);
-            if (listable instanceof Item && !((Item)listable).isLiveTv() && !((Item)listable).isMusic()) {
+            if (listable instanceof Item) {
                 Item item = (Item)listable;
                 menu.setHeaderTitle(item.getDialogTitle());
                 if (isSplitView()) {
@@ -1721,32 +1763,48 @@ public abstract class MediaActivity extends Activity {
                 else {
                     getListView().setItemChecked(info.position, true);
                 }
-                String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
-                for (int i = 0; i < menuItems.length; i++)
-                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, i, i, menuItems[i]);
-                if (item.isRecording())
-                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, 3, 3, getString(R.string.delete));
+                SparseArray<String> menuItems = getLongClickMenuItems(item);
+                for (int i = 0; i < menuItems.size(); i++) {
+                    int id = menuItems.keyAt(i);
+                    menu.add(MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID, id, id, menuItems.get(id));
+                }
             }
         }
+    }
+
+    SparseArray<String> getLongClickMenuItems(Item item) {
+        String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
+        SparseArray<String> relevantItems = new SparseArray<String>();
+        for (int i = 0; i < menuItems.length; i++) {
+            if (i == LONG_CLICK_MENU_PLAY)
+                relevantItems.put(i, menuItems[i]);
+            else if (i == LONG_CLICK_MENU_TRANSCODE && !item.isMusic())
+                relevantItems.put(i, menuItems[i]);
+            else if (i == LONG_CLICK_MENU_DOWNLOAD && !item.isLiveTv())
+                relevantItems.put(i, menuItems[i]);
+            else if (i == LONG_CLICK_MENU_DELETE && item.isRecording())
+                relevantItems.put(i, menuItems[i]);
+        }
+        return relevantItems;
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getGroupId() == MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            if (item.getItemId() == 0) {
+            if (item.getItemId() == LONG_CLICK_MENU_PLAY) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 playItem(it);
                 return true;
-            } else if (item.getItemId() == 1) {
+            } else if (item.getItemId() == LONG_CLICK_MENU_TRANSCODE) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 transcodeItem(it);
                 return true;
-            } else if (item.getItemId() == 2) {
+            } else if (item.getItemId() == LONG_CLICK_MENU_DOWNLOAD) {
                 Item it = (Item)getListView().getItemAtPosition(info.position);
                 downloadItem(it);
                 return true;
-            } else if (item.getItemId() == 3) {
+            } else if (item.getItemId() == LONG_CLICK_MENU_DELETE) {
                 Recording rec = (Recording)getListView().getItemAtPosition(info.position);
                 int size = getListables().size();
                 if (size == 1 || size == info.position + 1)
