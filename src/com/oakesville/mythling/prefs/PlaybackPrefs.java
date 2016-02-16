@@ -15,16 +15,22 @@
  */
 package com.oakesville.mythling.prefs;
 
+import org.json.JSONException;
+
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.util.Log;
 
 public class PlaybackPrefs extends PreferenceFragment {
+    private static final String TAG = PlaybackPrefs.class.getSimpleName();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +50,30 @@ public class PlaybackPrefs extends PreferenceFragment {
         });
         doCategoryEnablement(appSettings.isDevicePlayback());
 
-        // TODO: CLEAR PLAYBACK OPTIONS
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
 
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean update = super.onPreferenceChange(preference, newValue);
+                if (Boolean.parseBoolean(newValue.toString())) {
+                    AppSettings settings = new AppSettings(getPreferenceScreen().getContext());
+                    try {
+                        settings.getPlaybackOptions().clearAlwaysDoThisSettings();
+                    }
+                    catch (JSONException ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        if (settings.isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                        settings.getPlaybackOptions().clearAll();
+                    }
+                }
+
+                return update;
+            }
+        });
+
+        pref = getPreferenceScreen().findPreference(AppSettings.SKIP_BACK_INTERVAL);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getSkipBackInterval() + " " + getString(R.string.seconds));
 

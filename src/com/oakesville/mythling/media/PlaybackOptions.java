@@ -119,6 +119,7 @@ public class PlaybackOptions {
             mt.put(fileType, ft);
         }
         if (option.always) {
+            appSettings.setAlwaysPromptForPlaybackOptions(false);
             // obliterate any existing stream type since this itself is a pref
             JSONObject net = new JSONObject();
             net.put(option.stream, option.player);
@@ -145,7 +146,26 @@ public class PlaybackOptions {
         return PLAYER_LIBVLC;
     }
 
-    public void clear() {
+    public void clearAlwaysDoThisSettings() throws JSONException {
+        JSONObject json = new JSONObject(appSettings.getPlaybackOptionsJson());
+        Iterator<String> mtKeys = json.keys();
+        while (mtKeys.hasNext()) {
+            JSONObject mt = json.getJSONObject(mtKeys.next());
+            Iterator<String> ftKeys = mt.keys();
+            while (ftKeys.hasNext()) {
+                JSONObject ft = mt.getJSONObject(ftKeys.next());
+                Iterator<String> netKeys = ft.keys();
+                while (netKeys.hasNext()) {
+                    JSONObject net = ft.getJSONObject(netKeys.next());
+                    if (net.has(PROPERTY_ALWAYS))
+                        net.remove(PROPERTY_ALWAYS);
+                }
+            }
+        }
+        appSettings.setPlaybackOptionsJson(json.toString());
+    }
+
+    public void clearAll() {
         appSettings.setPlaybackOptionsJson("{}");
     }
 

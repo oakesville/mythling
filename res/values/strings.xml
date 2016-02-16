@@ -81,6 +81,7 @@
     <string name="title_quality_settings">HLS Video Quality Settings</string>
     <string name="title_cache_settings">Data Cache Settings</string>
     <string name="title_system_settings">System Settings</string>
+    <string name="title_always_prompt_for_playback_options">Always Prompt for Playback Options</string>    
     <string name="title_save_position_on_exit">Save Position on Exit</string>
     <string name="title_skip_forward_interval">Skip Forward Interval</string>
     <string name="message_skip_forward_interval">Seconds to skip ahead when the Skip Forward button is pressed.</string>

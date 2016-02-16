@@ -150,6 +150,7 @@ public class AppSettings {
     public static final String EPG_LAST_LOAD = "epg_last_load";
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
+    public static final String ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS = "always_prompt_for_playback_options";
     public static final String SAVE_POSITION_ON_EXIT = "save_position_on_exit";
     public static final String VIDEO_SAVED_POSITION = "video_saved_position";
     public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
@@ -485,6 +486,14 @@ public class AppSettings {
 
     public String getCommercialSkip() {
         return getStringPref(COMMERCIAL_SKIP, COMMERCIAL_SKIP_OFF);
+    }
+
+    public boolean isAlwaysPromptForPlaybackOptions() {
+        return getBooleanPref(ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS, true);
+    }
+
+    public void setAlwaysPromptForPlaybackOptions(boolean alwaysPrompt) {
+        setBooleanPref(ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS, alwaysPrompt);
     }
 
     public boolean isSavePositionOnExit() {

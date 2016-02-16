@@ -28,7 +28,11 @@
         android:key="device_playback_cat_video"
         android:title="@string/title_device_player_video"
         android:shouldDisableView="true">
-        <!-- TODO: CLEAR PLAYER OPTIONS -->
+        <CheckBoxPreference
+            android:key="always_prompt_for_playback_options"
+            android:title="@string/title_always_prompt_for_playback_options"
+            android:defaultValue="true"
+            android:layout="@layout/pref" />
         <CheckBoxPreference
             android:key="save_position_on_exit"
             android:title="@string/title_save_position_on_exit"
