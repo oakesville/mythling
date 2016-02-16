@@ -15,16 +15,21 @@
  */
 package com.oakesville.mythling.prefs.firetv;
 
+import org.json.JSONException;
+
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
+import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
+import android.util.Log;
 
 public class FireTvBasicPrefs extends PreferenceFragment {
+    private static final String TAG = FireTvBasicPrefs.class.getSimpleName();
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getActionBar().setTitle(R.string.title_basic_setup);
@@ -40,10 +45,27 @@ public class FireTvBasicPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary("" + appSettings.getMythTvServicePort());
 
-        SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_VIDEO_PLAYER);
-        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+        pref = getPreferenceScreen().findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean update = super.onPreferenceChange(preference, newValue);
+                if (Boolean.parseBoolean(newValue.toString())) {
+                    AppSettings settings = new AppSettings(getPreferenceScreen().getContext());
+                    try {
+                        settings.getPlaybackOptions().clearAlwaysDoThisSettings();
+                    }
+                    catch (JSONException ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        if (settings.isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                        settings.getPlaybackOptions().clearAll();
+                    }
+                }
+                return update;
+            }
+        });
 
         pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
-        pref.setTitle(AppSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
+        pref.setTitle(appSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
     }
 }

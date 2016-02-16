@@ -32,7 +32,6 @@ import com.oakesville.mythling.util.Reporter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,14 +50,6 @@ public class MainActivity extends MediaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        try {
-            getAppSettings().initialize();
-        } catch (NameNotFoundException ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-            if (getAppSettings().isErrorReportingEnabled())
-                new Reporter(ex).send();
-        }
 
         if (getAppSettings().isFirstRun()) {
             new AlertDialog.Builder(this)

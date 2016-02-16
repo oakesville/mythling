@@ -15,6 +15,7 @@
  */
 package com.oakesville.mythling.app;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -56,8 +57,11 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 public class AppSettings {
+    private static final String TAG = AppSettings.class.getSimpleName();
+
     public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
     public static final String DEVICE_PLAYBACK_CATEGORY_MUSIC = "device_playback_cat_music";
     public static final String FRONTEND_PLAYBACK_CATEGORY = "frontend_playback_cat";
@@ -174,6 +178,8 @@ public class AppSettings {
     public AppSettings(Context appContext) {
         this.appContext = appContext;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        // initialize mythling version for static access
+        getMythlingVersion();
     }
 
     public URL getMythlingWebBaseUrl() throws MalformedURLException {
@@ -1182,16 +1188,22 @@ public class AppSettings {
 
     private static String mythlingVersion;
 
-    public void initialize() throws NameNotFoundException {
-        loadDevicePrefsConstraints();
+    public String getMythlingVersion() {
         if (mythlingVersion == null) {
             PackageManager manager = appContext.getPackageManager();
-            PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
-            mythlingVersion = info.versionName;
+            try {
+                PackageInfo info = manager.getPackageInfo(appContext.getPackageName(), 0);
+                mythlingVersion = info.versionName;
+            } catch (NameNotFoundException ex) { // should never happen
+                Log.e(TAG, ex.getMessage(), ex);
+            }
         }
+        return mythlingVersion;
     }
-
-    public static String getMythlingVersion() {
+    /**
+     * may return null if AppSettings never instantiated
+     */
+    public static String staticGetMythlingVersion() {
         return mythlingVersion;
     }
 
@@ -1228,19 +1240,26 @@ public class AppSettings {
         return playbackOptions;
     }
 
-    private static DevicePrefsSpec devicePrefsSpec;
-    public static DevicePrefsSpec getDevicePrefsConstraints() { return devicePrefsSpec; }
-    private static boolean devicePrefsSpecsLoaded;
-    public static void loadDevicePrefsConstraints() {
+    private boolean devicePrefsSpecsLoaded;
+    private DevicePrefsSpec devicePrefsSpec;
+    public DevicePrefsSpec getDevicePrefsConstraints() {
         if (!devicePrefsSpecsLoaded) {
             devicePrefsSpecsLoaded = true;
             // perform this test for all devices that have prefs constraints
-            DevicePrefsSpec test = new FireTvPrefsSpec();
-            if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
-                devicePrefsSpec = test;
-                return;
+            try {
+                DevicePrefsSpec test = new FireTvPrefsSpec(getAppContext());
+                if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
+                    devicePrefsSpec = test;
+                }
+            }
+            catch (IOException ex) {
+                Log.e(TAG, ex.getMessage(), ex);
+                if (isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                Toast.makeText(appContext, appContext.getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
+        return devicePrefsSpec;
     }
 
     public boolean deviceSupportsWebLinks() {

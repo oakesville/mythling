@@ -69,7 +69,7 @@ public class Reporter {
         JSONObject json = new JSONObject();
         JSONObject report = new JSONObject();
         json.put("report", report);
-        report.put("source", "Mythling v" + AppSettings.getMythlingVersion() +
+        report.put("source", "Mythling v" + AppSettings.staticGetMythlingVersion() +
                 " (sdk " + AppSettings.getAndroidVersion() + ")");
         report.put("message", message == null ? "No message" : message);
         if (throwable != null) {

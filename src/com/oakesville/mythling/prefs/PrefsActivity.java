@@ -53,7 +53,8 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     public void onBuildHeaders(List<Header> target) {
         int headerResource = R.xml.prefs_headers;
-        DevicePrefsSpec deviceConstraints = AppSettings.getDevicePrefsConstraints();
+        AppSettings appSettings = new AppSettings(getApplicationContext());
+        DevicePrefsSpec deviceConstraints = appSettings.getDevicePrefsConstraints();
         if (deviceConstraints != null && deviceConstraints.getPrefsHeadersResource() != 0)
             headerResource = deviceConstraints.getPrefsHeadersResource();
         loadHeadersFromResource(headerResource, target);

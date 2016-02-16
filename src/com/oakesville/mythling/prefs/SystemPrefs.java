@@ -28,10 +28,10 @@ public class SystemPrefs extends PreferenceFragment {
         getActivity().getActionBar().setTitle(R.string.title_system_settings);
         addPreferencesFromResource(R.xml.system_prefs);
 
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
-        pref.setTitle(AppSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
-
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
+
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
+        pref.setTitle(appSettings + " (sdk " + AppSettings.getAndroidVersion() + ")");
 
         pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));

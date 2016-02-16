@@ -15,20 +15,17 @@
  */
 package com.oakesville.mythling.media;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppResources;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
-import android.content.res.Resources;
 import android.util.Log;
 
 public class PlaybackOptions {
@@ -87,8 +84,9 @@ public class PlaybackOptions {
 
     public PlaybackOption getDefaultOption(MediaType mediaType, String fileType, String network, String streamMode) throws IOException, JSONException {
         if (defaultOptionsJson == null) {
-            Resources res = appSettings.getAppContext().getResources();
-            defaultOptionsJson = readJson(res.openRawResource(R.raw.default_playback_options));
+            AppResources appResources = new AppResources(appSettings.getAppContext());
+            String jsonString = appResources.readJsonString(R.raw.default_playback_options);
+            defaultOptionsJson = new JSONObject(jsonString);
         }
         PlaybackOption defaultOption = getOption(mediaType, fileType, network, streamMode, defaultOptionsJson);
         if (defaultOption == null) {
@@ -224,25 +222,6 @@ public class PlaybackOptions {
         }
 
         return option;
-    }
-
-    /**
-     * Strips comment lines.  Only works for whole-line comments.
-     */
-    private JSONObject readJson(InputStream stream) throws IOException, JSONException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        try {
-            StringBuffer str = new StringBuffer();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.matches("^\\s*//.*$"))
-                    str.append(line).append("\n");
-            }
-            return new JSONObject(str.toString());
-        }
-        finally {
-            reader.close();
-        }
     }
 
     public static class PlaybackOption {

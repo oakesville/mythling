@@ -52,8 +52,6 @@ public class PlaybackPrefs extends PreferenceFragment {
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
-
-            @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean update = super.onPreferenceChange(preference, newValue);
                 if (Boolean.parseBoolean(newValue.toString())) {
@@ -68,7 +66,6 @@ public class PlaybackPrefs extends PreferenceFragment {
                         settings.getPlaybackOptions().clearAll();
                     }
                 }
-
                 return update;
             }
         });

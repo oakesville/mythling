@@ -35,13 +35,16 @@
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/title_video_player">
-        <com.oakesville.mythling.prefs.firetv.FireTvSwitchPreference
-            android:key="video_player"
-            android:switchTextOn="@string/switch_built_in"
-            android:switchTextOff="@string/switch_external_app"
+        <CheckBoxPreference
+            android:key="always_prompt_for_playback_options"
+            android:title="@string/title_always_prompt_for_playback_options"
             android:defaultValue="true"
-            android:layout="@layout/sw_pref_inner" 
-            android:widgetLayout="@layout/prefs_switch" />
+            android:layout="@layout/pref" />
+        <CheckBoxPreference
+            android:key="save_position_on_exit"
+            android:title="@string/title_save_position_on_exit"
+            android:defaultValue="true"
+            android:layout="@layout/pref" />
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/title_mythling_version">
