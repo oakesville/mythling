@@ -31,7 +31,7 @@ public class SystemPrefs extends PreferenceFragment {
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
-        pref.setTitle(appSettings + " (sdk " + AppSettings.getAndroidVersion() + ")");
+        pref.setTitle(appSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");
 
         pref = getPreferenceScreen().findPreference(AppSettings.TUNER_TIMEOUT);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
