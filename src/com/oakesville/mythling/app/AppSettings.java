@@ -88,7 +88,6 @@ public class AppSettings {
     public static final String VIEW_TYPE = "view_type";
     public static final String SORT_TYPE = "sort_type";
     public static final String FRONTEND_PLAYBACK = "playback_mode";
-    public static final String INTERNAL_VIDEO_PLAYER = "video_player";
     public static final String INTERNAL_MUSIC_PLAYER = "music_player";
     public static final String EXTERNAL_NETWORK = "network_location";
     public static final String CATEGORIZE_VIDEOS = "categorize_videos";
@@ -178,6 +177,24 @@ public class AppSettings {
     public AppSettings(Context appContext) {
         this.appContext = appContext;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        if (!devicePrefsSpecsLoaded) {
+            // initialize static device pref constraints
+            try {
+                // perform this test for all supported devices with pref constraints
+                DevicePrefsSpec test = new FireTvPrefsSpec(getAppContext());
+                if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
+                    devicePrefsSpec = test;
+                }
+                devicePrefsSpecsLoaded = true;
+            }
+            catch (IOException ex) {
+                Log.e(TAG, ex.getMessage(), ex);
+                if (isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                Toast.makeText(appContext, appContext.getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+
         // initialize mythling version for static access
         getMythlingVersion();
     }
@@ -461,13 +478,6 @@ public class AppSettings {
 
     public boolean isDevicePlayback() {
         return !getBooleanPref(FRONTEND_PLAYBACK, false);
-    }
-
-    /**
-     * Only for TV devices (eg: FireTv)
-     */
-    public boolean isExternalVideoPlayerx() {
-        return !getBooleanPref(INTERNAL_VIDEO_PLAYER, isCpuCompatibleWithInternalPlayer());
     }
 
     public boolean isCpuCompatibleWithInternalPlayer() {
@@ -1201,7 +1211,8 @@ public class AppSettings {
         return mythlingVersion;
     }
     /**
-     * may return null if AppSettings never instantiated
+     * may return null if getMythlingVersion() never called
+     * and AppSettings never instantiated.
      */
     public static String staticGetMythlingVersion() {
         return mythlingVersion;
@@ -1240,25 +1251,9 @@ public class AppSettings {
         return playbackOptions;
     }
 
-    private boolean devicePrefsSpecsLoaded;
-    private DevicePrefsSpec devicePrefsSpec;
+    private static boolean devicePrefsSpecsLoaded;
+    private static DevicePrefsSpec devicePrefsSpec;
     public DevicePrefsSpec getDevicePrefsConstraints() {
-        if (!devicePrefsSpecsLoaded) {
-            devicePrefsSpecsLoaded = true;
-            // perform this test for all devices that have prefs constraints
-            try {
-                DevicePrefsSpec test = new FireTvPrefsSpec(getAppContext());
-                if (test.appliesToDevice(Build.MANUFACTURER, Build.MODEL)) {
-                    devicePrefsSpec = test;
-                }
-            }
-            catch (IOException ex) {
-                Log.e(TAG, ex.getMessage(), ex);
-                if (isErrorReportingEnabled())
-                    new Reporter(ex).send();
-                Toast.makeText(appContext, appContext.getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
         return devicePrefsSpec;
     }
 

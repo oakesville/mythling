@@ -23,6 +23,7 @@ import com.oakesville.mythling.prefs.PrefChangeListener;
 import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
@@ -45,7 +46,8 @@ public class FireTvBasicPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary("" + appSettings.getMythTvServicePort());
 
-        pref = getPreferenceScreen().findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
+        CheckBoxPreference cbPref = (CheckBoxPreference)getPreferenceScreen().
+                findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean update = super.onPreferenceChange(preference, newValue);
@@ -64,6 +66,7 @@ public class FireTvBasicPrefs extends PreferenceFragment {
                 return update;
             }
         });
+        cbPref.setChecked(appSettings.isAlwaysPromptForPlaybackOptions());
 
         pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
         pref.setTitle(appSettings.getMythlingVersion() + " (sdk " + AppSettings.getAndroidVersion() + ")");

@@ -38,7 +38,7 @@
         <CheckBoxPreference
             android:key="always_prompt_for_playback_options"
             android:title="@string/title_always_prompt_for_playback_options"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:layout="@layout/pref" />
         <CheckBoxPreference
             android:key="save_position_on_exit"
