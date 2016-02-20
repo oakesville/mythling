@@ -42,3 +42,8 @@ http://192.168.0.70:6544/mythling-epg/guide.html?demoMode=true&startTime=2015-07
 
 amazon dev console:
 https://developer.amazon.com/home.html
+
+amazon webapp tester for firetv:
+https://developer.amazon.com/public/solutions/platforms/webapps/docs/tester.html
+webview remote debugging thru webapp tester:
+http://<firetv_ip>:9222
