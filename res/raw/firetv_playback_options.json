@@ -1,1 +1,63 @@
-// TODO: populate this with always settings
+// Same format as the playback_options preference string.
+// Any property named "default" is treated as the fallback
+// in case the named parameter is not found (except for
+// stream/player, where the default combo is a subprop).
+{
+  "default":
+  {
+    "mpg":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "always": true
+      },
+      "external":
+      {
+        "hls": "android",
+        "always": true
+      },
+      "download":
+      {
+        "file": "libvlc",
+        "always": true
+      }
+    },
+    "ts":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "always": true
+      },
+      "external":
+      {
+        "hls": "android",
+        "always": true
+      },
+      "download":
+      {
+        "file": "libvlc",
+        "always": true
+      }
+    },
+    "default":
+    {
+      "internal":
+      {
+        "file": "android",
+        "always": true
+      },
+      "external":
+      {
+        "hls": "android",
+        "always": true
+      },
+      "download":
+      {
+        "file": "android",
+        "always": true
+      }
+    }
+  }
+}
