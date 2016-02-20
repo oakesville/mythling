@@ -1,0 +1,141 @@
+<!--
+  Copyright 2016 Donald Oakes
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_stop"
+        android:title="@string/menu_stop"
+        android:orderInCategory="50"
+        android:icon="@drawable/ic_action_stop_red"
+        android:showAsAction="always"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_media"
+        android:title="@string/menu_videos"
+        android:orderInCategory="100"
+        android:showAsAction="always|withText">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/media_recordings"
+                    android:title="@string/menu_recordings" />
+                <item
+                    android:id="@+id/media_tv"
+                    android:title="@string/menu_tv" />
+                <item
+                    android:id="@+id/media_videos"
+                    android:title="@string/menu_videos" />
+                <item
+                    android:id="@+id/media_movies"
+                    android:title="@string/menu_movies" />
+                <item
+                    android:id="@+id/media_tv_series"
+                    android:title="@string/menu_tv_series" />
+                <item
+                    android:id="@+id/media_music"
+                    android:title="@string/menu_music" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_sort"
+        android:title="@string/menu_byTitle"
+        android:orderInCategory="150"
+        android:showAsAction="always|withText">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_byTitle"
+                    android:title="@string/menu_byTitle" />
+                <item
+                    android:id="@+id/sort_byDate"
+                    android:title="@string/menu_byDate" />
+                <item
+                    android:id="@+id/sort_byRating"
+                    android:title="@string/menu_byRating" />
+                <!-- for live tv -->
+                <item
+                    android:id="@+id/sort_byChannel"
+                    android:title="@string/menu_byChannel" />
+                <item
+                    android:id="@+id/sort_byCallsign"
+                    android:title="@string/menu_byCallsign" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_view"
+        android:title="@string/menu_view"
+        android:orderInCategory="175"
+        android:icon="@drawable/ic_menu_list"
+        android:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/view_list"
+                    android:title="@string/menu_list"
+                    android:icon="@drawable/ic_menu_list" />
+                <item
+                    android:id="@+id/view_detail"
+                    android:title="@string/menu_detail"
+                    android:icon="@drawable/ic_menu_detail" />
+                <item
+                    android:id="@+id/view_split"
+                    android:title="@string/menu_split"
+                    android:icon="@drawable/ic_menu_split" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_guide"
+        android:title="@string/menu_guide"
+        android:orderInCategory="200"
+        android:icon="@drawable/ic_menu_guide"
+        android:showAsAction="always" />
+    
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/menu_refresh"
+        android:orderInCategory="300"
+        android:icon="@drawable/ic_menu_refresh"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/menu_search"
+        android:orderInCategory="400"
+        android:icon="@drawable/ic_menu_search"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
+        android:orderInCategory="500"
+        android:icon="@drawable/ic_menu_settings"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/menu_help"
+        android:orderInCategory="600"
+        android:icon="@drawable/ic_menu_help"
+        android:showAsAction="always" />
+
+</menu>

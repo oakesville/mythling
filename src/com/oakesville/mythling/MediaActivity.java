@@ -448,7 +448,10 @@ public abstract class MediaActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        if (getAppSettings().isFireTv())
+            getMenuInflater().inflate(R.menu.firetv_main, menu);
+        else
+            getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -1814,6 +1817,19 @@ public abstract class MediaActivity extends Activity {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (getAppSettings().isTv() && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+                if (getCurrentFocus() != null) {
+                    getCurrentFocus().clearFocus();
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
