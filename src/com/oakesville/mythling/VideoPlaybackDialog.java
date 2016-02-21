@@ -64,7 +64,6 @@ public class VideoPlaybackDialog extends DialogFragment {
     private Switch streamModeSwitch;
     private Spinner playerDropdown;
     private CheckBox alwaysCheckbox;
-    private int userSwitchCount;
 
     public VideoPlaybackDialog(AppSettings settings, Item item) {
         this.settings = settings;
@@ -98,7 +97,6 @@ public class VideoPlaybackDialog extends DialogFragment {
         streamModeSwitch = (Switch) view.findViewById(R.id.stream_switch);
         streamModeSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                userSwitchCount++;
                 playbackOption = createPlaybackOption();
                 try {
                     // maybe a different player option for this stream mode
@@ -166,10 +164,8 @@ public class VideoPlaybackDialog extends DialogFragment {
             playerDropdown.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);
             alwaysCheckbox.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);
             if (!playbackOption.isAlways()) {
-                if (!item.isDownloaded()) {
-                    userSwitchCount = -1;
+                if (!item.isDownloaded())
                     streamModeSwitch.setChecked(playbackOption.isHls());
-                }
                 selectPlayer(false);
                 alwaysCheckbox.setChecked(playbackOption.isAlways());
             }
