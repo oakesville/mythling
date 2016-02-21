@@ -104,7 +104,7 @@ public class VideoPlaybackDialog extends DialogFragment {
                             settings.getPlaybackNetwork(), playbackOption.getStream());
                     if (!optionForStream.getPlayer().equals(playbackOption.getPlayer())) {
                         playbackOption.setPlayer(optionForStream.getPlayer());
-                        selectPlayer(true);
+                        selectPlayer();
                     }
                 }
                 catch (Exception ex) {
@@ -118,6 +118,7 @@ public class VideoPlaybackDialog extends DialogFragment {
         playerDropdown = (Spinner) view.findViewById(R.id.player_dropdown);
         playerDropdown.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                userPlayerSelects++;
                 playbackOption = createPlaybackOption();
             }
             public void onNothingSelected(AdapterView<?> parent) {
@@ -166,7 +167,7 @@ public class VideoPlaybackDialog extends DialogFragment {
             if (!playbackOption.isAlways()) {
                 if (!item.isDownloaded())
                     streamModeSwitch.setChecked(playbackOption.isHls());
-                selectPlayer(false);
+                selectPlayer();
                 alwaysCheckbox.setChecked(playbackOption.isAlways());
             }
         }
@@ -201,11 +202,16 @@ public class VideoPlaybackDialog extends DialogFragment {
         return new PlaybackOption(streamMode, player);
     }
 
-    private void selectPlayer(boolean animate) {
-        String[] selectedValues = getResources().getStringArray(R.array.player_values);
-        for (int i = 0; i < selectedValues.length; i++) {
-            if (selectedValues[i].equals(playbackOption.getPlayer()))
-                playerDropdown.setSelection(i, animate);
+    private int userPlayerSelects;  // as opposed to programmatic
+    private void selectPlayer() {
+        if (userPlayerSelects == 0) { // don't confound user by changing after they've selected
+            String[] selectedValues = getResources().getStringArray(R.array.player_values);
+            for (int i = 0; i < selectedValues.length; i++) {
+                if (selectedValues[i].equals(playbackOption.getPlayer())) {
+                    userPlayerSelects--;
+                    playerDropdown.setSelection(i);
+                }
+            }
         }
     }
 
