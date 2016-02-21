@@ -168,7 +168,7 @@ public abstract class Item implements Listable {
     }
 
     /**
-     * Identifies the item in dialog and context menu title bars.
+     * Identifies item in context menu title bars.
      */
     public String getDialogTitle() {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
@@ -178,8 +178,8 @@ public abstract class Item implements Listable {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 
-    public String getDialogText() {
-        return getTitle() + getListSubText();
+    public String getDialogSubText() {
+        return getListSubText();
     }
 
     public String getSubLabel() {

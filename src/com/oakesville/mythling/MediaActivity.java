@@ -720,41 +720,32 @@ public abstract class MediaActivity extends Activity {
                         startService(playMusic);
                     }
                 } else {
+                    if (item.isLiveTv()) {
+                        TvShow tvShow = (TvShow) item;
+                        if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0) {
+                            new AlertDialog.Builder(this)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setTitle(getString(R.string.live_tv))
+                                    .setMessage(getString(R.string.show_already_ended_) + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                            onResume();
+                            return;
+                        }
+                    }
                     String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
                     PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork);
-                    if (appSettings.getMediaSettings().getViewType() == ViewType.list) {
-                        // list mode - show info dialog
-                        String dialogMessage = item.getDialogText();
-                        if (item.isLiveTv()) {
-                            TvShow tvShow = (TvShow) item;
-                            if (tvShow.getEndTime().compareTo(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime()) < 0) {
-                                new AlertDialog.Builder(this)
-                                        .setIcon(android.R.drawable.ic_dialog_alert)
-                                        .setTitle(getString(R.string.live_tv))
-                                        .setMessage(getString(R.string.show_already_ended_) + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
-                                        .setPositiveButton("OK", null)
-                                        .show();
-                                onResume();
-                                return;
-                            }
-                            dialogMessage += "\n\n" + getString(R.string.recording_will_be_scheduled);
-                        }
-                        VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
-                        dialog.setMessage(dialogMessage);
-                        dialog.show(getFragmentManager(), "StreamVideoDialog");
-                    } else  {
+                    if (appSettings.getMediaSettings().getViewType() != ViewType.list && playbackOption.isAlways()) {
                         // detail or split mode -- no dialog if stream mode pref is set
-                        if (playbackOption.isAlways()) {
-                            startProgress();
-                            if (playbackOption.isHls())
-                                new StreamHlsTask(item).execute((URL) null);
-                            else
-                                playRawVideoStream(item);
-                        }
-                        else {
-                            VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
-                            dialog.show(getFragmentManager(), "StreamVideoDialog");
-                        }
+                        startProgress();
+                        if (playbackOption.isHls())
+                            new StreamHlsTask(item).execute((URL) null);
+                        else
+                            playRawVideoStream(item);
+                    }
+                    else {
+                        VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
+                        dialog.show(getFragmentManager(), "StreamVideoDialog");
                     }
                 }
             } else {
@@ -1717,7 +1708,6 @@ public abstract class MediaActivity extends Activity {
 
     protected VideoPlaybackDialog getVideoPlaybackDialog(Item item) {
         VideoPlaybackDialog dialog = new VideoPlaybackDialog(getAppSettings(), item);
-        dialog.setMessage(item.getDialogTitle());
         dialog.setListener(new StreamDialogListener() {
             public void onClickPlay(Item item, PlaybackOption option) {
                 startProgress();

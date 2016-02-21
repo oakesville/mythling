@@ -242,8 +242,8 @@ public class TvShow extends Item {
     }
 
     @Override
-    public String getDialogText() {
-        TextBuilder tb = new TextBuilder(getTitle());
+    public String getDialogSubText() {
+        TextBuilder tb = new TextBuilder();
         if (isShowMovie())
             tb.appendYear(getYear());
         tb.appendRating(getRating());

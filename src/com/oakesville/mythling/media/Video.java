@@ -66,8 +66,8 @@ public class Video extends Item {
     }
 
     @Override
-    public String getDialogText() {
-        TextBuilder tb = new TextBuilder(getTitle());
+    public String getDialogSubText() {
+        TextBuilder tb = new TextBuilder();
         tb.appendYear(getYear());
         tb.appendRating(getRating());
         tb.appendQuotedLine(getSubTitle());

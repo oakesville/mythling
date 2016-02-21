@@ -388,7 +388,7 @@
     <string name="playing">Playing</string>
     <string name="live_tv">Live TV</string>
     <string name="show_already_ended_">Show has already ended:\u0020</string>
-    <string name="recording_will_be_scheduled">Recording will be scheduled if necessary.</string>
+    <string name="recording_will_be_scheduled">(Recording will be scheduled if necessary).</string>
     <string name="interrupt">Interrupt</string>
     <string name="stop_playback_">Stop current playback?</string>
     <string name="transcode">Transcode</string>
@@ -403,6 +403,7 @@
     <string name="file">File</string>
     <string name="always_do_this_for">Always do this for</string>
     <string name="remember_this_for">Remember this for</string>
+    <string name="always_for">Always for</string>
     <string name="files">files</string>
     <string name="transcode_to_hls">Stream HLS</string>
     <string name="stream_raw_file">Stream File</string>

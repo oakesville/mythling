@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Donald Oakes
+ * Copyright 2016 Donald Oakes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.oakesville.mythling;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
 import com.oakesville.mythling.util.Reporter;
@@ -37,6 +38,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class VideoPlaybackDialog extends DialogFragment {
@@ -51,9 +53,6 @@ public class VideoPlaybackDialog extends DialogFragment {
     public void setListener(StreamDialogListener listener) {
         this.listener = listener;
     }
-
-    private String message;
-    public void setMessage(String message) { this.message = message;  }
 
     private AppSettings settings;
     private Item item;
@@ -77,8 +76,20 @@ public class VideoPlaybackDialog extends DialogFragment {
         builder.setIcon(R.drawable.ic_action_play);
         builder.setTitle(item.getTypeLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " " + getString(R.string.file)));
 
-        if (message != null)
-            builder.setMessage(message);
+        builder.setMessage(null); // use dialog_text view
+        TextView titleView = (TextView) view.findViewById(R.id.dialog_title_text);
+        titleView.setText(item.getTitle());
+
+        String detail;
+        if (settings.getMediaSettings().getViewType() == ViewType.list)
+            detail = item.getDialogSubText(); // show more details
+        else
+            detail = item.getListSubText();
+        if (item.isLiveTv())
+            detail += "\n" + getString(R.string.recording_will_be_scheduled);
+
+        TextView detailView = (TextView) view.findViewById(R.id.dialog_detail_text);
+        detailView.setText(detail);
 
         streamModeSwitch = (Switch) view.findViewById(R.id.stream_switch);
         streamModeSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -183,6 +194,17 @@ public class VideoPlaybackDialog extends DialogFragment {
         for (int i = 0; i < selectedValues.length; i++) {
             if (selectedValues[i].equals(playbackOption.getPlayer()))
                 playerDropdown.setSelection(i, animate);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int titleResId = getResources().getIdentifier("alertTitle", "id", "android");
+        View titleView = getDialog().findViewById(titleResId);
+        if (titleView != null && titleView.getParent() instanceof View) {
+            View parent = (View) titleView.getParent();
+            parent.setMinimumHeight(settings.dpToPx(55)); // default is 64dp
         }
     }
 

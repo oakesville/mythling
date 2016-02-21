@@ -15,32 +15,69 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
+    
+    <ScrollView
+        android:id="@+id/dialogScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true" >
 
-    <Switch 
-        android:id="@+id/stream_switch"
-        android:title="@string/title_stream_mode"
-        android:textOn="@string/switch_stream_hls"
-        android:textOff="@string/switch_stream_file"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:thumb="@drawable/switch_thumb"
-        android:layout_gravity="center_horizontal" />
-    <Spinner
-        android:id="@+id/player_dropdown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/player_entries"
-        android:entryValues="@array/player_values" 
-        android:layout_gravity="center_horizontal"
-        android:padding="0dp"
-        android:background="@drawable/spinner_background" /> 
-    <CheckBox
-        android:id="@+id/dialog_check"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/dialog_title_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/dialog_detail_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:includeFontPadding="false" />
+        </LinearLayout>        
+    </ScrollView>  
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Switch 
+            android:id="@+id/stream_switch"
+            android:title="@string/title_stream_mode"
+            android:textOn="@string/switch_stream_hls"
+            android:textOff="@string/switch_stream_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/switch_thumb"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="3dp"
+            android:switchTextAppearance="?android:attr/textAppearanceInverse" />
+        <Spinner
+            android:id="@+id/player_dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/player_entries"
+            android:entryValues="@array/player_values" 
+            android:layout_gravity="center_horizontal"
+            android:padding="0dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/spinner_background" /> 
+        <CheckBox
+            android:id="@+id/dialog_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 </LinearLayout>
