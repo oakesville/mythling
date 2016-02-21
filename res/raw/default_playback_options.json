@@ -56,6 +56,27 @@
         "file": "libvlc"
       }
     },
+    "Live TV":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "file": "libvlc"
+        }
+      },
+      "external":
+      {
+        "file": "libvlc",
+        "hls": "android",
+        "default":
+        {
+          "hls": "android"
+        }
+      }
+    },    
     "default":
     {
       "internal":

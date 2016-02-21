@@ -390,6 +390,9 @@
     <string name="live_tv">Live TV</string>
     <string name="show_already_ended_">Show has already ended:\u0020</string>
     <string name="recording_will_be_scheduled">(Recording will be scheduled if necessary).</string>
+    <string name="title_libvlc_playback">LibVLC Playback</string>
+    <string name="unsupported_cpu_for_libvlc">Device reports CPU unsupported by LibVLC.  Try anyway?</string>
+    <string name="always_ignore_libvlc_cpu_compatibility">Always ignore LibVLC CPU compatibility</string>
     <string name="interrupt">Interrupt</string>
     <string name="stop_playback_">Stop current playback?</string>
     <string name="transcode">Transcode</string>

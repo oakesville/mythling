@@ -46,6 +46,20 @@ public class PrefDismissDialog extends DialogFragment {
     private String key;
 
     private boolean checked;
+    private boolean defaultChecked = true;
+    public void setDefaultChecked(boolean defaultChecked) {
+        this.defaultChecked = defaultChecked;
+    }
+
+    public interface PrefDismissListener {
+        public String getPositiveBtnLabel();
+        public void onClickPositive();
+        public void onClickNegative();
+    }
+    private PrefDismissListener listener;
+    public void setListener(PrefDismissListener listener) {
+        this.listener = listener;
+    }
 
     public PrefDismissDialog(AppSettings settings, String title, String message, String key) {
         this.settings = settings;
@@ -69,14 +83,33 @@ public class PrefDismissDialog extends DialogFragment {
 
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.dialog_check);
         checkBox.setText(checkboxText == null ? getString(R.string.got_it) : checkboxText);
-        checkBox.setChecked(true);
+        checkBox.setChecked(defaultChecked);
 
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                checked = checkBox.isChecked();
-                settings.setBooleanPref(key, checked);
-            }
-        });
+        if (listener == null) {
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    checked = checkBox.isChecked();
+                    settings.setBooleanPref(key, checked);
+                }
+            });
+        }
+        else {
+            builder.setPositiveButton(listener.getPositiveBtnLabel(), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    checked = checkBox.isChecked();
+                    settings.setBooleanPref(key, checked);
+                    listener.onClickPositive();
+                }
+            });
+        }
+
+        if (listener != null) {
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    listener.onClickNegative();
+                }
+            });
+        }
 
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new OnShowListener() {

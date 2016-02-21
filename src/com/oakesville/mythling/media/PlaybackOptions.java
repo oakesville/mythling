@@ -78,7 +78,6 @@ public class PlaybackOptions {
             Log.d(TAG, "No saved playback option: " + mediaType.name() + "/" + fileType + "/" + network + "/" + streamMode);
             playbackOption = getDefaultOption(mediaType, fileType, network, streamMode);
         }
-
         return playbackOption;
     }
 
@@ -92,6 +91,11 @@ public class PlaybackOptions {
         if (defaultOption == null) {
             throw new JSONException("No match in default_playback_options.json: " + mediaType.name() + "/" + fileType + "/" + network + "/" + streamMode);
         }
+
+        // overrule default playback option where LIBVLC not supported by CPU
+        if (PLAYER_LIBVLC.equals(defaultOption.getPlayer()) && !appSettings.isCpuCompatibleWithLibVlcPlayer())
+            defaultOption.setPlayer(PLAYER_ANDROID);
+
         return defaultOption;
     }
 

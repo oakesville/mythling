@@ -164,6 +164,7 @@ public class AppSettings {
     public static final String COMMERCIAL_SKIP_ON = "Auto-Skip On";
     public static final String COMMERCIAL_SKIP_NOTIFY = "Auto-Skip Notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
+    public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
@@ -480,12 +481,16 @@ public class AppSettings {
         return !getBooleanPref(FRONTEND_PLAYBACK, false);
     }
 
-    public boolean isCpuCompatibleWithInternalPlayer() {
+    public boolean isCpuCompatibleWithLibVlcPlayer() {
         for (String cpu : getSupportedCpus()) {
             if (cpu.equals("armeabi-v7a"))
                 return true;
         }
         return false;
+    }
+
+    public boolean isIgnoreLibVlcCpuCompatibility() {
+        return getBooleanPref(IGNORE_LIBVLC_CPU_COMPATIBILITY, false);
     }
 
     public int getSkipBackInterval() {

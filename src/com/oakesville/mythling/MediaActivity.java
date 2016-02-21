@@ -32,7 +32,7 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 
-import com.oakesville.mythling.VideoPlaybackDialog.StreamDialogListener;
+import com.oakesville.mythling.VideoPlaybackDialog.PlaybackDialogListener;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.BadSettingsException;
@@ -55,6 +55,8 @@ import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvShow;
+import com.oakesville.mythling.prefs.PrefDismissDialog;
+import com.oakesville.mythling.prefs.PrefDismissDialog.PrefDismissListener;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
@@ -726,8 +728,8 @@ public abstract class MediaActivity extends Activity {
                             new AlertDialog.Builder(this)
                                     .setIcon(android.R.drawable.ic_dialog_alert)
                                     .setTitle(getString(R.string.live_tv))
-                                    .setMessage(getString(R.string.show_already_ended_) + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
-                                    .setPositiveButton("OK", null)
+                                    .setMessage(getString(R.string.show_already_ended_) + "\n" + item.getTitle() + "\n" + tvShow.getChannelInfo() + "\n" + tvShow.getShowTimeInfo())
+                                    .setPositiveButton(R.string.ok, null)
                                     .show();
                             onResume();
                             return;
@@ -901,7 +903,7 @@ public abstract class MediaActivity extends Activity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
                 .setMessage(getString(R.string.delete_recording) +  ":\n" + recording.getDialogTitle())
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new DeleteRecordingTask(recording).execute(getAppSettings().getMythTvServicesBaseUrl());
@@ -1442,7 +1444,7 @@ public abstract class MediaActivity extends Activity {
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setTitle(getString(R.string.recording_conflict))
                             .setMessage(getString(R.string.tuners_in_use_) + ex.getMessage())
-                            .setPositiveButton("OK", null)
+                            .setPositiveButton(R.string.ok, null)
                             .show();
                 } else {
                     if (ex != null)
@@ -1709,29 +1711,31 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected VideoPlaybackDialog getVideoPlaybackDialog(Item item) {
-        VideoPlaybackDialog dialog = new VideoPlaybackDialog(getAppSettings(), item);
-        dialog.setListener(new StreamDialogListener() {
-            public void onClickPlay(Item item, PlaybackOption option) {
-                startProgress();
-                if (item.isLiveTv()) {
-                    new StreamTvTask((TvShow)item, !option.isHls()).execute();
+        final VideoPlaybackDialog dialog = new VideoPlaybackDialog(getAppSettings(), item);
+        dialog.setListener(new PlaybackDialogListener() {
+            public void onClickPlay(final Item item, final PlaybackOption option) {
+                if (PlaybackOptions.PLAYER_LIBVLC.equals(option.getPlayer()) &&
+                        !getAppSettings().isCpuCompatibleWithLibVlcPlayer() && !getAppSettings().isIgnoreLibVlcCpuCompatibility()) {
+                    PrefDismissDialog dlg = new PrefDismissDialog(getAppSettings(), getString(R.string.title_libvlc_playback),
+                        getString(R.string.unsupported_cpu_for_libvlc), AppSettings.IGNORE_LIBVLC_CPU_COMPATIBILITY);
+                    dlg.setListener(new PrefDismissListener() {
+                            public String getPositiveBtnLabel() {
+                                return getString(R.string.play);
+                            }
+                            public void onClickPositive() {
+                                startVideoPlayback(item, option);
+                            }
+                            public void onClickNegative() {
+                                getVideoPlaybackDialog(item).show(getFragmentManager(), "StreamVideoDialog");
+                                return;
+                            }
+                    });
+                    dlg.setCheckboxText(getString(R.string.always_ignore_libvlc_cpu_compatibility));
+                    dlg.setDefaultChecked(false);
+                    dlg.show(getFragmentManager());
                 }
                 else {
-                    if (option.isHls()) {
-                        new StreamHlsTask(item).execute();
-                    }
-                    else {
-                        try {
-                            playRawVideoStream(item);
-                        } catch (Exception ex) {
-                            stopProgress();
-                            onResume();
-                            Log.e(TAG, ex.getMessage(), ex);
-                            if (getAppSettings().isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
-                        }
-                    }
+                    startVideoPlayback(item, option);
                 }
             }
             public void onClickCancel() {
@@ -1740,6 +1744,30 @@ public abstract class MediaActivity extends Activity {
             }
         });
         return dialog;
+    }
+
+    private void startVideoPlayback(Item item, PlaybackOption option) {
+        startProgress();
+        if (item.isLiveTv()) {
+            new StreamTvTask((TvShow)item, !option.isHls()).execute();
+        }
+        else {
+            if (option.isHls()) {
+                new StreamHlsTask(item).execute();
+            }
+            else {
+                try {
+                    playRawVideoStream(item);
+                } catch (Exception ex) {
+                    stopProgress();
+                    onResume();
+                    Log.e(TAG, ex.getMessage(), ex);
+                    if (getAppSettings().isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     @Override

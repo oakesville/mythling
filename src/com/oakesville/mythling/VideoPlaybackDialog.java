@@ -46,13 +46,13 @@ import android.widget.Toast;
 public class VideoPlaybackDialog extends DialogFragment {
     private static final String TAG = VideoPlaybackDialog.class.getSimpleName();
 
-    public interface StreamDialogListener {
+    public interface PlaybackDialogListener {
         public void onClickPlay(Item item, PlaybackOption option);
         public void onClickCancel();
     }
 
-    private StreamDialogListener listener;
-    public void setListener(StreamDialogListener listener) {
+    private PlaybackDialogListener listener;
+    public void setListener(PlaybackDialogListener listener) {
         this.listener = listener;
     }
 
@@ -130,7 +130,7 @@ public class VideoPlaybackDialog extends DialogFragment {
         if (item.isDownloaded())
             alwaysMsg += getString(R.string.downloaded).toLowerCase() + " " + item.getFormat() + " " + getString(R.string.files);
         else
-            alwaysMsg += item.getFormat() + " " + getString(R.string.files) + " " +
+            alwaysMsg += item.getFormat() + " " + ("Live TV".equals(item.getFormat()) ? getString(R.string.files) + " " : "") +
                 getString((settings.isExternalNetwork() ? R.string.on_external_network : R.string.on_internal_network));
         alwaysCheckbox.setText(alwaysMsg);
 
@@ -192,7 +192,7 @@ public class VideoPlaybackDialog extends DialogFragment {
     }
 
     private PlaybackOption createPlaybackOption() {
-        String[] selectedValues = getResources().getStringArray(R.array.player_values);
+        String[] selectedValues = getPlayerValues();
         String player = selectedValues[playerDropdown.getSelectedItemPosition()];
         String streamMode;
         if (item.isDownloaded())
@@ -205,7 +205,7 @@ public class VideoPlaybackDialog extends DialogFragment {
     private int userPlayerSelects;  // as opposed to programmatic
     private void selectPlayer() {
         if (userPlayerSelects == 0) { // don't confound user by changing after they've selected
-            String[] selectedValues = getResources().getStringArray(R.array.player_values);
+            String[] selectedValues = getPlayerValues();
             for (int i = 0; i < selectedValues.length; i++) {
                 if (selectedValues[i].equals(playbackOption.getPlayer())) {
                     userPlayerSelects--;
@@ -213,6 +213,10 @@ public class VideoPlaybackDialog extends DialogFragment {
                 }
             }
         }
+    }
+
+    private String[] getPlayerValues() {
+        return getResources().getStringArray(R.array.player_values);
     }
 
     @Override

@@ -41,6 +41,19 @@
         "always": true
       }
     },
+    "Live TV":
+    {
+      "internal":
+      {
+        "file": "libvlc",
+        "always": true
+      },
+      "external":
+      {
+        "hls": "android",
+        "always": true
+      }
+    },
     "default":
     {
       "internal":
