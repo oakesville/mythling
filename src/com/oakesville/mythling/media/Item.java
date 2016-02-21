@@ -168,13 +168,13 @@ public abstract class Item implements Listable {
     }
 
     /**
-     * Identifies item in context menu title bars.
+     * Identifies item in context menu and confirmation dialog title bars.
      */
     public String getDialogTitle() {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 
-    public String getDownloadTitle() {
+    public String getOneLineTitle() {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 

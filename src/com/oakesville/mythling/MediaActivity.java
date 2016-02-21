@@ -809,9 +809,9 @@ public abstract class MediaActivity extends Activity {
 
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
-            request.setTitle(item.getDownloadTitle());
+            request.setTitle(item.getOneLineTitle());
             final long id = dm.enqueue(request);
-            Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getFileName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
             getAppData().addDownload(item.getId(), id);
 
             // TODO: this receiver could be leaked if view is refreshed before download is complete
@@ -863,6 +863,7 @@ public abstract class MediaActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new TranscodeVideoTask(item, false).execute(getAppSettings().getMythTvServicesBaseUrl());
+                            Toast.makeText(getApplicationContext(), getString(R.string.transcoding_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             Log.e(TAG, ex.getMessage(), ex);
@@ -876,6 +877,7 @@ public abstract class MediaActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new TranscodeVideoTask(item, true).execute(getAppSettings().getMythTvServicesBaseUrl());
+                            Toast.makeText(getApplicationContext(), getString(R.string.transcoding_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
                         } catch (MalformedURLException ex) {
                             stopProgress();
                             Log.e(TAG, ex.getMessage(), ex);
@@ -984,7 +986,7 @@ public abstract class MediaActivity extends Activity {
                 // prepare for a progress bar dialog
                 countdownDialog = new ProgressDialog(this);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTypeLabel() + ":\n" + item.getDialogTitle());
+                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTitle() + "\n" + item.getListSubText());
                 countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 countdownDialog.setProgressPercentFormat(null);
                 countdownDialog.setProgressNumberFormat(null);

@@ -381,6 +381,7 @@
     <string name="go_to_settings">Go to Settings</string>
     <string name="error_">Error:\u0020</string>
     <string name="downloading_">Downloading:\u0020</string>
+    <string name="transcoding_">Transcoding:\u0020</string>
     <string name="failed_to_load_">Failed to load:\u0020</string>
     <string name="bad_setting_">Bad or missing setting:</string>
     <string name="directed_by_">Directed By:\u0020</string>
