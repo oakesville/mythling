@@ -27,12 +27,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -57,10 +59,12 @@ public class VideoPlaybackDialog extends DialogFragment {
     private AppSettings settings;
     private Item item;
     private PlaybackOption playbackOption;
+    private AlertDialog dialog;
 
     private Switch streamModeSwitch;
     private Spinner playerDropdown;
     private CheckBox alwaysCheckbox;
+    private int userSwitchCount;
 
     public VideoPlaybackDialog(AppSettings settings, Item item) {
         this.settings = settings;
@@ -94,6 +98,7 @@ public class VideoPlaybackDialog extends DialogFragment {
         streamModeSwitch = (Switch) view.findViewById(R.id.stream_switch);
         streamModeSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                userSwitchCount++;
                 playbackOption = createPlaybackOption();
                 try {
                     // maybe a different player option for this stream mode
@@ -103,7 +108,6 @@ public class VideoPlaybackDialog extends DialogFragment {
                         playbackOption.setPlayer(optionForStream.getPlayer());
                         selectPlayer(true);
                     }
-
                 }
                 catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);
@@ -162,8 +166,10 @@ public class VideoPlaybackDialog extends DialogFragment {
             playerDropdown.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);
             alwaysCheckbox.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);
             if (!playbackOption.isAlways()) {
-                if (!item.isDownloaded())
+                if (!item.isDownloaded()) {
+                    userSwitchCount = -1;
                     streamModeSwitch.setChecked(playbackOption.isHls());
+                }
                 selectPlayer(false);
                 alwaysCheckbox.setChecked(playbackOption.isAlways());
             }
@@ -175,7 +181,17 @@ public class VideoPlaybackDialog extends DialogFragment {
             Toast.makeText(settings.getAppContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
 
-        return builder.create();
+        dialog = builder.create();
+        if (settings.isTv()) {
+            dialog.setOnShowListener(new OnShowListener() {
+                public void onShow(DialogInterface dlg) {
+                    Button posBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    posBtn.setFocusable(true);
+                    posBtn.requestFocus();
+                }
+            });
+        }
+        return dialog;
     }
 
     private PlaybackOption createPlaybackOption() {
@@ -204,7 +220,7 @@ public class VideoPlaybackDialog extends DialogFragment {
         View titleView = getDialog().findViewById(titleResId);
         if (titleView != null && titleView.getParent() instanceof View) {
             View parent = (View) titleView.getParent();
-            parent.setMinimumHeight(settings.dpToPx(55)); // default is 64dp
+            parent.setMinimumHeight(settings.dpToPx(55)); // holo default is 64dp
         }
     }
 
