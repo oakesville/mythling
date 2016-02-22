@@ -255,6 +255,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             super.pause();
     }
 
+    // TODO: fast forward and rewind handling is duplicated in AndroidMediaPlayer
+
     /**
      * Step up the fast-forward rate by a factor of two
      * (resets playRate = +2 if maxPlayRate would be exceeded).
@@ -339,12 +341,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     if (shiftListener != null)
                         shiftListener.onShift(playRate);
                     rewindHandler.postDelayed(this, 1000);
-
                 }
             }
         }
     };
-
 
     private MediaPlayerEventListener eventListener;
     public void setMediaPlayerEventListener(MediaPlayerEventListener listener) {
