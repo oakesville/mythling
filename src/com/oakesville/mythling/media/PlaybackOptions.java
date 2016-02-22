@@ -253,5 +253,9 @@ public class PlaybackOptions {
         private boolean always;
         public boolean isAlways() { return always; }
         public void setAlways(boolean always) { this.always = always; }
+
+        public String toString() {
+            return stream + ": " + player + (always ? ", always: true" : "");
+        }
     }
 }

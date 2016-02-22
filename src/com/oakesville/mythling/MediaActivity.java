@@ -1841,7 +1841,7 @@ public abstract class MediaActivity extends Activity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (getAppSettings().isTv() && event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && getAppSettings().isTv()) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
                 if (getCurrentFocus() != null) {
                     getCurrentFocus().clearFocus();

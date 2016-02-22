@@ -23,4 +23,5 @@
     <color name="divider_blue">#37474f</color>
     <color name="overlay_black">#66000000</color>    
     <color name="firetv_focused_blue">#bfe7f5</color>
+    <color name="text_light_gray">#f5f5f5</color>
 </resources>

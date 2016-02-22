@@ -81,6 +81,8 @@ public class VideoPlaybackDialog extends DialogFragment {
 
         builder.setMessage(null); // use dialog_text view
         TextView titleView = (TextView) view.findViewById(R.id.dialog_title_text);
+        if (settings.isFireTv())
+            titleView.setTextColor(getResources().getColor(R.color.text_light_gray));
         titleView.setText(item.getTitle());
 
         String detail;
@@ -92,6 +94,8 @@ public class VideoPlaybackDialog extends DialogFragment {
             detail += "\n" + getString(R.string.recording_will_be_scheduled);
 
         TextView detailView = (TextView) view.findViewById(R.id.dialog_detail_text);
+        if (settings.isFireTv())
+            detailView.setTextColor(getResources().getColor(R.color.text_light_gray));
         detailView.setText(detail);
 
         streamModeSwitch = (Switch) view.findViewById(R.id.stream_switch);
@@ -130,23 +134,25 @@ public class VideoPlaybackDialog extends DialogFragment {
         if (item.isDownloaded())
             alwaysMsg += getString(R.string.downloaded).toLowerCase() + " " + item.getFormat() + " " + getString(R.string.files);
         else
-            alwaysMsg += item.getFormat() + " " + ("Live TV".equals(item.getFormat()) ? getString(R.string.files) + " " : "") +
+            alwaysMsg += item.getFormat() + " " + ("Live TV".equals(item.getFormat()) ? "" : (getString(R.string.files) + " ")) +
                 getString((settings.isExternalNetwork() ? R.string.on_external_network : R.string.on_internal_network));
         alwaysCheckbox.setText(alwaysMsg);
 
         builder.setPositiveButton(R.string.play, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // playbackOption is remembered regardless of alwaysCheckbox
-                playbackOption.setAlways(alwaysCheckbox.isChecked());
-                try {
-                    String network = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : settings.getPlaybackNetwork();
-                    settings.getPlaybackOptions().setOption(item.getType(), item.getFormat(), network, playbackOption);
-                }
-                catch (Exception ex) {
-                    Log.e(TAG, ex.getMessage(), ex);
-                    if (settings.isErrorReportingEnabled())
-                        new Reporter(ex).send();
-                    Toast.makeText(settings.getAppContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                if (!playbackOption.isAlways()) { // if always already set, option widgets are invisible -- no save
+                    playbackOption.setAlways(alwaysCheckbox.isChecked());
+                    // playbackOption is remembered regardless of alwaysCheckbox
+                    try {
+                        String network = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : settings.getPlaybackNetwork();
+                        settings.getPlaybackOptions().setOption(item.getType(), item.getFormat(), network, playbackOption);
+                    }
+                    catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        if (settings.isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                        Toast.makeText(settings.getAppContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+                    }
                 }
                 listener.onClickPlay(item, playbackOption);
             }

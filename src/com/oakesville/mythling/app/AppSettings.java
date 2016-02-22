@@ -1186,9 +1186,13 @@ public class AppSettings {
         return appContext.getResources().getBoolean(R.bool.isTablet);
     }
 
+    private Boolean isTv;
     public boolean isTv() {
-        UiModeManager modeMgr = (UiModeManager)appContext.getSystemService(Context.UI_MODE_SERVICE);
-        return modeMgr.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+        if (isTv == null) {
+            UiModeManager modeMgr = (UiModeManager)appContext.getSystemService(Context.UI_MODE_SERVICE);
+            isTv = modeMgr.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+        }
+        return isTv;
     }
 
     public boolean isFireTv() {
