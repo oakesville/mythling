@@ -150,7 +150,7 @@ public class Localizer {
         else if (mediaType == MediaType.recordings)
             return getStringRes(R.string.recording);
         else if (mediaType == MediaType.liveTv)
-            return getStringRes(R.string.tv_show);
+            return getStringRes(R.string.live_tv);
         else if (mediaType == MediaType.movies)
             return getStringRes(R.string.movie);
         else if (mediaType == MediaType.tvSeries)

@@ -77,7 +77,14 @@ public class VideoPlaybackDialog extends DialogFragment {
         View view = inflateView();
         builder.setView(view);
         builder.setIcon(R.drawable.ic_action_play);
-        builder.setTitle(item.getTypeLabel() + (item.isLiveTv() ? "" : " " + item.getFormat() + " " + getString(R.string.file)));
+        String typeFormatLabel = "";
+        if (item.isDownloaded())
+            typeFormatLabel += getString(R.string.downloaded) + " ";
+        if (item.isLiveTv())
+            typeFormatLabel += item.getTypeLabel();
+        else
+            typeFormatLabel += item.getTypeLabel() + " " + item.getFormat();
+        builder.setTitle(typeFormatLabel + (item.isLiveTv() ? "" : (" " + getString(R.string.file).toLowerCase())));
 
         builder.setMessage(null); // use dialog_text view
         TextView titleView = (TextView) view.findViewById(R.id.dialog_title_text);
@@ -130,12 +137,11 @@ public class VideoPlaybackDialog extends DialogFragment {
         });
 
         alwaysCheckbox = (CheckBox) view.findViewById(R.id.dialog_check);
-        String alwaysMsg = getString(R.string.always_do_this_for) + " ";
-        if (item.isDownloaded())
-            alwaysMsg += getString(R.string.downloaded).toLowerCase() + " " + item.getFormat() + " " + getString(R.string.files);
-        else
-            alwaysMsg += item.getFormat() + " " + ("Live TV".equals(item.getFormat()) ? "" : (getString(R.string.files) + " ")) +
-                getString((settings.isExternalNetwork() ? R.string.on_external_network : R.string.on_internal_network));
+        String alwaysMsg = getString(R.string.always_do_this_for) + " " + typeFormatLabel;
+        if (!item.isLiveTv())
+            alwaysMsg += " " + getString(R.string.files);
+        if (!item.isDownloaded())
+            alwaysMsg += " " + getString((settings.isExternalNetwork() ? R.string.on_external_network : R.string.on_internal_network));
         alwaysCheckbox.setText(alwaysMsg);
 
         builder.setPositiveButton(R.string.play, new DialogInterface.OnClickListener() {
