@@ -245,6 +245,6 @@ public class VideoPlaybackDialog extends DialogFragment {
     @SuppressLint("InflateParams")
     private View inflateView() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        return inflater.inflate(R.layout.video_playback_dialog, null);
+        return inflater.inflate(R.layout.playback_dialog, null);
     }
 }
