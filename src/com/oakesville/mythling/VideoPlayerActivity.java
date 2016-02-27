@@ -434,7 +434,7 @@ public class VideoPlayerActivity extends Activity {
                 mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
             else
                 throw new IllegalArgumentException("Unsupported player option: " + playerOption);
-            Log.i(TAG, "LibVLC version: " + mediaPlayer.getVersion());
+            Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
@@ -488,7 +488,6 @@ public class VideoPlayerActivity extends Activity {
                         }
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-
                         int pos = mediaPlayer.getSeconds();
 
                         // infer length if needed // TODO: for android player?
@@ -583,7 +582,8 @@ public class VideoPlayerActivity extends Activity {
             progressFrame.setVisibility(View.GONE);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error creating player: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Playback error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 

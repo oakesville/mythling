@@ -56,7 +56,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public int inferItemLength() {
-        return 0; // not applicable
+        return getDuration() / 1000;
     }
 
     private int playRate = 1;
@@ -119,8 +119,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     @Override
     public boolean isItemSeekable() {
-        // TODO is this right?
-        return itemLength > 0;
+        return getItemLength() > 0;
     }
 
     /**
@@ -310,6 +309,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
       android.media.MediaPlayer.OnBufferingUpdateListener, android.media.MediaPlayer.OnSeekCompleteListener,
       android.media.MediaPlayer.OnVideoSizeChangedListener, android.media.MediaPlayer.OnInfoListener {
 
+        boolean lengthKnown;
+
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
                 eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
@@ -321,8 +322,16 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                     timingAction = new Runnable() {
                         public void run() {
                             if (!isReleased()) {
-                                if (eventListener != null)
+                                if (eventListener != null) {
+                                    if (!lengthKnown) {
+                                        int secs = inferItemLength();
+                                        if (secs > 0) {
+                                            eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seekable));
+                                            lengthKnown = true;
+                                        }
+                                    }
                                     eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
+                                }
                                 timingHandler.postDelayed(this, 1000);
                             }
                         }
