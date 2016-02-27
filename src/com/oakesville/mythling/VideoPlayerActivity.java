@@ -28,7 +28,9 @@ import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventType;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.PlaybackOptions;
+import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.Reporter;
@@ -144,6 +146,26 @@ public class VideoPlayerActivity extends Activity {
         try {
             videoUri = getIntent().getData();
             playerOption = getIntent().getStringExtra(PLAYER);
+            if (playerOption == null) {
+                // if launched through external intent, try settings
+                String fileType = PlaybackOptions.PROPERTY_DEFAULT;
+                String streamMode = PlaybackOptions.STREAM_FILE;
+                String lastPathSeg = videoUri.getLastPathSegment();
+                if (lastPathSeg != null) {
+                    int lastDot = lastPathSeg.lastIndexOf('.');
+                    if (lastDot > 0) {
+                        fileType = lastPathSeg.substring(lastDot + 1);
+                        if ("m3u8".equals(fileType))
+                            streamMode = PlaybackOptions.STREAM_HLS;
+                    }
+                }
+                String network = appSettings.isExternalNetwork() ? PlaybackOptions.NETWORK_EXTERNAL : PlaybackOptions.NETWORK_INTERNAL;
+                if ("file".equals(videoUri.getScheme()))
+                    network = PlaybackOptions.NETWORK_DOWNLOAD;
+                PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(MediaType.videos, fileType, network, streamMode);
+                if (playbackOption != null)
+                    playerOption = playbackOption.getPlayer();
+            }
             if (playerOption == null)
                 playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
