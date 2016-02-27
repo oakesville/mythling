@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -85,6 +86,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -169,8 +171,6 @@ public abstract class MediaActivity extends Activity {
     protected MediaList mediaList;
     protected Map<String,StorageGroup> storageGroups;
 
-    private BroadcastReceiver playbackBroadcastReceiver;
-
     private static AppData appData;
     public static AppData getAppData() { return appData; }
     public static void setAppData(AppData data) { appData = data;}
@@ -226,30 +226,73 @@ public abstract class MediaActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (supportsMusic())
-          registerPlaybackBroadcastReceiver(true);
+          registerPlaybackReceiver();
     }
 
     @Override
     public void onPause() {
-        registerPlaybackBroadcastReceiver(false);
+        unregisterPlaybackReceiver();
+        if (downloadReceivers != null) {
+            for (long downloadId : downloadReceivers.keySet())
+                unregisterDownloadReceiver(downloadId);
+        }
         super.onPause();
     }
 
-    private void registerPlaybackBroadcastReceiver(boolean register) {
-        if (register) {
-            if (playbackBroadcastReceiver == null) {
-                playbackBroadcastReceiver = new BroadcastReceiver() {
-                    public void onReceive(Context context, Intent intent) {
-                        showStopMenuItem(false);
-                    }
-                };
+    private BroadcastReceiver playbackReceiver;
+    private void registerPlaybackReceiver() {
+        if (playbackReceiver == null) {
+            playbackReceiver = new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    showStopMenuItem(false);
+                }
+            };
+        }
+        registerReceiver(playbackReceiver, new IntentFilter(MusicPlaybackService.ACTION_PLAYBACK_STOPPED));
+    }
+    private void unregisterPlaybackReceiver() {
+        if (playbackReceiver != null) { // null if music not supported
+            unregisterReceiver(playbackReceiver);
+            playbackReceiver = null;
+        }
+    }
+
+    private class DownloadBroadcastReceiver extends BroadcastReceiver {
+        private Item item;
+        private long downloadId;
+        public DownloadBroadcastReceiver(Item item, long downloadId) {
+            this.item = item;
+            this.downloadId = downloadId;
+        }
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                if (downloadId == id) {
+                    item.setDownloadId(downloadId);
+                    unregisterDownloadReceiver(downloadId);
+                    onResume();
+                }
             }
-            registerReceiver(playbackBroadcastReceiver, new IntentFilter(MusicPlaybackService.ACTION_PLAYBACK_STOPPED));
-        } else {
-            if (playbackBroadcastReceiver != null) {
-                unregisterReceiver(playbackBroadcastReceiver);
-                playbackBroadcastReceiver = null;
-            }
+        }
+    }
+    private Map<Long,DownloadBroadcastReceiver> downloadReceivers;
+    private void registerDownloadReceiver(Item item, long downloadId) {
+        if (downloadReceivers == null)
+            downloadReceivers = new HashMap<Long,DownloadBroadcastReceiver>();
+        DownloadBroadcastReceiver receiver = downloadReceivers.get(downloadId);
+        if (receiver != null)
+            unregisterDownloadReceiver(downloadId);
+        receiver = new DownloadBroadcastReceiver(item, downloadId);
+        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        downloadReceivers.put(downloadId, receiver);
+    }
+    private void unregisterDownloadReceiver(long downloadId) {
+        if (downloadReceivers != null) { // how otherwise?
+            DownloadBroadcastReceiver receiver = downloadReceivers.get(downloadId);
+            if (receiver != null)
+                unregisterReceiver(receiver);
+            downloadReceivers.remove(downloadId);
         }
     }
 
@@ -812,24 +855,24 @@ public abstract class MediaActivity extends Activity {
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
             request.setTitle(item.getOneLineTitle());
-            final long id = dm.enqueue(request);
+            try {
+                String path = getPath() == null || getPath().equals("/") ? "" : (getPath() + "/");
+                String downloadPath = AppSettings.getExternalStorageDir() + "/" + path + item.getOneLineTitle() + "." + item.getFormat();
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadPath);
+                request.allowScanningByMediaScanner();
+            } catch (IllegalStateException ex) {
+                // store internal
+            } catch (Exception ex) {
+                // log, report and store internal
+                Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+            long downloadId = dm.enqueue(request);
+            registerDownloadReceiver(item, downloadId);
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
-            getAppData().addDownload(item.getId(), id);
-
-            // TODO: this receiver could be leaked if view is refreshed before download is complete
-            registerReceiver(new BroadcastReceiver() {
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                        long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                        if (downloadId == id) {
-                            item.setDownloadId(downloadId);
-                            unregisterReceiver(this);
-                            onResume();
-                        }
-                    }
-                }
-            }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+            getAppData().addDownload(item.getId(), downloadId);
         } catch (Exception ex) {
             stopProgress();
             Log.e(TAG, ex.getMessage(), ex);

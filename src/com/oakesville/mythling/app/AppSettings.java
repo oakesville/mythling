@@ -168,6 +168,7 @@ public class AppSettings {
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
+    public static final String EXTERNAL_STORAGE_DIRECTORY = "mythling";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -1341,5 +1342,9 @@ public class AppSettings {
         DisplayMetrics displayMetrics = appContext.getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
+    }
+
+    public static String getExternalStorageDir() {
+        return EXTERNAL_STORAGE_DIRECTORY;
     }
 }
