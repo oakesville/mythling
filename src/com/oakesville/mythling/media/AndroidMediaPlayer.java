@@ -19,6 +19,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.List;
 
+import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 
@@ -55,8 +56,11 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public int inferItemLength() {
-        return 0; // not applicable
+        return getDuration() / 1000;
     }
+
+    private int playRate = 1;
+    public int getPlayRate() { return playRate; }
 
     public AndroidMediaPlayer(Context context, SurfaceView videoView) {
         this.context = context;
@@ -77,6 +81,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         setOnInfoListener(mpListener);
         setOnBufferingUpdateListener(mpListener);
         setOnVideoSizeChangedListener(mpListener);
+        setMaxPlayRate(64); // TODO pref
     }
 
     public void playMedia(Uri mediaUri, AuthType authType, List<String> options) throws IOException {
@@ -102,13 +107,19 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void play() {
+        playRate = 1;
         start();
     }
 
     @Override
+    public void pause() throws IllegalStateException {
+        playRate = 0;
+        super.pause();
+    }
+
+    @Override
     public boolean isItemSeekable() {
-        // TODO
-        return true;
+        return getItemLength() > 0;
     }
 
     /**
@@ -125,6 +136,13 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void skip(int delta) {
+        doSkip(delta);
+    }
+
+    /**
+     * @return new position in ms
+     */
+    public int doSkip(int delta) {
         int curPos = getCurrentPosition();
         int newPos = curPos + (delta * 1000);
 
@@ -144,25 +162,115 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         seekTo(newPos);
+        return newPos;
     }
 
-    @Override
-    public int stepUpRewind() {
-        // TODO Auto-generated method stub
-        return 1;
+    private int maxPlayRate = 1;
+    /**
+     * Max multiplier for fast-forward and rewind.
+     */
+    public int getMaxPlayRate() {
+        if (isItemSeekable())
+            return maxPlayRate;
+        else
+            return 1;
+    }
+    public void setMaxPlayRate(int maxRate) {
+        if (maxRate <= 0)
+            this.maxPlayRate = 1;
+        else
+            this.maxPlayRate = maxRate;
     }
 
-    @Override
+    // TODO: fast forward and rewind handling is duplicated in VlcMediaPlayer
+    /**
+     * Step up the fast-forward rate by a factor of two
+     * (resets playRate = +2 if maxPlayRate would be exceeded).
+     * @return the new playRate
+     */
     public int stepUpFastForward() {
-        // TODO Auto-generated method stub
-        return 1;
+        if (isItemSeekable()) {
+            if (isPlaying())
+                super.pause(); // avoid setting playRate = 0 in this.pause()
+
+            int newPlayRate = 2;
+            if (playRate > 1) {
+                newPlayRate = playRate * 2;
+                if (newPlayRate > maxPlayRate)
+                    newPlayRate = 2;
+            }
+
+            if (newPlayRate > 1 && playRate <= 1) {
+                if (shiftListener != null)
+                    shiftListener.onShift(0);
+                fastForwardHandler.postDelayed(fastForwardAction, 100);
+            }
+
+            playRate = newPlayRate;
+
+        }
+
+        return playRate;
     }
 
-    @Override
-    public int getPlayRate() {
-        // TODO Auto-generated method stub
-        return 1;
+    private Handler fastForwardHandler = new Handler();
+    private Runnable fastForwardAction = new Runnable() {
+        public void run() {
+            if (!isReleased() && playRate > 1) {
+                skip(playRate);
+                if (shiftListener != null)
+                    shiftListener.onShift(playRate);
+                fastForwardHandler.postDelayed(this, 1000);
+            }
+        }
+    };
+
+    /**
+     * Step up the rewind rate by a factor of two
+     * (resets playRate = -2 if maxPlayRate would be exceeded).
+     * @return the new playRate
+     */
+    public int stepUpRewind() {
+        if (isItemSeekable()) {
+            if (isPlaying())
+                super.pause(); // avoid setting playRate = 0 in this.pause()
+
+            int newPlayRate = -2;
+
+            if (playRate < 0) {
+                newPlayRate = playRate * 2;
+                if (-newPlayRate > maxPlayRate)
+                    newPlayRate = -2;
+            }
+
+            if (newPlayRate < 0 && playRate >= 0) {
+                if (shiftListener != null)
+                    shiftListener.onShift(0);
+                rewindHandler.postDelayed(rewindAction, 100);
+            }
+
+            playRate = newPlayRate;
+        }
+
+        return playRate;
     }
+
+    private Handler rewindHandler = new Handler();
+    private Runnable rewindAction = new Runnable() {
+        public void run() {
+            if (!isReleased() && playRate < 0) {
+                int begin = doSkip(playRate);
+                if (begin == 0) {
+                    play();
+                }
+                else {
+                    if (shiftListener != null)
+                        shiftListener.onShift(playRate);
+                    rewindHandler.postDelayed(this, 1000);
+                }
+            }
+        }
+    };
 
     private boolean released;
 
@@ -178,10 +286,9 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         return released;
     }
 
-    @Override
+    private MediaPlayerShiftListener shiftListener;
     public void setMediaPlayerShiftListener(MediaPlayerShiftListener listener) {
-        // TODO Auto-generated method stub
-
+        this.shiftListener = listener;
     }
 
     @Override
@@ -202,6 +309,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
       android.media.MediaPlayer.OnBufferingUpdateListener, android.media.MediaPlayer.OnSeekCompleteListener,
       android.media.MediaPlayer.OnVideoSizeChangedListener, android.media.MediaPlayer.OnInfoListener {
 
+        boolean lengthKnown;
+
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
                 eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
@@ -213,8 +322,16 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                     timingAction = new Runnable() {
                         public void run() {
                             if (!isReleased()) {
-                                if (eventListener != null)
+                                if (eventListener != null) {
+                                    if (!lengthKnown) {
+                                        int secs = inferItemLength();
+                                        if (secs > 0) {
+                                            eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seekable));
+                                            lengthKnown = true;
+                                        }
+                                    }
                                     eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
+                                }
                                 timingHandler.postDelayed(this, 1000);
                             }
                         }
@@ -241,7 +358,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         public boolean onInfo(android.media.MediaPlayer mp, int what, int extra) {
-            // TODO Auto-generated method stub
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "INFO: what: " + what + ", extra: " + extra);
             return false;
         }
 

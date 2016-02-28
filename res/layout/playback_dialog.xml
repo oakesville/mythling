@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:thumb="@drawable/switch_thumb"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="4dp"
             android:switchTextAppearance="?android:attr/textAppearanceInverse" />
         <Spinner
             android:id="@+id/player_dropdown"

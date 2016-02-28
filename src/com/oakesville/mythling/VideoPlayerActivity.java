@@ -28,7 +28,9 @@ import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventType;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.PlaybackOptions;
+import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.Reporter;
@@ -69,8 +71,8 @@ public class VideoPlayerActivity extends Activity {
 
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int showUiShort = 3000;  // for use when showing for user interaction
-    private static int showUiLong = 4000;   // for skip since this can take some time
+    private static int showUiShort = 4000;  // for use when showing for user interaction
+    private static int showUiLong = 5000;   // for skip since this can take some time
 
     private AppSettings appSettings;
     private Uri videoUri;
@@ -144,6 +146,26 @@ public class VideoPlayerActivity extends Activity {
         try {
             videoUri = getIntent().getData();
             playerOption = getIntent().getStringExtra(PLAYER);
+            if (playerOption == null) {
+                // if launched through external intent, try settings
+                String fileType = PlaybackOptions.PROPERTY_DEFAULT;
+                String streamMode = PlaybackOptions.STREAM_FILE;
+                String lastPathSeg = videoUri.getLastPathSegment();
+                if (lastPathSeg != null) {
+                    int lastDot = lastPathSeg.lastIndexOf('.');
+                    if (lastDot > 0) {
+                        fileType = lastPathSeg.substring(lastDot + 1);
+                        if ("m3u8".equals(fileType))
+                            streamMode = PlaybackOptions.STREAM_HLS;
+                    }
+                }
+                String network = appSettings.isExternalNetwork() ? PlaybackOptions.NETWORK_EXTERNAL : PlaybackOptions.NETWORK_INTERNAL;
+                if ("file".equals(videoUri.getScheme()))
+                    network = PlaybackOptions.NETWORK_DOWNLOAD;
+                PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(MediaType.videos, fileType, network, streamMode);
+                if (playbackOption != null)
+                    playerOption = playbackOption.getPlayer();
+            }
             if (playerOption == null)
                 playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
@@ -193,8 +215,8 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            ImageButton fastBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
-            fastBack.setOnClickListener(new OnClickListener() {
+            ImageButton jumpBack = (ImageButton) findViewById(R.id.ctrl_jump_back);
+            jumpBack.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     skip(-appSettings.getJumpInterval());
                 }
@@ -232,8 +254,8 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            ImageButton fastFwd = (ImageButton) findViewById(R.id.ctrl_jump_fwd);
-            fastFwd.setOnClickListener(new OnClickListener() {
+            ImageButton jumpFwd = (ImageButton) findViewById(R.id.ctrl_jump_fwd);
+            jumpFwd.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     skip(appSettings.getJumpInterval());
                 }
@@ -412,7 +434,7 @@ public class VideoPlayerActivity extends Activity {
                 mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
             else
                 throw new IllegalArgumentException("Unsupported player option: " + playerOption);
-            Log.i(TAG, "LibVLC version: " + mediaPlayer.getVersion());
+            Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
@@ -466,7 +488,6 @@ public class VideoPlayerActivity extends Activity {
                         }
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-
                         int pos = mediaPlayer.getSeconds();
 
                         // infer length if needed // TODO: for android player?
@@ -561,7 +582,8 @@ public class VideoPlayerActivity extends Activity {
             progressFrame.setVisibility(View.GONE);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error creating player: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Playback error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 

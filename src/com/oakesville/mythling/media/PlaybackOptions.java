@@ -140,6 +140,12 @@ public class PlaybackOptions {
                 ft.put(network, net);
             }
             net.put(option.stream, option.player);
+            // set this stream option as the default
+            if (net.has(PROPERTY_DEFAULT))
+                net.remove(PROPERTY_DEFAULT);
+            JSONObject def = new JSONObject();
+            def.put(option.stream, option.player);
+            net.put(PROPERTY_DEFAULT, def);
         }
         appSettings.setPlaybackOptionsJson(json.toString());
     }
