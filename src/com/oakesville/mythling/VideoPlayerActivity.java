@@ -71,8 +71,8 @@ public class VideoPlayerActivity extends Activity {
 
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int showUiShort = 3000;  // for use when showing for user interaction
-    private static int showUiLong = 4000;   // for skip since this can take some time
+    private static int showUiShort = 4000;  // for use when showing for user interaction
+    private static int showUiLong = 5000;   // for skip since this can take some time
 
     private AppSettings appSettings;
     private Uri videoUri;
