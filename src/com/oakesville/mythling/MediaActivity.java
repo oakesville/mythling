@@ -1131,9 +1131,15 @@ public abstract class MediaActivity extends Activity {
             showSubListPane(null);
         if (getAppSettings().isTv()) {
             // empty list - set focus on action bar
-            int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
-            getWindow().getDecorView().findViewById(actionBarResId).requestFocus();
+            setFocusOnActionBar();
         }
+    }
+
+    protected void setFocusOnActionBar() {
+        int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
+        View actionBarView = getWindow().getDecorView().findViewById(actionBarResId);
+        if (actionBarView != null)
+            actionBarView.requestFocus();
     }
 
     protected void updateActionMenu() {
@@ -1897,10 +1903,8 @@ public abstract class MediaActivity extends Activity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && getAppSettings().isTv()) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
-                if (getCurrentFocus() != null) {
-                    getCurrentFocus().clearFocus();
-                    return true;
-                }
+                setFocusOnActionBar();
+                return true;
             }
         }
         return super.dispatchKeyEvent(event);
