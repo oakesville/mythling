@@ -15,6 +15,7 @@
  */
 package com.oakesville.mythling;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -856,10 +857,20 @@ public abstract class MediaActivity extends Activity {
             Request request = new Request(Uri.parse(fileUrl));
             request.setTitle(item.getOneLineTitle());
             try {
-                String path = getPath() == null || getPath().equals("/") ? "" : (getPath() + "/");
-                String downloadPath = AppSettings.getExternalStorageDir() + "/" + path + item.getOneLineTitle() + "." + item.getFormat();
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadPath);
-                request.allowScanningByMediaScanner();
+                if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                    File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    if (downloadDir.exists()) {
+                        String path = AppSettings.getExternalStorageDir() + "/";
+                        if (getPath() != null && !getPath().equals("/"))
+                            path += getPath() + "/";
+                        File destDir = new File(downloadDir + "/" + path);
+                        if (destDir.isDirectory() || destDir.mkdirs()) {
+                            String filePath = path + item.getOneLineTitle() + "." + item.getFormat();
+                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filePath);
+                            request.allowScanningByMediaScanner();
+                        }
+                    }
+                }
             } catch (IllegalStateException ex) {
                 // store internal
             } catch (Exception ex) {
