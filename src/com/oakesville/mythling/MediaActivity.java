@@ -861,11 +861,11 @@ public abstract class MediaActivity extends Activity {
                     File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                     if (downloadDir.exists()) {
                         String path = AppSettings.getExternalStorageDir() + "/";
-                        if (getPath() != null && !getPath().equals("/"))
+                        if (getPath() != null && !getPath().isEmpty() && !getPath().equals("/"))
                             path += getPath() + "/";
                         File destDir = new File(downloadDir + "/" + path);
                         if (destDir.isDirectory() || destDir.mkdirs()) {
-                            String filePath = path + item.getOneLineTitle() + "." + item.getFormat();
+                            String filePath = path + item.getDownloadFilename();
                             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filePath);
                             request.allowScanningByMediaScanner();
                         }

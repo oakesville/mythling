@@ -178,6 +178,10 @@ public abstract class Item implements Listable {
         return new TextBuilder(title).appendDashed(getSubLabel()).toString();
     }
 
+    public String getDownloadFilename() {
+        return getTitle() + "." + getFormat();
+    }
+
     public String getDialogSubText() {
         return getListSubText();
     }

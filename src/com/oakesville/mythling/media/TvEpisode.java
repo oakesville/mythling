@@ -64,6 +64,10 @@ public class TvEpisode extends Video {
         return new TextBuilder().appendParen((getYear() > 0 ? getYear() + " " : "") + "s" + getSeason() + "e" + getEpisode()).toString();
     }
 
+    public String getDownloadFilename() {
+        return getTitle() + " " + getSeasonEpisodeInfo() + "." + getFormat();
+    }
+
     @Override
     protected Comparator<Item> getDateComparator() {
         return new Comparator<Item>() {

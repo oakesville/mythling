@@ -16,6 +16,7 @@
 package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import com.oakesville.mythling.app.AppSettings;
@@ -112,6 +113,15 @@ public class Recording extends TvShow {
         }
         tb.appendLine(getDescription());
         return tb.toString();
+    }
+
+    public String getDownloadFilename() {
+        try {
+            return getTitle() + " " + getStartDateTimeFormatted() + "." + getFormat();
+        }
+        catch (ParseException ex) {
+            return super.getDownloadFilename();
+        }
     }
 
     @Override
