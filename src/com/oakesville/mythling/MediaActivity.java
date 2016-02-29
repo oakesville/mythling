@@ -219,8 +219,6 @@ public abstract class MediaActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         appSettings = new AppSettings(getApplicationContext());
-        if (!Localizer.isInitialized())
-            Localizer.initialize(getAppSettings());
     }
 
     @Override

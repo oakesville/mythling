@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
@@ -57,8 +56,6 @@ public class WebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         appSettings = new AppSettings(getApplicationContext());
-        if (!Localizer.isInitialized())
-            Localizer.initialize(getAppSettings());
         if (appSettings.isPhone())
             getActionBar().hide(); // TODO immersive
         else

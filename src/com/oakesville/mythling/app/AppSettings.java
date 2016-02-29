@@ -199,6 +199,9 @@ public class AppSettings {
 
         // initialize mythling version for static access
         getMythlingVersion();
+        // initialize localizer
+        if (!Localizer.isInitialized())
+            Localizer.initialize(this);
     }
 
     public URL getMythlingWebBaseUrl() throws MalformedURLException {

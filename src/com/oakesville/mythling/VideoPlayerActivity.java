@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Donald Oakes
+ * Copyright 2016 Donald Oakes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,8 +119,6 @@ public class VideoPlayerActivity extends Activity {
             getActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
-        if (!Localizer.isInitialized())
-            Localizer.initialize(appSettings);
 
         surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setOnClickListener(new View.OnClickListener() {
@@ -268,7 +266,7 @@ public class VideoPlayerActivity extends Activity {
 
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // delayedHideUi(showUiShort);
+        delayedHideUi(showUiShort);
     }
 
     private void showPlay() {

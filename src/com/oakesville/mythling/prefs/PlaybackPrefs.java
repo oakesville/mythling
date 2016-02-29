@@ -19,6 +19,7 @@ import org.json.JSONException;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
@@ -83,8 +84,8 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setSummary("" + appSettings.getJumpInterval() + " " + getString(R.string.seconds));
 
         pref = getPreferenceScreen().findPreference(AppSettings.AUTO_SKIP);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getAutoSkip());
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, R.array.auto_skip_values, R.array.auto_skip_entries));
+        pref.setSummary(Localizer.getStringArrayEntry(R.array.auto_skip_values, R.array.auto_skip_entries, appSettings.getAutoSkip()));
 
         pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));

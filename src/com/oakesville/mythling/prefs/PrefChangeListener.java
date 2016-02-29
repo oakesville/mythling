@@ -15,16 +15,19 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
+
 import android.content.SharedPreferences.Editor;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-
-import com.oakesville.mythling.app.AppSettings;
 
 public class PrefChangeListener implements OnPreferenceChangeListener {
     private boolean triggerCacheRefresh;
     private boolean triggerSummaryUpdate;
     private String units;
+    private int valuesResId;
+    private int entriesResId;
 
     public void setUnits(String units) {
         this.units = units;
@@ -40,9 +43,21 @@ public class PrefChangeListener implements OnPreferenceChangeListener {
         this.units = units;
     }
 
+    public PrefChangeListener(boolean triggerSummaryUpdate, boolean triggerCacheRefresh, int valuesResId, int entriesResId) {
+        this(triggerSummaryUpdate, triggerCacheRefresh);
+        this.valuesResId = valuesResId;
+        this.entriesResId = entriesResId;
+    }
+
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (triggerSummaryUpdate) {
-            preference.setSummary(newValue == null ? "" : (newValue.toString() + (units == null ? "" : " " + units)));
+            if (newValue == null) {
+                preference.setSummary("");
+            }
+            else if (valuesResId != 0 && entriesResId != 0)
+                preference.setSummary(Localizer.getStringArrayEntry(valuesResId, entriesResId, newValue.toString()));
+            else
+                preference.setSummary(newValue.toString() + (units == null ? "" : " " + units));
         }
         if (triggerCacheRefresh) {
             Editor ed = preference.getEditor();

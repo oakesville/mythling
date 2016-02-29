@@ -67,7 +67,7 @@
             android:title="@string/title_auto_skip"
             android:entries="@array/auto_skip_entries"
             android:entryValues="@array/auto_skip_values"
-            android:defaultValue="Auto-Skip Off"
+            android:defaultValue="auto_skip_off"
             android:layout="@layout/pref" />
         <EditTextPreference
             android:key="libvlc_parameters"
