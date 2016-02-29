@@ -602,8 +602,17 @@ public class VideoPlayerActivity extends Activity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (appSettings.isTv() && event.getAction() == KeyEvent.ACTION_DOWN && !mediaPlayer.isReleased()) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (mediaPlayer.isPlaying())
-                    pause();
+                if (mediaPlayer.isPlaying()) {
+                    if (mediaPlayer instanceof VlcMediaPlayer) {
+                        // delayed (otherwise with libvlc pause(), UI does not get shown for some reason)
+                        showUi(false);
+                        pauseHandler.removeCallbacks(pauseAction);
+                        pauseHandler.postDelayed(pauseAction, 250);
+                    }
+                    else {
+                        pause();
+                    }
+                }
                 else
                     play();
                 return true;
@@ -685,6 +694,13 @@ public class VideoPlayerActivity extends Activity {
         else
             delayedHideUi(showUiShort);
     }
+
+    private Handler pauseHandler = new Handler();
+    private final Runnable pauseAction = new Runnable() {
+        public void run() {
+            pause();
+        }
+    };
 
     List<Integer> specialKeys;
     private boolean specialKey(int code) {
