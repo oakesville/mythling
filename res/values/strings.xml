@@ -89,9 +89,14 @@
     <string name="message_skip_back_interval">Seconds to skip backward when the Skip Back button is pressed</string>
     <string name="title_jump_interval">Jump Interval</string>
     <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
-    <string name="title_commercial_skip">Skip Commercials (MythTV 0.28)</string>
-    <string name="notify_commercial_skip_">Skip Commercials:\u0020</string>
-    <string-array name="commercial_skip_values">
+    <string name="title_auto_skip">Auto-Skip (MythTV 0.28)</string>
+    <string name="notify_auto_skip_">Auto-Skip:\u0020</string>
+    <string-array name="auto_skip_values">
+        <item>auto_skip_off</item>
+        <item>auto_skip_notify</item>
+        <item>auto_skip_on</item>
+    </string-array>
+    <string-array name="auto_skip_entries">
         <item>Auto-Skip Off</item>
         <item>Auto-Skip Notify</item>
         <item>Auto-Skip On</item>
@@ -380,6 +385,7 @@
     <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="error_">Error:\u0020</string>
+    <string name="playback_error_">Playback Error:\u0020</string>
     <string name="downloading_">Downloading:\u0020</string>
     <string name="transcoding_">Transcoding:\u0020</string>
     <string name="failed_to_load_">Failed to load:\u0020</string>

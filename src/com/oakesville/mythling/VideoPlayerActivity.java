@@ -16,6 +16,7 @@
 package com.oakesville.mythling;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.oakesville.mythling.app.AppSettings;
@@ -71,8 +72,8 @@ public class VideoPlayerActivity extends Activity {
 
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int showUiShort = 4000;  // for use when showing for user interaction
-    private static int showUiLong = 5000;   // for skip since this can take some time
+    private static int showUiShort = 3500;  // for use when showing for user interaction
+    private static int showUiLong = 4000;   // for skip since this can take some time
 
     private AppSettings appSettings;
     private Uri videoUri;
@@ -80,7 +81,7 @@ public class VideoPlayerActivity extends Activity {
     private AuthType authType;
 
     private int itemLength; // this will be zero if not known definitively
-    private String commercialSkip;
+    private String autoSkip;
     private List<Cut> cutList;
     private Cut currentCut;
 
@@ -120,11 +121,6 @@ public class VideoPlayerActivity extends Activity {
         appSettings = new AppSettings(getApplicationContext());
         if (!Localizer.isInitialized())
             Localizer.initialize(appSettings);
-
-        if (appSettings.isTv()) {
-            showUiShort = 3500;
-            showUiLong = 6000;
-        }
 
         surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +322,7 @@ public class VideoPlayerActivity extends Activity {
             savedPosition = appSettings.getVideoPlaybackPosition(videoUri);
         else
             savedPosition = 0;
-        commercialSkip = appSettings.getCommercialSkip();
+        autoSkip = appSettings.getAutoSkip();
 
         if (appSettings.isTv()) {
             showTvControlsHint = !appSettings.getBooleanPref(SKIP_TV_PLAYER_HINT_PREF, false);
@@ -516,18 +512,18 @@ public class VideoPlayerActivity extends Activity {
                             }
                         }
 
-                        // commercial skip
+                        // auto skip
                         if (cutList != null && mediaPlayer.isItemSeekable() && mediaPlayer.getPlayRate() == 1) {
                             boolean inCut = false;
                             for (Cut cut : cutList) {
                                 if (cut.start <= pos && cut.end > pos) {
                                     if (!cut.equals(currentCut)) {
-                                        if (!AppSettings.COMMERCIAL_SKIP_OFF.equals(commercialSkip)) {
-                                            TextBuilder tb = new TextBuilder(getString(R.string.notify_commercial_skip_));
+                                        if (!AppSettings.AUTO_SKIP_OFF.equals(autoSkip)) {
+                                            TextBuilder tb = new TextBuilder(getString(R.string.notify_auto_skip_));
                                             tb.appendDuration(cut.end - cut.start);
                                             Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
                                         }
-                                        if (AppSettings.COMMERCIAL_SKIP_ON.equals(commercialSkip)) {
+                                        if (AppSettings.AUTO_SKIP_ON.equals(autoSkip)) {
                                             int skip = (cut.end - pos);
                                             if (skip > 0) {
                                                 skip(skip);
@@ -582,7 +578,7 @@ public class VideoPlayerActivity extends Activity {
             progressFrame.setVisibility(View.GONE);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Playback error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.playback_error_) + ex.getMessage(), Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -593,6 +589,15 @@ public class VideoPlayerActivity extends Activity {
 
         videoWidth = 0;
         videoHeight = 0;
+    }
+
+    private void setAutoSkip(String autoSkip) {
+        String entry = Localizer.getStringArrayEntry(R.array.auto_skip_values, R.array.auto_skip_entries, autoSkip);
+        Toast.makeText(getApplicationContext(), entry, Toast.LENGTH_LONG).show();
+        if (!this.autoSkip.equals(autoSkip)) {
+            appSettings.setAutoSkip(autoSkip);
+            this.autoSkip = autoSkip;
+        }
     }
 
     @Override
@@ -630,12 +635,19 @@ public class VideoPlayerActivity extends Activity {
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                if (specialKey(KeyEvent.KEYCODE_DPAD_UP))
+                    return true;
                 skip(-appSettings.getJumpInterval());
                 return true;
             }
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                if (specialKey(KeyEvent.KEYCODE_DPAD_DOWN))
+                    return true;
                 skip(appSettings.getJumpInterval());
                 return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER) {
+                specialKey(KeyEvent.KEYCODE_DPAD_CENTER);
             }
         }
         return super.dispatchKeyEvent(event);
@@ -648,7 +660,6 @@ public class VideoPlayerActivity extends Activity {
     private Handler hideHandler = new Handler();
     private final Runnable hideAction = new Runnable() {
         @SuppressLint("InlinedApi")
-        @Override
         public void run() {
             // safe to use these constants as they're inlined at compile-time and do nothing on earlier devices
             surface.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -676,6 +687,35 @@ public class VideoPlayerActivity extends Activity {
         else
             delayedHideUi(showUiShort);
     }
+
+    List<Integer> specialKeys;
+    private boolean specialKey(int code) {
+        specialKeyHandler.removeCallbacks(specialKeyAction);
+        if (code == KeyEvent.KEYCODE_DPAD_CENTER) {
+            specialKeys = new ArrayList<Integer>();
+            specialKeys.add(code);
+            specialKeyHandler.postDelayed(specialKeyAction, 1000);
+            return true;
+        }
+        else if (specialKeys != null) {
+            specialKeys.add(code);
+            if (specialKeys.size() == 3) {
+                if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP)
+                    setAutoSkip(AppSettings.AUTO_SKIP_ON);
+                else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN)
+                    setAutoSkip(AppSettings.AUTO_SKIP_OFF);
+            }
+            specialKeyHandler.postDelayed(specialKeyAction, 1000);
+            return true;
+        }
+        return false;
+    }
+    private Handler specialKeyHandler = new Handler();
+    private final Runnable specialKeyAction = new Runnable() {
+        public void run() {
+            specialKeys = null;
+        }
+    };
 
     private FrameLayout createProgressBar() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);

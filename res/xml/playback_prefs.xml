@@ -63,10 +63,10 @@
             android:defaultValue="600"
             android:layout="@layout/pref" />
         <ListPreference
-            android:key="commercial_skip"
-            android:title="@string/title_commercial_skip"
-            android:entries="@array/commercial_skip_values"
-            android:entryValues="@array/commercial_skip_values"
+            android:key="auto_skip"
+            android:title="@string/title_auto_skip"
+            android:entries="@array/auto_skip_entries"
+            android:entryValues="@array/auto_skip_values"
             android:defaultValue="Auto-Skip Off"
             android:layout="@layout/pref" />
         <EditTextPreference

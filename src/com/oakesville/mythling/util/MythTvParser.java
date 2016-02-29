@@ -90,6 +90,8 @@ public class MythTvParser implements MediaListParser {
             // videos, movies, or tvSeries
             MediaSettings mediaSettings = appSettings.getMediaSettings();
             JSONObject infoList = list.getJSONObject("VideoMetadataInfoList");
+            if (infoList.has("Version"))
+                mediaList.setMythTvVersion(infoList.getString("Version"));
             mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
             JSONArray vids = infoList.getJSONArray("VideoMetadataInfos");
 
@@ -154,6 +156,8 @@ public class MythTvParser implements MediaListParser {
         } else if (list.has("ProgramList")) {
             // recordings
             JSONObject infoList = list.getJSONObject("ProgramList");
+            if (infoList.has("Version"))
+                mediaList.setMythTvVersion(infoList.getString("Version"));
             mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
             mediaList.setCount(infoList.getString("Count"));
             JSONArray recs = infoList.getJSONArray("Programs");
@@ -185,6 +189,8 @@ public class MythTvParser implements MediaListParser {
         } else if (list.has("ProgramGuide")) {
             // live tv
             JSONObject infoList = list.getJSONObject("ProgramGuide");
+            if (infoList.has("Version"))
+                mediaList.setMythTvVersion(infoList.getString("Version"));
             mediaList.setRetrieveDate(parseMythDateTime(infoList.getString("AsOf")));
             mediaList.setCount(infoList.getString("Count"));
             JSONArray chans = infoList.getJSONArray("Channels");

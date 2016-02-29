@@ -1380,7 +1380,7 @@ public abstract class MediaActivity extends Activity {
         protected Long doInBackground(URL... urls) {
             try {
                 AppSettings appSettings = getAppSettings();
-                URL url = new URL(appSettings.getCommercialCutListBaseUrl() + "ChanId=" + recording.getChannelId() +
+                URL url = new URL(appSettings.getCutListBaseUrl() + "ChanId=" + recording.getChannelId() +
                         "&StartTime=" + recording.getStartTimeParam());
                 boolean mythlingServices = appSettings.isMythlingMediaServices();
                 String authType = mythlingServices ? appSettings.getBackendWebAuthType() : appSettings.getMythTvServicesAuthType();
@@ -1393,7 +1393,7 @@ public abstract class MediaActivity extends Activity {
                 String cutListJson = new String(downloader.get());
                 // use mythtv parser since services are compatible
                 ArrayList<Cut> cutList = new MythTvParser(appSettings, cutListJson).parseCutList();
-                recording.setCommercialCutList(cutList);
+                recording.setCutList(cutList);
                 return 0L;
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
@@ -1415,8 +1415,8 @@ public abstract class MediaActivity extends Activity {
             videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
             if (recording.isLengthKnown())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
-            if (recording.hasCommercialCutList())
-                videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCommercialCutList());
+            if (recording.hasCutList())
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCutList());
             startActivity(videoIntent);
         }
     }
@@ -1591,8 +1591,7 @@ public abstract class MediaActivity extends Activity {
 
         PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_FILE);
         boolean isExternalPlayer = playbackOption.isAppPlayer();
-        boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
-        if (item.isRecording() && useCutList && !isExternalPlayer) {
+        if (item.isRecording() && isUseCutList()) {
             new PlayWithCutListTask(uri, (Recording)item, playbackOption).execute();
         }
         else {
@@ -1625,8 +1624,7 @@ public abstract class MediaActivity extends Activity {
 
         PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_HLS);
         boolean isExternalPlayer = playbackOption.isAppPlayer();
-        boolean useCutList = !getAppSettings().getCommercialSkip().equals(AppSettings.COMMERCIAL_SKIP_OFF);
-        if (item.isRecording() && useCutList && !isExternalPlayer) {
+        if (item.isRecording() && isUseCutList() && !isExternalPlayer) {
             new PlayWithCutListTask(Uri.parse(streamUrl), (Recording)item, playbackOption).execute();
         }
         else {
@@ -1640,6 +1638,15 @@ public abstract class MediaActivity extends Activity {
             }
             startActivity(videoIntent);
         }
+    }
+
+    boolean isUseCutList() {
+        boolean useCutList = false;
+        if (isTv() && mediaList != null)
+            useCutList = mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices();
+        else // pref may be invalid if not using mythtv 0.28, but just let user be warned
+            useCutList = !getAppSettings().getAutoSkip().equals(AppSettings.AUTO_SKIP_OFF);
+        return useCutList;
     }
 
     void initListViewOnItemClickListener() {

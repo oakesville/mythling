@@ -82,9 +82,9 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getJumpInterval() + " " + getString(R.string.seconds));
 
-        pref = getPreferenceScreen().findPreference(AppSettings.COMMERCIAL_SKIP);
+        pref = getPreferenceScreen().findPreference(AppSettings.AUTO_SKIP);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
-        pref.setSummary(appSettings.getCommercialSkip());
+        pref.setSummary(appSettings.getAutoSkip());
 
         pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));

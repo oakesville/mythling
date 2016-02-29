@@ -142,6 +142,10 @@ public class Localizer {
         return getAppContext().getString(resId);
     }
 
+    public static String[] getStringArrayRes(int resId) {
+        return getAppContext().getResources().getStringArray(resId);
+    }
+
     public static String getItemTypeLabel(MediaType mediaType) {
         if (mediaType == MediaType.music)
             return getStringRes(R.string.song);
@@ -201,4 +205,14 @@ public class Localizer {
         else
             return null;
     }
-}
+
+    public static String getStringArrayEntry(int valuesResId, int entriesResId, String value) {
+        String[] values = getStringArrayRes(valuesResId);
+        String[] entries = getStringArrayRes(entriesResId);
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(value))
+                return entries[i];
+        }
+        return null;
+    }
+ }

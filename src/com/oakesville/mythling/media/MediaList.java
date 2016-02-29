@@ -33,6 +33,14 @@ public class MediaList {
     public MediaType getMediaType() { return mediaType; }
     public void setMediaType(MediaType mt) { this.mediaType = mt; }
 
+    private String mythTvVersion = "Unknown";
+    public String getMythTvVersion() { return mythTvVersion; }
+    public void setMythTvVersion(String mythTvVersion) { this.mythTvVersion = mythTvVersion; }
+
+    public boolean isMythTv28() {
+        return mythTvVersion.startsWith("0.28");
+    }
+
     private Date retrieveDate;
     public Date getRetrieveDate() { return retrieveDate; }
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }

@@ -30,4 +30,8 @@ public class Cut implements Serializable {
     public boolean equals(Cut other) {
         return other != null && other.start == this.start && other.end == this.end;
     }
+    
+    public String toString() {
+        return start + " - " + end;
+    }
 }

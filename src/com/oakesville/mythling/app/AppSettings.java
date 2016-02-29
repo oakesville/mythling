@@ -159,10 +159,10 @@ public class AppSettings {
     public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
     public static final String SKIP_BACK_INTERVAL = "skip_back_interval";
     public static final String JUMP_INTERVAL = "jump_interval";
-    public static final String COMMERCIAL_SKIP = "commercial_skip";
-    public static final String COMMERCIAL_SKIP_OFF = "Auto-Skip Off";
-    public static final String COMMERCIAL_SKIP_ON = "Auto-Skip On";
-    public static final String COMMERCIAL_SKIP_NOTIFY = "Auto-Skip Notify";
+    public static final String AUTO_SKIP = "auto_skip";
+    public static final String AUTO_SKIP_OFF = "auto_skip_off";
+    public static final String AUTO_SKIP_ON = "auto_skip_on";
+    public static final String AUTO_SKIP_NOTIFY = "auto_skip_notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
@@ -245,7 +245,7 @@ public class AppSettings {
         return new URL(url);
     }
 
-    public URL getCommercialCutListBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
+    public URL getCutListBaseUrl() throws MalformedURLException, UnsupportedEncodingException {
         if (isMythlingMediaServices())
             return new URL(getMythlingWebBaseUrl() + "/media.php?type=cutList&");
         else
@@ -506,8 +506,12 @@ public class AppSettings {
         return Integer.parseInt(getStringPref(JUMP_INTERVAL, "600"));
     }
 
-    public String getCommercialSkip() {
-        return getStringPref(COMMERCIAL_SKIP, COMMERCIAL_SKIP_OFF);
+    public String getAutoSkip() {
+        return getStringPref(AUTO_SKIP, AUTO_SKIP_OFF);
+    }
+
+    public boolean setAutoSkip(String option) {
+        return setStringPref(AUTO_SKIP, option);
     }
 
     public boolean isAlwaysPromptForPlaybackOptions() {
@@ -1282,10 +1286,16 @@ public class AppSettings {
         return prefs.getBoolean(key, deviceDefault);
     }
 
-    public void setBooleanPref(String key, boolean value) {
+    public boolean setBooleanPref(String key, boolean value) {
         Editor ed = prefs.edit();
         ed.putBoolean(key, value);
-        ed.commit();
+        return ed.commit();
+    }
+
+    public boolean setStringPref(String key, String value) {
+        Editor ed = prefs.edit();
+        ed.putString(key, value);
+        return ed.commit();
     }
 
     public long getLongPref(String key, long defValue) {

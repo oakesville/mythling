@@ -48,11 +48,11 @@ public class Recording extends TvShow {
     public boolean isRecorded() { return recorded; }
     public void setRecorded(boolean recorded) { this.recorded = recorded; }
 
-    private ArrayList<Cut> commercialCutList;
-    public ArrayList<Cut> getCommercialCutList() { return commercialCutList; }
-    public void setCommercialCutList(ArrayList<Cut> cutList) { this.commercialCutList = cutList; }
-    public boolean hasCommercialCutList() {
-        return commercialCutList != null && commercialCutList.size() > 0;
+    private ArrayList<Cut> cutList;
+    public ArrayList<Cut> getCutList() { return cutList; }
+    public void setCutList(ArrayList<Cut> cutList) { this.cutList = cutList; }
+    public boolean hasCutList() {
+        return cutList != null && cutList.size() > 0;
     }
 
     public Recording(String id, String title) {
