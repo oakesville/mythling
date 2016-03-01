@@ -368,11 +368,16 @@ public class VideoPlayerActivity extends Activity {
 
         // check sanity
         if (dw * dh == 0 || videoWidth * videoHeight == 0) {
-            String msg = "Invalid surface size";
-            Log.e(TAG, msg);
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-            if (appSettings.isErrorReportingEnabled())
-                new Reporter(msg).send();
+            String msg = "Invalid surface size: dw=" + dw + ", dh=" + dh + ", w=" + videoWidth + ", h=" + videoHeight;
+            if (appSettings.isFireTv() && dw == 0) {
+                Log.d(TAG, msg); // getWindow().getDecorView() can be 0 for some reason
+            }
+            else {
+                Log.e(TAG, msg);
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                if (appSettings.isErrorReportingEnabled())
+                    new Reporter(msg).send();
+            }
             return;
         }
 
