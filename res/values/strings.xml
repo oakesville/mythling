@@ -460,6 +460,7 @@
     <string name="estimating_video_length">Estimating video length&#8230;</string>
     <string name="restoring_saved_position">Restoring saved position</string>
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
+    <string name="media_not_seekable">Media is not seekable.</string>
     <string name="media_player_error_">Media player error:\u0020</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">

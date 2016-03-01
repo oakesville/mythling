@@ -290,20 +290,35 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void skip(int delta) {
-        showUi(true);
-        mediaPlayer.skip(delta);
+        if (mediaPlayer.isItemSeekable()) {
+            showUi(true);
+            mediaPlayer.skip(delta);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void fastForward() {
-        showUi(false);
-        int playRate = mediaPlayer.stepUpFastForward();
-        Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
+        if (mediaPlayer.isItemSeekable()) {
+            showUi(false);
+            int playRate = mediaPlayer.stepUpFastForward();
+            Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void rewind() {
-        showUi(false);
-        int playRate = mediaPlayer.stepUpRewind();
-        Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
+        if (mediaPlayer.isItemSeekable()) {
+            showUi(false);
+            int playRate = mediaPlayer.stepUpRewind();
+            Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
