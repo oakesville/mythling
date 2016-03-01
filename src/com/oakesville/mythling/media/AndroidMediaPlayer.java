@@ -291,10 +291,9 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         this.shiftListener = listener;
     }
 
-    @Override
+    private MediaPlayerLayoutChangeListener layoutChangeListener;
     public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener) {
-        // TODO Auto-generated method stub
-
+        this.layoutChangeListener = listener;
     }
 
     private MediaPlayerEventListener eventListener;
@@ -364,7 +363,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         public void onVideoSizeChanged(android.media.MediaPlayer mp, int width, int height) {
-            // TODO Auto-generated method stub
+            if (layoutChangeListener != null)
+                layoutChangeListener.onLayoutChange(width, height, 1, 1);
         }
 
         public void onSeekComplete(android.media.MediaPlayer mp) {

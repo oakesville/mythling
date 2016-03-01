@@ -56,7 +56,7 @@ public interface MediaPlayer {
     }
 
     public interface MediaPlayerLayoutChangeListener {
-        public void onLayoutChange(int width, int height, int sarNumerator, int sarDenominator);
+        public void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator);
     }
 
     public String getVersion();

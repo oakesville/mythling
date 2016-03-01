@@ -420,9 +420,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private Callback nativeCallback = new Callback() {
         public void onNewLayout(IVLCVout vout, int width, int height,
-                int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+                int visibleWidth, int visibleHeight, int aspectNumerator, int aspectDenominator) {
             if (layoutChangeListener != null)
-                layoutChangeListener.onLayoutChange(width, height, sarNum, sarDen);
+                layoutChangeListener.onLayoutChange(width, height, aspectNumerator, aspectDenominator);
         }
 
         public void onSurfacesCreated(IVLCVout vout) {

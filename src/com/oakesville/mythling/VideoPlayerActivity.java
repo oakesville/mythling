@@ -94,8 +94,8 @@ public class VideoPlayerActivity extends Activity {
     private int videoWidth;
     private int videoHeight;
 
-    private int screenAspectNumerator;
-    private int screenAspectDenominator;
+    private int aspectNumerator;
+    private int aspectDenominator;
 
     // seek
     private TextView totalLengthText;
@@ -378,13 +378,13 @@ public class VideoPlayerActivity extends Activity {
 
         // compute the aspect ratio
         double ar, vw;
-        if (screenAspectDenominator == screenAspectNumerator) {
+        if (aspectDenominator == aspectNumerator) {
             // no indication about density, assume 1:1
             vw = width;
             ar =  (double)width / (double)height;
         } else {
             // use the specified aspect ratio
-            vw = width * (double)screenAspectNumerator / screenAspectDenominator;
+            vw = width * (double)aspectNumerator / aspectDenominator;
             ar = vw / height;
         }
 
@@ -431,11 +431,11 @@ public class VideoPlayerActivity extends Activity {
             Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
-                public void onLayoutChange(int width, int height, int sarNum, int sarDen) {
+                public void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator) {
                     if (width * height == 0)
                         return;
-                    screenAspectNumerator = sarNum;
-                    screenAspectDenominator = sarDen;
+                    VideoPlayerActivity.this.aspectNumerator = aspectNumerator;
+                    VideoPlayerActivity.this.aspectDenominator = aspectDenominator;
                     changeSurfaceLayout(width, height);
                 }
             });
