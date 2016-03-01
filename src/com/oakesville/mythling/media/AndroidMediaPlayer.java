@@ -36,7 +36,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     private Context context;
     private SurfaceView videoView;
-    private int lengthOffset; // known item length - getDuration() in ms
+    private int lengthOffset; // meta item length - getDuration() in ms
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -45,18 +45,6 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             return itemLength;
         int d = getDuration();
         return d == -1 ? 0 : d / 1000;
-    }
-    public void setItemLength(int secs) {
-        this.itemLength = secs;
-        if (itemLength > 0) {
-            int duration = getDuration();
-            if (duration > 0)
-                lengthOffset = (itemLength * 1000) - duration;
-        }
-    }
-
-    public int inferItemLength() {
-        return getDuration() / 1000;
     }
 
     private int playRate = 1;
@@ -84,15 +72,17 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         setMaxPlayRate(64); // TODO pref
     }
 
-    public void playMedia(Uri mediaUri, AuthType authType, List<String> options) throws IOException {
+    public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException {
         lengthOffset = 0;
+        itemLength = metaLength;
         setDataSource(context, mediaUri);
         prepare();
         start();
     }
 
-    public void playMedia(FileDescriptor fileDescriptor, List<String> options) throws IOException {
+    public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException {
         lengthOffset = 0;
+        itemLength = metaLength;
         setDataSource(fileDescriptor);
         prepare();
         start();
@@ -308,7 +298,9 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
       android.media.MediaPlayer.OnBufferingUpdateListener, android.media.MediaPlayer.OnSeekCompleteListener,
       android.media.MediaPlayer.OnVideoSizeChangedListener, android.media.MediaPlayer.OnInfoListener {
 
-        boolean lengthKnown;
+        private int duration;
+        private int samples = 0;
+        private int minSamples = 2;
 
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
@@ -321,16 +313,15 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                     timingAction = new Runnable() {
                         public void run() {
                             if (!isReleased()) {
-                                if (eventListener != null) {
-                                    if (!lengthKnown) {
-                                        int secs = inferItemLength();
-                                        if (secs > 0) {
-                                            eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seekable));
-                                            lengthKnown = true;
-                                        }
+                                if (duration == -1 && samples++ < minSamples) {
+                                    duration = getDuration();
+                                    if (duration > 0 && itemLength > 0) {
+                                        // correct duration inaccuracy based on meta length
+                                        lengthOffset = (itemLength * 1000) - duration;
                                     }
-                                    eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
                                 }
+                                if (eventListener != null)
+                                    eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
                                 timingHandler.postDelayed(this, 1000);
                             }
                         }

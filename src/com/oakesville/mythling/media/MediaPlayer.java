@@ -37,7 +37,6 @@ public interface MediaPlayer {
 
     public enum MediaPlayerEventType {
         playing,
-        seekable,
         time,
         position,
         buffered,
@@ -62,11 +61,11 @@ public interface MediaPlayer {
     public String getVersion();
 
     /**
-     * @param mediaUri
+     * @param metaLength length from mythtv database
      */
-    public void playMedia(Uri mediaUri, AuthType authType, List<String> options) throws IOException;
+    public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException;
 
-    public void playMedia(FileDescriptor fileDescriptor, List<String> options) throws IOException;
+    public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException;
 
     public boolean isPlaying();
     public boolean isProxying();
@@ -78,12 +77,6 @@ public interface MediaPlayer {
      * @return length in seconds (or zero if unknown)
      */
     public int getItemLength();
-    public void setItemLength(int secs);
-
-    /**
-     * Calculate item length based on position/time.
-     */
-    public int inferItemLength();
 
     public boolean isItemSeekable();
 

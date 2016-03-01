@@ -77,10 +77,10 @@ public class VideoPlayerActivity extends Activity {
 
     private AppSettings appSettings;
     private Uri videoUri;
+    private int metaLength; // length known my mythtv
     private String playerOption;
     private AuthType authType;
 
-    private int itemLength; // this will be zero if not known definitively
     private String autoSkip;
     private List<Cut> cutList;
     private Cut currentCut;
@@ -164,7 +164,7 @@ public class VideoPlayerActivity extends Activity {
                 playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
             authType = at == null ? null : AuthType.valueOf(at);
-            itemLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
+            metaLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
             cutList = (List<Cut>) getIntent().getSerializableExtra(ITEM_CUT_LIST);
 
             currentPositionText = (TextView) findViewById(R.id.current_pos);
@@ -462,15 +462,11 @@ public class VideoPlayerActivity extends Activity {
 
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
 
-                private int minSampleLength = 3;
-                private int correctableDelta = 5;  // don't update if off by less than this
-
                 public void onEvent(MediaPlayerEvent event) {
                     if (event.type == MediaPlayerEventType.playing) {
                         progressFrame.setVisibility(View.GONE);
+                        int itemLength = mediaPlayer.getItemLength();
                         if (itemLength != 0) {
-                            // length is already known -- don't wait for seekability determination
-                            mediaPlayer.setItemLength(itemLength);
                             totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
                             seekBar.setMax(itemLength); // max is length in seconds
                         }
@@ -493,31 +489,15 @@ public class VideoPlayerActivity extends Activity {
                             new Reporter(msg).send();
                         finish();
                     }
-                    else if (event.type == MediaPlayerEventType.seekable) {
-                        if (mediaPlayer.getItemLength() != itemLength) {
-                            // now the length is known definitively
-                            itemLength = mediaPlayer.getItemLength();
-                            totalLengthText.setText(new TextBuilder().appendDuration(itemLength).toString());
-                            seekBar.setMax(itemLength); // max is length in seconds
-                        }
-                    }
                     else if (event.type == MediaPlayerEventType.time) {
-                        int pos = mediaPlayer.getSeconds();
-
-                        // infer length if needed // TODO: for android player?
-                        if (itemLength == 0) {
-                            Log.i(TAG, "Estimating video length");
-                            if (pos > minSampleLength) {
-                                int prevLen = mediaPlayer.getItemLength();
-                                int len = mediaPlayer.inferItemLength();
-                                if (Math.abs(len - prevLen) > correctableDelta) {
-                                    totalLengthText.setText(new TextBuilder().appendDuration(len).toString());
-                                    seekBar.setMax(len);
-                                }
-                            }
+                        // seek bar max if changed
+                        if (seekBar.getMax() != mediaPlayer.getItemLength()) {
+                            totalLengthText.setText(new TextBuilder().appendDuration(mediaPlayer.getItemLength()).toString());
+                            seekBar.setMax(mediaPlayer.getItemLength());
                         }
 
-                        // update seek bar
+                        int pos = mediaPlayer.getSeconds();
+                        // seek bar position
                         currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
                         seekBar.setProgress(pos);
                         // restore saved position
@@ -581,14 +561,15 @@ public class VideoPlayerActivity extends Activity {
             Log.i(TAG, "Playing video: " + videoUri);
             Log.i(TAG, "Using: " + mediaPlayer.getClass() + " v" + mediaPlayer.getVersion());
 
+            List<String> mediaOptions = new PlaybackOptions(appSettings).getMediaOptions(playerOption);
             if (videoUri.getScheme().equals("content")) {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
                 if (pfd == null)
                     throw new IOException("Unable to open file descriptor for: " + videoUri);
-                mediaPlayer.playMedia(pfd.getFileDescriptor(), appSettings.getVlcMediaOptions());
+                mediaPlayer.playMedia(pfd.getFileDescriptor(), metaLength, mediaOptions);
             }
             else {
-                mediaPlayer.playMedia(videoUri, authType, appSettings.getVlcMediaOptions());
+                mediaPlayer.playMedia(videoUri, metaLength, authType, mediaOptions);
             }
         }
         catch (Exception ex) {

@@ -17,6 +17,7 @@ package com.oakesville.mythling.media;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -232,6 +233,13 @@ public class PlaybackOptions {
         }
 
         return option;
+    }
+
+    public List<String> getMediaOptions(String player) {
+        if (player.equals(PLAYER_LIBVLC))
+            return appSettings.getVlcMediaOptions();
+        else
+            return null;
     }
 
     public static class PlaybackOption {
