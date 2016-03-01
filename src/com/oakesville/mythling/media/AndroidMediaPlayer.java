@@ -119,7 +119,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     @Override
     public boolean isItemSeekable() {
-        return getItemLength() > 0;
+        return getDuration() != -1;
     }
 
     /**
