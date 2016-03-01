@@ -85,6 +85,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> mediaOptions) throws IOException {
         itemLength = metaLength;
+        Log.d(TAG, "Video designated length: " + itemLength);
         ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
         Media media;
         if (proxyInfo == null) {
@@ -117,6 +118,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public void playMedia(FileDescriptor fd, int metaLength, List<String> mediaOptions) {
         Media media = new Media(libvlc, fd);
         itemLength = metaLength;
+        Log.d(TAG, "Video designated length: " + itemLength);
         if (mediaOptions == null) {
             media.setHWDecoderEnabled(true, false);
         }
@@ -380,11 +382,12 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.error));
                         break;
                     case MediaPlayer.Event.TimeChanged:
-                        if (!lengthDetermined) {
+                        if (t < maxSampleLength && !lengthDetermined) {
                             long len = getLength();
                             if (len > 0) {
                                 itemLength = (int)(len / 1000);
                                 lengthDetermined = true;
+                                Log.d(TAG, "Video length determined: " + itemLength);
                             }
                         }
                         // infer length if needed
@@ -394,7 +397,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                 if (t > minSampleLength) {
                                     int len = inferItemLength();
                                     if (len != itemLength) {
-                                        Log.i(TAG, "Estimated video length: " + len);
+                                        Log.d(TAG, "Estimated video length: " + len);
                                         itemLength = len;
                                     }
                                 }

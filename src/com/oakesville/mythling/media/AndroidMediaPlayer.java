@@ -75,6 +75,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException {
         lengthOffset = 0;
         itemLength = metaLength;
+        Log.d(TAG, "Video designated length: " + itemLength);
         setDataSource(context, mediaUri);
         prepare();
         start();
@@ -83,6 +84,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException {
         lengthOffset = 0;
         itemLength = metaLength;
+        Log.d(TAG, "Video designated length: " + itemLength);
         setDataSource(fileDescriptor);
         prepare();
         start();
