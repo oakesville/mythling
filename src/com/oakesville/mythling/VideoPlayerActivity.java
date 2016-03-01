@@ -120,6 +120,9 @@ public class VideoPlayerActivity extends Activity {
 
         appSettings = new AppSettings(getApplicationContext());
 
+        if (appSettings.isTv())
+            showUiLong = 6000;
+
         surface = (SurfaceView) findViewById(R.id.player_surface);
         surface.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
