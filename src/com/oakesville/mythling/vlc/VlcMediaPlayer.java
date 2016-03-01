@@ -350,9 +350,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.eventListener = listener;
     }
 
-    // TODO only instantiate this when eventListener is set
     private MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
         private int minSampleLength = 3000;
+        private int maxSampleLength = 10000;
+        private long t;
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
@@ -388,11 +389,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         }
                         // infer length if needed
                         if (itemLength == 0) {
-                            if (getTime() > minSampleLength) {
-                                int len = inferItemLength();
-                                if (len != itemLength) {
-                                    Log.i(TAG, "Estimated video length: " + len);
-                                    itemLength = len;
+                            if (t < maxSampleLength) {
+                                t = getTime();
+                                if (t > minSampleLength) {
+                                    int len = inferItemLength();
+                                    if (len != itemLength) {
+                                        Log.i(TAG, "Estimated video length: " + len);
+                                        itemLength = len;
+                                    }
                                 }
                             }
                         }

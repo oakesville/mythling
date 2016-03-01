@@ -300,7 +300,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
         private int duration;
         private int samples = 0;
-        private int minSamples = 2;
+        private int maxSamples = 10;
 
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
@@ -313,11 +313,12 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                     timingAction = new Runnable() {
                         public void run() {
                             if (!isReleased()) {
-                                if (duration == -1 && samples++ < minSamples) {
+                                if (duration <= 0 && samples++ <= maxSamples) {
                                     duration = getDuration();
                                     if (duration > 0 && itemLength > 0) {
                                         // correct duration inaccuracy based on meta length
                                         lengthOffset = (itemLength * 1000) - duration;
+                                        Log.i(TAG, "Adjusting length by offset: " + lengthOffset);
                                     }
                                 }
                                 if (eventListener != null)
