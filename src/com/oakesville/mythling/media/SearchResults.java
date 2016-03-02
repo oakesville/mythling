@@ -25,6 +25,10 @@ import com.oakesville.mythling.app.Localizer;
 
 public class SearchResults {
 
+    private String mythTvVersion = "Unknown";
+    public String getMythTvVersion() { return mythTvVersion; }
+    public void setMythTvVersion(String mythTvVersion) { this.mythTvVersion = mythTvVersion; }
+
     private Date retrieveDate;
     public Date getRetrieveDate() { return retrieveDate; }
     public void setRetrieveDate(Date d) { this.retrieveDate = d; }

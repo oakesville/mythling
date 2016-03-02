@@ -1,6 +1,6 @@
  <?php
 /**
- * Copyright 2014 Donald Oakes
+ * Copyright 2016 Donald Oakes
  * 
  * This file is part of Mythling.
  *
@@ -17,7 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Mythling.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+$VERSION = "2.0"; 
+ 
 // Assign values for these constants and drop this file somewhere
 // under your Apache DocumentRoot directory.
 $MYTHTV_VERSION = "0.28";
@@ -349,7 +350,7 @@ else if ($type->isSearch())
   header("Content-type:application/json");
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "date": "' . $dt . ' UTC", "query": "' . $searchQuery . '"';
+  echo '  { "version": "' . $VERSION . '", "mythTvVersion": "' . $MYTHTV_VERSION . '", "date": "' . $dt . ' UTC", "query": "' . $searchQuery . '"';
   if ($videoBase != null)
     echo ', "videoBase": "' . $videoBase . '"';
   if ($musicBase != null)
@@ -949,7 +950,7 @@ else
   
   echo "{\n";
   echo '  "summary": ' . "\n";
-  echo '  { "type": "' . $type->type . '", "date": "' . $dt . ' UTC", "count": "' . $num . '"';
+  echo '  { "version": "' . $VERSION . '", "mythTvVersion": "' . $MYTHTV_VERSION . '", "type": "' . $type->type . '", "date": "' . $dt . ' UTC", "count": "' . $num . '"';
   if ($base != null)
     echo ', "base": "' . $base . '" ';
   if ($num > 0)

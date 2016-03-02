@@ -68,6 +68,8 @@ public class MythlingParser implements MediaListParser {
         if (list.has("error"))
             throw new ServiceException(list.getString("error"));
         JSONObject summary = list.getJSONObject("summary");
+        if (summary.has("mythTvVersion"))
+            mediaList.setMythTvVersion(summary.getString("mythTvVersion"));
         mediaList.setRetrieveDate(summary.getString("date"));
         mediaList.setCount(summary.getString("count"));
         if (summary.has("base"))
@@ -135,6 +137,8 @@ public class MythlingParser implements MediaListParser {
             throw new ServiceException(list.getString("error"));
 
         JSONObject summary = list.getJSONObject("summary");
+        if (summary.has("mythTvVersion"))
+            searchResults.setMythTvVersion(summary.getString("mythTvVersion"));
         searchResults.setRetrieveDate(summary.getString("date"));
         searchResults.setQuery(summary.getString("query"));
         if (summary.has("videoBase"))
