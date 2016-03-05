@@ -487,6 +487,7 @@ public class AppSettings {
 
     public boolean isCpuCompatibleWithLibVlcPlayer() {
         for (String cpu : getSupportedCpus()) {
+            Log.d(TAG, "Supported cpu: " + cpu);
             if (cpu.equals("armeabi-v7a"))
                 return true;
         }
