@@ -108,22 +108,8 @@ public class Transcoder {
                 preExist = true;
                 break;
             } else {
-                if ("Transcoding".equals(liveStream.getMessage())) {
-                    if (liveStream.matchesItem(item)) {
-                        // stop and delete in-progress transcoding jobs for same file (why did I think this was necessary?)
-                        try {
-                            //getDownloader(new URL(baseUrl + "/Content/StopLiveStream?Id=" + liveStream.getId())).retrieve();
-                            getServiceDownloader(new URL(baseUrl + "/Content/RemoveLiveStream?Id=" + liveStream.getId())).get();
-                        } catch (Exception ex) {
-                            // don't let this stop us
-                            Log.e(TAG, ex.getMessage(), ex);
-                            if (appSettings.isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                        }
-                    } else {
-                        inProgress++;
-                    }
-                }
+                if ("Transcoding".equals(liveStream.getMessage()))
+                    inProgress++;
             }
         }
 
