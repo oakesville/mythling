@@ -69,6 +69,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         setOnInfoListener(mpListener);
         setOnBufferingUpdateListener(mpListener);
         setOnVideoSizeChangedListener(mpListener);
+        setScreenOnWhilePlaying(true);
         setMaxPlayRate(64); // TODO pref
     }
 
@@ -122,9 +123,12 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void setSeconds(int secs) {
-        // use skip() to handle lengthOffset
-        int delta = secs - getSeconds();
-        skip(delta);
+        if (lengthOffset == 0)
+            seekTo(secs * 1000);
+        else {
+            float frac = (float)secs/itemLength;
+            seekTo((int)(frac*getDuration()));
+        }
     }
 
     public void skip(int delta) {
@@ -139,9 +143,9 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         int newPos = curPos + (delta * 1000);
 
         if (lengthOffset != 0) {
-            // correct for inaccurate duration (more off toward end of stream)
-            int correctionMs = (int) (((float)newPos/(float)(itemLength*1000))*(lengthOffset));
-            newPos = curPos + (delta * 1000) - correctionMs;
+            // correct for inaccurate duration
+            float frac = (float)newPos/(itemLength*1000);
+            newPos = (int)(frac*getDuration());
         }
 
         if (newPos < 0) {
@@ -346,7 +350,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         public void onBufferingUpdate(android.media.MediaPlayer mp, int percent) {
-            MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
+            MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.buffered);
             event.position = (percent/100) * getItemLength();
         }
 
@@ -362,7 +366,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         public void onSeekComplete(android.media.MediaPlayer mp) {
-            // TODO Auto-generated method stub
+            // TODO
         }
     }
 
