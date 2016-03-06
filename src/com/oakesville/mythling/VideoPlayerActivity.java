@@ -387,8 +387,8 @@ public class VideoPlayerActivity extends Activity {
         // check sanity
         if (dw * dh == 0 || videoWidth * videoHeight == 0) {
             String msg = "Invalid surface size: dw=" + dw + ", dh=" + dh + ", w=" + videoWidth + ", h=" + videoHeight;
-            if (appSettings.isFireTv() && dw == 0) {
-                Log.d(TAG, msg); // getWindow().getDecorView() can be 0 for some reason
+            if (dw == 0) {
+                Log.d(TAG, msg); // getWindow().getDecorView().getWidth() can be 0 for some reason
             }
             else {
                 Log.e(TAG, msg);
