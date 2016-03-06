@@ -504,13 +504,11 @@ public class VideoPlayerActivity extends Activity {
                         currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
                         seekBar.setProgress(pos);
                         // restore saved position
-                        if (mediaPlayer.isItemSeekable()) {
-                            if (savedPosition > 0) {
-                                showUi(true);
-                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
-                                mediaPlayer.setSeconds(savedPosition);
-                                savedPosition = 0;
-                            }
+                        if (savedPosition > 0 && mediaPlayer.isItemSeekable()) {
+                            showUi(true);
+                            Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
+                            mediaPlayer.setSeconds(savedPosition);
+                            savedPosition = 0;
                         }
 
                         // auto skip
