@@ -81,6 +81,11 @@ public interface MediaPlayer {
     public boolean isItemSeekable();
 
     /**
+     * Significant mismatch leading to inaccurate seeks.
+     */
+    public boolean isDurationMismatch();
+
+    /**
      * @return video position in seconds (or zero if unknown)
      */
     public int getSeconds();

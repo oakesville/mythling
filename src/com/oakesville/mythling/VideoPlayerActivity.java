@@ -465,6 +465,8 @@ public class VideoPlayerActivity extends Activity {
 
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
 
+                boolean durationMismatchWarned = false;
+
                 public void onEvent(MediaPlayerEvent event) {
                     if (event.type == MediaPlayerEventType.playing) {
                         progressFrame.setVisibility(View.GONE);
@@ -493,6 +495,11 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
+                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch()) {
+                            durationMismatchWarned = true;
+                            Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
+                        }
+
                         // seek bar max if changed
                         if (seekBar.getMax() != mediaPlayer.getItemLength()) {
                             totalLengthText.setText(new TextBuilder().appendDuration(mediaPlayer.getItemLength()).toString());

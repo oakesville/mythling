@@ -27,6 +27,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaStreamProxy;
 import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
@@ -49,6 +50,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         return itemLength > 0 && proxy == null; // proxied seek awaits issue #65
     }
 
+    private boolean durationMismatch;
+    public boolean isDurationMismatch() { return durationMismatch; }
+
+    private boolean isHls;
     private boolean lengthDetermined; // libvlc knows the media length (not inferred)
 
     /**
@@ -86,6 +91,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> mediaOptions) throws IOException {
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
+        isHls = PlaybackOptions.isHls(mediaUri);
         ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
         Media media;
         if (proxyInfo == null) {
@@ -119,6 +125,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         Media media = new Media(libvlc, fd);
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
+        isHls = false;
         if (mediaOptions == null) {
             media.setHWDecoderEnabled(true, false);
         }
@@ -181,7 +188,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public int getSeconds() {
         long time = getTime();
-        return time == -1 ? 0 : (int)(getTime()/1000);
+        return time == -1 ? 0 : (int)(time/1000);
     }
 
     public void setSeconds(int secs) {
@@ -200,17 +207,22 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
         if (isItemSeekable()) {
             // libvlc setTime() seems to hardly ever work, so use setPosition()
-            float curPos = getPosition();
-            float newPos = curPos + (float)delta/(float)itemLength;
-            if (newPos < 0) {
+            long time = getTime();
+            long newTime = time + (delta * 1000);
+            long lengthMs = itemLength * 1000;
+            if (newTime < 0) {
                 setPosition(0);
                 return 0;
             }
-            else if (newPos > 1) {
+            else if (newTime >= lengthMs) {
                 setPosition(1);
                 return 1;
             }
             else {
+                float pos = getPosition();
+                // TODO: which is more accurate?
+                // float newPos = (float)newTime/lengthMs;
+                float newPos = pos + (float)delta/itemLength;
                 setPosition(newPos);
                 return newPos;
             }
@@ -353,9 +365,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
-        private int minSampleLength = 3000;
-        private int maxSampleLength = 10000;
-        private long t;
+        private int samples = 0;
+        private int minSamples = 10;
+        private int maxSamples = 30;
+        private long length;
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
@@ -382,28 +395,37 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.error));
                         break;
                     case MediaPlayer.Event.TimeChanged:
-                        if (t < maxSampleLength && !lengthDetermined) {
-                            long len = getLength();
-                            if (len > 0) {
-                                itemLength = (int)(len / 1000);
-                                lengthDetermined = true;
-                                Log.d(TAG, "Video length determined: " + itemLength);
-                            }
-                        }
-                        // infer length if needed
-                        if (itemLength == 0) {
-                            if (t < maxSampleLength) {
-                                t = getTime();
-                                if (t > minSampleLength) {
-                                    int len = inferItemLength();
-                                    if (len != itemLength) {
-                                        Log.d(TAG, "Estimated video length: " + len);
-                                        itemLength = len;
+                        if (length <= 0 && samples < maxSamples) {
+                            length = getLength(); // reported length
+                            if (length > 0) {
+                                if (isHls) {
+                                    if (itemLength > 0) {
+                                        // duration inaccuracy based on meta length (don't trust HLS reported length)
+                                        int itemLengthMs = itemLength * 1000;
+                                        long lengthOffset = itemLengthMs - length;
+                                        if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
+                                            durationMismatch = true;
+                                    }
+                                }
+                                else {
+                                    if (samples < maxSamples && !lengthDetermined) {
+                                        itemLength = (int)(length/1000);
+                                        lengthDetermined = true;
+                                        Log.d(TAG, "Video length determined: " + itemLength);
                                     }
                                 }
                             }
                         }
+                        // infer length if needed
+                        if (itemLength == 0 && samples > minSamples) {
+                            length = inferItemLength();
+                            if (length != itemLength) {
+                                Log.d(TAG, "Estimated video length: " + length);
+                                itemLength = (int)length;
+                            }
+                        }
 
+                        samples++;
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
                         break;
                     case MediaPlayer.Event.PositionChanged:

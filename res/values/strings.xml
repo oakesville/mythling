@@ -462,6 +462,7 @@
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
     <string name="media_not_seekable">Media is not seekable.</string>
     <string name="media_player_error_">Media player error:\u0020</string>
+    <string name="duration_mismatch">Duration mismatch.  Seek may be inaccurate.</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>

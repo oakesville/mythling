@@ -37,6 +37,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     private Context context;
     private SurfaceView videoView;
     private int lengthOffset; // meta item length - getDuration() in ms
+    private boolean durationMismatch;
+    public boolean isDurationMismatch() { return durationMismatch; }
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -75,6 +77,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException {
         lengthOffset = 0;
+        durationMismatch = false;
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
         setDataSource(context, mediaUri);
@@ -84,6 +87,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException {
         lengthOffset = 0;
+        durationMismatch = false;
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
         setDataSource(fileDescriptor);
@@ -323,7 +327,10 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                                     duration = getDuration();
                                     if (duration > 0 && itemLength > 0) {
                                         // correct duration inaccuracy based on meta length
-                                        lengthOffset = (itemLength * 1000) - duration;
+                                        int itemLengthMs = itemLength * 1000;
+                                        lengthOffset = itemLengthMs - duration;
+                                        if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
+                                            durationMismatch = true;
                                         Log.i(TAG, "Adjusting length by offset: " + lengthOffset);
                                     }
                                 }
@@ -352,6 +359,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         public void onBufferingUpdate(android.media.MediaPlayer mp, int percent) {
             MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.buffered);
             event.position = (percent/100) * getItemLength();
+            // TODO fire this event
         }
 
         public boolean onInfo(android.media.MediaPlayer mp, int what, int extra) {

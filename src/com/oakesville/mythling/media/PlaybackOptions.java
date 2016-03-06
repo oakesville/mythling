@@ -27,6 +27,7 @@ import com.oakesville.mythling.app.AppResources;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 
+import android.net.Uri;
 import android.util.Log;
 
 public class PlaybackOptions {
@@ -240,6 +241,16 @@ public class PlaybackOptions {
             return appSettings.getVlcMediaOptions();
         else
             return null;
+    }
+
+    public static boolean isHls(Uri videoUri) {
+        String lastPathSeg = videoUri.getLastPathSegment();
+        if (lastPathSeg != null) {
+            int lastDot = lastPathSeg.lastIndexOf('.');
+            if (lastDot > 0)
+                return "m3u8".equals(lastPathSeg.substring(lastDot + 1));
+        }
+        return false;
     }
 
     public static class PlaybackOption {
