@@ -207,22 +207,17 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
         if (isItemSeekable()) {
             // libvlc setTime() seems to hardly ever work, so use setPosition()
-            long time = getTime();
-            long newTime = time + (delta * 1000);
-            long lengthMs = itemLength * 1000;
-            if (newTime < 0) {
+            float curPos = getPosition();
+            float newPos = curPos + (float)delta/(float)itemLength;
+            if (newPos < 0) {
                 setPosition(0);
                 return 0;
             }
-            else if (newTime >= lengthMs) {
+            else if (newPos > 1) {
                 setPosition(1);
                 return 1;
             }
             else {
-                float pos = getPosition();
-                // TODO: which is more accurate?
-                // float newPos = (float)newTime/lengthMs;
-                float newPos = pos + (float)delta/itemLength;
                 setPosition(newPos);
                 return newPos;
             }

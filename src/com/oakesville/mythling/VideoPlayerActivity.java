@@ -466,6 +466,7 @@ public class VideoPlayerActivity extends Activity {
             mediaPlayer.setMediaPlayerEventListener(new MediaPlayerEventListener() {
 
                 boolean durationMismatchWarned = false;
+                int prevPos = -1;
 
                 public void onEvent(MediaPlayerEvent event) {
                     if (event.type == MediaPlayerEventType.playing) {
@@ -507,9 +508,12 @@ public class VideoPlayerActivity extends Activity {
                         }
 
                         int pos = mediaPlayer.getSeconds();
-                        // seek bar position
-                        currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
-                        seekBar.setProgress(pos);
+                        if (pos != prevPos) {
+                            // seek bar position
+                            currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
+                            seekBar.setProgress(pos);
+                            prevPos = pos;
+                        }
                         // restore saved position
                         if (savedPosition > 0 && mediaPlayer.isItemSeekable()) {
                             showUi(true);
