@@ -410,7 +410,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         lengthDetermined = false;
                         break;
                     case MediaPlayer.Event.Playing:
-                        System.out.println("PLAYING::: ");
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
                         break;
                     case MediaPlayer.Event.Paused:
@@ -473,11 +472,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             else {
                                 long d = target - getTime();
                                 Log.d(TAG, "Seek delta ms: " + d);
-                                System.out.println("DELTA::: " + d);
                                 if (Math.abs(d) > seekCorrectionTolerance) {
                                     float newPos = getPosition() + (float)d/(itemLength*1000);
                                     Log.d(TAG, "Correcting position: " + newPos);
-                                    System.out.println("CORR::: " + newPos);
                                     setPosition(newPos);
                                 }
                                 else {
