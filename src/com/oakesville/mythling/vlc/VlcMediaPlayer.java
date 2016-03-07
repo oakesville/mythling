@@ -203,8 +203,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public void skip(int delta) {
         if (seekCorrectionTolerance > 0 && getLength() <= 0) {
             if (!isTargeting()) {
-                target = getTime() + delta * 1000;
-                target();
+                long newTarget = getTime() + delta * 1000;
+                if (newTarget <= 0)
+                    setPosition(0);
+                else if (newTarget >= (itemLength*1000))
+                    setPosition(1);
+                else
+                    target(newTarget);
             }
         }
         else {
@@ -215,7 +220,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     /**
      * Seeks with retry when tolerance is exceeded.
      */
-    private void target() {
+    private void target(long t) {
+        target = t;
         targetStart = System.currentTimeMillis();
         long d = target - getTime();
         float newPos = getPosition() + (float)d/(itemLength*1000);
@@ -404,6 +410,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         lengthDetermined = false;
                         break;
                     case MediaPlayer.Event.Playing:
+                        System.out.println("PLAYING::: ");
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
                         break;
                     case MediaPlayer.Event.Paused:
@@ -466,9 +473,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             else {
                                 long d = target - getTime();
                                 Log.d(TAG, "Seek delta ms: " + d);
+                                System.out.println("DELTA::: " + d);
                                 if (Math.abs(d) > seekCorrectionTolerance) {
                                     float newPos = getPosition() + (float)d/(itemLength*1000);
                                     Log.d(TAG, "Correcting position: " + newPos);
+                                    System.out.println("CORR::: " + newPos);
                                     setPosition(newPos);
                                 }
                                 else {
