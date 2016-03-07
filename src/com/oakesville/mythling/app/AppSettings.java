@@ -534,6 +534,9 @@ public class AppSettings {
     public int getSeekCorrectionTolerance() {
         return Integer.parseInt(getStringPref(SEEK_CORRECTION_TOLERANCE, "2"));
     }
+    public boolean setSeekCorrectionTolerance(int tol) {
+        return setStringPref(SEEK_CORRECTION_TOLERANCE, String.valueOf(tol));
+    }
 
     public String getLibVlcParameters() {
         return getStringPref(LIBVLC_PARAMETERS, "");

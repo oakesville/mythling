@@ -496,7 +496,8 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch() && appSettings.getSeekCorrectionTolerance() <= 0) {
+                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch() &&
+                                (appSettings.getSeekCorrectionTolerance() <= 0 || PlaybackOptions.isHls(videoUri))) {
                             durationMismatchWarned = true;
                             Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
                         }
@@ -548,6 +549,9 @@ public class VideoPlayerActivity extends Activity {
                             if (!inCut)
                                 currentCut = null;
                         }
+                    }
+                    else if (event.type == MediaPlayerEventType.seek) {
+                        showUi(false);
                     }
                     else if (event.type == MediaPlayerEventType.buffered) {
                         seekBar.setSecondaryProgress(event.position);
@@ -727,10 +731,14 @@ public class VideoPlayerActivity extends Activity {
         else if (specialKeys != null) {
             specialKeys.add(code);
             if (specialKeys.size() == 3) {
-                if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP)
+                if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP) {
                     setAutoSkip(AppSettings.AUTO_SKIP_ON);
-                else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN)
+                    appSettings.setSeekCorrectionTolerance(2); // TODO: won't take effect until next playback
+                }
+                else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN) {
                     setAutoSkip(AppSettings.AUTO_SKIP_OFF);
+                    appSettings.setSeekCorrectionTolerance(0); // TODO: won't take effect until next playback
+                }
             }
             specialKeyHandler.postDelayed(specialKeyAction, 1000);
             return true;

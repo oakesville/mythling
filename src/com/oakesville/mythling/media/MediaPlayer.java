@@ -38,7 +38,7 @@ public interface MediaPlayer {
     public enum MediaPlayerEventType {
         playing,
         time,
-        position,
+        seek,
         buffered,
         paused,
         stopped,

@@ -55,6 +55,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public boolean isDurationMismatch() { return durationMismatch; }
 
     private boolean isHls;
+
     private boolean lengthDetermined; // libvlc knows the media length (not inferred)
 
     /**
@@ -225,6 +226,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         long d = target - getTime();
         float newPos = getPosition() + (float)d/(itemLength*1000);
         setPosition(newPos);
+        audioTrack = getAudioTrack();
         targetTimeoutHandler.removeCallbacks(targetTimeoutAction);
         targetTimeoutHandler.postDelayed(targetTimeoutAction, targetTimeout);
         setAudioTrack(-1); // mute until target reached
@@ -232,7 +234,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private void clearTarget() {
         target = -1;
-        setAudioTrack(audioTrack);
+        if (!isReleased())
+            setAudioTrack(audioTrack);
     }
 
     private Handler targetTimeoutHandler = new Handler();
@@ -422,7 +425,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         lengthDetermined = false;
                         break;
                     case MediaPlayer.Event.Playing:
-                        audioTrack = getAudioTrack();
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
                         break;
                     case MediaPlayer.Event.Paused:
@@ -487,6 +489,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             }
                             else {
                                 clearTarget();
+                                eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seek));
                             }
                         }
                         break;

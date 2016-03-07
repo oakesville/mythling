@@ -80,6 +80,12 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         durationMismatch = false;
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
+        if (options != null) {
+            for (String option : options) {
+                if (option.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
+                    seekCorrectionTolerance = 1000 * Integer.parseInt(option.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
+            }
+        }
         setDataSource(context, mediaUri);
         prepare();
         start();
@@ -130,16 +136,63 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         if (lengthOffset == 0)
             seekTo(secs * 1000);
         else {
-            float frac = (float)secs/itemLength;
-            seekTo((int)(frac*getDuration()));
+            if (!isTargeting())
+                target(secs * 1000);
         }
     }
 
-    public boolean isTargeting() { return false; }
-
     public void skip(int delta) {
-        doSkip(delta);
+        int newPos = getCurrentPosition() + delta * 1000;
+        if (newPos < 0) {
+            seekTo(0);
+        }
+        else if (newPos > itemLength * 1000) {
+            seekTo(itemLength * 1000);
+        }
+        else {
+            if (lengthOffset != 0 && seekCorrectionTolerance > 0) {
+                if (!isTargeting())
+                    target(newPos);
+            }
+            else {
+                seekTo(newPos);
+            }
+        }
     }
+
+    /**
+     * Does not actually retry seek, but returns isTargeting() == true
+     * until target is reached or timeout occurs.
+     * This prevents confusing seek bar position jumps.
+     */
+    private void target(int t) {
+        target = t;
+        // correct for inaccurate duration
+        float frac = (float)target/(itemLength*1000);
+        int newPos = (int)(frac*getDuration());
+        seekTo(newPos);
+        targetTimeoutHandler.removeCallbacks(targetTimeoutAction);
+        targetTimeoutHandler.postDelayed(targetTimeoutAction, targetTimeout);
+    }
+
+    private void clearTarget() {
+        target = -1;
+    }
+
+    private Handler targetTimeoutHandler = new Handler();
+    private Runnable targetTimeoutAction = new Runnable() {
+        public void run() {
+            if (target >= 0)
+                eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seek));
+            clearTarget();
+            Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
+        }
+    };
+
+    private int target; // ms
+    public boolean isTargeting() { return target > 0; }
+    private int seekCorrectionTolerance; // ms
+    private int targetTimeout = 5000; // ms
 
     /**
      * @return new position in ms
@@ -376,7 +429,14 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
 
         public void onSeekComplete(android.media.MediaPlayer mp) {
-            // TODO
+            if (target > 0 && !isReleased()) {
+                long d = target - getCurrentPosition();
+                Log.d(TAG, "Seek delta ms: " + d);
+                if (Math.abs(d) < seekCorrectionTolerance) {
+                    clearTarget();
+                    eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seek));
+                }
+            }
         }
     }
 
