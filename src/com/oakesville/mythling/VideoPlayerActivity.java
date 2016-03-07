@@ -675,7 +675,7 @@ public class VideoPlayerActivity extends Activity {
 
     private void delayedHideUi(int delayMs) {
         hideHandler.removeCallbacks(hideAction);
-        // hideHandler.postDelayed(hideAction, delayMs);
+        hideHandler.postDelayed(hideAction, delayMs);
     }
     private Handler hideHandler = new Handler();
     private final Runnable hideAction = new Runnable() {

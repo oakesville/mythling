@@ -168,7 +168,6 @@ public class EpgActivity extends WebViewActivity {
 
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    System.out.println("Failed loading: " + failingUrl + " (" + errorCode + ": " + description + ")");
                     Log.e(TAG, "Failed loading: " + failingUrl + " (" + errorCode + ": " + description + ")");
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
