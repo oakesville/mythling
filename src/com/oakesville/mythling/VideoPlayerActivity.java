@@ -358,7 +358,7 @@ public class VideoPlayerActivity extends Activity {
         super.onPause();
         if (done || !appSettings.isSavePositionOnExit())
             appSettings.clearVideoPlaybackPosition(videoUri);
-        else
+        else if (mediaPlayer != null)
             appSettings.setVideoPlaybackPosition(videoUri, mediaPlayer.getSeconds());
         releasePlayer();
     }

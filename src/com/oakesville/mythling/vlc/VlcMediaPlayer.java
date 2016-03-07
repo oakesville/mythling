@@ -202,8 +202,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     public void skip(int delta) {
         if (seekCorrectionTolerance > 0 && getLength() <= 0) {
-            target = getTime() + delta * 1000;
-            target();
+            if (!isTargeting()) {
+                target = getTime() + delta * 1000;
+                target();
+            }
         }
         else {
             doSkip(delta);
