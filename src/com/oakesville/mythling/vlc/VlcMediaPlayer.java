@@ -222,20 +222,32 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     private void target(long t) {
         target = t;
-        targetStart = System.currentTimeMillis();
         long d = target - getTime();
         float newPos = getPosition() + (float)d/(itemLength*1000);
         setPosition(newPos);
-        audTrack = getAudioTrack(); // mute until target reached
-        setAudioTrack(-1);
+        targetTimeoutHandler.removeCallbacks(targetTimeoutAction);
+        targetTimeoutHandler.postDelayed(targetTimeoutAction, targetTimeout);
+        setAudioTrack(-1); // mute until target reached
     }
+
+    private void clearTarget() {
+        target = -1;
+        setAudioTrack(audioTrack);
+    }
+
+    private Handler targetTimeoutHandler = new Handler();
+    private Runnable targetTimeoutAction = new Runnable() {
+        public void run() {
+            clearTarget();
+            Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
+        }
+    };
 
     private long target; // ms
     public boolean isTargeting() { return target > 0; }
     private int seekCorrectionTolerance; // ms
-    private long targetStart;
-    private int targetingTimeout = 5000; // ms
-    private int audTrack;
+    private int targetTimeout = 5000; // ms
+    private int audioTrack;
 
     /**
      * Seek forward or backward delta seconds.
@@ -410,6 +422,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         lengthDetermined = false;
                         break;
                     case MediaPlayer.Event.Playing:
+                        audioTrack = getAudioTrack();
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
                         break;
                     case MediaPlayer.Event.Paused:
@@ -465,22 +478,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         break;
                     case MediaPlayer.Event.PositionChanged:
                         if (target > 0) {
-                            if (System.currentTimeMillis() - targetStart > targetingTimeout) {
-                                target = -1;
-                                setAudioTrack(audTrack);
+                            long d = target - getTime();
+                            Log.d(TAG, "Seek delta ms: " + d);
+                            if (Math.abs(d) > seekCorrectionTolerance) {
+                                float newPos = getPosition() + (float)d/(itemLength*1000);
+                                Log.d(TAG, "Correcting position: " + newPos);
+                                setPosition(newPos);
                             }
                             else {
-                                long d = target - getTime();
-                                Log.d(TAG, "Seek delta ms: " + d);
-                                if (Math.abs(d) > seekCorrectionTolerance) {
-                                    float newPos = getPosition() + (float)d/(itemLength*1000);
-                                    Log.d(TAG, "Correcting position: " + newPos);
-                                    setPosition(newPos);
-                                }
-                                else {
-                                    target = -1;
-                                    setAudioTrack(audTrack);
-                                }
+                                clearTarget();
                             }
                         }
                         break;
