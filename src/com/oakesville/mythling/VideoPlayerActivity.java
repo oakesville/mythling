@@ -496,7 +496,7 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch()) {
+                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch() && appSettings.getSeekCorrectionTolerance() <= 0) {
                             durationMismatchWarned = true;
                             Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
                         }
@@ -508,7 +508,7 @@ public class VideoPlayerActivity extends Activity {
                         }
 
                         int pos = mediaPlayer.getSeconds();
-                        if (pos != prevPos) {
+                        if (pos != prevPos && !mediaPlayer.isTargeting()) {
                             // seek bar position
                             currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
                             seekBar.setProgress(pos);
@@ -518,7 +518,7 @@ public class VideoPlayerActivity extends Activity {
                         if (savedPosition > 0 && mediaPlayer.isItemSeekable()) {
                             showUi(true);
                             Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
-                            mediaPlayer.setSeconds(savedPosition);
+                            mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
                             savedPosition = 0;
                         }
 
@@ -675,7 +675,7 @@ public class VideoPlayerActivity extends Activity {
 
     private void delayedHideUi(int delayMs) {
         hideHandler.removeCallbacks(hideAction);
-        hideHandler.postDelayed(hideAction, delayMs);
+        // hideHandler.postDelayed(hideAction, delayMs);
     }
     private Handler hideHandler = new Handler();
     private final Runnable hideAction = new Runnable() {

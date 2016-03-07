@@ -87,6 +87,10 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, R.array.auto_skip_values, R.array.auto_skip_entries));
         pref.setSummary(Localizer.getStringArrayEntry(R.array.auto_skip_values, R.array.auto_skip_entries, appSettings.getAutoSkip()));
 
+        pref = getPreferenceScreen().findPreference(AppSettings.SEEK_CORRECTION_TOLERANCE);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
+        pref.setSummary("" + appSettings.getSeekCorrectionTolerance() + " " + getString(R.string.seconds));
+
         pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getLibVlcParameters());

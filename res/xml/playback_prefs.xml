@@ -70,6 +70,14 @@
             android:defaultValue="auto_skip_off"
             android:layout="@layout/pref" />
         <EditTextPreference
+            android:key="seek_correction_tolerance"
+            android:title="@string/title_seek_correction_tolerance"
+            android:dialogTitle="@string/title_seek_correction_tolerance"
+            android:dialogMessage="@string/message_seek_correction_tolerance"
+            android:inputType="number"
+            android:defaultValue="2"
+            android:layout="@layout/pref" />
+        <EditTextPreference
             android:key="libvlc_parameters"
             android:title="@string/title_libvlc_parameters"
             android:dialogTitle="@string/title_libvlc_parameters"

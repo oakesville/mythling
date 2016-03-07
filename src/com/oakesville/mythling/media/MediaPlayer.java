@@ -69,6 +69,7 @@ public interface MediaPlayer {
 
     public boolean isPlaying();
     public boolean isProxying();
+    public boolean isTargeting(); // wait for seek to settle
 
     public void play();
     public void pause();

@@ -101,6 +101,8 @@
         <item>Auto-Skip Notify</item>
         <item>Auto-Skip On</item>
     </string-array>
+    <string name="title_seek_correction_tolerance">Seek Correction Tolerance</string>
+    <string name="message_seek_correction_tolerance">If non-zero, seek will be reattempted until tolerance (in seconds) is achieved.</string>
     <string name="title_libvlc_parameters">LibVLC Parameters</string>
     <string name="message_libvlc_parameters" tools:ignore="TypographyDashes">Whitespace-separated list of raw engine and media options to pass to LibVLC\n(eg: --audio-time-stretch --audio-time-stretch :network-caching=2500 :codec=all)</string>
     <string name="title_frontend_host">Host</string>

@@ -135,6 +135,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     }
 
+    public boolean isTargeting() { return false; }
+
     public void skip(int delta) {
         doSkip(delta);
     }

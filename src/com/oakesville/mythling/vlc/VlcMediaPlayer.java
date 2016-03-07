@@ -27,6 +27,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaStreamProxy;
@@ -109,13 +110,17 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
-        if (mediaOptions == null) {
+        if (mediaOptions == null || mediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
             media.addOption(":network-caching=2500");
         }
         else {
-            for (String mediaOption : mediaOptions)
-                media.addOption(mediaOption);
+            for (String mediaOption : mediaOptions) {
+                if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
+                    seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
+                else
+                    media.addOption(mediaOption);
+            }
         }
         setMedia(media);
         play();
@@ -196,17 +201,41 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void skip(int delta) {
-        doSkip(delta);
+        if (seekCorrectionTolerance > 0 && getLength() <= 0) {
+            target = getTime() + delta * 1000;
+            target();
+        }
+        else {
+            doSkip(delta);
+        }
     }
+
+    /**
+     * Seeks with retry when tolerance is exceeded.
+     */
+    private void target() {
+        targetStart = System.currentTimeMillis();
+        long d = target - getTime();
+        float newPos = getPosition() + (float)d/(itemLength*1000);
+        setPosition(newPos);
+        audTrack = getAudioTrack(); // mute until target reached
+        setAudioTrack(-1);
+    }
+
+    private long target; // ms
+    public boolean isTargeting() { return target > 0; }
+    private int seekCorrectionTolerance; // ms
+    private long targetStart;
+    private int targetingTimeout = 5000; // ms
+    private int audTrack;
 
     /**
      * Seek forward or backward delta seconds.
      * @return past end
      */
     public float doSkip(int delta) {
-
         if (isItemSeekable()) {
-            // libvlc setTime() seems to hardly ever work, so use setPosition()
+            // libvlc setTime() never works, so use setPosition()
             float curPos = getPosition();
             float newPos = curPos + (float)delta/(float)itemLength;
             if (newPos < 0) {
@@ -299,7 +328,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate > 1) {
-                skip(playRate);
+                doSkip(playRate);
                 if (shiftListener != null)
                     shiftListener.onShift(playRate);
                 fastForwardHandler.postDelayed(this, 1000);
@@ -411,12 +440,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                 }
                             }
                         }
-                        // infer length if needed
-                        if (itemLength == 0 && samples > minSamples) {
-                            length = inferItemLength();
-                            if (length != itemLength) {
-                                Log.d(TAG, "Estimated video length: " + length);
-                                itemLength = (int)length;
+                        if (samples > minSamples) {
+                            durationMismatch = true;
+                            if (itemLength == 0) {
+                                // infer length
+                                length = inferItemLength();
+                                if (length != itemLength) {
+                                    Log.d(TAG, "Estimated video length: " + length);
+                                    itemLength = (int)length;
+                                }
                             }
                         }
 
@@ -424,7 +456,25 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.time));
                         break;
                     case MediaPlayer.Event.PositionChanged:
-                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.position));
+                        if (target > 0) {
+                            if (System.currentTimeMillis() - targetStart > targetingTimeout) {
+                                target = -1;
+                                setAudioTrack(audTrack);
+                            }
+                            else {
+                                long d = target - getTime();
+                                Log.d(TAG, "Seek delta ms: " + d);
+                                if (Math.abs(d) > seekCorrectionTolerance) {
+                                    float newPos = getPosition() + (float)d/(itemLength*1000);
+                                    Log.d(TAG, "Correcting position: " + newPos);
+                                    setPosition(newPos);
+                                }
+                                else {
+                                    target = -1;
+                                    setAudioTrack(audTrack);
+                                }
+                            }
+                        }
                         break;
                     default:
                         break;

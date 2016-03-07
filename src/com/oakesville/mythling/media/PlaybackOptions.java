@@ -16,6 +16,7 @@
 package com.oakesville.mythling.media;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -237,10 +238,17 @@ public class PlaybackOptions {
     }
 
     public List<String> getMediaOptions(String player) {
+        List<String> options = null;
         if (player.equals(PLAYER_LIBVLC))
-            return appSettings.getVlcMediaOptions();
-        else
-            return null;
+            options = appSettings.getVlcMediaOptions();
+
+        int tol = appSettings.getSeekCorrectionTolerance();
+        if (tol > 0) {
+            if (options == null)
+                options = new ArrayList<String>();
+            options.add(AppSettings.SEEK_CORRECTION_TOLERANCE + "=" + tol);
+        }
+        return options;
     }
 
     public static boolean isHls(Uri videoUri) {
