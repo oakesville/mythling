@@ -1589,7 +1589,7 @@ public abstract class MediaActivity extends Activity {
 
         PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_FILE);
         boolean isExternalPlayer = playbackOption.isAppPlayer();
-        if (item.isRecording() && isUseCutList()) {
+        if (!isExternalPlayer && item.isRecording() && isUseCutList()) {
             new PlayWithCutListTask(uri, (Recording)item, playbackOption).execute();
         }
         else {
@@ -1622,7 +1622,7 @@ public abstract class MediaActivity extends Activity {
 
         PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_HLS);
         boolean isExternalPlayer = playbackOption.isAppPlayer();
-        if (item.isRecording() && isUseCutList() && !isExternalPlayer) {
+        if (!isExternalPlayer && item.isRecording() && isUseCutList()) {
             new PlayWithCutListTask(Uri.parse(streamUrl), (Recording)item, playbackOption).execute();
         }
         else {
