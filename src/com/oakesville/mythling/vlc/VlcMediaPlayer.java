@@ -56,8 +56,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private boolean isHls;
 
-    private boolean lengthDetermined; // libvlc knows the media length (not inferred)
-
     /**
      * Proxy is needed for Digest and Basic auth since libVLC doesn't support.
      */
@@ -68,10 +66,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     public int inferItemLength() {
         float p = getPosition();
-        if (p > 0) {
-            itemLength = (int)(getTime() / (p * 1000));
-        }
-        return itemLength;
+        if (p > 0)
+            return (int)(getTime() / (p * 1000));
+        else
+            return 0;
     }
 
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
@@ -198,7 +196,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void setSeconds(int secs) {
-        setPosition((float)secs/(float)(itemLength));
+        setPosition((float)secs/itemLength);
     }
 
     public void skip(int delta) {
@@ -415,14 +413,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         private int samples = 0;
         private int minSamples = 10;
         private int maxSamples = 30;
-        private long length;
+        private long length;  // length reported by libvlc
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
             if (eventListener != null) {
                 switch(event.type) {
                     case MediaPlayer.Event.Opening:
-                        lengthDetermined = false;
+                        length = 0;
                         break;
                     case MediaPlayer.Event.Playing:
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
@@ -447,7 +445,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             if (length > 0) {
                                 if (isHls) {
                                     if (itemLength > 0) {
-                                        // duration inaccuracy based on meta length (don't trust HLS reported length)
+                                        // duration inaccuracy based on meta length
+                                        // (don't trust HLS reported length)
                                         int itemLengthMs = itemLength * 1000;
                                         long lengthOffset = itemLengthMs - length;
                                         if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
@@ -455,18 +454,17 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                     }
                                 }
                                 else {
-                                    if (samples < maxSamples && !lengthDetermined) {
-                                        itemLength = (int)(length/1000);
-                                        lengthDetermined = true;
-                                        Log.d(TAG, "Video length determined: " + itemLength);
-                                    }
+                                    itemLength = (int)(length/1000);
+                                    Log.d(TAG, "Video length determined: " + itemLength);
                                 }
                             }
                         }
+
                         if (samples > minSamples) {
-                            durationMismatch = true;
+                            if (length <= 0) // not known to vlc (usually true for streamed files)
+                                durationMismatch = true;
+                            // infer length if no meta
                             if (itemLength == 0) {
-                                // infer length
                                 length = inferItemLength();
                                 if (length != itemLength) {
                                     Log.d(TAG, "Estimated video length: " + length);
