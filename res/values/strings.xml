@@ -89,7 +89,7 @@
     <string name="message_skip_back_interval">Seconds to skip backward when the Skip Back button is pressed</string>
     <string name="title_jump_interval">Jump Interval</string>
     <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
-    <string name="title_auto_skip">Auto-Skip (MythTV 0.28)</string>
+    <string name="title_auto_skip">Commercial Skip (MythTV 0.28)</string>
     <string name="notify_auto_skip_">Auto-Skip:\u0020</string>
     <string-array name="auto_skip_values">
         <item>auto_skip_off</item>
@@ -102,7 +102,7 @@
         <item>Auto-Skip On</item>
     </string-array>
     <string name="title_seek_correction_tolerance">Seek Correction Tolerance</string>
-    <string name="message_seek_correction_tolerance">If non-zero, seek will be reattempted until tolerance (in seconds) is achieved.</string>
+    <string name="message_seek_correction_tolerance">If non-zero, inaccurate seeks will be reattempted until tolerance (in seconds) is achieved.</string>
     <string name="title_libvlc_parameters">LibVLC Parameters</string>
     <string name="message_libvlc_parameters" tools:ignore="TypographyDashes">Whitespace-separated list of raw engine and media options to pass to LibVLC\n(eg: --audio-time-stretch --audio-time-stretch :network-caching=2500 :codec=all)</string>
     <string name="title_frontend_host">Host</string>
@@ -463,6 +463,7 @@
     <string name="restoring_saved_position">Restoring saved position</string>
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
     <string name="media_not_seekable">Media is not seekable.</string>
+    <string name="launched_through_external_intent">Mythling player launched through external intent.</string>
     <string name="media_player_error_">Media player error:\u0020</string>
     <string name="duration_mismatch">Duration mismatch.  Seek may be inaccurate.</string>
     <!-- these words are stripped from the beginning of titles when sorting -->

@@ -25,6 +25,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.oakesville.mythling.VideoPlaybackDialog.PlaybackDialogListener;
 import com.oakesville.mythling.app.AppData;
@@ -43,6 +45,7 @@ import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.AllTunersInUseException;
 import com.oakesville.mythling.media.Category;
 import com.oakesville.mythling.media.Cut;
+import com.oakesville.mythling.media.Download;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.LiveStreamInfo;
@@ -854,17 +857,18 @@ public abstract class MediaActivity extends Activity {
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             Request request = new Request(Uri.parse(fileUrl));
             request.setTitle(item.getOneLineTitle());
+            String downloadFilePath = null;
             try {
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                     File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                     if (downloadDir.exists()) {
-                        String path = AppSettings.getExternalStorageDir() + "/";
+                        String downloadPath = AppSettings.getExternalStorageDir() + "/";
                         if (getPath() != null && !getPath().isEmpty() && !getPath().equals("/"))
-                            path += getPath() + "/";
-                        File destDir = new File(downloadDir + "/" + path);
+                            downloadPath += getPath() + "/";
+                        File destDir = new File(downloadDir + "/" + downloadPath);
                         if (destDir.isDirectory() || destDir.mkdirs()) {
-                            String filePath = path + item.getDownloadFilename();
-                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filePath);
+                            downloadFilePath = downloadPath + item.getDownloadFilename();
+                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFilePath);
                             request.allowScanningByMediaScanner();
                         }
                     }
@@ -881,7 +885,9 @@ public abstract class MediaActivity extends Activity {
             long downloadId = dm.enqueue(request);
             registerDownloadReceiver(item, downloadId);
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
-            getAppData().addDownload(item.getId(), downloadId);
+            getAppData().addDownload(new Download(item.getId(), downloadId, downloadFilePath, new Date()));
+            if (item.isRecording() && (mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices()))
+                new GetCutListTask((Recording)item, downloadId).execute();
         } catch (Exception ex) {
             stopProgress();
             Log.e(TAG, ex.getMessage(), ex);
@@ -1125,8 +1131,17 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected void handleEmptyMediaList() {
-        if (isSplitView())
-            showSubListPane(null);
+        if (isSplitView()) {
+            try {
+                showSubListPane(null);
+            }
+            catch (IllegalStateException ex) {
+                // "Can not perform this action after onSaveInstanceState"
+                Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+            }
+        }
         if (getAppSettings().isTv()) {
             // empty list - set focus on action bar
             setFocusOnActionBar();
@@ -1254,7 +1269,7 @@ public abstract class MediaActivity extends Activity {
                 getAppSettings().setLastLoad(System.currentTimeMillis());
 
                 try {
-                    mediaList.setDownloadIds(appData.readDownloads());
+                    mediaList.setDownloads(appData.getDownloads());
                     appData.writeStorageGroups(storageGroupsJson);
                     appData.writeMediaList(mediaListJson);
                     stopProgress();
@@ -1364,15 +1379,44 @@ public abstract class MediaActivity extends Activity {
     /**
      * Uses internal video player.
      */
-    protected class PlayWithCutListTask extends AsyncTask<URL,Integer,Long> {
-        private Recording recording;
+    protected class PlayWithCutListTask extends GetCutListTask {
         private Uri playbackUri;
         private PlaybackOption playbackOption;
 
         public PlayWithCutListTask(Uri uri, Recording rec, PlaybackOption opt) {
+            super(rec);
             this.playbackUri = uri;
-            this.recording = rec;
             this.playbackOption = opt;
+        }
+
+        protected void onPostExecute(Long result) {
+            super.onPostExecute(result);
+            // play regardless of cutlist success
+            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+            videoIntent.setDataAndType(playbackUri, "video/*");
+            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
+            videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
+            if (getRecording().isLengthKnown())
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, getRecording().getLength());
+            if (getRecording().hasCutList())
+                videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, getRecording().getCutList());
+            startActivity(videoIntent);
+        }
+    }
+
+    protected class GetCutListTask extends AsyncTask<URL,Integer,Long> {
+        private Recording recording;
+        protected Recording getRecording() { return recording; }
+
+        private long downloadId;
+
+        public GetCutListTask(Recording rec, long downloadId) {
+            this.recording = rec;
+            this.downloadId = downloadId;
+        }
+
+        public GetCutListTask(Recording rec) {
+            this.recording = rec;
         }
 
         protected Long doInBackground(URL... urls) {
@@ -1390,8 +1434,9 @@ public abstract class MediaActivity extends Activity {
 
                 String cutListJson = new String(downloader.get());
                 // use mythtv parser since services are compatible
-                ArrayList<Cut> cutList = new MythTvParser(appSettings, cutListJson).parseCutList();
-                recording.setCutList(cutList);
+                ArrayList<Cut> cutList = Cut.parseCutList(new JSONObject(cutListJson));
+                if (!cutList.isEmpty())
+                    recording.setCutList(cutList);
                 return 0L;
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);
@@ -1405,17 +1450,19 @@ public abstract class MediaActivity extends Activity {
             stopProgress();
             if (result != 0L) {
                 Toast.makeText(getApplicationContext(), getString(R.string.unable_to_retrieve_cutlist), Toast.LENGTH_LONG).show();
-                onResume();
             }
-            Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-            videoIntent.setDataAndType(playbackUri, "video/*");
-            videoIntent.setClass(getApplicationContext(), VideoPlayerActivity.class);
-            videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
-            if (recording.isLengthKnown())
-                videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, recording.getLength());
-            if (recording.hasCutList())
-                videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, recording.getCutList());
-            startActivity(videoIntent);
+            else {
+                try {
+                    if (downloadId > 0 && recording.getCutList() != null)
+                        getAppData().addDownloadCutList(recording.getId(), recording.getCutList());
+                }
+                catch (Exception ex) {
+                    Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, ex.getMessage(), ex);
+                    if (getAppSettings().isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                }
+            }
         }
     }
 

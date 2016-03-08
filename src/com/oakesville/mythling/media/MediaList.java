@@ -223,14 +223,21 @@ public class MediaList {
             sortCategory(child, sort, includeItems);
     }
 
-    public void setDownloadIds(Map<String,Long> downloads) {
+    public void setDownloads(Map<String,Download> downloads) {
         if (items != null) {
-            for (Item item : items)
-                item.setDownloadId(downloads.get(item.getId()));
+            for (Item item : items) {
+                Download download = downloads.get(item.getId());
+                if (download != null) {
+                    item.setDownloadId(download.getDownloadId());
+                    if (item.isRecording() && download.getCutList() != null)
+                        ((Recording)item).setCutList(download.getCutList());
+                }
+            }
         }
         if (categories != null) {
-            for (Category cat : categories)
-                cat.setDownloadIds(downloads);
+            for (Category cat : categories) {
+                cat.setDownloads(downloads);
+            }
         }
     }
 

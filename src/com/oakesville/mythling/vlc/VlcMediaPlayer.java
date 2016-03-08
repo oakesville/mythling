@@ -196,11 +196,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public void setSeconds(int secs) {
-        setPosition((float)secs/itemLength);
+        if (getLength() > 0)
+            setTime(secs * 1000);
+        else
+            setPosition((float)secs/itemLength);
     }
 
     public void skip(int delta) {
-        if (seekCorrectionTolerance > 0 && getLength() <= 0) {
+        if (getLength() <= 0 && seekCorrectionTolerance > 0) {
+            // use seek correction
             if (!isTargeting()) {
                 long newTarget = getTime() + delta * 1000;
                 if (newTarget <= 0)
@@ -231,6 +235,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private void clearTarget() {
+        targetTimeoutHandler.removeCallbacks(targetTimeoutAction);
         target = -1;
         if (!isReleased())
             setAudioTrack(audioTrack);
@@ -239,8 +244,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Handler targetTimeoutHandler = new Handler();
     private Runnable targetTimeoutAction = new Runnable() {
         public void run() {
+            if (target > 0)
+                Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
             clearTarget();
-            Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
         }
     };
 
@@ -256,20 +262,38 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public float doSkip(int delta) {
         if (isItemSeekable()) {
-            // libvlc setTime() never works, so use setPosition()
-            float curPos = getPosition();
-            float newPos = curPos + (float)delta/(float)itemLength;
-            if (newPos < 0) {
-                setPosition(0);
-                return 0;
-            }
-            else if (newPos > 1) {
-                setPosition(1);
-                return 1;
+            long len = getLength();
+            if (len > 0) {
+                // seems that setPosition() causes hang for mpg if length known, so must replicate bounds logic
+                long newTime = getTime() + (delta*1000);
+                if (newTime < 0) {
+                    setTime(0);
+                    return 0;
+                }
+                else if (newTime > len) {
+                    setTime(len);
+                    return 1;
+                }
+                else {
+                    return setTime(newTime)/len;
+                }
             }
             else {
-                setPosition(newPos);
-                return newPos;
+                // for unknown length setTime() never works, so use setPosition()
+                float curPos = getPosition();
+                float newPos = curPos + (float)delta/(float)itemLength;
+                if (newPos < 0) {
+                    setPosition(0);
+                    return 0;
+                }
+                else if (newPos > 1) {
+                    setPosition(1);
+                    return 1;
+                }
+                else {
+                    setPosition(newPos);
+                    return newPos;
+                }
             }
         }
         return -1;
@@ -349,10 +373,18 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate > 1) {
-                doSkip(playRate);
-                if (shiftListener != null)
-                    shiftListener.onShift(playRate);
-                fastForwardHandler.postDelayed(this, 1000);
+                float f = doSkip(playRate);
+                if (f >= 1) {
+                   stop();
+                   eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
+                   if (proxy != null)
+                       proxy.stop();
+                }
+                else {
+                    if (shiftListener != null)
+                        shiftListener.onShift(playRate);
+                    fastForwardHandler.postDelayed(this, 1000);
+                }
             }
         }
     };
@@ -443,19 +475,20 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         if (length <= 0 && samples < maxSamples) {
                             length = getLength(); // reported length
                             if (length > 0) {
+                                Log.d(TAG, "Video length determined: " + length);
                                 if (isHls) {
                                     if (itemLength > 0) {
                                         // duration inaccuracy based on meta length
                                         // (don't trust HLS reported length)
                                         int itemLengthMs = itemLength * 1000;
                                         long lengthOffset = itemLengthMs - length;
+                                        Log.d(TAG, "Length offset: " + lengthOffset);
                                         if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
                                             durationMismatch = true;
                                     }
                                 }
                                 else {
                                     itemLength = (int)(length/1000);
-                                    Log.d(TAG, "Video length determined: " + itemLength);
                                 }
                             }
                         }

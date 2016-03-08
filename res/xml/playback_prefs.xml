@@ -75,7 +75,7 @@
             android:dialogTitle="@string/title_seek_correction_tolerance"
             android:dialogMessage="@string/message_seek_correction_tolerance"
             android:inputType="number"
-            android:defaultValue="2"
+            android:defaultValue="3"
             android:layout="@layout/pref" />
         <EditTextPreference
             android:key="libvlc_parameters"

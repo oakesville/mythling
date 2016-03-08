@@ -221,7 +221,7 @@ public class SearchActivity extends MediaActivity {
                 updateResultsMenuItem();
             } else {
                 try {
-                    searchResults.setDownloadIds(getAppData().readDownloads());
+                    searchResults.setDownloads(getAppData().getDownloads());
                     populate();
                 } catch (Exception ex) {
                     Log.e(TAG, ex.getMessage(), ex);

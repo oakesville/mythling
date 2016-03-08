@@ -120,11 +120,14 @@ public class SearchResults {
         return all;
     }
 
-    public void setDownloadIds(Map<String,Long> downloads) {
+    public void setDownloads(Map<String,Download> downloads) {
         for (Item item : getAll()) {
-            Long downloadId = downloads.get(item.getId());
-            if (downloadId != null)
-                item.setDownloadId(downloadId);
+            Download download = downloads.get(item.getId());
+            if (download != null) {
+                item.setDownloadId(download.getDownloadId());
+                if (item.isRecording() && download.getCutList() != null)
+                    ((Recording)item).setCutList(download.getCutList());
+            }
         }
     }
 }

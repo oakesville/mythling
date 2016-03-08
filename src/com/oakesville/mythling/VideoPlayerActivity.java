@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.AndroidMediaPlayer;
 import com.oakesville.mythling.media.Cut;
+import com.oakesville.mythling.media.Download;
 import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
@@ -144,7 +146,8 @@ public class VideoPlayerActivity extends Activity {
             videoUri = getIntent().getData();
             playerOption = getIntent().getStringExtra(PLAYER);
             if (playerOption == null) {
-                // if launched through external intent, try settings
+                Log.i(TAG, getString(R.string.launched_through_external_intent));
+                // if launched through external intent, try settings for player option
                 String fileType = PlaybackOptions.PROPERTY_DEFAULT;
                 String streamMode = PlaybackOptions.STREAM_FILE;
                 String lastPathSeg = videoUri.getLastPathSegment();
@@ -157,18 +160,30 @@ public class VideoPlayerActivity extends Activity {
                     }
                 }
                 String network = appSettings.isExternalNetwork() ? PlaybackOptions.NETWORK_EXTERNAL : PlaybackOptions.NETWORK_INTERNAL;
-                if ("file".equals(videoUri.getScheme()))
+                if ("file".equals(videoUri.getScheme())) {
                     network = PlaybackOptions.NETWORK_DOWNLOAD;
+                    // try and retrieve cutlist for download
+                    AppData appData = new AppData(getApplicationContext());
+                    if (videoUri.getPath() != null) {
+                        Download download = appData.getDownload(videoUri.getPath());
+                        if (download != null)
+                            cutList = download.getCutList();
+                    }
+                }
                 PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(MediaType.videos, fileType, network, streamMode);
                 if (playbackOption != null)
                     playerOption = playbackOption.getPlayer();
             }
+            else {
+                // cutlist should have been passed for non-external intent
+                cutList = (List<Cut>) getIntent().getSerializableExtra(ITEM_CUT_LIST);
+            }
+
             if (playerOption == null)
                 playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
             authType = at == null ? null : AuthType.valueOf(at);
             metaLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
-            cutList = (List<Cut>) getIntent().getSerializableExtra(ITEM_CUT_LIST);
 
             currentPositionText = (TextView) findViewById(R.id.current_pos);
             seekBar = (SeekBar) findViewById(R.id.player_seek);
@@ -535,7 +550,7 @@ public class VideoPlayerActivity extends Activity {
                                             Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
                                         }
                                         if (AppSettings.AUTO_SKIP_ON.equals(autoSkip)) {
-                                            int skip = (cut.end - pos);
+                                            int skip = (cut.end - pos - 2); // adjust by 2 seconds
                                             if (skip > 0) {
                                                 skip(skip);
                                             }
