@@ -206,7 +206,7 @@ public class AppData {
 
     public Download getDownload(String path) throws IOException, JSONException, ParseException {
         for (Download download : getDownloads().values()) {
-            if (path.equals(download.getPath()))
+            if (path.endsWith(download.getPath()))
                 return download;
         }
         return null;
