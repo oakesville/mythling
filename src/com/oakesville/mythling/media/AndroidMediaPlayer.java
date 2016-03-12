@@ -162,17 +162,17 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     /**
      * Does not actually retry seek, but returns isTargeting() == true
-     * until target is reached or timeout occurs.
+     * until target is reached or timeout (overloading pref seekCorrectionTolerance) occurs.
      * This prevents confusing seek bar position jumps.
      */
     private void target(int t) {
         target = t;
-        // correct for inaccurate duration
+        // try to correct for inaccurate duration
         float frac = (float)target/(itemLength*1000);
         int newPos = (int)(frac*getDuration());
         seekTo(newPos);
         targetTimeoutHandler.removeCallbacks(targetTimeoutAction);
-        targetTimeoutHandler.postDelayed(targetTimeoutAction, targetTimeout);
+        targetTimeoutHandler.postDelayed(targetTimeoutAction, seekCorrectionTolerance);
     }
 
     private void clearTarget() {
@@ -185,14 +185,13 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             if (target >= 0)
                 eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seek));
             clearTarget();
-            Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
+            Log.d(TAG, "Seek target timed out after " + seekCorrectionTolerance + " ms");
         }
     };
 
     private int target; // ms
     public boolean isTargeting() { return target > 0; }
     private int seekCorrectionTolerance; // ms
-    private int targetTimeout = 5000; // ms
 
     /**
      * @return new position in ms
