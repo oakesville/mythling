@@ -48,3 +48,17 @@
 .help_step {
 	text-decoration: underline;
 }
+.icon_category {
+	font-weight: bold;
+	margin-bottom: 0px;
+}
+.icon {
+	vertical-align: middle;
+	border: none;
+	border-radius: none;
+	box-shadow: none;
+}
+.icon_text {
+  vertical-align: middle;
+}
+
