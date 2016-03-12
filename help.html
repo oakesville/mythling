@@ -49,8 +49,10 @@
           <div class="help_text">
             <p>1. <span class="help_step">Network Settings</span></p>
             <p>Definitely start with an internal network.  For that you'll need to specify your mythbackend machine's host name or IP address.</p>
-            <p>When you decide to set up external network access, then here you will also enter the externally-available host information.
-            There are more details about this on the <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">Mythling Wiki on GitHub</a>.
+            <p>To make sure your MythTV settings are friendly for Mythling access, check out 
+            the <a href="https://github.com/oakesville/mythling/wiki">Setup Guide</a> on the Mythling GitHub wiki site.</p>
+            <p>When you decide to enable external network access, then you can revisit Network Settings to enter your externally-available host information.
+            There are more details about this on the wiki's <a href="https://github.com/oakesville/mythling/wiki/External-Network-Access">External Access</a> page.
           </div>
         </div>
         <div class="help_item">
@@ -59,12 +61,21 @@
             alt="Playback Settings" />
           <div class="help_text">
             <p>2. <span class="help_step">Playback Settings</span></p>
-            <p>If you choose to play media on your Device using Mythling's built-in music and video player, 
-            then no further configuration is required in Playback Settings.</p>
+            <p>If you choose to play media on your device using Mythling's built-in music and video players, 
+            then no further configuration is needed in Playback Settings.</p>
             <p>For playback on a MythTV frontend, Mythling uses either the <a href="http://www.mythtv.org/wiki/Frontend_Service">MythTV Frontend Service</a> 
             or the <a href="http://www.mythtv.org/wiki/Frontend_control_socket">Frontend Control Socket</a> interface (depending on the selected media type).
             So for frontend playback you'll need to specify the mythfrontend host name or IP address, along with the service port and socket control port.
-            The frontend port and IP values are remembered, so you can readily switch back and forth between frontend and device playback.
+            This information is remembered, so you can readily switch back and forth between frontend and device playback.</p>
+            <p style="margin-bottom:2px;">
+              <span style="font-weight:bold;">Note:</span> When you first play video on your device, you'll see a dialog like this:
+            </p>
+            <img src="images/screenshots/video_playback_dialog.png"
+              style="width:40%;margin:0;"
+              alt="Video Playback Dialog" />
+            <p style="margin-top:0;"> If you choose "Always do this..." and later change your mind, you can unremember all selections by 
+              checking the "Always Prompt for Playback Options" box under Playback settings.
+            </p>
           </div>
         </div>
         <div class="help_item">
