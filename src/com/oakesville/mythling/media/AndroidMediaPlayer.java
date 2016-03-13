@@ -133,7 +133,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public void setSeconds(int secs) {
-        if (lengthOffset == 0)
+        if (!seekNeedsCorrection())
             seekTo(secs * 1000);
         else {
             if (!isTargeting())
@@ -146,11 +146,11 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         if (newPos < 0) {
             seekTo(0);
         }
-        else if (newPos > itemLength * 1000) {
+        else if (itemLength > 0 && newPos > itemLength * 1000) {
             seekTo(itemLength * 1000);
         }
         else {
-            if (lengthOffset != 0 && seekCorrectionTolerance > 0) {
+            if (seekNeedsCorrection()) {
                 if (!isTargeting())
                     target(newPos);
             }
@@ -158,6 +158,10 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                 seekTo(newPos);
             }
         }
+    }
+
+    private boolean seekNeedsCorrection() {
+        return lengthOffset != 0 && seekCorrectionTolerance > 0;
     }
 
     /**
@@ -190,34 +194,10 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     };
 
     private int target; // ms
-    public boolean isTargeting() { return target > 0; }
-    private int seekCorrectionTolerance; // ms
-
-    /**
-     * @return new position in ms
-     */
-    public int doSkip(int delta) {
-        int curPos = getCurrentPosition();
-        int newPos = curPos + (delta * 1000);
-
-        if (lengthOffset != 0) {
-            // correct for inaccurate duration
-            float frac = (float)newPos/(itemLength*1000);
-            newPos = (int)(frac*getDuration());
-        }
-
-        if (newPos < 0) {
-            newPos = 0;
-        }
-        else {
-            int lenMs = getItemLength() * 1000;
-            if (newPos > lenMs)
-                newPos = lenMs - 1;
-        }
-
-        seekTo(newPos);
-        return newPos;
+    public boolean isTargeting() {
+        return target > 0 || playRate != 1;
     }
+    private int seekCorrectionTolerance; // ms
 
     private int maxPlayRate = 1;
     /**
@@ -236,13 +216,13 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             this.maxPlayRate = maxRate;
     }
 
-    // TODO: fast forward and rewind handling is duplicated in VlcMediaPlayer
+    private int shiftPos = 0; // ms
+
     /**
      * Step up the fast-forward rate by a factor of two
      * (resets playRate = +2 if maxPlayRate would be exceeded).
-     * @return the new playRate
      */
-    public int stepUpFastForward() {
+    public void stepUpFastForward() {
         if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
@@ -255,26 +235,42 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             }
 
             if (newPlayRate > 1 && playRate <= 1) {
+                shiftPos = getCurrentPosition();
                 if (shiftListener != null)
                     shiftListener.onShift(0);
-                fastForwardHandler.postDelayed(fastForwardAction, 100);
+                fastForwardHandler.post(fastForwardAction);
             }
 
             playRate = newPlayRate;
 
         }
-
-        return playRate;
     }
 
     private Handler fastForwardHandler = new Handler();
     private Runnable fastForwardAction = new Runnable() {
         public void run() {
-            if (!isReleased() && playRate > 1) {
-                skip(playRate);
-                if (shiftListener != null)
-                    shiftListener.onShift(playRate);
-                fastForwardHandler.postDelayed(this, 1000);
+            if (!isReleased()) {
+                if (playRate <= 1) {
+                    // fast forward done
+                    skip((shiftPos - getCurrentPosition()) / 1000);
+                }
+                else {
+                    // fast-forwarding
+                    shiftPos = shiftPos + playRate * 1000;
+                    if (shiftPos >= getItemLength() * 1000) {
+                        stop();
+                        eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
+                    }
+                    else {
+                        if (!seekNeedsCorrection()) {
+                            // go ahead and seek to show frame
+                            seekTo(shiftPos);
+                        }
+                        fastForwardHandler.postDelayed(this, 1000);
+                        if (shiftListener != null)
+                            shiftListener.onShift(playRate);
+                    }
+                }
             }
         }
     };
@@ -282,9 +278,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     /**
      * Step up the rewind rate by a factor of two
      * (resets playRate = -2 if maxPlayRate would be exceeded).
-     * @return the new playRate
      */
-    public int stepUpRewind() {
+    public void stepUpRewind() {
         if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
@@ -298,29 +293,40 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             }
 
             if (newPlayRate < 0 && playRate >= 0) {
+                shiftPos = getCurrentPosition();
                 if (shiftListener != null)
                     shiftListener.onShift(0);
-                rewindHandler.postDelayed(rewindAction, 100);
+                rewindHandler.post(rewindAction);
             }
 
             playRate = newPlayRate;
         }
-
-        return playRate;
     }
 
     private Handler rewindHandler = new Handler();
     private Runnable rewindAction = new Runnable() {
         public void run() {
-            if (!isReleased() && playRate < 0) {
-                int begin = doSkip(playRate);
-                if (begin == 0) {
-                    play();
+            if (!isReleased()) {
+                if (playRate >= 0) {
+                    // rewind done
+                    skip((shiftPos - getCurrentPosition()) / 1000);
                 }
                 else {
+                    // rewinding
+                    shiftPos = shiftPos + playRate * 1000;
+                    if (shiftPos <= 0) {
+                        seekTo(0);
+                        play();
+                    }
+                    else {
+                        if (!seekNeedsCorrection()) {
+                            // go ahead and seek to show frame
+                            seekTo(shiftPos);
+                        }
+                        rewindHandler.postDelayed(this, 1000);
+                    }
                     if (shiftListener != null)
                         shiftListener.onShift(playRate);
-                    rewindHandler.postDelayed(this, 1000);
                 }
             }
         }

@@ -288,13 +288,17 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void showPlay() {
-        pauseBtn.setVisibility(View.GONE);
-        playBtn.setVisibility(View.VISIBLE);
+        if (playBtn.getVisibility() == View.GONE) {
+            pauseBtn.setVisibility(View.GONE);
+            playBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showPause() {
-        playBtn.setVisibility(View.GONE);
-        pauseBtn.setVisibility(View.VISIBLE);
+        if (pauseBtn.getVisibility() == View.GONE) {
+            playBtn.setVisibility(View.GONE);
+            pauseBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     private void play() {
@@ -320,8 +324,8 @@ public class VideoPlayerActivity extends Activity {
     private void fastForward() {
         if (mediaPlayer.isItemSeekable()) {
             showUi(false);
-            int playRate = mediaPlayer.stepUpFastForward();
-            Toast.makeText(getApplicationContext(), ">> " + playRate + "x", Toast.LENGTH_SHORT).show();
+            mediaPlayer.stepUpFastForward();
+            Toast.makeText(getApplicationContext(), ">> " + mediaPlayer.getPlayRate() + "x", Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
@@ -331,8 +335,8 @@ public class VideoPlayerActivity extends Activity {
     private void rewind() {
         if (mediaPlayer.isItemSeekable()) {
             showUi(false);
-            int playRate = mediaPlayer.stepUpRewind();
-            Toast.makeText(getApplicationContext(), "<< " + (-playRate) + "x", Toast.LENGTH_SHORT).show();
+            mediaPlayer.stepUpRewind();
+            Toast.makeText(getApplicationContext(), "<< " + (-mediaPlayer.getPlayRate()) + "x", Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
@@ -525,13 +529,11 @@ public class VideoPlayerActivity extends Activity {
 
                         int pos = mediaPlayer.getSeconds();
                         if (pos != prevPos && !mediaPlayer.isTargeting()) {
-                            // seek bar position
-                            currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
-                            seekBar.setProgress(pos);
+                            updatePositionUi(pos);
                             prevPos = pos;
                         }
                         // restore saved position
-                        if (savedPosition > 0 && mediaPlayer.isItemSeekable()) {
+                        if (savedPosition > 10 && mediaPlayer.isItemSeekable()) {
                             showUi(true);
                             Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
                             mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
@@ -579,12 +581,16 @@ public class VideoPlayerActivity extends Activity {
                 public void onShift(int delta) {
                     showUi(false);
                     if (delta == 0) {
+                        // start tracking
                         pos = mediaPlayer.getSeconds();
+                    }
+                    else if (delta == 1) {
+                        // switched back to play
+                        showPause();
                     }
                     else {
                         pos += delta;
-                        currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
-                        seekBar.setProgress(pos);
+                        updatePositionUi(pos);
                     }
                 }
             });
@@ -628,6 +634,13 @@ public class VideoPlayerActivity extends Activity {
             appSettings.setAutoSkip(autoSkip);
             this.autoSkip = autoSkip;
         }
+    }
+
+    public void updatePositionUi(int pos) {
+        if (pos < 0)
+            pos = 0;
+        currentPositionText.setText(new TextBuilder().appendDuration(pos).toString());
+        seekBar.setProgress(pos);
     }
 
     @Override

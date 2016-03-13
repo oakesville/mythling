@@ -103,15 +103,13 @@ public interface MediaPlayer {
 
     /**
      * Step up the rewind rate by a factor of two
-     * @return the new playRate
      */
-    public int stepUpRewind();
+    public void stepUpRewind();
 
     /**
      * Step up the fast-forward rate by a factor of two
-     * @return the new playRate
      */
-    public int stepUpFastForward();
+    public void stepUpFastForward();
 
     public int getPlayRate();
 

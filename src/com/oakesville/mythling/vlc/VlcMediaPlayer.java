@@ -258,7 +258,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     /**
      * Seek forward or backward delta seconds.
-     * @return past end
+     * @return fractional position or -1 if not seekable
      */
     public float doSkip(int delta) {
         if (isItemSeekable()) {
@@ -337,14 +337,12 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             super.pause();
     }
 
-    // TODO: fast forward and rewind handling is duplicated in AndroidMediaPlayer
-
     /**
      * Step up the fast-forward rate by a factor of two
      * (resets playRate = +2 if maxPlayRate would be exceeded).
      * @return the new playRate
      */
-    public int stepUpFastForward() {
+    public void stepUpFastForward() {
         if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
@@ -359,14 +357,12 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             if (newPlayRate > 1 && playRate <= 1) {
                 if (shiftListener != null)
                     shiftListener.onShift(0);
-                fastForwardHandler.postDelayed(fastForwardAction, 100);
+                fastForwardHandler.post(fastForwardAction);
             }
 
             playRate = newPlayRate;
 
         }
-
-        return playRate;
     }
 
     private Handler fastForwardHandler = new Handler();
@@ -394,7 +390,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * (resets playRate = -2 if maxPlayRate would be exceeded).
      * @return the new playRate
      */
-    public int stepUpRewind() {
+    public void stepUpRewind() {
         if (isItemSeekable()) {
             if (isPlaying())
                 super.pause(); // avoid setting playRate = 0 in this.pause()
@@ -410,13 +406,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             if (newPlayRate < 0 && playRate >= 0) {
                 if (shiftListener != null)
                     shiftListener.onShift(0);
-                rewindHandler.postDelayed(rewindAction, 100);
+                rewindHandler.post(rewindAction);
             }
 
             playRate = newPlayRate;
         }
-
-        return playRate;
     }
 
     private Handler rewindHandler = new Handler();
@@ -424,14 +418,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void run() {
             if (!isReleased() && playRate < 0) {
                 float begin = doSkip(playRate);
-                if (begin == 0) {
+                if (begin == 0)
                     play();
-                }
-                else {
-                    if (shiftListener != null)
-                        shiftListener.onShift(playRate);
+                else
                     rewindHandler.postDelayed(this, 1000);
-                }
+
+                if (shiftListener != null)
+                    shiftListener.onShift(playRate);
             }
         }
     };
