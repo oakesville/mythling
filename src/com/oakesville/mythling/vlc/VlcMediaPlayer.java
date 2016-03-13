@@ -55,9 +55,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public boolean isDurationMismatch() { return durationMismatch; }
 
     private boolean isHls;
+    private String mythTvVersion;
 
     /**
      * Proxy is needed for Digest and Basic auth since libVLC doesn't support.
+     * Also to avoid MythTV services always setting Content-Type=video/mp2p for mpg files.
      */
     private MediaStreamProxy proxy;
     public boolean isProxying() {
@@ -91,8 +93,18 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> mediaOptions) throws IOException {
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
+
+        for (String mediaOption : mediaOptions) {
+            if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
+                seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
+            else if (mediaOption.startsWith(AppSettings.MYTHTV_VERSION))
+                mythTvVersion = mediaOption.substring(AppSettings.MYTHTV_VERSION.length() + 1);
+        }
+
         isHls = PlaybackOptions.isHls(mediaUri);
         ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
+        if (proxyInfo == null && mythTvVersion.startsWith("0.28") && ProxyInfo.isMpeg(mediaUri.toString()))
+            proxyInfo = new ProxyInfo(MediaStreamProxy.getNetUrl(mediaUri));  // need proxy to avoid mythtv assumption that Content-Type=video/mp2p
         Media media;
         if (proxyInfo == null) {
             media = new Media(libvlc, mediaUri);
@@ -109,18 +121,16 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
-        if (mediaOptions == null || mediaOptions.isEmpty()) {
+        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions);
+        if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
             media.addOption(":network-caching=2500");
         }
         else {
-            for (String mediaOption : mediaOptions) {
-                if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
-                    seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
-                else
-                    media.addOption(mediaOption);
-            }
+            for (String mediaOption : libVlcMediaOptions)
+                media.addOption(mediaOption);
         }
+
         setMedia(media);
         play();
     }
@@ -130,15 +140,26 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
         isHls = false;
-        if (mediaOptions == null) {
+        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions);
+        if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
         }
         else {
-            for (String mediaOption : mediaOptions)
+            for (String mediaOption : libVlcMediaOptions) {
                 media.addOption(mediaOption);
+            }
         }
         setMedia(media);
         play();
+    }
+
+    private List<String> getLibVlcMediaOptions(List<String> mediaOptions) {
+        List<String> libVlcMediaOptions = new ArrayList<String>();
+        for (String mediaOption : mediaOptions) {
+            if (!mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE) && !mediaOption.startsWith(AppSettings.MYTHTV_VERSION))
+                libVlcMediaOptions.add(mediaOption);
+        }
+        return libVlcMediaOptions;
     }
 
     public void doRelease() {

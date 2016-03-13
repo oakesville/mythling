@@ -170,6 +170,7 @@ public class AppSettings {
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
     public static final String EXTERNAL_STORAGE_DIRECTORY = "mythling";
+    public static final String MYTHTV_VERSION = "mythtv_version";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -556,12 +557,10 @@ public class AppSettings {
     }
 
     public List<String> getVlcMediaOptions() {
-        List<String> options = null;
+        List<String> options = new ArrayList<String>();
         String params = getLibVlcParameters();
         for (String param : params.split("\\s+")) {
             if (param.startsWith(":")) {
-                if (options == null)
-                    options = new ArrayList<String>();
                 options.add(param);
             }
         }

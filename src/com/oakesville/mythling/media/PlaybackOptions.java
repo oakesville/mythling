@@ -238,16 +238,13 @@ public class PlaybackOptions {
     }
 
     public List<String> getMediaOptions(String player) {
-        List<String> options = null;
+        List<String> options = new ArrayList<String>();
         if (player.equals(PLAYER_LIBVLC))
             options = appSettings.getVlcMediaOptions();
 
         int tol = appSettings.getSeekCorrectionTolerance();
-        if (tol > 0) {
-            if (options == null)
-                options = new ArrayList<String>();
+        if (tol > 0)
             options.add(AppSettings.SEEK_CORRECTION_TOLERANCE + "=" + tol);
-        }
         return options;
     }
 

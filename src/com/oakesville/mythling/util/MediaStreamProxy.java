@@ -164,8 +164,12 @@ public class MediaStreamProxy implements Runnable {
         StringBuilder httpString = new StringBuilder();
         httpString.append(response.getStatusLine().toString());
         httpString.append("\n");
-        for (Header h : response.getAllHeaders())
-            httpString.append(h.getName()).append(": ").append(h.getValue()).append("\n");
+        for (Header h : response.getAllHeaders()) {
+            if (h.getName().equals("Content-Type") && ProxyInfo.isMpeg(proxyInfo.netUrl.toString()))
+                httpString.append(h.getName()).append(": ").append("video/mpeg").append("\n");
+            else
+                httpString.append(h.getName()).append(": ").append(h.getValue()).append("\n");
+        }
         httpString.append("\n");
         Log.d(TAG, "Proxy headers done");
 
@@ -202,7 +206,6 @@ public class MediaStreamProxy implements Runnable {
             response = httpClient.execute(host, request, context);
         }
         else if (authType == AuthType.Basic) {
-            // otherwise assume basic
             String credentials = Base64.encodeToString((proxyInfo.user + ":" + proxyInfo.password).getBytes(), Base64.DEFAULT);
             request.setHeader("Authorization", "Basic " + credentials);
             response = httpClient.execute(host, request);
@@ -215,13 +218,24 @@ public class MediaStreamProxy implements Runnable {
     }
 
     public static class ProxyInfo {
+        public ProxyInfo() {};
+        public ProxyInfo(URL netUrl) { this.netUrl = netUrl; }
+
         private URL netUrl;
         public URL getNetUrl() { return netUrl; }
         public void setNetUrl(URL url) { this.netUrl = url; }
 
+        /**
+         * Relies on Mythling's practice of putting FileName parameter last
+         */
+        public static boolean isMpeg(String url) {
+            return url.toString().endsWith(".mpg") || url.toString().endsWith(".mpeg");
+        }
+
         private String user;
         private String password;
     }
+
 
     /**
      * Returns ProxyInfo if proxy is needed, null otherwise.

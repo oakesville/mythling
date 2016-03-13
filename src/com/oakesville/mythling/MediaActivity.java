@@ -846,11 +846,13 @@ public abstract class MediaActivity extends Activity {
     protected void downloadItem(final Item item) {
         try {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
-            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
+
+            String fileUrl = baseUrl + "/Content/GetFile?";
             if (item.getStorageGroup() == null)
-                fileUrl += "&StorageGroup=None";
+                fileUrl += "StorageGroup=None&";
             else
-                fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
+                fileUrl += "StorageGroup=" + item.getStorageGroup().getName() + "&";
+            fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
 
             stopProgress();
 
@@ -1625,11 +1627,13 @@ public abstract class MediaActivity extends Activity {
         }
         else {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
-            String fileUrl = baseUrl + "/Content/GetFile?FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
+            String fileUrl = baseUrl + "/Content/GetFile?";
             if (item.getStorageGroup() == null)
-                fileUrl += "&StorageGroup=None";
+                fileUrl += "StorageGroup=None&";
             else
-                fileUrl += "&StorageGroup=" + item.getStorageGroup().getName();
+                fileUrl += "StorageGroup=" + item.getStorageGroup().getName() + "&";
+            fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
+
             uri = Uri.parse(fileUrl);
         }
 
@@ -1652,6 +1656,8 @@ public abstract class MediaActivity extends Activity {
                     String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
                     if (streamingAuthType != AuthType.None.toString())
                         videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
+                    if (mediaList != null)
+                        videoIntent.putExtra(VideoPlayerActivity.MYTHTV_VERSION, mediaList.getMythTvVersion());
                 }
             }
             startActivity(videoIntent);
