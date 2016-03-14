@@ -216,7 +216,7 @@ public abstract class Item implements Listable {
      * This means known definitively for the purpose of seeking.
      */
     public boolean isLengthKnown() {
-        return false;
+        return getLength() > 0;
     }
 
     /**

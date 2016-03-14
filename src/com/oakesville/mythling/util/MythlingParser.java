@@ -306,6 +306,8 @@ public class MythlingParser implements MediaListParser {
             item.setSummary(jsonObj.getString("summary"));
         if (jsonObj.has("artwork"))
             item.setArtwork(jsonObj.getString("artwork"));
+        if (jsonObj.has("length"))
+            item.setLength(Integer.parseInt(jsonObj.getString("length")) * 60);
         if (jsonObj.has("internetRef"))
             item.setInternetRef(jsonObj.getString("internetRef"));
         if (jsonObj.has("pageUrl"))
