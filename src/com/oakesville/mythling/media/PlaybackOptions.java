@@ -245,6 +245,9 @@ public class PlaybackOptions {
         int tol = appSettings.getSeekCorrectionTolerance();
         if (tol > 0)
             options.add(AppSettings.SEEK_CORRECTION_TOLERANCE + "=" + tol);
+        String forceMpeg = appSettings.getForceMpegContentTypeFileExts();
+        if (forceMpeg.trim().length() > 0)
+            options.add(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS + "=" + forceMpeg);
         return options;
     }
 

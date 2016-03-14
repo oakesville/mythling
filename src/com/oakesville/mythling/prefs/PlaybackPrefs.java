@@ -91,6 +91,10 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, getString(R.string.seconds)));
         pref.setSummary("" + appSettings.getSeekCorrectionTolerance() + " " + getString(R.string.seconds));
 
+        pref = getPreferenceScreen().findPreference(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
+        pref.setSummary(appSettings.getForceMpegContentTypeFileExts());
+
         pref = getPreferenceScreen().findPreference(AppSettings.LIBVLC_PARAMETERS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));
         pref.setSummary(appSettings.getLibVlcParameters());

@@ -320,7 +320,7 @@ public class VideoPlayerActivity extends Activity {
             mediaPlayer.skip(delta);
         }
         else {
-            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -331,7 +331,7 @@ public class VideoPlayerActivity extends Activity {
             Toast.makeText(getApplicationContext(), ">> " + mediaPlayer.getPlayRate() + "x", Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -342,8 +342,15 @@ public class VideoPlayerActivity extends Activity {
             Toast.makeText(getApplicationContext(), "<< " + (-mediaPlayer.getPlayRate()) + "x", Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(getApplicationContext(), getString(R.string.media_not_seekable), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    protected String getNotSeekableMessage() {
+        String msg = getString(R.string.media_not_seekable);
+        if (mediaPlayer.isProxying())
+            msg += " (" + getString(R.string.proxying) + ")";
+        return msg + ".";
     }
 
     @Override
@@ -768,7 +775,7 @@ public class VideoPlayerActivity extends Activity {
             if (specialKeys.size() == 3) {
                 if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP) {
                     setAutoSkip(AppSettings.AUTO_SKIP_ON);
-                    appSettings.setSeekCorrectionTolerance(2); // TODO: won't take effect until next playback
+                    appSettings.setSeekCorrectionTolerance(3); // TODO: won't take effect until next playback
                 }
                 else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN) {
                     setAutoSkip(AppSettings.AUTO_SKIP_OFF);

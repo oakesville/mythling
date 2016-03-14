@@ -55,7 +55,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public boolean isDurationMismatch() { return durationMismatch; }
 
     private boolean isHls;
-    private String mythTvVersion;
 
     /**
      * Proxy is needed for Digest and Basic auth since libVLC doesn't support.
@@ -94,17 +93,26 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
 
+        isHls = PlaybackOptions.isHls(mediaUri);
+        ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
+
         for (String mediaOption : mediaOptions) {
             if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
                 seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
-            else if (mediaOption.startsWith(AppSettings.MYTHTV_VERSION))
-                mythTvVersion = mediaOption.substring(AppSettings.MYTHTV_VERSION.length() + 1);
+            else if (proxyInfo == null && mediaOption.startsWith(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS)) {
+                String exts = mediaOption.substring(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS.length() + 1);
+                if (!exts.isEmpty()) {
+                    for (String ext : exts.split(",")) {
+                        if (mediaUri.toString().endsWith("." + ext)) {
+                            // need proxy to avoid mythtv assumption that Content-Type=video/mp2p
+                            proxyInfo = new ProxyInfo(MediaStreamProxy.getNetUrl(mediaUri));
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-        isHls = PlaybackOptions.isHls(mediaUri);
-        ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
-        if (proxyInfo == null && mythTvVersion.startsWith("0.28") && ProxyInfo.isMpeg(mediaUri.toString()))
-            proxyInfo = new ProxyInfo(MediaStreamProxy.getNetUrl(mediaUri));  // need proxy to avoid mythtv assumption that Content-Type=video/mp2p
         Media media;
         if (proxyInfo == null) {
             media = new Media(libvlc, mediaUri);
@@ -156,7 +164,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private List<String> getLibVlcMediaOptions(List<String> mediaOptions) {
         List<String> libVlcMediaOptions = new ArrayList<String>();
         for (String mediaOption : mediaOptions) {
-            if (!mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE) && !mediaOption.startsWith(AppSettings.MYTHTV_VERSION))
+            if (!mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE)
+                    && !mediaOption.startsWith(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS))
                 libVlcMediaOptions.add(mediaOption);
         }
         return libVlcMediaOptions;

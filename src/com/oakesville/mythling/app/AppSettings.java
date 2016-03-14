@@ -165,6 +165,7 @@ public class AppSettings {
     public static final String AUTO_SKIP_NOTIFY = "auto_skip_notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String SEEK_CORRECTION_TOLERANCE = "seek_correction_tolerance"; // pseudo-parameter
+    public static final String FORCE_MPEG_CONTENT_TYPE_FILE_EXTS = "force_mpeg_content_type_file_exts"; // pseudo-parameter
     public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
@@ -537,6 +538,10 @@ public class AppSettings {
     }
     public boolean setSeekCorrectionTolerance(int tol) {
         return setStringPref(SEEK_CORRECTION_TOLERANCE, String.valueOf(tol));
+    }
+
+    public String getForceMpegContentTypeFileExts() {
+        return getStringPref(FORCE_MPEG_CONTENT_TYPE_FILE_EXTS, "");
     }
 
     public String getLibVlcParameters() {
