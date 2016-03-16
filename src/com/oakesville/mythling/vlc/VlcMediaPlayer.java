@@ -99,18 +99,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         for (String mediaOption : mediaOptions) {
             if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
                 seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
-            else if (proxyInfo == null && mediaOption.startsWith(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS)) {
-                String exts = mediaOption.substring(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS.length() + 1);
-                if (!exts.isEmpty()) {
-                    for (String ext : exts.split(",")) {
-                        if (mediaUri.toString().endsWith("." + ext)) {
-                            // need proxy to avoid mythtv assumption that Content-Type=video/mp2p
-                            proxyInfo = new ProxyInfo(MediaStreamProxy.getNetUrl(mediaUri));
-                            break;
-                        }
-                    }
-                }
-            }
         }
 
         Media media;
@@ -129,7 +117,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
-        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions);
+        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, mediaUri);
         if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
             media.addOption(":network-caching=2500");
@@ -148,7 +136,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
         isHls = false;
-        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions);
+        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, null);
         if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
         }
@@ -161,12 +149,22 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         play();
     }
 
-    private List<String> getLibVlcMediaOptions(List<String> mediaOptions) {
+    /**
+     * Weeds out pseudo-parameters, and format-specific options that don't apply for the given URI
+     * (relies on file extension appearing last in the uri).
+     */
+    private List<String> getLibVlcMediaOptions(List<String> mediaOptions, Uri uri) {
         List<String> libVlcMediaOptions = new ArrayList<String>();
         for (String mediaOption : mediaOptions) {
-            if (!mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE)
-                    && !mediaOption.startsWith(AppSettings.FORCE_MPEG_CONTENT_TYPE_FILE_EXTS))
+            int colon = mediaOption.indexOf(':');
+            if (colon == 0) {
                 libVlcMediaOptions.add(mediaOption);
+            }
+            else if (colon > 0) {
+                String fileExt = mediaOption.substring(0, colon);
+                if (uri.toString().endsWith(fileExt))
+                    libVlcMediaOptions.add(mediaOption.substring(colon));
+            }
         }
         return libVlcMediaOptions;
     }

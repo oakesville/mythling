@@ -165,9 +165,10 @@ public class MediaStreamProxy implements Runnable {
         httpString.append(response.getStatusLine().toString());
         httpString.append("\n");
         for (Header h : response.getAllHeaders()) {
-            if (h.getName().equals("Content-Type") && proxyInfo.isMpeg()) // TODO: don't assume this is needed when proxying
-                httpString.append(h.getName()).append(": ").append("video/mpeg").append("\n");
-            else
+            // TODO: this is disabled until it is made optional
+//            if (h.getName().equals("Content-Type") && proxyInfo.isMpeg())
+//                httpString.append(h.getName()).append(": ").append("video/mpeg").append("\n");
+//            else
                 httpString.append(h.getName()).append(": ").append(h.getValue()).append("\n");
         }
         httpString.append("\n");
@@ -224,13 +225,6 @@ public class MediaStreamProxy implements Runnable {
         private URL netUrl;
         public URL getNetUrl() { return netUrl; }
         public void setNetUrl(URL url) { this.netUrl = url; }
-
-        /**
-         * Relies on Mythling's practice of putting FileName parameter last
-         */
-        public boolean isMpeg() {
-            return netUrl.toString().endsWith(".mpg") || netUrl.toString().endsWith(".mpeg");
-        }
 
         private String user;
         private String password;

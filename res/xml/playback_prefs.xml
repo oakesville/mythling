@@ -78,12 +78,6 @@
             android:defaultValue="3"
             android:layout="@layout/pref" />
         <EditTextPreference
-            android:key="force_mpeg_content_type_file_exts"
-            android:title="@string/title_force_mpeg_file_exts"
-            android:dialogTitle="@string/dlg_title_force_mpeg_file_exts"
-            android:dialogMessage="@string/message_force_mpeg_file_exts"
-            android:layout="@layout/pref" />
-        <EditTextPreference
             android:key="libvlc_parameters"
             android:title="@string/title_libvlc_parameters"
             android:dialogTitle="@string/title_libvlc_parameters"

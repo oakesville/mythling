@@ -1626,7 +1626,7 @@ public abstract class MediaActivity extends Activity {
             uri = getDownload(item);
         }
         else {
-            final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
+            URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
             String fileUrl = baseUrl + "/Content/GetFile?";
             if (item.getStorageGroup() == null)
                 fileUrl += "StorageGroup=None&";
@@ -1656,8 +1656,6 @@ public abstract class MediaActivity extends Activity {
                     String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
                     if (streamingAuthType != AuthType.None.toString())
                         videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
-                    if (mediaList != null)
-                        videoIntent.putExtra(VideoPlayerActivity.MYTHTV_VERSION, mediaList.getMythTvVersion());
                 }
             }
             startActivity(videoIntent);

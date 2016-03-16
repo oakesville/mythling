@@ -69,7 +69,6 @@ public class VideoPlayerActivity extends Activity {
 
     public static final String PLAYER = "com.oakesville.mythling.PLAYER";
     public static final String AUTH_TYPE = "com.oakesville.mythling.AUTH_TYPE";
-    public static final String MYTHTV_VERSION = "com.oakesville.mythling.MYTHTV_VERSION";
     public static final String ITEM_LENGTH_SECS = "com.oakesville.mythling.ITEM_LENGTH_SECS";
     public static final String ITEM_CUT_LIST = "com.oakesville.mythling.ITEM_CUT_LIST";
 
@@ -83,7 +82,6 @@ public class VideoPlayerActivity extends Activity {
     private int metaLength; // length known my mythtv
     private String playerOption;
     private AuthType authType;
-    private String mythTvVersion;
 
     private String autoSkip;
     private List<Cut> cutList;
@@ -185,7 +183,6 @@ public class VideoPlayerActivity extends Activity {
                 playerOption = appSettings.getPlaybackOptions().getDefaultPlayer();
             String at = getIntent().getStringExtra(AUTH_TYPE);
             authType = at == null ? null : AuthType.valueOf(at);
-            mythTvVersion = getIntent().getStringExtra(MYTHTV_VERSION);
             metaLength = getIntent().getIntExtra(ITEM_LENGTH_SECS, 0);
 
             currentPositionText = (TextView) findViewById(R.id.current_pos);
@@ -609,7 +606,6 @@ public class VideoPlayerActivity extends Activity {
             Log.i(TAG, "Using: " + mediaPlayer.getClass() + " v" + mediaPlayer.getVersion());
 
             List<String> mediaOptions = new PlaybackOptions(appSettings).getMediaOptions(playerOption);
-            mediaOptions.add(AppSettings.MYTHTV_VERSION + "=" + mythTvVersion);
             if (videoUri.getScheme().equals("content")) {
                 ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
                 if (pfd == null)

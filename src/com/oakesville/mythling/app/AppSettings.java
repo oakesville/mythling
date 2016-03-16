@@ -165,13 +165,11 @@ public class AppSettings {
     public static final String AUTO_SKIP_NOTIFY = "auto_skip_notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String SEEK_CORRECTION_TOLERANCE = "seek_correction_tolerance"; // pseudo-parameter
-    public static final String FORCE_MPEG_CONTENT_TYPE_FILE_EXTS = "force_mpeg_content_type_file_exts"; // pseudo-parameter
     public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
     public static final String EXTERNAL_STORAGE_DIRECTORY = "mythling";
-    public static final String MYTHTV_VERSION = "mythtv_version";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -540,10 +538,6 @@ public class AppSettings {
         return setStringPref(SEEK_CORRECTION_TOLERANCE, String.valueOf(tol));
     }
 
-    public String getForceMpegContentTypeFileExts() {
-        return getStringPref(FORCE_MPEG_CONTENT_TYPE_FILE_EXTS, "");
-    }
-
     public String getLibVlcParameters() {
         return getStringPref(LIBVLC_PARAMETERS, "");
     }
@@ -565,7 +559,7 @@ public class AppSettings {
         List<String> options = new ArrayList<String>();
         String params = getLibVlcParameters();
         for (String param : params.split("\\s+")) {
-            if (param.startsWith(":")) {
+            if (param.indexOf(":") >= 0) {
                 options.add(param);
             }
         }
