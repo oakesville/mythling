@@ -525,6 +525,7 @@ public class VideoPlayerActivity extends Activity {
                         if (!durationMismatchWarned && mediaPlayer.isDurationMismatch() &&
                                 (appSettings.getSeekCorrectionTolerance() <= 0 || PlaybackOptions.isHls(videoUri))) {
                             durationMismatchWarned = true;
+                            Log.w(TAG, "Duration mismatch.  Seek may be inaccurate.");
                             Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
                         }
 

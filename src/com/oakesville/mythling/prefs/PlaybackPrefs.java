@@ -84,7 +84,20 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setSummary("" + appSettings.getJumpInterval() + " " + getString(R.string.seconds));
 
         pref = getPreferenceScreen().findPreference(AppSettings.AUTO_SKIP);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, R.array.auto_skip_values, R.array.auto_skip_entries));
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false, R.array.auto_skip_values, R.array.auto_skip_entries) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                super.onPreferenceChange(preference, newValue);
+                if (!AppSettings.AUTO_SKIP_OFF.equals(newValue.toString())) {
+                    AppSettings settings = new AppSettings(getPreferenceScreen().getContext());
+                    int scTol = settings.getSeekCorrectionTolerance();
+                    if (scTol == 0) {
+                        settings.setSeekCorrectionTolerance(3);
+                        getPreferenceScreen().findPreference(AppSettings.SEEK_CORRECTION_TOLERANCE).setSummary("3");;
+                    }
+                }
+                return true;
+            }
+        });
         pref.setSummary(Localizer.getStringArrayEntry(R.array.auto_skip_values, R.array.auto_skip_entries, appSettings.getAutoSkip()));
 
         pref = getPreferenceScreen().findPreference(AppSettings.SEEK_CORRECTION_TOLERANCE);

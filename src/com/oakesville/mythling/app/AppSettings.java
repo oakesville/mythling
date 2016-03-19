@@ -532,7 +532,8 @@ public class AppSettings {
     }
 
     public int getSeekCorrectionTolerance() {
-        return Integer.parseInt(getStringPref(SEEK_CORRECTION_TOLERANCE, "3"));
+        String pref = getStringPref(SEEK_CORRECTION_TOLERANCE, "0");
+        return pref.isEmpty() ? 0 : Integer.parseInt(pref);
     }
     public boolean setSeekCorrectionTolerance(int tol) {
         return setStringPref(SEEK_CORRECTION_TOLERANCE, String.valueOf(tol));
