@@ -315,6 +315,7 @@ public class VideoPlayerActivity extends Activity {
         if (mediaPlayer.isItemSeekable()) {
             showUi(true);
             mediaPlayer.skip(delta);
+            updatePositionUi(mediaPlayer.getSeconds());
         }
         else {
             Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();

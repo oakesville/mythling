@@ -219,7 +219,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * Get current position.  Zero if unknown.
      */
     public int getSeconds() {
-        long time = getTime();
+        long time;
+        if (getLength() <= 0 && !isPlaying()) // otherwise incorrect after skip while paused
+            time = (long)(getPosition()*getItemLength()) * 1000;
+        else
+            time = getTime();
         return time == -1 ? 0 : (int)(time/1000);
     }
 
@@ -496,14 +500,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         if (length <= 0 && samples < maxSamples) {
                             length = getLength(); // reported length
                             if (length > 0) {
-                                Log.d(TAG, "Video length determined: " + length);
+                                Log.i(TAG, "Video length determined: " + length);
                                 if (isHls) {
                                     if (itemLength > 0) {
                                         // duration inaccuracy based on meta length
                                         // (don't trust HLS reported length)
                                         int itemLengthMs = itemLength * 1000;
                                         long lengthOffset = itemLengthMs - length;
-                                        Log.d(TAG, "Length offset: " + lengthOffset);
+                                        Log.i(TAG, "Length offset: " + lengthOffset);
                                         if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
                                             durationMismatch = true;
                                     }
@@ -521,7 +525,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             if (itemLength == 0) {
                                 length = inferItemLength();
                                 if (length != itemLength) {
-                                    Log.d(TAG, "Estimated video length: " + length);
+                                    Log.i(TAG, "Estimated video length: " + length);
                                     itemLength = (int)length;
                                 }
                             }
@@ -536,7 +540,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             Log.d(TAG, "Seek delta ms: " + d);
                             if (Math.abs(d) > seekCorrectionTolerance) {
                                 float newPos = getPosition() + (float)d/(itemLength*1000);
-                                Log.d(TAG, "Correcting position: " + newPos);
+                                Log.w(TAG, "Correcting position: " + newPos);
                                 setPosition(newPos);
                             }
                             else {
