@@ -226,7 +226,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public int getSeconds() {
         long time;
-        if (getLength() <= 0 && !isPlaying() && !isTargeting()) // otherwise incorrect after skip while paused
+        if (getLength() <= 0 && playRate == 0) // otherwise incorrect after skip while paused
             time = (long)(getPosition()*getItemLength()) * 1000;
         else
             time = getTime();
