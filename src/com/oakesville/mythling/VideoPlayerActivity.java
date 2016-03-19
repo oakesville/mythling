@@ -313,6 +313,8 @@ public class VideoPlayerActivity extends Activity {
 
     private void skip(int delta) {
         if (mediaPlayer.isItemSeekable()) {
+            if (mediaPlayer.getPlayRate() < 0 || mediaPlayer.getPlayRate() > 1)
+                mediaPlayer.play();
             showUi(true);
             mediaPlayer.skip(delta);
             updatePositionUi(mediaPlayer.getSeconds());
