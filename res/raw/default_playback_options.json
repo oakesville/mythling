@@ -85,7 +85,7 @@
         "hls": "android",
         "default":
         {
-          "file": "android"
+          "file": "libvlc"
         }
       },
       "external":
@@ -99,7 +99,7 @@
       },
       "download":
       {
-        "file": "android"
+        "file": "libvlc"
       }
     }
   }

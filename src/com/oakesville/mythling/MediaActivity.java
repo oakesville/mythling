@@ -67,6 +67,8 @@ import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MediaStreamProxy;
+import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Recorder;
 import com.oakesville.mythling.util.Reporter;
@@ -853,6 +855,20 @@ public abstract class MediaActivity extends Activity {
             else
                 fileUrl += "StorageGroup=" + item.getStorageGroup().getName() + "&";
             fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
+
+            Uri uri = Uri.parse(fileUrl.toString());
+            ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(uri);
+            if (proxyInfo != null) {
+                // needs proxying to support authentication since DownloadManager doesn't support
+                MediaStreamProxy proxy = new MediaStreamProxy(proxyInfo, AuthType.valueOf(appSettings.getMythTvServicesAuthType()));
+                proxy.init();
+                proxy.start();
+                fileUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + uri.getPath();
+                if (uri.getQuery() != null)
+                    fileUrl += "?" + uri.getQuery();
+            }
+
+            Log.i(TAG, "Media download URL: " + fileUrl);
 
             stopProgress();
 
