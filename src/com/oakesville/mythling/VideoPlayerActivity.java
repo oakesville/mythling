@@ -108,8 +108,10 @@ public class VideoPlayerActivity extends Activity {
 
     private int savedPosition;
     private boolean done;
+    private int seekCorrectionTolerance; // secs
 
     private boolean showTvControlsHint;
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -369,6 +371,8 @@ public class VideoPlayerActivity extends Activity {
             savedPosition = 0;
         autoSkip = appSettings.getAutoSkip();
 
+        seekCorrectionTolerance = appSettings.getSeekCorrectionTolerance();
+
         if (appSettings.isTv()) {
             showTvControlsHint = !appSettings.getBooleanPref(SKIP_TV_PLAYER_HINT_PREF, false);
             if (showTvControlsHint) {
@@ -482,6 +486,8 @@ public class VideoPlayerActivity extends Activity {
                 throw new IllegalArgumentException("Unsupported player option: " + playerOption);
             Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());
 
+            mediaPlayer.setSeekCorrectionTolerance(seekCorrectionTolerance * 1000);
+
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator) {
                     if (width * height == 0)
@@ -525,11 +531,16 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch() &&
-                                (appSettings.getSeekCorrectionTolerance() <= 0 || PlaybackOptions.isHls(videoUri))) {
+                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch()) {
                             durationMismatchWarned = true;
                             Log.w(TAG, "Duration mismatch.  Seek may be inaccurate.");
-                            Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
+                            if (mediaPlayer.supportsSeekCorrection()) {
+                                if (seekCorrectionTolerance <= 0)
+                                    Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch_suggest), Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         // seek bar max if changed
@@ -543,39 +554,42 @@ public class VideoPlayerActivity extends Activity {
                             updatePositionUi(pos);
                             prevPos = pos;
                         }
-                        // restore saved position
-                        if (savedPosition > 10 && mediaPlayer.isItemSeekable()) {
-                            showUi(true);
-                            Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
-                            mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
-                            savedPosition = 0;
+                        if (savedPosition > 10) {
+                            // restore saved position
+                            if (mediaPlayer.isItemSeekable()) {
+                                showUi(true);
+                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
+                                mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
+                                savedPosition = 0;
+                            }
                         }
-
-                        // auto skip
-                        if (cutList != null && mediaPlayer.isItemSeekable() && mediaPlayer.getPlayRate() == 1) {
-                            boolean inCut = false;
-                            for (Cut cut : cutList) {
-                                if (cut.start <= pos && cut.end > pos) {
-                                    if (!cut.equals(currentCut)) {
-                                        if (!AppSettings.AUTO_SKIP_OFF.equals(autoSkip)) {
-                                            TextBuilder tb = new TextBuilder(getString(R.string.notify_auto_skip_));
-                                            tb.appendDuration(cut.end - cut.start);
-                                            Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
-                                        }
-                                        if (AppSettings.AUTO_SKIP_ON.equals(autoSkip)) {
-                                            int skip = (cut.end - pos - 2); // adjust by 2 seconds
-                                            if (skip > 0) {
-                                                skip(skip);
+                        else if (cutList != null) {
+                            // auto skip
+                            if (mediaPlayer.isItemSeekable() && mediaPlayer.getPlayRate() == 1) {
+                                boolean inCut = false;
+                                for (Cut cut : cutList) {
+                                    if (cut.start <= pos && cut.end > pos) {
+                                        if (!cut.equals(currentCut)) {
+                                            if (!AppSettings.AUTO_SKIP_OFF.equals(autoSkip)) {
+                                                TextBuilder tb = new TextBuilder(getString(R.string.notify_auto_skip_));
+                                                tb.appendDuration(cut.end - cut.start);
+                                                Toast.makeText(getApplicationContext(), tb.toString(), Toast.LENGTH_SHORT).show();
+                                            }
+                                            if (AppSettings.AUTO_SKIP_ON.equals(autoSkip)) {
+                                                int skip = (cut.end - pos);
+                                                if (skip > 0) {
+                                                    skip(skip);
+                                                }
                                             }
                                         }
+                                        inCut = true;
+                                        currentCut = cut;
+                                        break;
                                     }
-                                    inCut = true;
-                                    currentCut = cut;
-                                    break;
                                 }
+                                if (!inCut)
+                                    currentCut = null;
                             }
-                            if (!inCut)
-                                currentCut = null;
                         }
                     }
                     else if (event.type == MediaPlayerEventType.seek) {
@@ -645,6 +659,12 @@ public class VideoPlayerActivity extends Activity {
             appSettings.setAutoSkip(autoSkip);
             this.autoSkip = autoSkip;
         }
+    }
+
+    private void setSeekCorrectionTolerance(int tolerance) {
+        this.seekCorrectionTolerance = tolerance;
+        mediaPlayer.setSeekCorrectionTolerance(tolerance * 1000);
+        appSettings.setSeekCorrectionTolerance(tolerance);
     }
 
     public void updatePositionUi(int pos) {
@@ -774,12 +794,12 @@ public class VideoPlayerActivity extends Activity {
             specialKeys.add(code);
             if (specialKeys.size() == 3) {
                 if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP) {
+                    setSeekCorrectionTolerance(3);
                     setAutoSkip(AppSettings.AUTO_SKIP_ON);
-                    appSettings.setSeekCorrectionTolerance(3); // TODO: won't take effect until next playback
                 }
                 else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    setSeekCorrectionTolerance(0);
                     setAutoSkip(AppSettings.AUTO_SKIP_OFF);
-                    appSettings.setSeekCorrectionTolerance(0); // TODO: won't take effect until next playback
                 }
             }
             specialKeyHandler.postDelayed(specialKeyAction, 1000);

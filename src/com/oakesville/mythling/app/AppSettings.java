@@ -164,7 +164,7 @@ public class AppSettings {
     public static final String AUTO_SKIP_ON = "auto_skip_on";
     public static final String AUTO_SKIP_NOTIFY = "auto_skip_notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
-    public static final String SEEK_CORRECTION_TOLERANCE = "seek_correction_tolerance"; // pseudo-parameter
+    public static final String SEEK_CORRECTION_TOLERANCE = "seek_correction_tolerance";
     public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";

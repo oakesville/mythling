@@ -81,6 +81,10 @@ public interface MediaPlayer {
 
     public boolean isItemSeekable();
 
+    public boolean supportsSeekCorrection();
+    public int getSeekCorrectionTolerance();
+    public void setSeekCorrectionTolerance(int seekCorrectionTolerance);
+
     /**
      * Significant mismatch leading to inaccurate seeks.
      */

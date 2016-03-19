@@ -49,6 +49,17 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         return d == -1 ? 0 : d / 1000;
     }
 
+    public boolean supportsSeekCorrection() {
+        return false;
+    }
+
+    /**
+     * Currently just delays progress update since seek correction not supported.
+     */
+    private int seekCorrectionTolerance; // ms
+    public int getSeekCorrectionTolerance() { return seekCorrectionTolerance; }
+    public void setSeekCorrectionTolerance(int tolerance) { this.seekCorrectionTolerance = tolerance; }
+
     private int playRate = 1;
     public int getPlayRate() { return playRate; }
 
@@ -75,23 +86,23 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         setMaxPlayRate(64); // TODO pref
     }
 
-    public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException {
+    /**
+     * options not used
+     */
+    public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> mediaOptions) throws IOException {
         lengthOffset = 0;
         durationMismatch = false;
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
-        if (options != null) {
-            for (String option : options) {
-                if (option.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
-                    seekCorrectionTolerance = 1000 * Integer.parseInt(option.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
-            }
-        }
         setDataSource(context, mediaUri);
         prepare();
         start();
     }
 
-    public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException {
+    /**
+     * options not used
+     */
+    public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> mediaOptions) throws IOException {
         lengthOffset = 0;
         durationMismatch = false;
         itemLength = metaLength;
@@ -114,13 +125,11 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         start();
     }
 
-    @Override
     public void pause() throws IllegalStateException {
         playRate = 0;
         super.pause();
     }
 
-    @Override
     public boolean isItemSeekable() {
         return getDuration() != -1;
     }
@@ -197,7 +206,6 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     public boolean isTargeting() {
         return target > 0 || playRate != 1;
     }
-    private int seekCorrectionTolerance; // ms
 
     private int maxPlayRate = 1;
     /**

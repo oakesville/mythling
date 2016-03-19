@@ -27,7 +27,6 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaStreamProxy;
@@ -54,6 +53,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private boolean durationMismatch;
     public boolean isDurationMismatch() { return durationMismatch; }
 
+    public boolean supportsSeekCorrection() {
+        return true;
+    }
+
+    private int seekCorrectionTolerance; // ms
+    public int getSeekCorrectionTolerance() { return seekCorrectionTolerance; }
+    public void setSeekCorrectionTolerance(int tolerance) { this.seekCorrectionTolerance = tolerance; }
+
+    private List<String> libVlcMediaOptions;
     private boolean isHls;
 
     /**
@@ -96,10 +104,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         isHls = PlaybackOptions.isHls(mediaUri);
         ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
 
-        for (String mediaOption : mediaOptions) {
-            if (mediaOption.startsWith(AppSettings.SEEK_CORRECTION_TOLERANCE + "="))
-                seekCorrectionTolerance = 1000 * Integer.parseInt(mediaOption.substring(AppSettings.SEEK_CORRECTION_TOLERANCE.length() + 1));
-        }
+        libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, mediaUri);
 
         Media media;
         if (proxyInfo == null) {
@@ -117,7 +122,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             media = new Media(libvlc, Uri.parse(playUrl));
         }
 
-        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, mediaUri);
         if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
             media.addOption(":network-caching=2500");
@@ -136,7 +140,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
         isHls = false;
-        List<String> libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, null);
+        libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, null);
         if (libVlcMediaOptions.isEmpty()) {
             media.setHWDecoderEnabled(true, false);
         }
@@ -161,9 +165,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                 libVlcMediaOptions.add(mediaOption);
             }
             else if (colon > 0) {
-                String fileExt = mediaOption.substring(0, colon);
-                if (uri.toString().endsWith(fileExt))
-                    libVlcMediaOptions.add(mediaOption.substring(colon));
+                if (uri != null) {
+                    String fileExt = mediaOption.substring(0, colon);
+                    if (uri.toString().endsWith(fileExt))
+                        libVlcMediaOptions.add(mediaOption.substring(colon));
+                }
             }
         }
         return libVlcMediaOptions;
@@ -220,7 +226,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      */
     public int getSeconds() {
         long time;
-        if (getLength() <= 0 && !isPlaying()) // otherwise incorrect after skip while paused
+        if (getLength() <= 0 && !isPlaying() && !isTargeting()) // otherwise incorrect after skip while paused
             time = (long)(getPosition()*getItemLength()) * 1000;
         else
             time = getTime();
@@ -284,7 +290,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private long target; // ms
     public boolean isTargeting() { return target > 0; }
-    private int seekCorrectionTolerance; // ms
     private int targetTimeout = 5000; // ms
     private int audioTrack;
 

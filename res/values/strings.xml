@@ -467,7 +467,8 @@
     <string name="proxying">proxying</string>
     <string name="launched_through_external_intent">Mythling player launched through external intent.</string>
     <string name="media_player_error_">Media player error:\u0020</string>
-    <string name="duration_mismatch">Duration mismatch.  Seek may be inaccurate (consider setting Seek Correction Tolerance > 0).</string>
+    <string name="duration_mismatch">Duration mismatch.  Seek may be inaccurate.</string>
+    <string name="duration_mismatch_suggest">Duration mismatch.  Seek may be inaccurate (consider setting Seek Correction Tolerance > 0).</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>
