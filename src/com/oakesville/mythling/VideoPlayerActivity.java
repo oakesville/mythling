@@ -319,7 +319,8 @@ public class VideoPlayerActivity extends Activity {
                 mediaPlayer.play();
             showUi(true);
             mediaPlayer.skip(delta);
-            updatePositionUi(mediaPlayer.getSeconds());
+            if (!mediaPlayer.isTargeting())
+                updatePositionUi(mediaPlayer.getSeconds());
         }
         else {
             Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();
