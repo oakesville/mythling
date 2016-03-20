@@ -302,7 +302,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             long len = getLength();
             if (len > 0) {
                 // seems that setPosition() causes hang for mpg if length known, so must replicate bounds logic
-                long newTime = getTime() + (delta*1000);
+                long curTime = getTime();
+                final long newTime = curTime + (delta*1000);
                 if (newTime < 0) {
                     setTime(0);
                     return 0;
@@ -312,7 +313,21 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     return 1;
                 }
                 else {
-                    return setTime(newTime)/len;
+                    float f = setTime(newTime)/len;
+                    if (curTime < 1000 && newTime > 10000)  {  // sometimes restore is inaccurate for items where vlc knows length
+                        if (seekCorrectionTolerance > 0) {
+                            new Handler().postDelayed(new Runnable() {
+                                public void run() {
+                                    long deltaMs = newTime - getTime() - 1;
+                                    if (Math.abs(deltaMs) > seekCorrectionTolerance) {
+                                        Log.e(TAG, "Correcting restore position by: " + deltaMs + " ms");
+                                        doSkip((int)(deltaMs/1000));
+                                    }
+                               }
+                            }, 1000);
+                        }
+                    }
+                    return f;
                 }
             }
             else {
@@ -523,7 +538,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             }
                         }
 
-                        if (samples > minSamples) {
+                        if (samples > minSamples && samples < maxSamples) {
                             if (length <= 0) // not known to vlc (usually true for streamed files)
                                 durationMismatch = true;
                             // infer length if no meta

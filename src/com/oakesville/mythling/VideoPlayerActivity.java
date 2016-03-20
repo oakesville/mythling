@@ -560,7 +560,7 @@ public class VideoPlayerActivity extends Activity {
                                 showUi(true);
                                 Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position_) +
                                         new TextBuilder().appendDuration(savedPosition).toString(), Toast.LENGTH_SHORT).show();
-                                mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
+                                mediaPlayer.skip(savedPosition); // unlike setSeconds(), will apply seek correction tolerance
                                 savedPosition = 0;
                             }
                         }
@@ -602,7 +602,7 @@ public class VideoPlayerActivity extends Activity {
                 }
             });
 
-            mediaPlayer.setMediaPlayerShiftListener( new MediaPlayerShiftListener() {
+            mediaPlayer.setMediaPlayerShiftListener(new MediaPlayerShiftListener() {
                 int pos; // seconds
                 public void onShift(int delta) {
                     showUi(false);
