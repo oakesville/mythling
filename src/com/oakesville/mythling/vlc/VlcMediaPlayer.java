@@ -318,10 +318,16 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         if (seekCorrectionTolerance > 0) {
                             new Handler().postDelayed(new Runnable() {
                                 public void run() {
-                                    long deltaMs = newTime - getTime() - 1;
-                                    if (Math.abs(deltaMs) > seekCorrectionTolerance) {
-                                        Log.e(TAG, "Correcting restore position by: " + deltaMs + " ms");
-                                        doSkip((int)(deltaMs/1000));
+                                    try {
+                                        long deltaMs = newTime - getTime() - 1;
+                                        if (Math.abs(deltaMs) > seekCorrectionTolerance) {
+                                            Log.e(TAG, "Correcting restore position by: " + deltaMs + " ms");
+                                            doSkip((int)(deltaMs/1000));
+                                        }
+                                    }
+                                    catch (Exception ex) {
+                                        // TODO: IllegalStateException: can't get VLCObject instance
+                                        Log.e(TAG, ex.getMessage(), ex);
                                     }
                                }
                             }, 1000);
