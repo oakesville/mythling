@@ -169,7 +169,7 @@ public class MediaStreamProxy implements Runnable {
 //            if (h.getName().equals("Content-Type") && proxyInfo.isMpeg())
 //                httpString.append(h.getName()).append(": ").append("video/mpeg").append("\n");
 //            else
-                httpString.append(h.getName()).append(": ").append(h.getValue()).append("\n");
+            httpString.append(h.getName()).append(": ").append(h.getValue()).append("\n");
         }
         httpString.append("\n");
         Log.d(TAG, "Proxy headers done");

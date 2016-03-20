@@ -1416,6 +1416,9 @@ public abstract class MediaActivity extends Activity {
             videoIntent.putExtra(VideoPlayerActivity.PLAYER, playbackOption.getPlayer());
             if (getRecording().isLengthKnown())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, getRecording().getLength());
+            String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
+            if (streamingAuthType != AuthType.None.toString())
+                videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
             if (getRecording().hasCutList())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, getRecording().getCutList());
             startActivity(videoIntent);
