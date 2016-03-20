@@ -558,7 +558,8 @@ public class VideoPlayerActivity extends Activity {
                             // restore saved position
                             if (mediaPlayer.isItemSeekable()) {
                                 showUi(true);
-                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.restoring_saved_position_) +
+                                        new TextBuilder().appendDuration(savedPosition).toString(), Toast.LENGTH_SHORT).show();
                                 mediaPlayer.skip(savedPosition - mediaPlayer.getSeconds()); // unlike setSeconds(), will apply seek correction tolerance
                                 savedPosition = 0;
                             }

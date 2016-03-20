@@ -202,7 +202,7 @@ public class MediaList {
     }
 
     public boolean supportsTranscode() {
-        return mediaType == MediaType.recordings || mediaType == MediaType.movies || mediaType == MediaType.tvSeries;
+        return mediaType == MediaType.recordings || mediaType == MediaType.movies || mediaType == MediaType.tvSeries || mediaType == MediaType.videos;
     }
 
     public void sort(SortType sortType, boolean includeItems) {

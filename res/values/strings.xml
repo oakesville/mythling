@@ -461,7 +461,7 @@
     <string name="tv_player_hint">Skip and Jump forward/back are triggered by the DPAD directional controls.</string>
     <string name="got_it">Got it.  Don\u0027t show me this again.</string>
     <string name="estimating_video_length">Estimating video length&#8230;</string>
-    <string name="restoring_saved_position">Restoring saved position</string>
+    <string name="restoring_saved_position_">Restoring saved position:\u0020</string>
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
     <string name="media_not_seekable">Media is not seekable</string>
     <string name="proxying">proxying</string>
