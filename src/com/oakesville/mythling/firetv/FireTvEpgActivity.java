@@ -56,6 +56,8 @@ public class FireTvEpgActivity extends EpgActivity {
 
     private static final String EPG_FIRETV_JS = "<script src=\"js/epg-firetv.js\"></script>";
     private static final String MYTHLING_FIRETV_CSS = "<link rel=\"stylesheet\" href=\"css/mythling-firetv.css\">";
+    // when hosted in dev structure and not dist
+    private static final String SRC_EPG_FIRETV_JS = "<script src=\"src/epg-firetv.js\"></script>";
 
     private static final String SKIP_GUIDE_HINT_PREF = "skip_guide_hint";
     private static final String SKIP_SEARCH_HINT_PREF = "skip_search_hint";
@@ -263,6 +265,10 @@ public class FireTvEpgActivity extends EpgActivity {
                 else if (str.trim().equals(EPG_JS)) {
                     strBuf.append(str).append('\n').append(EPG_DEVICE_JS).append('\n');
                     strBuf.append(str).append('\n').append(EPG_FIRETV_JS).append('\n');
+                }
+                else if (str.trim().equals(SRC_EPG_JS)) {
+                    strBuf.append(str).append('\n').append(SRC_EPG_DEVICE_JS).append('\n');
+                    strBuf.append(str).append('\n').append(SRC_EPG_FIRETV_JS).append('\n');
                 }
                 else if (str.trim().equals(MYTHLING_CSS))
                     strBuf.append(str).append('\n').append(MYTHLING_FIRETV_CSS).append('\n');

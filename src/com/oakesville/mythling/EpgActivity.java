@@ -61,6 +61,9 @@ public class EpgActivity extends WebViewActivity {
 
     protected static final String EPG_JS = "<script src=\"js/mythling-epg.js\"></script>";
     protected static final String EPG_DEVICE_JS = "<script src=\"js/epg-device.js\"></script>";
+    // when hosted in dev structure and not dist
+    protected static final String SRC_EPG_JS = "<script src=\"src/epg.js\"></script>";
+    protected static final String SRC_EPG_DEVICE_JS = "<script src=\"src/epg-device.js\"></script>";
 
     private AppData appData;
 
@@ -411,6 +414,8 @@ public class EpgActivity extends WebViewActivity {
                     strBuf.append(str.replaceAll("1\\.0", scale));
                 else if (str.trim().equals(EPG_JS))
                     strBuf.append(str).append('\n').append(EPG_DEVICE_JS).append('\n');
+                else if (str.trim().equals(SRC_EPG_JS))
+                    strBuf.append(str).append('\n').append(SRC_EPG_DEVICE_JS).append('\n');
                 else
                     strBuf.append(str);
                 strBuf.append('\n');
