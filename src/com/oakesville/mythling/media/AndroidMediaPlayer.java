@@ -105,7 +105,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
                 proxy = new MediaStreamProxy(proxyInfo, authType);
                 proxy.init();
                 proxy.start();
-                String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getPath();
+                String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getEncodedPath();
                 if (mediaUri.getQuery() != null)
                     playUrl += "?" + mediaUri.getQuery();
                 Log.i(TAG, "Media proxy URL: " + playUrl);

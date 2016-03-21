@@ -34,6 +34,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HttpContext;
@@ -195,6 +196,7 @@ public class MediaStreamProxy implements Runnable {
     private HttpResponse download() throws IOException {
 
         httpClient = AndroidHttpClient.newInstance("Android");
+        // httpClient.getParams().setParameter(ClientPNames.VIRTUAL_HOST, new HttpHost("127.0.0.1"));
 
         URL netUrl = proxyInfo.netUrl;
         HttpHost host = new HttpHost(netUrl.getHost(), netUrl.getPort(), netUrl.getProtocol());
@@ -250,7 +252,7 @@ public class MediaStreamProxy implements Runnable {
 
     public static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
         String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
-        netUrl += mediaUri.getPath();
+        netUrl += mediaUri.getEncodedPath();
         if (mediaUri.getQuery() != null)
             netUrl += "?" + mediaUri.getQuery();
         return new URL(netUrl);
