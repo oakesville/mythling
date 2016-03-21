@@ -107,7 +107,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, mediaUri);
 
         Media media;
-        if (proxyInfo == null) {
+        if (proxyInfo == null || isHls) {
             media = new Media(libvlc, mediaUri);
         }
         else {

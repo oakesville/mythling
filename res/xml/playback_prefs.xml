@@ -83,6 +83,11 @@
             android:dialogTitle="@string/title_libvlc_parameters"
             android:dialogMessage="@string/message_libvlc_parameters"
             android:layout="@layout/pref" />
+        <CheckBoxPreference
+            android:key="proxy_android_authenticated_playback"
+            android:title="@string/title_proxy_android_authenticated_playback"
+            android:defaultValue="true"
+            android:layout="@layout/pref" />
     </com.oakesville.mythling.prefs.DisableableCategory>
 
     <com.oakesville.mythling.prefs.DisableableCategory

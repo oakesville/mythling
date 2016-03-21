@@ -22,6 +22,8 @@ import java.util.List;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
+import com.oakesville.mythling.util.MediaStreamProxy;
+import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 
 import android.content.Context;
 import android.net.Uri;
@@ -39,6 +41,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     private int lengthOffset; // meta item length - getDuration() in ms
     private boolean durationMismatch;
     public boolean isDurationMismatch() { return durationMismatch; }
+    private MediaStreamProxy proxy;
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -94,6 +97,22 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         durationMismatch = false;
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
+
+        if (!PlaybackOptions.isHls(mediaUri) && mediaOptions.contains(AppSettings.PROXY_ANDROID_AUTHENTICATED_PLAYBACK)) {
+            ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
+            if (proxyInfo != null) {
+                // needs proxying to support authentication
+                proxy = new MediaStreamProxy(proxyInfo, authType);
+                proxy.init();
+                proxy.start();
+                String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getPath();
+                if (mediaUri.getQuery() != null)
+                    playUrl += "?" + mediaUri.getQuery();
+                Log.i(TAG, "Media proxy URL: " + playUrl);
+                mediaUri = Uri.parse(playUrl);
+            }
+        }
+
         setDataSource(context, mediaUri);
         prepare();
         start();
@@ -117,7 +136,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public boolean isProxying() {
-        return false;
+        return proxy != null;
     }
 
     public void play() {
@@ -131,7 +150,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     }
 
     public boolean isItemSeekable() {
-        return getDuration() != -1;
+        return getDuration() != -1 && proxy == null;
     }
 
     /**
@@ -345,6 +364,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     @Override
     public void doRelease() {
         super.release();
+        if (proxy != null)
+            proxy.stop();
         timingAction = null;
         released = true;
     }
@@ -383,6 +404,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
                 eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.end));
+            if (proxy != null)
+                proxy.stop();
         }
 
         public void onPrepared(android.media.MediaPlayer mp) {

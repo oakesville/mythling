@@ -155,6 +155,7 @@ public class AppSettings {
     public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS = "always_prompt_for_playback_options";
     public static final String SAVE_POSITION_ON_EXIT = "save_position_on_exit";
+    public static final String PROXY_ANDROID_AUTHENTICATED_PLAYBACK = "proxy_android_authenticated_playback";
     public static final String VIDEO_SAVED_POSITION = "video_saved_position";
     public static final String SKIP_FORWARD_INTERVAL = "skip_forward_interval";
     public static final String SKIP_BACK_INTERVAL = "skip_back_interval";
@@ -529,6 +530,10 @@ public class AppSettings {
 
     public boolean isSavePositionOnExit() {
         return getBooleanPref(SAVE_POSITION_ON_EXIT, true);
+    }
+
+    public boolean isProxyAndroicAuthenticatedPlayback() {
+        return getBooleanPref(PROXY_ANDROID_AUTHENTICATED_PLAYBACK, true);
     }
 
     public int getSeekCorrectionTolerance() {

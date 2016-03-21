@@ -241,6 +241,10 @@ public class PlaybackOptions {
         List<String> options = new ArrayList<String>();
         if (player.equals(PLAYER_LIBVLC))
             options = appSettings.getVlcMediaOptions();
+        else if (player.equals(PLAYER_ANDROID)) {
+            if (appSettings.isProxyAndroicAuthenticatedPlayback())
+                options.add(AppSettings.PROXY_ANDROID_AUTHENTICATED_PLAYBACK);
+        }
         return options;
     }
 
