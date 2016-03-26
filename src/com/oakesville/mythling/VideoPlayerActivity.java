@@ -532,16 +532,13 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && mediaPlayer.isDurationMismatch()) {
+                        if (!durationMismatchWarned && seekCorrectionTolerance <= 0 && mediaPlayer.isDurationMismatch()) {
                             durationMismatchWarned = true;
                             Log.w(TAG, "Duration mismatch.  Seek may be inaccurate.");
-                            if (mediaPlayer.supportsSeekCorrection()) {
-                                if (seekCorrectionTolerance <= 0)
-                                    Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch_suggest), Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_LONG).show();
-                            }
+                            if (mediaPlayer.supportsSeekCorrection() && !appSettings.isTv())
+                                Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch_suggest), Toast.LENGTH_LONG).show();
+                            else
+                                Toast.makeText(getApplicationContext(), getString(R.string.duration_mismatch), Toast.LENGTH_SHORT).show();
                         }
 
                         // seek bar max if changed

@@ -15,7 +15,7 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/title_streaming_quality">
+    <PreferenceCategory android:title="@string/title_hls_video_quality">
         <ListPreference
             android:key="internal_video_res"
             android:title="@string/title_video_res"

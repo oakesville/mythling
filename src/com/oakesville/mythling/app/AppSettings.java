@@ -138,6 +138,7 @@ public class AppSettings {
     public static final String THEMOVIEDB_BASE_URL = "http://www.themoviedb.org/movie/";
     public static final String THETVDB_BASE_URL = "http://www.thetvdb.com";
     public static final String AUTH_TYPE_NONE = "None";
+    public static final String AUTH_TYPE_DIGEST = "Digest";
     public static final String AUTH_TYPE_SAME = "(Same as MythTV Services)";
     public static final String GUIDE_HTML = "guide.html";
     public static final String GUIDE_OMB_HTML = "guide-omb.html";
@@ -623,11 +624,28 @@ public class AppSettings {
     }
 
     public String getInternalBackendHost() {
-        return getStringPref(MYTH_BACKEND_INTERNAL_HOST, "192.168.0.69").trim();
+        String host = getStringPref(MYTH_BACKEND_INTERNAL_HOST, "").trim();
+        if (isFireTv()) {
+            // allows host:port or user:password@host:port (those prefs saved during validate())
+            int at = host.indexOf('@');
+            if (at > 0)
+                host = host.substring(at + 1);
+            int colon = host.indexOf(':');
+            if (colon > 0)
+                host = host.substring(0, colon);
+        }
+        return host;
+    }
+
+    /**
+     * Allows host:port or user:password@host:port
+     */
+    public String getInternalBackendHostPort() {
+        return getStringPref(MYTH_BACKEND_INTERNAL_HOST, "").trim();
     }
 
     public String getExternalBackendHost() {
-        return getStringPref(MYTH_BACKEND_EXTERNAL_HOST, "192.168.0.69").trim();
+        return getStringPref(MYTH_BACKEND_EXTERNAL_HOST, "").trim();
     }
 
     public String getMovieDirectories() {
@@ -1057,8 +1075,59 @@ public class AppSettings {
     }
 
     public boolean validateHost(String host) {
-        if (host == null)
+        if (host == null || host.isEmpty())
             return false;
+        if (Character.isDigit(host.charAt(0)))
+            return validateIp(host);
+
+        return true;
+    }
+
+    /**
+     * Either: host/ip, host:port, user:password@host, or user:password@host:port
+     */
+    public boolean validateHostPort(String hostPort) {
+        if (hostPort == null || hostPort.isEmpty())
+            return false;
+        String host = null;
+        int port = 0;
+        int at = hostPort.indexOf('@');
+        if (at > 0) {
+            String userPass = hostPort.substring(0, at);
+            hostPort = hostPort.substring(at + 1);
+            int colon = userPass.indexOf(':');
+            if (colon <= 0 || colon == userPass.length() - 1)
+                return false;
+            else {
+                // set user/password prefs from these values
+                String user = userPass.substring(0, colon);
+                setStringPref(MYTHTV_SERVICES_USER, user);
+                String password = userPass.substring(colon + 1);
+                setStringPref(MYTHTV_SERVICES_PASSWORD, password);
+                // HTTP Basic will have to await configurator
+                setStringPref(MYTHTV_SERVICES_AUTH_TYPE, AUTH_TYPE_DIGEST);
+            }
+        }
+        else {
+            setStringPref(MYTHTV_SERVICES_AUTH_TYPE, AUTH_TYPE_NONE);
+        }
+
+        int colon = hostPort.indexOf(':');
+        if (colon > 0) {
+            host = hostPort.substring(0, colon);
+            try {
+                port = Integer.parseInt(hostPort.substring(colon + 1));
+                setStringPref(MYTHTV_SERVICE_PORT, String.valueOf(port));
+            }
+            catch (NumberFormatException ex) {
+                return false;
+            }
+        }
+        else {
+            host = hostPort;
+            setStringPref(MYTHTV_SERVICE_PORT, "6544");
+        }
+
         if (Character.isDigit(host.charAt(0)))
             return validateIp(host);
 
@@ -1089,8 +1158,13 @@ public class AppSettings {
                         bse(R.string.title_prefs_network, R.string.title_external_backend, R.string.title_backend_host);
                 }
             } else {
-                if (!validateHost(getInternalBackendHost()))
+                if (isFireTv()) {
+                    if (!validateHostPort(getInternalBackendHostPort()))
+                        bse(R.string.title_connect, R.string.title_mythtv_backend, R.string.title_backend_host);
+                }
+                else if (!validateHost(getInternalBackendHost())) {
                     bse(R.string.title_prefs_network, R.string.title_internal_backend, R.string.title_backend_host);
+                }
             }
 
             // backend ports regardless of internal/external network

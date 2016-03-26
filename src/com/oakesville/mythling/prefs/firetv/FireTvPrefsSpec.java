@@ -50,7 +50,6 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
         defaults.put(AppSettings.EPG_PARAMS, "bufferSize=0"); // guideInterval added dynamically
         defaults.put(AppSettings.PLAYBACK_OPTIONS_JSON, playbackOptionsJson);
         defaults.put(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS, false);
-        defaults.put(AppSettings.SEEK_CORRECTION_TOLERANCE, "0");
         return defaults;
     }
 

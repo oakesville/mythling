@@ -14,42 +14,29 @@
   limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <PreferenceCategory android:title="@string/title_web_server">
-        <com.oakesville.mythling.prefs.firetv.FireTvSwitchPreference
-            android:key="backend_web"
-            android:switchTextOn="@string/yes"
-            android:switchTextOff="@string/no"
-            android:defaultValue="false"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
+    
+    <PreferenceCategory android:title="@string/title_mythtv_backend">
         <EditTextPreference
-            android:key="mythling_web_port"
-            android:title="@string/title_web_port"
-            android:dialogMessage="@string/message_web_port"
-            android:inputType="number"
-            android:defaultValue="80"
+            android:key="mythbe_internal_host"
+            android:title="@string/title_backend_host"
+            android:dialogTitle="@string/title_backend_host_dialog"
+            android:dialogMessage="@string/message_backend_host_port"
             android:layout="@layout/pref" />
     </PreferenceCategory>
-
-    <com.oakesville.mythling.prefs.DisableableCategory
-        android:key="media_services_cat"
-        android:title="@string/title_media_services">
-        <com.oakesville.mythling.prefs.firetv.FireTvSwitchPreference
-            android:key="media_services"
-            android:switchTextOn="@string/mythling"
-            android:switchTextOff="@string/mythtv"
+    
+    <PreferenceCategory android:title="@string/title_video_player">
+        <CheckBoxPreference
+            android:key="always_prompt_for_playback_options"
+            android:title="@string/title_always_prompt_for_playback_options"
             android:defaultValue="false"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
-        <EditTextPreference
-            android:key="mythling_web_root"
-            android:title="@string/title_mythling_web_root"
-            android:dialogMessage="@string/message_mythling_web_root"
-            android:defaultValue="@string/default_mythling_web_root"
             android:layout="@layout/pref" />
-    </com.oakesville.mythling.prefs.DisableableCategory>
-
+        <CheckBoxPreference
+            android:key="save_position_on_exit"
+            android:title="@string/title_save_position_on_exit"
+            android:defaultValue="true"
+            android:layout="@layout/pref" />
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="@string/title_error_reporting">
         <com.oakesville.mythling.prefs.firetv.FireTvSwitchPreference
             android:key="error_reporting"
@@ -58,6 +45,14 @@
             android:defaultValue="false"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
-    </PreferenceCategory>
+    </PreferenceCategory>    
 
+    <PreferenceCategory android:title="@string/title_mythling_version">
+      <Preference
+          android:key="mythling_version"
+          android:title="@string/title_version"
+          android:layout="@layout/pref"
+          android:selectable="false" />
+    </PreferenceCategory>
+    
 </PreferenceScreen>

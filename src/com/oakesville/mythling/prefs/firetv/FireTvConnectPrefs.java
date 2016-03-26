@@ -15,82 +15,57 @@
  */
 package com.oakesville.mythling.prefs.firetv;
 
+import org.json.JSONException;
+
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
+import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
+import android.util.Log;
 
 public class FireTvConnectPrefs extends PreferenceFragment {
+    private static final String TAG = FireTvConnectPrefs.class.getSimpleName();
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_connect_settings);
+        getActivity().getActionBar().setTitle(R.string.title_connect);
         addPreferencesFromResource(R.xml.firetv_connect_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
-        Preference pref = getPreferenceScreen().findPreference(AppSettings.BACKEND_WEB);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
+        Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setSummary(appSettings.getInternalBackendHostPort());
+
+        pref = getPreferenceScreen().
+                findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean hasBackendWeb = Boolean.valueOf(newValue.toString());
-                getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES_CATEGORY).setEnabled(hasBackendWeb);
-
-                Preference webPortPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT);
-                webPortPref.setEnabled(hasBackendWeb);
-                webPortPref.setSelectable(hasBackendWeb);
-
-                Preference webRootPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT);
-                webRootPref.setEnabled(false);
-                webRootPref.setSelectable(false);
-                SwitchPreference svcsSwPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MYTHLING_MEDIA_SERVICES);
-                svcsSwPref.setEnabled(hasBackendWeb);
-                svcsSwPref.setSelectable(hasBackendWeb);
-
-                if (!hasBackendWeb) {
-                    if (svcsSwPref.isChecked()) {
-                        svcsSwPref.setChecked(false);
-                        new AppSettings(getPreferenceScreen().getContext()).setMythlingMediaServices(false);
+                boolean update = super.onPreferenceChange(preference, newValue);
+                if (Boolean.parseBoolean(newValue.toString())) {
+                    AppSettings settings = new AppSettings(getPreferenceScreen().getContext());
+                    try {
+                        settings.getPlaybackOptions().clearAlwaysDoThisSettings();
+                    }
+                    catch (JSONException ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        if (settings.isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                        settings.getPlaybackOptions().clearAll();
                     }
                 }
-
-                return super.onPreferenceChange(preference, newValue);
+                return update;
             }
         });
-        boolean hasBackendWeb = appSettings.isHasBackendWeb();
-        Preference webPortPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT);
-        webPortPref.setEnabled(hasBackendWeb);
-        webPortPref.setSelectable(hasBackendWeb);
-        getPreferenceScreen().findPreference(AppSettings.MEDIA_SERVICES_CATEGORY).setEnabled(hasBackendWeb);
-
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_PORT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-        pref.setSummary("" + appSettings.getMythlingWebPort());
-
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_MEDIA_SERVICES);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true) {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean useMythlingSvcs = Boolean.valueOf(newValue.toString());
-                Preference webRootPref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT);
-                webRootPref.setEnabled(useMythlingSvcs);
-                webRootPref.setSelectable(useMythlingSvcs);
-                return super.onPreferenceChange(preference, newValue);
-            }
-        });
-        pref.setEnabled(hasBackendWeb);
-        pref.setSelectable(hasBackendWeb);
-
-        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_WEB_ROOT);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-        pref.setSummary(appSettings.getMythlingWebRoot());
-        boolean webRootEnabled = hasBackendWeb && appSettings.isMythlingMediaServices();
-        pref.setEnabled(webRootEnabled);
-        pref.setSelectable(webRootEnabled);
 
         pref = getPreferenceScreen().findPreference(AppSettings.ERROR_REPORTING);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
-    }
 
+        pref = getPreferenceScreen().findPreference(AppSettings.MYTHLING_VERSION);
+        pref.setTitle(appSettings.getMythlingVersion());
+    }
 }

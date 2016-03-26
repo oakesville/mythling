@@ -51,9 +51,9 @@
     <string name="title_prefs_playback">Playback</string>
     <string name="summary_prefs_playback">Media player selection and settings</string>
     <string name="title_prefs_network">Network</string>
-    <string name="title_prefs_basic_setup">Basic Setup</string>
     <string name="summary_prefs_network">MythTV backend host settings</string>
-    <string name="summary_prefs_basic_setup">MythTV backend and playback settings</string>
+    <string name="title_prefs_connect">Connect</string>
+    <string name="summary_prefs_connect">MythTV backend and playback settings</string>
     <string name="title_prefs_connections">Connections</string>
     <string name="summary_prefs_connections">Backend ports and paths</string>
     <string name="title_prefs_credentials">Authentication</string>
@@ -66,6 +66,7 @@
     <string name="summary_prefs_artwork">Media artwork options</string>
     <string name="title_prefs_video_quality">HLS Video Quality</string>
     <string name="title_streaming_quality">HLS Streaming Quality</string>
+    <string name="title_hls_video_quality">HTTP Live Stream Quality</string>
     <string name="summary_prefs_video_quality">HTTP Live Stream settings</string>
     <string name="title_prefs_caching">Data Cache</string>
     <string name="summary_prefs_caching">Media list data cache</string>
@@ -73,12 +74,14 @@
     <string name="summary_prefs_system">Operational Parameters</string>
     <string name="title_playback_settings">Playback Settings</string>
     <string name="title_network_settings">Network Settings</string>
-    <string name="title_basic_setup">Basic Setup</string>
+    <string name="title_connect">Connect</string>
     <string name="title_connect_settings">Connection Settings</string>
     <string name="title_credentials_settings">Authentication Settings</string>
     <string name="title_categories_settings">Category Settings</string>
     <string name="title_guide_settings">Program Guide Settings</string>
+    <string name="title_guide">Program Guide</string>
     <string name="title_quality_settings">HLS Video Quality Settings</string>
+    <string name="title_video_quality">Video Quality</string>
     <string name="title_cache_settings">Data Cache Settings</string>
     <string name="title_system_settings">System Settings</string>
     <string name="title_always_prompt_for_playback_options">Always Prompt for Playback Options</string>    
@@ -163,7 +166,7 @@
     <string name="switch_channel_callsigns">Call Sign</string>
     <string name="switch_channel_icons">Icon</string>
     <string name="title_epg_channel_group">Channel Group (MythTV 0.28)</string>
-    <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28)</string>
+    <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28, or Mythling media services)</string>
     <string name="title_epg_params">Parameters</string>
     <string name="message_epg_params">Ampersand-delimited webapp parameters (eg: guideInterval=8&amp;bufferSize=3)</string>
     <string name="title_artwork_settings">Artwork Settings</string>
@@ -230,7 +233,8 @@
     <string name="title_internal_backend_host_dialog">Internal Backend Host</string>
     <string name="title_backend_host_dialog">Backend Host</string>
     <string name="message_internal_backend_host">Backend host name or IP address for internal network</string>
-    <string name="message_backend_host">Backend host name or IP address</string>
+    <string name="message_backend_host_port">Backend host name or IP address</string>
+    <string name="message_backend_host_firetv">Backend host name or IP address (host:port if not default).</string>
     <string name="title_external_backend_host">Host</string>
     <string name="title_external_backend_host_dialog">External Backend Host</string>
     <string name="message_external_backend_host">Backend host name or IP address for external network</string>

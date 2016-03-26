@@ -18,38 +18,20 @@
 
     <header
         android:id="@+id/prefs_header_network"
-        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvBasicPrefs"
-        android:title="@string/title_prefs_basic_setup"
-        android:summary="@string/summary_prefs_basic_setup" />
-
-    <header
-        android:id="@+id/prefs_header_connections"
         android:fragment="com.oakesville.mythling.prefs.firetv.FireTvConnectPrefs"
-        android:title="@string/title_prefs_connections"
-        android:summary="@string/summary_prefs_connections" />
+        android:title="@string/title_connect"
+        android:summary="@string/summary_prefs_connect" />
 
     <header
-        android:id="@+id/prefs_header_credentials"
-        android:fragment="com.oakesville.mythling.prefs.CredentialsPrefs"
-        android:title="@string/title_prefs_credentials"
-        android:summary="@string/summary_prefs_credentials" />
-
-    <header
-        android:id="@+id/prefs_header_categories"
-        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvCategoriesPrefs"
-        android:title="@string/title_prefs_categories"
-        android:summary="@string/summary_prefs_categories" />
-
-    <header
-        android:id="@+id/prefs_header_artwork"
-        android:fragment="com.oakesville.mythling.prefs.ArtworkPrefs"
-        android:title="@string/title_prefs_artwork"
-        android:summary="@string/summary_prefs_artwork" />
-
+        android:id="@+id/prefs_header_guide"
+        android:fragment="com.oakesville.mythling.prefs.firetv.FireTvProgramGuidePrefs"
+        android:title="@string/title_guide"
+        android:summary="@string/summary_prefs_guide" />
+    
     <header
         android:id="@+id/prefs_header_quality"
         android:fragment="com.oakesville.mythling.prefs.firetv.FireTvVideoQualityPrefs"
-        android:title="@string/title_prefs_video_quality"
+        android:title="@string/title_video_quality"
         android:summary="@string/summary_prefs_video_quality" />
     
 </preference-headers>
