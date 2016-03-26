@@ -73,14 +73,6 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         return proxy != null;
     }
 
-    public int inferItemLength() {
-        float p = getPosition();
-        if (p > 0)
-            return (int)(getTime() / (p * 1000));
-        else
-            return 0;
-    }
-
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
         super(createLibVlc(libVlcOptions));
         libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
@@ -495,8 +487,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
         private int samples = 0;
         private int minSamples = 10;
-        private int maxSamples = 30;
+        private int maxSamples = 200;
         private long length;  // length reported by libvlc
+        private int metaLength = itemLength;
+        private float offsetFraction = 0.0f;
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
@@ -523,10 +517,10 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.error));
                         break;
                     case MediaPlayer.Event.TimeChanged:
-                        if (length <= 0 && samples < maxSamples) {
+                        if (length <= 0 && samples <= maxSamples) {
                             length = getLength(); // reported length
                             if (length > 0) {
-                                Log.i(TAG, "Video length determined: " + length);
+                                Log.i(TAG, "Video length determined (" + samples + "): " + length);
                                 if (isHls) {
                                     if (itemLength > 0) {
                                         // duration inaccuracy based on meta length
@@ -534,7 +528,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                                         int itemLengthMs = itemLength * 1000;
                                         long lengthOffset = itemLengthMs - length;
                                         Log.i(TAG, "Length offset: " + lengthOffset);
-                                        if (Math.abs((float)lengthOffset/itemLengthMs) > 0.01)
+                                        if (Math.abs((float)lengthOffset/itemLengthMs) > offsetFraction)
                                             durationMismatch = true;
                                     }
                                 }
@@ -544,15 +538,19 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                             }
                         }
 
-                        if (samples > minSamples && samples < maxSamples) {
-                            if (length <= 0) // not known to vlc (usually true for streamed files)
+                        if (samples >= minSamples && samples <= maxSamples) {
+                            if (length <= 0) { // not known to vlc (usually true for streamed files)
                                 durationMismatch = true;
-                            // infer length if no meta
-                            if (itemLength == 0) {
-                                length = inferItemLength();
-                                if (length != itemLength) {
-                                    Log.i(TAG, "Estimated video length: " + length);
-                                    itemLength = (int)length;
+                                // infer length if no meta and not known to vlc
+                                if (metaLength == 0) {
+                                    float p = getPosition();
+                                    if (p > 0) {
+                                        int inferredLength = (int)(getTime() / (p * 1000));
+                                        if (inferredLength != itemLength) {
+                                            Log.i(TAG, "Estimated video length (" + samples + "): " + inferredLength);
+                                            itemLength = inferredLength;
+                                        }
+                                    }
                                 }
                             }
                         }
