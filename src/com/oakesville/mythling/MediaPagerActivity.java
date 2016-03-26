@@ -23,6 +23,7 @@ import org.json.JSONException;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.SortType;
@@ -122,7 +123,7 @@ public class MediaPagerActivity extends MediaActivity {
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             public void onPageSelected(int position) {
                 setSelItemIndex(position);
-                positionBar.setProgress(getSelItemIndex() + 1);
+                positionBar.setProgress(getSelItemIndex());
                 TextView curItemView = (TextView) findViewById(R.id.pager_current_item);
                 curItemView.setText(String.valueOf(getSelItemIndex() + 1));
             }
@@ -133,12 +134,12 @@ public class MediaPagerActivity extends MediaActivity {
         });
 
         positionBar = (SeekBar) findViewById(R.id.pager_position);
-        positionBar.setMax(getListables().size());
-        positionBar.setProgress(1);
+        positionBar.setMax(getListables().size() == 0 ? 0 : getListables().size() - 1);
+        positionBar.setProgress(0);
         positionBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    setSelItemIndex(progress);
+                    setSelItemIndex(progress - 1);
                 }
             }
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -156,7 +157,7 @@ public class MediaPagerActivity extends MediaActivity {
             button.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     pager.setCurrentItem(0);
-                    positionBar.setProgress(1);
+                    positionBar.setProgress(0);
                 }
             });
         }
@@ -168,7 +169,7 @@ public class MediaPagerActivity extends MediaActivity {
             button.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     pager.setCurrentItem(getListables().size() - 1);
-                    positionBar.setProgress(getListables().size());
+                    positionBar.setProgress(getListables().size() - 1);
                 }
             });
         }
@@ -272,51 +273,53 @@ public class MediaPagerActivity extends MediaActivity {
     public void sort() throws IOException, JSONException, ParseException {
         super.sort();
         pager.setCurrentItem(0);
-        positionBar.setProgress(1);
+        positionBar.setProgress(0);
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    if (getCurrentFocus().getParent() instanceof View &&
-                            ((View)getCurrentFocus().getParent()).getId() == R.id.button_bar) {
-                        findViewById(R.id.pager_position).requestFocus();
+            if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                if ((getCurrentFocus().getParent() instanceof View &&
+                        ((View)getCurrentFocus().getParent()).getId() == R.id.button_bar) ||
+                      getCurrentFocus().getId() == R.id.title_text) {
+                    findViewById(R.id.pager_position).requestFocus();
+                    return true;
+                }
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if (getCurrentFocus().getId() == R.id.pager_position) {
+                    if (pager.getCurrentItem() < getListables().size() - 1) {
+                        pager.setCurrentItem(pager.getCurrentItem() + 1);
+                        positionBar.setProgress(pager.getCurrentItem());
                         return true;
                     }
                 }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    if (getCurrentFocus().getId() == R.id.pager_position) {
-                        if (pager.getCurrentItem() < getListables().size() - 1) {
-                            pager.setCurrentItem(pager.getCurrentItem() + 1);
-                            positionBar.setProgress(pager.getCurrentItem() + 1);
-                            return true;
-                        }
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (getCurrentFocus().getId() == R.id.pager_position) {
+                    if (pager.getCurrentItem() > 0) {
+                        pager.setCurrentItem(pager.getCurrentItem() - 1);
+                        positionBar.setProgress(pager.getCurrentItem());
+                        return true;
                     }
                 }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    if (getCurrentFocus().getId() == R.id.pager_position) {
-                        if (pager.getCurrentItem() > 0) {
-                            pager.setCurrentItem(pager.getCurrentItem() - 1);
-                            positionBar.setProgress(pager.getCurrentItem() + 1);
-                            return true;
-                        }
-                    }
-                }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                    pager.setCurrentItem(getListables().size() - 1);
-                    positionBar.setProgress(getListables().size());
-                    return true;
-                }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                    pager.setCurrentItem(0);
-                    positionBar.setProgress(1);
-                    return true;
-                }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ||
-                         event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
-                    playItem((Item)getListables().get(pager.getCurrentItem()));
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
+                pager.setCurrentItem(getListables().size() - 1);
+                positionBar.setProgress(getListables().size() - 1);
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_REWIND) {
+                pager.setCurrentItem(0);
+                positionBar.setProgress(0);
+                return true;
+            }
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ||
+                     event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                Listable listable = getListables().get(pager.getCurrentItem());
+                if (listable instanceof Item) {
+                    playItem((Item)listable);
                     return true;
                 }
             }
