@@ -99,10 +99,12 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         libVlcMediaOptions = getLibVlcMediaOptions(mediaOptions, mediaUri);
 
         Media media;
-        if (proxyInfo == null || isHls) {
+        if (proxyInfo == null) {
             media = new Media(libvlc, mediaUri);
         }
         else {
+            if (isHls)
+                throw new IOException("HTTP Live Stream with authentication not supported by VLC.");
             // libvlc needs proxying to support authentication
             proxy = new MediaStreamProxy(proxyInfo, authType);
             proxy.init();

@@ -98,9 +98,11 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         itemLength = metaLength;
         Log.d(TAG, "Video designated length: " + itemLength);
 
-        if (!PlaybackOptions.isHls(mediaUri) && mediaOptions.contains(AppSettings.PROXY_ANDROID_AUTHENTICATED_PLAYBACK)) {
+        if (mediaOptions.contains(AppSettings.PROXY_ANDROID_AUTHENTICATED_PLAYBACK)) {
             ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(mediaUri);
             if (proxyInfo != null) {
+                if (PlaybackOptions.isHls(mediaUri))
+                    throw new IOException("HTTP Live Stream authentication proxy not supported with Android.");
                 // needs proxying to support authentication
                 proxy = new MediaStreamProxy(proxyInfo, authType);
                 proxy.init();

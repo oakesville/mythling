@@ -81,7 +81,7 @@
     {
       "internal":
       {
-        "file": "android",
+        "file": "libvlc",
         "hls": "android",
         "default":
         {
@@ -90,7 +90,7 @@
       },
       "external":
       {
-        "file": "android",
+        "file": "libvlc",
         "hls": "app",
         "default":
         {
