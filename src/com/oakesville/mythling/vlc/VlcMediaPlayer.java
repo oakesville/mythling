@@ -489,7 +489,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         private int minSamples = 10;
         private int maxSamples = 200;
         private long length;  // length reported by libvlc
-        private int metaLength = itemLength;
+        private int metaLength = 0;
         private float offsetFraction = 0.0f;
 
         @Override
@@ -498,6 +498,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                 switch(event.type) {
                     case MediaPlayer.Event.Opening:
                         length = 0;
+                        metaLength = itemLength;
                         break;
                     case MediaPlayer.Event.Playing:
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
