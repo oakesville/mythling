@@ -15,13 +15,13 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class NetworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,17 @@ public class NetworkPrefs extends PreferenceFragment {
         doCategoryEnablement(appSettings.isExternalNetwork());
 
         Preference pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_INTERNAL_HOST);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
-        pref.setSummary(appSettings.getInternalBackendHost());
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean ret = super.onPreferenceChange(preference, newValue);
+                preference.setTitle(newValue.toString().isEmpty() ? R.string.title_backend_host_ : R.string.title_backend_host);
+                return ret;
+            }
+        });
+        String internalHost = appSettings.getInternalBackendHost();
+        pref.setSummary(internalHost);
+        if (internalHost.isEmpty())
+            pref.setTitle(R.string.title_backend_host_);
 
         pref = getPreferenceScreen().findPreference(AppSettings.MYTH_BACKEND_EXTERNAL_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
