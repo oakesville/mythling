@@ -107,9 +107,9 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             proxy = new MediaStreamProxy(proxyInfo, authType);
             proxy.init();
             proxy.start();
-            String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getEncodedPath();
+            String playUrl = "http://" + proxy.getLocalhost().getHostAddress() + ":" + proxy.getPort() + mediaUri.getPath();
             if (mediaUri.getQuery() != null)
-                playUrl += "?" + mediaUri.getQuery();
+                playUrl += "?" + mediaUri.getEncodedQuery();
             Log.i(TAG, "Media proxy URL: " + playUrl);
             media = new Media(libvlc, Uri.parse(playUrl));
         }

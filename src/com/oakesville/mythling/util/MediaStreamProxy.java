@@ -251,9 +251,9 @@ public class MediaStreamProxy implements Runnable {
 
     public static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
         String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
-        netUrl += mediaUri.getEncodedPath();
+        netUrl += mediaUri.getPath();
         if (mediaUri.getQuery() != null)
-            netUrl += "?" + mediaUri.getQuery();
+            netUrl += "?" + mediaUri.getEncodedQuery();
         return new URL(netUrl);
     }
 }

@@ -20,10 +20,10 @@
       "external":
       {
         "file": "libvlc",
-        "hls": "android",
+        "hls": "app",
         "default":
         {
-          "hls": "android"
+          "hls": "app"
         }
       },
       "download":
