@@ -65,6 +65,7 @@
         <ListPreference
             android:key="auto_skip"
             android:title="@string/title_auto_skip"
+            android:dialogTitle="@string/dlg_title_auto_skip"
             android:entries="@array/auto_skip_entries"
             android:entryValues="@array/auto_skip_values"
             android:defaultValue="auto_skip_off"

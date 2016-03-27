@@ -94,6 +94,7 @@
     <string name="title_jump_interval">Jump Interval</string>
     <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
     <string name="title_auto_skip">Commercial Skip (MythTV 0.28)</string>
+    <string name="dlg_title_auto_skip">Commercial Skip (requires MythTV 0.28+ or Mythling media services)</string>
     <string name="notify_auto_skip_">Auto-Skip:\u0020</string>
     <string-array name="auto_skip_values">
         <item>auto_skip_off</item>
