@@ -223,7 +223,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     private int target; // ms
     public boolean isTargeting() {
-        return target > 0 || playRate != 1;
+        return target > 0 || (playRate != 1 && playRate != 0);
     }
 
     private int maxPlayRate = 1;
