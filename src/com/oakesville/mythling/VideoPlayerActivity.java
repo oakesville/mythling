@@ -532,7 +532,7 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && seekCorrectionTolerance <= 0 && mediaPlayer.isDurationMismatch()) {
+                        if (!durationMismatchWarned && seekCorrectionTolerance <= 0 && mediaPlayer.isDurationMismatch() && mediaPlayer.isItemSeekable()) {
                             durationMismatchWarned = true;
                             Log.w(TAG, "Duration mismatch.  Seek may be inaccurate.");
                             if (mediaPlayer.supportsSeekCorrection() && !appSettings.isTv())

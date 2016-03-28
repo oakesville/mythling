@@ -167,7 +167,7 @@
     <string name="switch_channel_callsigns">Call Sign</string>
     <string name="switch_channel_icons">Icon</string>
     <string name="title_epg_channel_group">Channel Group (MythTV 0.28)</string>
-    <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28, or Mythling media services)</string>
+    <string name="message_epg_channel_group">Filter guide listings to show only this channel group (requires MythTV 0.28)</string>
     <string name="title_epg_params">Parameters</string>
     <string name="message_epg_params">Ampersand-delimited webapp parameters (eg: guideInterval=8&amp;bufferSize=3)</string>
     <string name="title_artwork_settings">Artwork Settings</string>
