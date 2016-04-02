@@ -1,5 +1,6 @@
-GitHub Pages Home:
+GitHub Pages:
 http://oakesville.github.io/mythling
+http://oakesville.github.io/mythling/epg/
 
 Mythling Help:
 http://oakesville.github.io/mythling/help.html
