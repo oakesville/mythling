@@ -237,8 +237,13 @@ public abstract class MediaActivity extends Activity {
     public void onPause() {
         unregisterPlaybackReceiver();
         if (downloadReceivers != null) {
-            for (long downloadId : downloadReceivers.keySet())
+            List<Long> idsToRemove = new ArrayList<Long>();
+            for (long downloadId : downloadReceivers.keySet()) {
                 unregisterDownloadReceiver(downloadId);
+                idsToRemove.add(downloadId);
+            }
+            for (long id : idsToRemove)
+                downloadReceivers.remove(id);
         }
         super.onPause();
     }
@@ -275,6 +280,8 @@ public abstract class MediaActivity extends Activity {
                 if (downloadId == id) {
                     item.setDownloadId(downloadId);
                     unregisterDownloadReceiver(downloadId);
+                    if (downloadReceivers != null) // how else?
+                        downloadReceivers.remove(downloadId);
                     onResume();
                 }
             }
@@ -285,8 +292,10 @@ public abstract class MediaActivity extends Activity {
         if (downloadReceivers == null)
             downloadReceivers = new HashMap<Long,DownloadBroadcastReceiver>();
         DownloadBroadcastReceiver receiver = downloadReceivers.get(downloadId);
-        if (receiver != null)
+        if (receiver != null) {
             unregisterDownloadReceiver(downloadId);
+            downloadReceivers.remove(downloadId);
+        }
         receiver = new DownloadBroadcastReceiver(item, downloadId);
         registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         downloadReceivers.put(downloadId, receiver);
@@ -296,7 +305,6 @@ public abstract class MediaActivity extends Activity {
             DownloadBroadcastReceiver receiver = downloadReceivers.get(downloadId);
             if (receiver != null)
                 unregisterReceiver(receiver);
-            downloadReceivers.remove(downloadId);
         }
     }
 
