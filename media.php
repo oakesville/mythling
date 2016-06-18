@@ -30,6 +30,7 @@ $MYTHDB_PASSWORD = "mythtv";
 // MythTV settings
 $VIDEO_STORAGE_GROUP = "Videos";
 $VIDEO_DIR_SETTING = "VideoStartupDir";
+$MUSIC_STORAGE_GROUP = "Music";
 $MUSIC_DIR_SETTING = "MusicLocation";
 $ARTWORK_DIR_SETTING = "VideoArtworkDir";
 
@@ -344,7 +345,7 @@ else if ($type->isSearch())
   else
     $videoBase = getSettingDir($VIDEO_DIR_SETTING);
   
-  $musicBase = getSettingDir($MUSIC_DIR_SETTING);
+  $musicBase = getBaseDir($MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
   $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
   
   header("Content-type:application/json");
@@ -676,9 +677,9 @@ else
   }
   else if ($type->isMusic())
   {
-    $base = getSettingDir($MUSIC_DIR_SETTING);
+    $base = getBaseDir($MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
     if ($base == null)
-      die(error("No " . $MUSIC_DIR_SETTING . " setting for music"));
+      die(error("Cannot find " . $MUSIC_STORAGE_GROUP . " storage group or " . $MUSIC_DIR_SETTING . " setting for music"));
     $albumArtMap = getAlbumArtMap();
     $where = "where d.directory_id = s.directory_id";
     // one option
