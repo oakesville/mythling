@@ -59,14 +59,14 @@
             android:title="@string/title_connect_timeout"
             android:dialogTitle="@string/title_connect_timeout_dialog"
             android:inputType="number"
-            android:defaultValue="6"
+            android:defaultValue="10"
             android:layout="@layout/pref" />
         <EditTextPreference
             android:key="http_read_timeout"
             android:title="@string/title_read_timeout"
             android:dialogTitle="@string/title_read_timeout_dialog"
             android:inputType="number"
-            android:defaultValue="10"
+            android:defaultValue="30"
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
