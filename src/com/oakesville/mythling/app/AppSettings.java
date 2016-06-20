@@ -106,7 +106,10 @@ public class AppSettings {
     public static final String DEFAULT_ARTWORK_SG_VIDEOS = ARTWORK_SG_BANNERS;
     public static final String DEFAULT_ARTWORK_SG_MOVIES = ARTWORK_SG_COVERART;
     public static final String DEFAULT_ARTWORK_SG_TV_SERIES = ARTWORK_SG_COVERART;
-    public static final String MUSIC_ART_LEVEL_SONG = "album_art_level";
+    public static final String MUSIC_ART = "music_art";
+    public static final String MUSIC_ART_NONE = "None";
+    public static final String MUSIC_ART_ALBUM = "Album";
+    public static final String MUSIC_ART_SONG = "Song";
     public static final String INTERNAL_VIDEO_RES = "internal_video_res";
     public static final String EXTERNAL_VIDEO_RES = "external_video_res";
     public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
@@ -129,7 +132,9 @@ public class AppSettings {
     public static final String TRANSCODE_TIMEOUT = "transcode_timeout";
     public static final String TRANSCODE_JOB_LIMIT = "transcode_job_limit";
     public static final String HTTP_CONNECT_TIMEOUT = "http_connect_timeout";
+    public static final String DEFAULT_HTTP_CONNECT_TIMEOUT = "10";
     public static final String HTTP_READ_TIMEOUT = "http_read_timeout";
+    public static final String DEFAULT_HTTP_READ_TIMEOUT = "60";
     public static final String PAGER_CURRENT_POSITION = "movie_current_position";
     public static final String DEFAULT_MEDIA_TYPE = "recordings";
     public static final String MOVIE_BASE_URL = "movie_base_url";
@@ -246,6 +251,9 @@ public class AppSettings {
                 String nowUtc = Localizer.SERVICE_DATE_TIME_RAW_FORMAT.format(cal.getTime()).replace(' ', 'T');
                 url += "Guide/GetProgramGuide?StartTime=" + nowUtc + "&EndTime=" + nowUtc;
             }
+            else if (mediaType == MediaType.music) {
+                url += "Content/GetFileList?StorageGroup=" + getMusicStorageGroup();
+            }
         }
 
         return new URL(url);
@@ -288,13 +296,13 @@ public class AppSettings {
     }
 
     /**
-     * If not empty, always begins with '&'.
+     * (Only for Mythling services).  If not empty, always begins with '&'.
      */
     public String getArtworkParams(MediaType mediaType) throws UnsupportedEncodingException {
         String params = "";
         String prefStorageGroup = getArtworkStorageGroup(mediaType);
         params += "&artworkStorageGroup=" + prefStorageGroup;
-        if (!isAlbumArtAlbumLevel())
+        if (isMusicArtSong())
             params += "&albumArtSongLevel=true";
         return params;
     }
@@ -728,13 +736,22 @@ public class AppSettings {
     }
 
     public String getVideoStorageGroup() {
-        // TODO prefs
-        return "Videos";
+        return "Videos"; // TODO: prefs
+    }
+
+    public String getMusicStorageGroup() {
+        return "Music"; // TODO: prefs
     }
 
     public String getArtworkStorageGroup(MediaType mediaType) {
-        if (mediaType == MediaType.music)
-            return isAlbumArtAlbumLevel() ? Song.ARTWORK_LEVEL_ALBUM : Song.ARTWORK_LEVEL_SONG;
+        if (mediaType == MediaType.music) {
+            if (isMusicArtAlbum())
+                return getMusicStorageGroup();
+            else if (isMusicArtSong())
+                return Song.ARTWORK_LEVEL_SONG;
+            else
+                return null;
+        }
         else if (mediaType == MediaType.videos)
             return getStringPref(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG_VIDEOS);
         else if (mediaType == MediaType.recordings)
@@ -747,8 +764,19 @@ public class AppSettings {
             return DEFAULT_ARTWORK_SG_VIDEOS;
     }
 
-    public boolean isAlbumArtAlbumLevel() {
-        return !getBooleanPref(MUSIC_ART_LEVEL_SONG, false);
+    public String getMusicArt() {
+        return getStringPref(MUSIC_ART, MUSIC_ART_ALBUM);
+    }
+    public boolean isMusicArtAlbum() {
+        String art = getMusicArt();
+        // MUSIC_ART_SONG not supported for MythTV services
+        return MUSIC_ART_ALBUM.equals(art) || (MUSIC_ART_SONG.equals(art) && !isMythlingMediaServices());
+    }
+    public boolean isMusicArtSong() {
+        return MUSIC_ART_SONG.equals(getMusicArt());
+    }
+    public boolean isMusicArtNone() {
+        return MUSIC_ART_NONE.equals(getMusicArt());
     }
 
     public int getVideoRes() {
@@ -1035,11 +1063,11 @@ public class AppSettings {
     }
 
     public int getHttpConnectTimeout() {
-        return Integer.parseInt(getStringPref(HTTP_CONNECT_TIMEOUT, "6").trim());
+        return Integer.parseInt(getStringPref(HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_CONNECT_TIMEOUT).trim());
     }
 
     public int getHttpReadTimeout() {
-        return Integer.parseInt(getStringPref(HTTP_READ_TIMEOUT, "10").trim());
+        return Integer.parseInt(getStringPref(HTTP_READ_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT).trim());
     }
 
     // change these values and recompile to route service calls through a dev-time reverse proxy

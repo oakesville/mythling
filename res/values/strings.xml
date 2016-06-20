@@ -194,6 +194,16 @@
         <item>Fanart</item>
         <item>&lt;Use Preview Image></item>
     </string-array>
+    <string-array name="music_art_entries">
+        <item>Album Directory</item>
+        <item>Song ID (Mythling Svcs)</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="music_art_values">
+        <item>Album</item>
+        <item>Song</item>
+        <item>None</item>
+    </string-array>
     <string name="artwork_sg_use_preview">&lt;Use Preview Image></string>
     <string name="artwork_sg_default">Coverart</string>
     <string name="artwork_sg_default_videos">Banners</string>
@@ -201,9 +211,11 @@
     <string name="artwork_sg_default_tvseries">Coverart</string>
     <string name="artwork_sg_default_recordings">Screenshots</string>
     <!-- really preview images -->
-    <string name="title_album_art_level">Album Art Level</string>
-    <string name="album_art_song">Song</string>
-    <string name="album_art_album">Album</string>
+    <string name="title_music_art">Music Artwork</string>
+    <string name="title_music_art_key">Display Key</string>
+    <string name="music_art_album">Album</string>
+    <string name="music_art_song">Song</string>
+    <string name="music_art_none">None</string>
     <string name="title_device_player_video">Device Player (Video)</string>
     <string name="switch_built_in">Built-In</string>
     <string name="switch_external_app">External App</string>
@@ -476,6 +488,8 @@
     <string name="media_player_error_">Media player error:\u0020</string>
     <string name="duration_mismatch">Duration mismatch.  Seek may be inaccurate.</string>
     <string name="duration_mismatch_suggest">Duration mismatch.  Seek may be inaccurate (consider setting Seek Correction Tolerance > 0).</string>
+    <string name="socket_timeout_after_">Socket timeout after\u0020</string>
+    <string name="socket_timeout_suggest">Consider changing settings: System > HTTP > Read Timeout.</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>
@@ -516,4 +530,5 @@
     <string name="abbrev_am">a</string> <!-- abbreviation for a.m. -->
     <string name="abbrev_pm">p</string> <!-- abbreviation for p.m. -->
     <string name="abbrev_hrs">hrs</string> <!-- abbreviation for hours -->
+    <string name="abbrev_secs">s</string> <!-- abbreviation for seconds -->
 </resources>

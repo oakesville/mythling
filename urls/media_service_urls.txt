@@ -43,7 +43,7 @@ http://192.168.0.69/mythling/media.php?type=guide&StartTime=2015-04-19T00:00:00&
 # MythTV Channel Groups (req. 0.28)
 http://192.168.0.69:6544/Guide/GetChannelGroupList
 
-# MythTV Song
+# MythTV Song (by id)
 http://192.168.0.69:6544/Content/GetMusic?Id=53938
 
 # MythTV Artwork
@@ -95,4 +95,8 @@ http://192.168.0.69:6544/Capture/GetCaptureCardList
 
 # MythTV Frontend Service Action List
 http://192.168.0.69:6547/Frontend/GetActionList
+
+# MythTV File List Service for Music
+http://192.168.0.69:6544/Content/GetFileList?StorageGroup=Music
+
 

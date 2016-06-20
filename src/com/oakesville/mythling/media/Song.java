@@ -16,17 +16,13 @@
 package com.oakesville.mythling.media;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.util.TextBuilder;
 
 public class Song extends Item {
-    public static final String ARTWORK_LEVEL_ALBUM = "albumArtwork";
     public static final String ARTWORK_LEVEL_SONG = "songArtwork";
-
-    private int albumArtId;
-    public int getAlbumArtId() { return albumArtId;  }
-    public void setAlbumArtId(int id) { this.albumArtId = id;  }
 
     public Song(String id, String title) {
         super(id, title);
@@ -36,22 +32,32 @@ public class Song extends Item {
         return MediaType.music;
     }
 
+    private String albumArt;  // pathless filename
+    public String getAlbumArt() { return albumArt; }
+    public void setAlbumArt(String art) { this.albumArt = art; }
+
+    /**
+     * Storage group is null to indicate no artwork.
+     */
     @Override
     public ArtworkDescriptor getArtworkDescriptor(String storageGroup) {
-        if (albumArtId == 0)
+        if (storageGroup == null)
             return null;
 
-        // actually storageGroup is artwork level (album or song)
+        // ARTWORK_LEVEL_SONG = bogus storage group to indicate use GetAlbumArt with songId
         final boolean songLevelArt = ARTWORK_LEVEL_SONG.equals(storageGroup);
 
         return new ArtworkDescriptor(storageGroup) {
             public String getArtworkPath() {
-                // cache at album level
+                // cache at album level if it makes sense
                 return getStorageGroup() + (songLevelArt ? ("/" + getId()) : "");
             }
 
             public String getArtworkContentServicePath() throws UnsupportedEncodingException {
-                return "GetAlbumArt?Id=" + getAlbumArtId();
+                if (songLevelArt)
+                    return "GetAlbumArt?Id=" + getId();
+                else
+                    return "GetImageFile?StorageGroup=Music&FileName=" + URLEncoder.encode(getPath() + "/" + albumArt, "UTF-8");
             }
         };
     }

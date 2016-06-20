@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -479,7 +480,7 @@ public abstract class MediaActivity extends Activity {
     }
 
     protected boolean supportsMusic() {
-        return getAppSettings().isMythlingMediaServices();
+        return true;
     }
 
     protected boolean supportsMythwebMenu() {
@@ -751,10 +752,19 @@ public abstract class MediaActivity extends Activity {
             if (appSettings.isDevicePlayback()) {
                 if (item.isMusic()) {
                     Uri uri;
-                    if (item.isDownloaded())
+                    if (item.isDownloaded()) {
                         uri = getDownload(item);
-                    else
-                        uri = Uri.parse(appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/GetMusic?Id=" + item.getId());
+                    }
+                    else {
+                        String base = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/";
+                        if (appSettings.isMythlingMediaServices()) {
+                            uri = Uri.parse(base + "GetMusic?Id=" + item.getId());
+                        }
+                        else {
+                            uri = Uri.parse(base + "GetFile?StorageGroup=" + appSettings.getMusicStorageGroup()
+                                        + "&FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8"));
+                        }
+                    }
                     if (appSettings.isExternalMusicPlayer()) {
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                         intent.setDataAndType(uri, "audio/*");
@@ -1215,10 +1225,12 @@ public abstract class MediaActivity extends Activity {
         private Exception ex;
 
         protected Long doInBackground(URL... urls) {
+            Long before = null;
             try {
                 MediaSettings mediaSettings = getAppSettings().getMediaSettings();
 
                 HttpHelper downloader = getAppSettings().getMediaListDownloader(urls);
+                before = Long.valueOf(System.currentTimeMillis());
                 byte[] bytes = downloader.get();
                 mediaListJson = new String(bytes, downloader.getCharSet());
                 if (mediaListJson.startsWith("<")) {
@@ -1267,6 +1279,18 @@ public abstract class MediaActivity extends Activity {
                     updateTranscodeStatuses(mediaList.getAllItems());
 
                 return 0L;
+            } catch (SocketTimeoutException ex) {
+                long secs = (System.currentTimeMillis() - before) / 1000;
+                String msg = getString(R.string.socket_timeout_after_) + secs + " " + getString(R.string.seconds) + ". "
+                        + getString(R.string.socket_timeout_suggest);
+                this.ex = new SocketTimeoutException(msg);
+                // log the original exception to avoid losing cause,
+                // since SocketTimeoutException(String, Throwable) is "internal use only"
+                Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+
             } catch (Exception ex) {
                 this.ex = ex;
                 Log.e(TAG, ex.getMessage(), ex);

@@ -49,14 +49,14 @@
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/title_album_art_level">
-        <com.oakesville.mythling.prefs.SwitchPreference
-            android:key="album_art_level"
-            android:switchTextOn="@string/album_art_song"
-            android:switchTextOff="@string/album_art_album"
-            android:defaultValue="false"
-            android:layout="@layout/sw_pref_inner"
-            android:widgetLayout="@layout/prefs_switch" />
+    <PreferenceCategory android:title="@string/title_music_art">
+        <ListPreference
+            android:key="music_art"
+            android:title="@string/title_music_art_key"
+            android:entries="@array/music_art_entries"
+            android:entryValues="@array/music_art_values"
+            android:defaultValue="@string/music_art_album"
+            android:layout="@layout/pref" />
     </PreferenceCategory>
 
 </PreferenceScreen>

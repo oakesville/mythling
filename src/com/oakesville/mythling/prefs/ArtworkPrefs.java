@@ -15,13 +15,13 @@
  */
 package com.oakesville.mythling.prefs;
 
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.MediaSettings.MediaType;
+
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
 
 public class ArtworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,8 @@ public class ArtworkPrefs extends PreferenceFragment {
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
         pref.setSummary(appSettings.getArtworkStorageGroup(MediaType.tvSeries));
 
-        pref = getPreferenceScreen().findPreference(AppSettings.MUSIC_ART_LEVEL_SONG);
-        pref.setOnPreferenceChangeListener(new PrefChangeListener(false, true));
+        pref = getPreferenceScreen().findPreference(AppSettings.MUSIC_ART);
+        pref.setOnPreferenceChangeListener(new PrefChangeListener(true, true));
+        pref.setSummary(appSettings.getMusicArt());
     }
 }

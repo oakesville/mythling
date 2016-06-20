@@ -247,8 +247,8 @@ public class MythlingParser implements MediaListParser {
             }
         } else if (type == MediaType.music) {
             item = new Song(jsonObj.getString("id"), jsonObj.getString("title"));
-            if (jsonObj.has("albumArtId"))
-                ((Song) item).setAlbumArtId(jsonObj.getInt("albumArtId"));
+            if (appSettings.isMusicArtAlbum())
+                ((Song) item).setAlbumArt("cover.jpg"); // TODO: hardcoded
         } else {
             throw new IllegalArgumentException("Unsupported media type: " + type);
         }

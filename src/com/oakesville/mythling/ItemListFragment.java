@@ -18,6 +18,7 @@ package com.oakesville.mythling;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.Song;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -119,14 +120,20 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        Uri uri = new Uri.Builder().path(path).build();
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
-        intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());
-        View topV = listView.getChildAt(0);
-        intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
-        intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
-        intent.putExtra(MediaActivity.GRAB_FOCUS, true);
-        startActivity(intent);
+        Object item = getListView().getItemAtPosition(position);
+        if (item instanceof Song && mediaActivity != null && mediaActivity.getAppSettings().isMusicArtNone()) {
+            mediaActivity.playItem((Song)item);
+        }
+        else {
+            Uri uri = new Uri.Builder().path(path).build();
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaListActivity.class);
+            intent.putExtra(MediaActivity.CURRENT_TOP, listView.getFirstVisiblePosition());
+            View topV = listView.getChildAt(0);
+            intent.putExtra(MediaActivity.TOP_OFFSET, (topV == null) ? 0 : topV.getTop());
+            intent.putExtra(MediaActivity.SEL_ITEM_INDEX, position);
+            intent.putExtra(MediaActivity.GRAB_FOCUS, true);
+            startActivity(intent);
+        }
     }
 
     @Override

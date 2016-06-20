@@ -43,6 +43,7 @@ import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.Movie;
 import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.media.TvEpisode;
 import com.oakesville.mythling.media.TvShow;
@@ -206,6 +207,57 @@ public class MythTvParser implements MediaListParser {
                     Log.e(TAG, "NumberFormatException for live TV at index: " + i);
                 }
             }
+        } else if (mediaType == MediaType.music) {
+            JSONArray strList = list.getJSONArray("StringList");
+            mediaList.setCount(strList.length());
+            Map<String,String> dirToAlbumArt = null;
+            if (appSettings.isMusicArtAlbum())
+                dirToAlbumArt = new HashMap<String,String>();
+            for (int i = 0; i < strList.length(); i++) {
+                String filepath = strList.getString(i);
+                int lastSlash = filepath.lastIndexOf('/');
+                String filename = filepath;
+                String path = null;
+                if (lastSlash > 0 && filepath.length() > lastSlash + 1) {
+                    filename = filepath.substring(lastSlash + 1);
+                    path = filepath.substring(0, lastSlash);
+                }
+                String title = filename;
+                String format = null;
+                int lastDot = filename.lastIndexOf('.');
+                if (lastDot > 0 && filename.length() > lastDot + 1) {
+                    title = filename.substring(0, lastDot);
+                    format = filename.substring(lastDot + 1);
+                }
+
+                if ("jpg".equals(format) && "cover".equals(title)) {
+                    if (dirToAlbumArt != null)
+                        dirToAlbumArt.put(path, title + ".jpg");
+                } else if ("jpg".equals(format) || "jpeg".equals(format) // TODO: better check for image type
+                        || "png".equals(format) || "gif".equals(format)) {
+                    if (dirToAlbumArt != null) {
+                        String imgPath = dirToAlbumArt.get(title + '.' + format);
+                        if (!"cover.jpg".equals(imgPath)) // prefer cover.jpg
+                            dirToAlbumArt.put(path, title + '.' + format);
+                    }
+                } else {
+                    Song song = new Song(String.valueOf(i), title);
+                    song.setPath(path);
+                    song.setFileBase(path + "/" + title);
+                    song.setFormat(format);
+                    song.setStorageGroup(storageGroups.get(appSettings.getMusicStorageGroup()));
+                    mediaList.addItemUnderPathCategory(song);
+                }
+            }
+            if (dirToAlbumArt != null && !dirToAlbumArt.isEmpty()) {
+                // set album art
+                for (Item item : mediaList.getAllItems()) {
+                    String art = dirToAlbumArt.get(item.getPath());
+                    if (art != null)
+                        ((Song)item).setAlbumArt(art);
+                }
+            }
+
         }
         if (sortType != null) {
             startTime = System.currentTimeMillis();
