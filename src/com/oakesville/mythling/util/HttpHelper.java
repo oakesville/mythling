@@ -355,14 +355,14 @@ public class HttpHelper {
 
     public int getConnectTimeout() {
         if (sharedPrefs != null)
-            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, "10").trim()) * 1000;
+            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, AppSettings.DEFAULT_HTTP_CONNECT_TIMEOUT).trim()) * 1000;
         else
             return 10000;
     }
 
     public int getReadTimeout() {
         if (sharedPrefs != null)
-            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, "30").trim()) * 1000;
+            return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, AppSettings.DEFAULT_HTTP_READ_TIMEOUT).trim()) * 1000;
         else
             return 30000;
     }

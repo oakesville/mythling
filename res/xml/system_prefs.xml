@@ -66,7 +66,7 @@
             android:title="@string/title_read_timeout"
             android:dialogTitle="@string/title_read_timeout_dialog"
             android:inputType="number"
-            android:defaultValue="30"
+            android:defaultValue="60"
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
