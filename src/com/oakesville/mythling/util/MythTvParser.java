@@ -345,7 +345,8 @@ public class MythTvParser implements MediaListParser {
             item.setLength(Integer.parseInt(vid.getString("Length")) * 60);
         }
         if (vid.has("Artwork")) {
-            StorageGroup artworkStorageGroup = storageGroups == null ? null : storageGroups.get(appSettings.getArtworkStorageGroup(type));
+            String artSgName = appSettings.getArtworkStorageGroup(type);
+            StorageGroup artworkStorageGroup = storageGroups == null || AppSettings.ARTWORK_NONE.equals(artSgName) ? null : storageGroups.get(artSgName);
             if (artworkStorageGroup != null) {
                 JSONObject artwork = vid.getJSONObject("Artwork");
                 if (artwork.has("ArtworkInfos")) {

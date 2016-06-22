@@ -107,9 +107,9 @@ public class AppSettings {
     public static final String DEFAULT_ARTWORK_SG_MOVIES = ARTWORK_SG_COVERART;
     public static final String DEFAULT_ARTWORK_SG_TV_SERIES = ARTWORK_SG_COVERART;
     public static final String MUSIC_ART = "music_art";
-    public static final String MUSIC_ART_NONE = "None";
     public static final String MUSIC_ART_ALBUM = "Album";
     public static final String MUSIC_ART_SONG = "Song";
+    public static final String ARTWORK_NONE = "None";
     public static final String INTERNAL_VIDEO_RES = "internal_video_res";
     public static final String EXTERNAL_VIDEO_RES = "external_video_res";
     public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
@@ -301,9 +301,15 @@ public class AppSettings {
     public String getArtworkParams(MediaType mediaType) throws UnsupportedEncodingException {
         String params = "";
         String prefStorageGroup = getArtworkStorageGroup(mediaType);
-        params += "&artworkStorageGroup=" + prefStorageGroup;
-        if (isMusicArtSong())
-            params += "&albumArtSongLevel=true";
+        if (!AppSettings.ARTWORK_NONE.equals(prefStorageGroup)) {
+            if (mediaType == MediaType.music) {
+                if (isMusicArtSong())
+                    params += "&albumArtSongLevel=true";
+            }
+            else {
+                params += "&artworkStorageGroup=" + prefStorageGroup;
+            }
+        }
         return params;
     }
 
@@ -750,7 +756,7 @@ public class AppSettings {
             else if (isMusicArtSong())
                 return Song.ARTWORK_LEVEL_SONG;
             else
-                return null;
+                return ARTWORK_NONE;
         }
         else if (mediaType == MediaType.videos)
             return getStringPref(ARTWORK_SG_VIDEOS, DEFAULT_ARTWORK_SG_VIDEOS);
@@ -776,7 +782,7 @@ public class AppSettings {
         return MUSIC_ART_SONG.equals(getMusicArt());
     }
     public boolean isMusicArtNone() {
-        return MUSIC_ART_NONE.equals(getMusicArt());
+        return ARTWORK_NONE.equals(getMusicArt());
     }
 
     public int getVideoRes() {

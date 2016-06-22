@@ -15,10 +15,10 @@
  */
 package com.oakesville.mythling;
 
+import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.Song;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -120,9 +120,11 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        Object item = getListView().getItemAtPosition(position);
-        if (item instanceof Song && mediaActivity != null && mediaActivity.getAppSettings().isMusicArtNone()) {
-            mediaActivity.playItem((Song)item);
+        AppSettings settings = mediaActivity == null ? null : mediaActivity.getAppSettings();
+        Object listable = getListView().getItemAtPosition(position);
+        if (listable instanceof Item && settings != null && AppSettings.ARTWORK_NONE.equals(settings.getArtworkStorageGroup(((Item)listable).getType()))) {
+            Item item = (Item)listable;
+            mediaActivity.playItem(item);
         }
         else {
             Uri uri = new Uri.Builder().path(path).build();

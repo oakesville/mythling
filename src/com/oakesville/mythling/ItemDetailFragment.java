@@ -365,35 +365,37 @@ public class ItemDetailFragment extends Fragment {
                 detailView.findViewById(R.id.detailScroll).setFocusable(false);
 
             String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
-            ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
-            if (art != null) {
-                artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-                try {
-                    String filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
-                    Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
-                    if (bitmap == null) {
-                        URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
-                        String filepath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
-                        new ImageRetrievalTask(filepath, getAppSettings().isErrorReportingEnabled()).execute(url);
-                    } else {
-                        artworkView.setImageBitmap(bitmap);
+            if (!AppSettings.ARTWORK_NONE.equals(artSg)) {
+                ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
+                if (art != null) {
+                    artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+                    try {
+                        String filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
+                        Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
+                        if (bitmap == null) {
+                            URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
+                            String filepath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
+                            new ImageRetrievalTask(filepath, getAppSettings().isErrorReportingEnabled()).execute(url);
+                        } else {
+                            artworkView.setImageBitmap(bitmap);
+                        }
+                        if (!getAppSettings().isTv()) {
+                            artworkView.setClickable(true);
+                            artworkView.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    Item item = (Item) listable;
+                                    mediaActivity.playItem(item);
+                                }
+                            });
+                        } else {
+                            artworkView.setFocusable(false);
+                        }
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        if (getAppSettings().isErrorReportingEnabled())
+                            new Reporter(ex).send();
+                        Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                     }
-                    if (!getAppSettings().isTv()) {
-                        artworkView.setClickable(true);
-                        artworkView.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                Item item = (Item) listable;
-                                mediaActivity.playItem(item);
-                            }
-                        });
-                    } else {
-                        artworkView.setFocusable(false);
-                    }
-                } catch (Exception ex) {
-                    Log.e(TAG, ex.getMessage(), ex);
-                    if (getAppSettings().isErrorReportingEnabled())
-                        new Reporter(ex).send();
-                    Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
                 }
             }
         }

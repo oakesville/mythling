@@ -75,7 +75,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
         super(createLibVlc(libVlcOptions));
-        libvlc.setOnHardwareAccelerationError(hardwareAccelerationErrorHandler);
+        LibVLC.setOnNativeCrashListener(nativeCrashListener);
 
         setMaxPlayRate(64); // TODO pref
         setEventListener(vlcEventListener);
@@ -588,11 +588,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.shiftListener = listener;
     }
 
-    private LibVLC.HardwareAccelerationError hardwareAccelerationErrorHandler = new LibVLC.HardwareAccelerationError() {
-        public void eventHardwareAccelerationError() {
+    private LibVLC.OnNativeCrashListener nativeCrashListener = new LibVLC.OnNativeCrashListener() {
+
+        @Override
+        public void onNativeCrash() {
             if (eventListener != null){
                 MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
-                event.message = LibVLC.HardwareAccelerationError.class.getName();
+                event.message = LibVLC.OnNativeCrashListener.class.getName();
                 eventListener.onEvent(event);
             }
         }
@@ -614,6 +616,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         }
 
         public void onSurfacesDestroyed(IVLCVout vout) {
+        }
+
+        @Override
+        public void onHardwareAccelerationError(IVLCVout vlcVout) {
+            MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
+            event.message = "Hardware Acceleration Error: " + vlcVout.toString();
+            eventListener.onEvent(event);
         }
     };
 }

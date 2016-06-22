@@ -1082,7 +1082,10 @@ public abstract class MediaActivity extends Activity {
                 // prepare for a progress bar dialog
                 countdownDialog = new ProgressDialog(this);
                 countdownDialog.setCancelable(true);
-                countdownDialog.setMessage(getString(R.string.playing) + " " + item.getTitle() + "\n" + item.getListSubText());
+                String msg = getString(R.string.playing) + " " + item.getTitle();
+                if (item.getListSubText() != null)
+                    msg += "\n" + item.getListSubText();
+                countdownDialog.setMessage(msg);
                 countdownDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 countdownDialog.setProgressPercentFormat(null);
                 countdownDialog.setProgressNumberFormat(null);
