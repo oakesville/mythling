@@ -18,6 +18,7 @@ package com.oakesville.mythling.prefs;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -33,6 +34,7 @@ import android.widget.CheckBox;
  * Displays a dialog with a message and a checkbox to permanently dismiss
  * based on the supplied preference key.
  */
+@SuppressLint("ValidFragment")
 public class PrefDismissDialog extends DialogFragment {
 
     private String title;

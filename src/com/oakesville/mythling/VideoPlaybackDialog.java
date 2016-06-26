@@ -43,6 +43,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@SuppressLint("ValidFragment")
 public class VideoPlaybackDialog extends DialogFragment {
     private static final String TAG = VideoPlaybackDialog.class.getSimpleName();
 
