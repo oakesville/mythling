@@ -943,7 +943,7 @@ public class AppSettings {
     }
 
     public int getExpiryMinutes() {
-        return Integer.parseInt(getStringPref(CACHE_EXPIRE_MINUTES, "30").trim());
+        return Integer.parseInt(getStringPref(CACHE_EXPIRE_MINUTES, "1440").trim());
     }
 
     public long getLastLoad() {

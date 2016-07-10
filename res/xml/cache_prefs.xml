@@ -20,7 +20,7 @@
             android:key="cache_expiry"
             android:title="@string/title_cache_expiry"
             android:inputType="number"
-            android:defaultValue="30"
+            android:defaultValue="1440"
             android:layout="@layout/pref" />
         <Preference
             android:key="cache_refresh"
