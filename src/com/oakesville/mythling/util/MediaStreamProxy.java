@@ -74,7 +74,7 @@ public class MediaStreamProxy implements Runnable {
     public void init() throws IOException {
         localhost = InetAddress.getByAddress(new byte[] {127, 0, 0, 1});
         socket = new ServerSocket(port, 0, localhost);
-        socket.setSoTimeout(5000);
+        socket.setSoTimeout(5000); // TODO hardcoded
         port = socket.getLocalPort();
     }
 
@@ -99,6 +99,11 @@ public class MediaStreamProxy implements Runnable {
         } catch (InterruptedException ex) {
             Log.e(TAG, ex.getMessage(), ex);
         }
+//        try {
+//            socket.close();
+//        } catch (IOException ex) {
+//            Log.e(TAG, ex.getMessage(), ex);
+//        }
     }
 
     public void run() {
