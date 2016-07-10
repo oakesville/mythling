@@ -197,7 +197,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     public String getVersion() {
-        return libvlc.version();
+        return libvlc.version() + "_" + libvlc.changeset();
     }
 
     /**

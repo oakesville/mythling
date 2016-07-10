@@ -16,8 +16,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="35"
-    android:versionName="2.0.07" >
+    android:versionCode="36"
+    android:versionName="2.1.01" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -137,6 +137,7 @@
                 <data android:scheme="http"/>
                 <data android:scheme="https"/>
                 <data android:scheme="file" />
+                <data android:scheme="content" />
                 <data android:host="*" />
                 <data android:mimeType="video/*"/>
             </intent-filter>

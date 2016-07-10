@@ -93,8 +93,10 @@ public class VideoPlaybackDialog extends DialogFragment {
             titleView.setTextColor(getResources().getColor(R.color.text_light_gray));
         titleView.setText(item.getTitle());
 
+        ViewType viewType = settings.getMediaSettings().getViewType();
         String detail;
-        if (settings.getMediaSettings().getViewType() == ViewType.list)
+        if (viewType == ViewType.list ||
+                (viewType == ViewType.split && AppSettings.ARTWORK_NONE.equals(settings.getArtworkStorageGroup(item.getType()))))
             detail = item.getDialogSubText(); // show more details
         else
             detail = item.getListSubText();
