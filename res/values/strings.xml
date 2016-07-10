@@ -107,7 +107,7 @@
         <item>Auto-Skip On</item>
     </string-array>
     <string name="title_seek_correction_tolerance">Seek Correction Tolerance</string>
-    <string name="message_seek_correction_tolerance">If non-zero, inaccurate seeks will be reattempted until tolerance (in seconds) is achieved.  Set to 2&#8211;3 seconds if auto-skip is enabled.</string>
+    <string name="message_seek_correction_tolerance">If greater than zero, inaccurate seeks will be reattempted until tolerance (in seconds) is achieved.  Set to 2&#8211;3 seconds if auto-skip is enabled.  Set to -1 if you don\u0027t care and never want to see the duration mismatch warning.</string>
     <string name="title_libvlc_parameters">LibVLC Parameters</string>
     <string name="message_libvlc_parameters" tools:ignore="TypographyDashes">VLC engine and media options (eg: --audio-time-stretch :codec=all).
       Media options can be prefixed to apply for a specific file extension.  For example, mpg:demux=ts (compatibility for TS-container mpg files in MythTV 0.28).</string>

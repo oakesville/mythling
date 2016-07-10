@@ -75,7 +75,7 @@
             android:title="@string/title_seek_correction_tolerance"
             android:dialogTitle="@string/title_seek_correction_tolerance"
             android:dialogMessage="@string/message_seek_correction_tolerance"
-            android:inputType="number"
+            android:inputType="numberSigned"
             android:defaultValue="0"
             android:layout="@layout/pref" />
         <EditTextPreference

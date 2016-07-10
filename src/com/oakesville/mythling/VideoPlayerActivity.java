@@ -487,7 +487,10 @@ public class VideoPlayerActivity extends Activity {
                 throw new IllegalArgumentException("Unsupported player option: " + playerOption);
             Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());
 
-            mediaPlayer.setSeekCorrectionTolerance(seekCorrectionTolerance * 1000);
+            if (seekCorrectionTolerance < 0) // ie: -1
+                mediaPlayer.setSeekCorrectionTolerance(0);
+            else
+                mediaPlayer.setSeekCorrectionTolerance(seekCorrectionTolerance * 1000);
 
             mediaPlayer.setLayoutChangeListener(new MediaPlayerLayoutChangeListener() {
                 public void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator) {
@@ -532,7 +535,7 @@ public class VideoPlayerActivity extends Activity {
                         finish();
                     }
                     else if (event.type == MediaPlayerEventType.time) {
-                        if (!durationMismatchWarned && seekCorrectionTolerance <= 0 && mediaPlayer.isDurationMismatch() && mediaPlayer.isItemSeekable()) {
+                        if (!durationMismatchWarned && seekCorrectionTolerance == 0 && mediaPlayer.isDurationMismatch() && mediaPlayer.isItemSeekable()) {
                             durationMismatchWarned = true;
                             Log.w(TAG, "Duration mismatch.  Seek may be inaccurate.");
                             if (mediaPlayer.supportsSeekCorrection() && !appSettings.isTv())
