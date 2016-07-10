@@ -17,9 +17,12 @@ package com.oakesville.mythling;
 
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.media.Item;
+import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
+import com.oakesville.mythling.media.Recording;
+import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.util.Reporter;
 
 import android.annotation.SuppressLint;
@@ -154,7 +157,13 @@ public class VideoPlaybackDialog extends DialogFragment {
                     // playbackOption is remembered regardless of alwaysCheckbox
                     try {
                         String network = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : settings.getPlaybackNetwork();
-                        settings.getPlaybackOptions().setOption(item.getType(), item.getFormat(), network, playbackOption);
+                        MediaType type = item.getType();
+                        String format = item.getFormat();
+                        if (item instanceof Recording && ((Recording)item).isForLiveTv()) {
+                            type = MediaType.liveTv;
+                            format = TvShow.LIVE_TV_FORMAT;
+                        }
+                        settings.getPlaybackOptions().setOption(type, format, network, playbackOption);
                     }
                     catch (Exception ex) {
                         Log.e(TAG, ex.getMessage(), ex);
@@ -175,7 +184,13 @@ public class VideoPlaybackDialog extends DialogFragment {
 
         try {
             String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : settings.getPlaybackNetwork();
-            playbackOption = settings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork);
+            MediaType type = item.getType();
+            String format = item.getFormat();
+            if (item instanceof Recording && ((Recording)item).isForLiveTv()) {
+                type = MediaType.liveTv;
+                format = TvShow.LIVE_TV_FORMAT;
+            }
+            playbackOption = settings.getPlaybackOptions().getOption(type, format, playbackNetwork);
             streamModeSwitch.setVisibility(playbackOption.isAlways() || item.isDownloaded() ? View.GONE : View.VISIBLE);
             playerDropdown.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);
             alwaysCheckbox.setVisibility(playbackOption.isAlways() ? View.GONE : View.VISIBLE);

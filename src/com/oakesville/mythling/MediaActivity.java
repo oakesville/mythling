@@ -1614,6 +1614,7 @@ public abstract class MediaActivity extends Activity {
                 }
             } else {
                 try {
+                    recording.setForLiveTv(true); // for playbackOption purposes
                     if (raw)
                         playRawVideoStream(recording);
                     else
@@ -1877,7 +1878,13 @@ public abstract class MediaActivity extends Activity {
 
     protected PlaybackOption getPlaybackOption(Item item, String streamType) throws IOException, JSONException {
         String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
-        return appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork, streamType);
+        MediaType type = item.getType();
+        String format = item.getFormat();
+        if (item instanceof Recording && ((Recording)item).isForLiveTv()) {
+            type = MediaType.liveTv;
+            format = TvShow.LIVE_TV_FORMAT;
+        }
+        return appSettings.getPlaybackOptions().getOption(type, format, playbackNetwork, streamType);
     }
 
     protected VideoPlaybackDialog getVideoPlaybackDialog(Item item) {

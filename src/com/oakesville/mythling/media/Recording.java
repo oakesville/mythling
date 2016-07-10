@@ -166,4 +166,9 @@ public class Recording extends TvShow {
         int length = getLength();
         return length > 0 && isRecorded();
     }
+
+    // indicates recording scheduled for Live TV
+    private boolean forLiveTv;
+    public boolean isForLiveTv() { return forLiveTv; }
+    public void setForLiveTv(boolean forLiveTv) { this.forLiveTv = forLiveTv; }
 }

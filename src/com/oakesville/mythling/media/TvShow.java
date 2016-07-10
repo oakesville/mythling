@@ -155,9 +155,10 @@ public class TvShow extends Item {
         return tb.toString();
     }
 
+    public static final String LIVE_TV_FORMAT = "Live TV"; // for remembering stream option
     public String getFormat() {
         if (getType() == MediaType.liveTv)
-            return "Live TV"; // for remembering stream option
+            return LIVE_TV_FORMAT;
         else
             return super.getFormat();
     }
