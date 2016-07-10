@@ -102,6 +102,7 @@ public class AppSettings {
     public static final String ARTWORK_SG_FANART = "Fanart";
     public static final String ARTWORK_SG_BANNERS = "Banners";
     public static final String ARTWORK_SG_SCREENSHOTS = "Screenshots";
+    public static final String ARTWORK_NONE = "None";
     public static final String DEFAULT_ARTWORK_SG_RECORDINGS = ARTWORK_SG_SCREENSHOTS;
     public static final String DEFAULT_ARTWORK_SG_VIDEOS = ARTWORK_SG_BANNERS;
     public static final String DEFAULT_ARTWORK_SG_MOVIES = ARTWORK_SG_COVERART;
@@ -109,7 +110,6 @@ public class AppSettings {
     public static final String MUSIC_ART = "music_art";
     public static final String MUSIC_ART_ALBUM = "Album";
     public static final String MUSIC_ART_SONG = "Song";
-    public static final String ARTWORK_NONE = "None";
     public static final String INTERNAL_VIDEO_RES = "internal_video_res";
     public static final String EXTERNAL_VIDEO_RES = "external_video_res";
     public static final String INTERNAL_VIDEO_BITRATE = "internal_video_bitrate";
