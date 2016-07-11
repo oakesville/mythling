@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.StringTokenizer;
@@ -190,6 +191,11 @@ public class MediaStreamProxy implements Runnable {
             while (isRunning && (readBytes = data.read(buff, 0, buff.length)) != -1) {
                 client.getOutputStream().write(buff, 0, readBytes);
             }
+        } catch (SocketException ex) {
+            Log.e(TAG, "SocketException writing to client", ex);
+            // avoid trying to close (because close() hangs in this situation, and for some reason
+            // libvlc breaks the first connection when attempting to write, but second succeeds)
+            data = null;
         } finally {
             if (data != null)
                 data.close();
