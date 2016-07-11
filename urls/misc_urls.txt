@@ -3,7 +3,7 @@ https://play.google.com/store/apps/details?id=com.oakesville.mythling
 
 tester install:
 https://play.google.com/apps/testing/com.oakesville.mythling
-(google group e-mail: mythling-users@googlegroups.com)
+(google group e-mail: mythling-users@googlegroups.com -- but open testing now)
 
 mythling issues:
 https://github.com/oakesville/mythling/issues
