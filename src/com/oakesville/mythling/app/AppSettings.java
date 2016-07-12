@@ -771,7 +771,7 @@ public class AppSettings {
     }
 
     public String getMusicArt() {
-        return getStringPref(MUSIC_ART, MUSIC_ART_ALBUM);
+        return getStringPref(MUSIC_ART, ARTWORK_NONE);
     }
     public boolean isMusicArtAlbum() {
         String art = getMusicArt();
