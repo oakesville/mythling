@@ -55,7 +55,7 @@
             android:title="@string/title_music_art_key"
             android:entries="@array/music_art_entries"
             android:entryValues="@array/music_art_values"
-            android:defaultValue="@string/music_art_album"
+            android:defaultValue="@string/artwork_none"
             android:layout="@layout/pref" />
     </PreferenceCategory>
 
