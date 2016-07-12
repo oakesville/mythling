@@ -493,6 +493,7 @@
     <string name="duration_mismatch_suggest">Duration mismatch.  Seek may be inaccurate (consider setting Seek Correction Tolerance > 0).</string>
     <string name="socket_timeout_after_">Socket timeout after\u0020</string>
     <string name="socket_timeout_suggest">Consider changing settings: System > HTTP > Read Timeout.</string>
+    <string name="music_storage_group_required">Storage Group: \u0022Music\u0022 required for Mythling music listings.</string>
     <!-- these words are stripped from the beginning of titles when sorting -->
     <string-array name="leading_articles">
         <item>A</item>

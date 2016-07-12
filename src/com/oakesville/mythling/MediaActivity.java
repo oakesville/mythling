@@ -1226,6 +1226,7 @@ public abstract class MediaActivity extends Activity {
         private String storageGroupsJson;
 
         private Exception ex;
+        private String msg;
 
         protected Long doInBackground(URL... urls) {
             Long before = null;
@@ -1246,6 +1247,10 @@ public abstract class MediaActivity extends Activity {
                 HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
                 storageGroupsJson = new String(sgDownloader.get());
                 storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();
+                if (mediaSettings.getType() == MediaType.music && storageGroups.get(appSettings.getMusicStorageGroup()) == null) {
+                    msg = getString(R.string.music_storage_group_required);
+                    return -1L;
+                }
 
                 MediaListParser mediaListParser = getAppSettings().getMediaListParser(mediaListJson);
                 if (getAppSettings().isMythlingMediaServices()) {
@@ -1313,6 +1318,8 @@ public abstract class MediaActivity extends Activity {
                 });
                 if (ex != null)
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
+                else if (msg != null)
+                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
             } else {
                 AppData appData = new AppData(getApplicationContext());
                 appData.setMediaList(mediaList);
