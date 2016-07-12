@@ -1247,7 +1247,8 @@ public abstract class MediaActivity extends Activity {
                 HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
                 storageGroupsJson = new String(sgDownloader.get());
                 storageGroups = new MythTvParser(getAppSettings(), storageGroupsJson).parseStorageGroups();
-                if (mediaSettings.getType() == MediaType.music && storageGroups.get(appSettings.getMusicStorageGroup()) == null) {
+                if (mediaSettings.getType() == MediaType.music && storageGroups.get(appSettings.getMusicStorageGroup()) == null
+                        && !appSettings.isMythlingMediaServices()) {
                     msg = getString(R.string.music_storage_group_required);
                     return -1L;
                 }
