@@ -210,6 +210,7 @@ public class MythTvParser implements MediaListParser {
         } else if (mediaType == MediaType.music) {
             JSONArray strList = list.getJSONArray("StringList");
             mediaList.setCount(strList.length());
+            StorageGroup musicStorageGroup = storageGroups.get(appSettings.getMusicStorageGroup());
             Map<String,String> dirToAlbumArt = null;
             if (appSettings.isMusicArtAlbum())
                 dirToAlbumArt = new HashMap<String,String>();
@@ -217,7 +218,7 @@ public class MythTvParser implements MediaListParser {
                 String filepath = strList.getString(i);
                 int lastSlash = filepath.lastIndexOf('/');
                 String filename = filepath;
-                String path = null;
+                String path = "";
                 if (lastSlash > 0 && filepath.length() > lastSlash + 1) {
                     filename = filepath.substring(lastSlash + 1);
                     path = filepath.substring(0, lastSlash);
@@ -245,7 +246,7 @@ public class MythTvParser implements MediaListParser {
                     song.setPath(path);
                     song.setFileBase(path + "/" + title);
                     song.setFormat(format);
-                    song.setStorageGroup(storageGroups.get(appSettings.getMusicStorageGroup()));
+                    song.setStorageGroup(musicStorageGroup);
                     mediaList.addItemUnderPathCategory(song);
                 }
             }
@@ -257,7 +258,6 @@ public class MythTvParser implements MediaListParser {
                         ((Song)item).setAlbumArt(art);
                 }
             }
-
         }
         if (sortType != null) {
             startTime = System.currentTimeMillis();
