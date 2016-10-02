@@ -34,6 +34,9 @@
                     android:id="@+id/media_recordings"
                     android:title="@string/menu_recordings" />
                 <item
+                    android:id="@+id/media_tv"
+                    android:title="@string/menu_tv" />
+                <item
                     android:id="@+id/media_videos"
                     android:title="@string/menu_videos" />
                 <item
