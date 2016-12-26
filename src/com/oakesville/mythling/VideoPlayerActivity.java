@@ -806,14 +806,16 @@ public class VideoPlayerActivity extends Activity {
             specialKeys.add(code);
             if (specialKeys.size() == 3) {
                 if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_UP && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_UP) {
-                    setSeekCorrectionTolerance(3);
-                    setAutoSkip(AppSettings.AUTO_SKIP_ON);
+                    if (AppSettings.AUTO_SKIP_ON.equals(appSettings.getAutoSkip())) {
+                        setSeekCorrectionTolerance(0);
+                        setAutoSkip(AppSettings.AUTO_SKIP_OFF);
+                    }
+                    else {
+                        setSeekCorrectionTolerance(3);
+                        setAutoSkip(AppSettings.AUTO_SKIP_ON);
+                    }
                 }
                 else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    setSeekCorrectionTolerance(0);
-                    setAutoSkip(AppSettings.AUTO_SKIP_OFF);
-                }
-                else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_RIGHT && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_RIGHT) {
                     nextAudioTrack();
                 }
             }

@@ -382,7 +382,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
             if (nextTrackIndex >= 0) {
                 audioTrackIndex = nextTrackIndex;
                 selectTrack(audioTrackIndex);
-                return infos[audioTrackIndex].toString();
+                return String.valueOf(audioTrackIndex);
             }
         }
         return null;
