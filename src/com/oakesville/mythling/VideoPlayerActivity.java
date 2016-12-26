@@ -349,6 +349,16 @@ public class VideoPlayerActivity extends Activity {
         }
     }
 
+    /**
+     * TODO: remember last selection for this channel
+     * TODO: way to invoke on non-FireTV device
+     */
+    private void nextAudioTrack() {
+        String track = mediaPlayer.nextAudioTrack();
+        if (track != null)
+            Toast.makeText(getApplicationContext(), "Playing audio track: " + track , Toast.LENGTH_SHORT).show();
+    }
+
     protected String getNotSeekableMessage() {
         String msg = getString(R.string.media_not_seekable);
         if (mediaPlayer.isProxying())
@@ -802,6 +812,9 @@ public class VideoPlayerActivity extends Activity {
                 else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_DOWN && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_DOWN) {
                     setSeekCorrectionTolerance(0);
                     setAutoSkip(AppSettings.AUTO_SKIP_OFF);
+                }
+                else if (specialKeys.get(1) == KeyEvent.KEYCODE_DPAD_RIGHT && specialKeys.get(2) == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    nextAudioTrack();
                 }
             }
             specialKeyHandler.postDelayed(specialKeyAction, 1000);

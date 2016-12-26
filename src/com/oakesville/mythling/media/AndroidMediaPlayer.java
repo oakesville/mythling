@@ -42,6 +42,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
     private boolean durationMismatch;
     public boolean isDurationMismatch() { return durationMismatch; }
     private MediaStreamProxy proxy;
+    private int audioTrackIndex = -1;
 
     private int itemLength; // seconds
     public int getItemLength() {
@@ -361,6 +362,32 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     };
 
+    /**
+     * null indicates no audio tracks or unknown current
+     */
+    public String nextAudioTrack() {
+        if (audioTrackIndex >= 0) {
+            int nextTrackIndex = -1;
+            TrackInfo[] infos = getTrackInfo();
+            for (int i = 0; i < infos.length; i++) {
+                if (infos[i].getTrackType() == TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                    if (nextTrackIndex == -1)
+                        nextTrackIndex = i;
+                    if (i > audioTrackIndex) {
+                        nextTrackIndex = i;
+                        break;
+                    }
+                }
+            }
+            if (nextTrackIndex >= 0) {
+                audioTrackIndex = nextTrackIndex;
+                selectTrack(audioTrackIndex);
+                return infos[audioTrackIndex].toString();
+            }
+        }
+        return null;
+    }
+
     private boolean released;
 
     @Override
@@ -458,6 +485,13 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         public boolean onInfo(android.media.MediaPlayer mp, int what, int extra) {
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "INFO: what: " + what + ", extra: " + extra);
+            TrackInfo[] trackInfos = mp.getTrackInfo();
+            for (int i = 0; i < trackInfos.length; i++) {
+                if (trackInfos[i].getTrackType() == TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                    audioTrackIndex = i;
+                    break;
+                }
+            }
             return false;
         }
 

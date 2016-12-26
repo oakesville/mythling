@@ -144,8 +144,11 @@ public class MythTvParser implements MediaListParser {
 
                 if (type == mediaType) {
                     try {
-                        mediaList.addItemUnderPathCategory(buildVideoItem(type, vid, storageGroups));
-                        count++;
+                        Video video = buildVideoItem(type, vid, storageGroups);
+                        if (video != null) {
+                            mediaList.addItemUnderPathCategory(video);
+                            count++;
+                        }
                     }
                     catch (NumberFormatException ex) {
                         Log.e(TAG, "NumberFormatException for " + type + " at index: " + count);
@@ -293,6 +296,12 @@ public class MythTvParser implements MediaListParser {
 
         String filename = vid.getString("FileName");
         int lastdot = filename.lastIndexOf('.');
+        if (lastdot == -1) {
+            Log.e(TAG, "Bad filename (missing ext): " + filename);
+            item.setFileBase(filename);
+            return null;
+        }
+
         item.setFileBase(filename.substring(0, lastdot));
         item.setFormat(filename.substring(lastdot + 1));
         if (storageGroups != null)

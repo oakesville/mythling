@@ -117,6 +117,8 @@ public interface MediaPlayer {
 
     public int getPlayRate();
 
+    public String nextAudioTrack();
+
     /**
      * Release player and associated native stuff.
      */

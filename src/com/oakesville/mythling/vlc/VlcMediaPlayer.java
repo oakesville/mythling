@@ -481,6 +481,34 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         }
     };
 
+    /**
+     * null indicates no audio tracks or unknown current
+     */
+    public String nextAudioTrack() {
+        int curId = getAudioTrack();
+        int curIdx = -1;
+        TrackDescription[] descriptions = getAudioTracks();
+        for (int i = 0; i < descriptions.length; i++) {
+            if (descriptions[i].id == curId) {
+                curIdx = i;
+                break;
+            }
+        }
+
+        if (curIdx >= 0) {
+            TrackDescription nextDescription;
+            if (curIdx == descriptions.length - 1)
+                nextDescription = descriptions[0];
+            else
+                nextDescription = descriptions[curIdx + 1];
+            if (setAudioTrack(nextDescription.id))
+                return nextDescription.name;
+            else
+                return String.valueOf(curId);
+        }
+        return null;
+    }
+
     private MediaPlayerEventListener eventListener;
     public void setMediaPlayerEventListener(MediaPlayerEventListener listener) {
         this.eventListener = listener;
