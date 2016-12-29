@@ -356,7 +356,7 @@ public class VideoPlayerActivity extends Activity {
     private void nextAudioTrack() {
         String track = mediaPlayer.nextAudioTrack();
         if (track != null)
-            Toast.makeText(getApplicationContext(), "Playing audio track: " + track , Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.playing_audio_track_) + track , Toast.LENGTH_SHORT).show();
     }
 
     protected String getNotSeekableMessage() {

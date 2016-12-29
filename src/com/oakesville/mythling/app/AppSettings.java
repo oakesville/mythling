@@ -176,7 +176,7 @@ public class AppSettings {
     public static final String EXTERNAL_VIDEO_QUALITY = "external_video_quality";
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
-    public static final String EXTERNAL_STORAGE_DIRECTORY = "mythling";
+    public static final String EXTERNAL_MEDIA_DIR = "external_media_dir";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -908,6 +908,7 @@ public class AppSettings {
 
     public void clearMediaSettings() {
         mediaSettings = null;
+        setExternalMediaDir("");
     }
 
     public boolean setMediaType(MediaType mediaType) {
@@ -1091,6 +1092,14 @@ public class AppSettings {
 
     public int getServiceProxyPort() {
         return serviceProxyPort;
+    }
+
+    public String getExternalMediaDir() {
+        return getStringPref(EXTERNAL_MEDIA_DIR, "");
+    }
+
+    public void setExternalMediaDir(String dir) {
+        setStringPref(EXTERNAL_MEDIA_DIR, dir);
     }
 
     public static final String IPADDRESS_PATTERN =
@@ -1478,7 +1487,4 @@ public class AppSettings {
         return px;
     }
 
-    public static String getExternalStorageDir() {
-        return EXTERNAL_STORAGE_DIRECTORY;
-    }
 }

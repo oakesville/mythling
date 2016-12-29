@@ -896,15 +896,60 @@ public abstract class MediaActivity extends Activity {
             String downloadFilePath = null;
             try {
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-                    File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                    if (downloadDir.exists()) {
-                        String downloadPath = AppSettings.getExternalStorageDir() + "/";
+                    File downloadDir = null;
+                    try {
+                        Context.class.getMethod("getExternalMediaDirs", (Class<?>[])null);
+                        File[] dirs = getApplicationContext().getExternalMediaDirs();
+                        String storageDirName = getString(R.string.storage_dir);
+                        if (dirs.length >= 1) {
+                            Map<String,File> mediaDirs = new HashMap<String,File>();
+                            for (int i = 0; i < dirs.length; i++) {
+                                if (dirs[i] != null) { // entry can be null if storage not attached
+                                    String label = dirs[i].toString();
+                                    if (label.startsWith(storageDirName))
+                                        label = label.substring(storageDirName.length());
+                                    mediaDirs.put(label, dirs[i]);
+                                }
+                            }
+                            File dl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/mythling");
+                            String dlLabel = dl.toString();
+                            if (dlLabel.startsWith(storageDirName))
+                                dlLabel = dlLabel.substring(storageDirName.length());
+                            if (!mediaDirs.containsKey(dlLabel))
+                                mediaDirs.put(dlLabel, dl);
+                            if (mediaDirs.size() == 1)
+                                downloadDir = mediaDirs.values().iterator().next();
+                            else
+                                downloadDir = mediaDirs.get(getAppSettings().getExternalMediaDir());
+
+                            if (downloadDir == null) {
+                                final String[] labels = mediaDirs.keySet().toArray(new String[0]);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                                builder.setTitle(getString(R.string.save_to_media_folder))
+                                       .setItems(labels, new DialogInterface.OnClickListener() {
+                                           public void onClick(DialogInterface dialog, int which) {
+                                               getAppSettings().setExternalMediaDir(labels[which].toString());
+                                               downloadItem(item);
+                                       }
+                                }).show();
+                                return;
+                            }
+                        }
+                    }
+                    catch (NoSuchMethodException ex) {
+                        // not supported by android version
+                        downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/mythling");
+                    }
+
+                    if (downloadDir != null) {
+                        String downloadPath = "/";
                         if (getPath() != null && !getPath().isEmpty() && !getPath().equals("/"))
                             downloadPath += getPath() + "/";
-                        File destDir = new File(downloadDir + "/" + downloadPath);
+                        File destDir = new File(downloadDir + downloadPath);
                         if (destDir.isDirectory() || destDir.mkdirs()) {
-                            downloadFilePath = downloadPath + item.getDownloadFilename();
-                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadFilePath);
+                            File downloadFile = new File(destDir + "/" + item.getDownloadFilename());
+                            Log.i(TAG, "Downloading to file: " + downloadFile);
+                            request.setDestinationUri(Uri.fromFile(downloadFile));
                             request.allowScanningByMediaScanner();
                         }
                     }

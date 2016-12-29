@@ -15,15 +15,15 @@
  */
 package com.oakesville.mythling.prefs;
 
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import android.app.AlertDialog;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
 
 public class CachingPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,8 @@ public class CachingPrefs extends PreferenceFragment {
                 Editor ed = pref.getEditor();
                 ed.putLong(AppSettings.LAST_LOAD, 0);
                 ed.commit();
+                // also clear media storage location
+                new AppSettings(getPreferenceScreen().getContext()).setExternalMediaDir("");
 
                 new AlertDialog.Builder(getPreferenceScreen().getContext())
                         .setIcon(android.R.drawable.ic_dialog_info)
