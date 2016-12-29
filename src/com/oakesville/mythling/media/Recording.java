@@ -117,7 +117,7 @@ public class Recording extends TvShow {
 
     public String getDownloadFilename() {
         try {
-            return getTitle() + " " + getStartDateTimeFormatted() + "." + getFormat();
+            return getTitle() + " " + getStartDateTimeFormatted().replaceAll(":", "") + "." + getFormat();
         }
         catch (ParseException ex) {
             return super.getDownloadFilename();
