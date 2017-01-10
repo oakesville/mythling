@@ -26,10 +26,10 @@ import org.json.JSONObject;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppResources;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
 
 import android.net.Uri;
 import android.util.Log;
+import io.oakesville.media.MediaSettings.MediaType;
 
 public class PlaybackOptions {
     private static final String TAG = PlaybackOptions.class.getSimpleName();

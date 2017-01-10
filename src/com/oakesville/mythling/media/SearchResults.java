@@ -23,6 +23,11 @@ import java.util.Map;
 
 import com.oakesville.mythling.app.Localizer;
 
+import io.oakesville.media.Download;
+import io.oakesville.media.Item;
+import io.oakesville.media.Recording;
+import io.oakesville.media.StorageGroup;
+
 public class SearchResults {
 
     private String mythTvVersion = "Unknown";

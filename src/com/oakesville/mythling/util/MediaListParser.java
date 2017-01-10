@@ -21,8 +21,9 @@ import java.util.Map;
 import org.json.JSONException;
 
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.StorageGroup;
+
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.StorageGroup;
 
 public interface MediaListParser {
     public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups)

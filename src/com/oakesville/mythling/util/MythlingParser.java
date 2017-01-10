@@ -27,21 +27,21 @@ import org.json.JSONObject;
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Category;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.Movie;
-import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.media.Song;
-import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.media.TvEpisode;
-import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.Video;
 
 import android.util.Log;
+import io.oakesville.media.Category;
+import io.oakesville.media.Item;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.SortType;
+import io.oakesville.media.Movie;
+import io.oakesville.media.Recording;
+import io.oakesville.media.Song;
+import io.oakesville.media.StorageGroup;
+import io.oakesville.media.TvEpisode;
+import io.oakesville.media.TvShow;
+import io.oakesville.media.Video;
 
 /**
  * Artist and title may be reversed for some folks
@@ -277,7 +277,7 @@ public class MythlingParser implements MediaListParser {
         if (jsonObj.has("airdate")) {
             String ad = jsonObj.getString("airdate");
             if (ad.length() == 4) // year only (for movies)
-                item.setOriginallyAired(Localizer.getYearFormat().parse(ad));
+                item.setOriginallyAired(Localizer.getInstance().getYearFormat().parse(ad));
             else
                 item.setOriginallyAired(Localizer.SERVICE_DATE_FORMAT.parse(ad));
         }

@@ -16,9 +16,6 @@
 package com.oakesville.mythling;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.Recording;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -35,6 +32,9 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.Recording;
 
 public class ItemListFragment extends ListFragment {
 

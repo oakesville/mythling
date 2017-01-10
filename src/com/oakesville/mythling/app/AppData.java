@@ -32,14 +32,8 @@ import org.json.JSONObject;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
-import com.oakesville.mythling.media.ChannelGroup;
-import com.oakesville.mythling.media.Cut;
-import com.oakesville.mythling.media.Download;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
@@ -53,6 +47,12 @@ import android.util.Log;
 import android.util.LruCache;
 import android.view.Display;
 import android.view.WindowManager;
+import io.oakesville.media.ChannelGroup;
+import io.oakesville.media.Cut;
+import io.oakesville.media.Download;
+import io.oakesville.media.Item;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.StorageGroup;
 
 public class AppData {
     private static final String TAG = AppData.class.getSimpleName();

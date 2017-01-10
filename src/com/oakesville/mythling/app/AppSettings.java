@@ -28,13 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oakesville.mythling.R;
-import com.oakesville.mythling.media.MediaSettings;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.PlaybackOptions;
-import com.oakesville.mythling.media.Song;
 import com.oakesville.mythling.prefs.DevicePrefsSpec;
 import com.oakesville.mythling.prefs.firetv.FireTvPrefsSpec;
 import com.oakesville.mythling.util.HttpHelper;
@@ -58,10 +52,17 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
+import io.oakesville.media.MediaSettings;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.MediaTypeDeterminer;
+import io.oakesville.media.MediaSettings.SortType;
+import io.oakesville.media.MediaSettings.ViewType;
+import io.oakesville.media.Song;
 
 public class AppSettings {
     private static final String TAG = AppSettings.class.getSimpleName();
 
+    public static final String PACKAGE = "com.oakesville.mythling";
     public static final String DEVICE_PLAYBACK_CATEGORY_VIDEO = "device_playback_cat_video";
     public static final String DEVICE_PLAYBACK_CATEGORY_MUSIC = "device_playback_cat_music";
     public static final String FRONTEND_PLAYBACK_CATEGORY = "frontend_playback_cat";
@@ -208,8 +209,8 @@ public class AppSettings {
         // initialize mythling version for static access
         getMythlingVersion();
         // initialize localizer
-        if (!Localizer.isInitialized())
-            Localizer.initialize(this);
+        if (!Localizer.getInstance().isInitialized())
+            Localizer.getInstance().initialize(this);
     }
 
     public URL getMythlingWebBaseUrl() throws MalformedURLException {

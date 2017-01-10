@@ -22,11 +22,7 @@ import org.json.JSONException;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.util.Reporter;
 
 import android.app.Fragment;
@@ -47,6 +43,10 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.SortType;
 
 /**
  * Activity for side-scrolling through paged detail views of MythTV media w/artwork.

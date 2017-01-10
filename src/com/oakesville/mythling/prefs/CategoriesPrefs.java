@@ -18,12 +18,12 @@ package com.oakesville.mythling.prefs;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.MediaSettings;
-import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
 
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import io.oakesville.media.MediaSettings;
+import io.oakesville.media.MediaSettings.MediaTypeDeterminer;
 
 public class CategoriesPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {

@@ -20,10 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.media.StorageGroup;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.MythlingParser;
@@ -43,6 +40,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.StorageGroup;
 
 public class SearchActivity extends MediaActivity {
     private static final String TAG = SearchActivity.class.getSimpleName();

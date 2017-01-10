@@ -25,11 +25,11 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.LiveStreamInfo;
-import com.oakesville.mythling.media.Recording;
 
 import android.util.Log;
+import io.oakesville.media.Item;
+import io.oakesville.media.LiveStreamInfo;
+import io.oakesville.media.Recording;
 
 public class Transcoder {
     private static final String TAG = Transcoder.class.getSimpleName();

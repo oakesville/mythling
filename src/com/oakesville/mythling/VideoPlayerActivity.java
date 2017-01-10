@@ -23,15 +23,12 @@ import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.AndroidMediaPlayer;
-import com.oakesville.mythling.media.Cut;
-import com.oakesville.mythling.media.Download;
 import com.oakesville.mythling.media.MediaPlayer;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEvent;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerEventType;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerLayoutChangeListener;
 import com.oakesville.mythling.media.MediaPlayer.MediaPlayerShiftListener;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
@@ -62,6 +59,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.oakesville.media.Cut;
+import io.oakesville.media.Download;
+import io.oakesville.media.MediaSettings.MediaType;
 
 public class VideoPlayerActivity extends Activity {
 

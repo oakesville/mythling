@@ -1,6 +1,7 @@
 package com.oakesville.mythling;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 public class SwipeListener implements OnTouchListener {
+
+    private static final String TAG = SwipeListener.class.getSimpleName();
 
     private final GestureDetector gestureDetector;
 
@@ -55,8 +58,8 @@ public class SwipeListener implements OnTouchListener {
                     }
                     result = true;
 
-            } catch (Exception exception) {
-                exception.printStackTrace();
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage(), ex);
             }
             return result;
         }

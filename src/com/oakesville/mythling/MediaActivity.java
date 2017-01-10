@@ -44,23 +44,10 @@ import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.AllTunersInUseException;
-import com.oakesville.mythling.media.Category;
-import com.oakesville.mythling.media.Cut;
-import com.oakesville.mythling.media.Download;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.LiveStreamInfo;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
-import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.prefs.PrefDismissDialog.PrefDismissListener;
 import com.oakesville.mythling.prefs.PrefsActivity;
@@ -90,6 +77,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -114,6 +102,19 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import io.oakesville.media.Category;
+import io.oakesville.media.Cut;
+import io.oakesville.media.Download;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.LiveStreamInfo;
+import io.oakesville.media.MediaSettings;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.SortType;
+import io.oakesville.media.MediaSettings.ViewType;
+import io.oakesville.media.Recording;
+import io.oakesville.media.StorageGroup;
+import io.oakesville.media.TvShow;
 
 /**
  * Base class for the different ways to view collections of MythTV media.
@@ -325,9 +326,9 @@ public abstract class MediaActivity extends Activity {
         mediaMenuItem = menu.findItem(R.id.menu_media);
         if (mediaMenuItem != null) {
             if (mediaList != null)
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(mediaSettings.getType()) + " (" + mediaList.getCount() + ")");
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(mediaSettings.getType()) + " (" + mediaList.getCount() + ")");
             else
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(mediaSettings.getType()));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(mediaSettings.getType()));
             if (mediaSettings.isMusic())
                 mediaMenuItem.getSubMenu().findItem(R.id.media_music).setChecked(true);
             else if (mediaSettings.isLiveTv())
@@ -403,7 +404,7 @@ public abstract class MediaActivity extends Activity {
         if (viewMenuItem != null) {
             MediaSettings mediaSettings = appSettings.getMediaSettings();
             if (show) {
-                viewMenuItem.setIcon(mediaSettings.getViewIcon());
+                viewMenuItem.setIcon(getViewIcon());
                 if (mediaSettings.getViewType() == ViewType.detail)
                     viewMenuItem.getSubMenu().findItem(R.id.view_detail).setChecked(true);
                 else if (mediaSettings.getViewType() == ViewType.split)
@@ -417,6 +418,12 @@ public abstract class MediaActivity extends Activity {
         }
     }
 
+    private Drawable getViewIcon() {
+        return getResources().getDrawable(getResources().getIdentifier(
+                "ic_menu_" + appSettings.getMediaSettings().getViewIcon(),
+                "drawable", AppSettings.PACKAGE));
+    }
+
     protected void showMythwebMenu(boolean show) {
         if (mythwebMenuItem != null) {
             mythwebMenuItem.setEnabled(show);
@@ -428,7 +435,7 @@ public abstract class MediaActivity extends Activity {
         if (sortMenuItem != null) {
             if (show) {
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
-                sortMenuItem.setTitle(Localizer.getSortLabel(mediaSettings.getSortType()));
+                sortMenuItem.setTitle(Localizer.getInstance().getSortLabel(mediaSettings.getSortType()));
                 boolean isLiveTv = mediaSettings.getType() == MediaType.liveTv;
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setVisible(!isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setVisible(!isLiveTv);
@@ -524,15 +531,15 @@ public abstract class MediaActivity extends Activity {
         }
         try {
             if (sortMenuItem != null)
-                sortMenuItem.setTitle(Localizer.getSortLabel(appSettings.getMediaSettings().getSortType()));
+                sortMenuItem.setTitle(Localizer.getInstance().getSortLabel(appSettings.getMediaSettings().getSortType()));
             if (viewMenuItem != null)
-                viewMenuItem.setIcon(appSettings.getMediaSettings().getViewIcon());
+                viewMenuItem.setIcon(getViewIcon());
 
             if (item.getItemId() == R.id.media_music) {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.music);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.music));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.music));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -545,7 +552,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.videos);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.videos));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.videos));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -558,7 +565,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.recordings);  // clears view type
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.recordings));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.recordings));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -571,7 +578,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.liveTv);  // clears view type
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.liveTv));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.liveTv));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -584,7 +591,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.movies);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.movies));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.movies));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -597,7 +604,7 @@ public abstract class MediaActivity extends Activity {
                 ViewType oldView = appSettings.getMediaSettings().getViewType();
                 appSettings.setMediaType(MediaType.tvSeries);
                 item.setChecked(true);
-                mediaMenuItem.setTitle(Localizer.getMediaLabel(MediaType.tvSeries));
+                mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(MediaType.tvSeries));
                 showViewMenu(supportsViewMenu());
                 showSortMenu(supportsSort());
                 ViewType newView = appSettings.getMediaSettings().getViewType();
@@ -1248,7 +1255,7 @@ public abstract class MediaActivity extends Activity {
         showSearchMenu(supportsSearch());
 
         if (mediaMenuItem != null)
-            mediaMenuItem.setTitle(Localizer.getMediaLabel(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
+            mediaMenuItem.setTitle(Localizer.getInstance().getMediaLabel(getAppSettings().getMediaSettings().getType()) + " (" + mediaList.getCount() + ")");
 
         showStopMenuItem(isPlayingMusic());
     }

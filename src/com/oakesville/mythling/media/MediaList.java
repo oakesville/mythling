@@ -24,8 +24,14 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
+
+import io.oakesville.media.Category;
+import io.oakesville.media.Download;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.SortType;
+import io.oakesville.media.Recording;
 
 public class MediaList {
 
@@ -50,11 +56,11 @@ public class MediaList {
     }
 
     public String getRetrieveDateDisplay() {
-        return Localizer.getWeekdayDateFormat().format(retrieveDate);
+        return Localizer.getInstance().getWeekdayDateFormat().format(retrieveDate);
     }
 
     public String getRetrieveTimeDisplay() {
-        return Localizer.getTimeFormat().format(retrieveDate);
+        return Localizer.getInstance().getTimeFormat().format(retrieveDate);
     }
 
     private String charSet;

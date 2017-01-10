@@ -16,7 +16,7 @@
 package com.oakesville.mythling.util;
 
 /**
- * Utility for building labes for displaying in TextViews.
+ * Utility for building labels for displaying in TextViews.
  * All append methods check for null and don't append in that case.
  */
 public class TextBuilder {

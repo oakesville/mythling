@@ -29,12 +29,12 @@ import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.TvShow;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+import io.oakesville.media.Item;
+import io.oakesville.media.TvShow;
 
 /**
  * Does not work with video storage groups.  Only used for features not supported by ServiceFrontendPlayer

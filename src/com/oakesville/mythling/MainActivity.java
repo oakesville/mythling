@@ -23,9 +23,7 @@ import org.json.JSONException;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.Listable;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
@@ -38,6 +36,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import io.oakesville.media.Listable;
+import io.oakesville.media.MediaSettings.ViewType;
 
 public class MainActivity extends MediaActivity {
     private static final String TAG = MainActivity.class.getSimpleName();

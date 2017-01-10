@@ -24,13 +24,13 @@ import org.json.JSONException;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Recording;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+import io.oakesville.media.Item;
+import io.oakesville.media.Recording;
 
 public class ServiceFrontendPlayer implements FrontendPlayer {
     private static final String TAG = ServiceFrontendPlayer.class.getSimpleName();

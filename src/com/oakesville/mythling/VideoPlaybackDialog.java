@@ -16,13 +16,8 @@
 package com.oakesville.mythling;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.media.PlaybackOptions;
 import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
-import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.TvShow;
 import com.oakesville.mythling.util.Reporter;
 
 import android.annotation.SuppressLint;
@@ -45,6 +40,11 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.oakesville.media.Item;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.ViewType;
+import io.oakesville.media.Recording;
+import io.oakesville.media.TvShow;
 
 @SuppressLint("ValidFragment")
 public class VideoPlaybackDialog extends DialogFragment {

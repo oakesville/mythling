@@ -22,14 +22,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.ArtworkDescriptor;
-import com.oakesville.mythling.media.Category;
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.TvShow;
-import com.oakesville.mythling.media.Video;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.Reporter;
 
@@ -58,6 +50,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.oakesville.media.ArtworkDescriptor;
+import io.oakesville.media.Category;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.Recording;
+import io.oakesville.media.TvShow;
+import io.oakesville.media.Video;
 
 public class ItemDetailFragment extends Fragment {
 

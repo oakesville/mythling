@@ -22,10 +22,6 @@ import org.json.JSONException;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.media.Listable;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.SortType;
-import com.oakesville.mythling.media.MediaSettings.ViewType;
 import com.oakesville.mythling.util.Reporter;
 
 import android.content.Intent;
@@ -36,6 +32,10 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.oakesville.media.Listable;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.SortType;
+import io.oakesville.media.MediaSettings.ViewType;
 
 /**
  * Displays a list of listables (either categories or items).
@@ -76,7 +76,7 @@ public class MediaListActivity extends MediaActivity {
         else if (ViewType.split.toString().equals(mode))
             goSplitView();
 
-        if (!Localizer.getMediaLabel(MediaType.liveTv).equals(getPath()))
+        if (!Localizer.getInstance().getMediaLabel(MediaType.liveTv).equals(getPath()))
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
         breadCrumbs = (TextView) findViewById(R.id.breadcrumbs);
@@ -125,7 +125,7 @@ public class MediaListActivity extends MediaActivity {
         storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
-        if (Localizer.getMediaLabel(MediaType.liveTv).equals(getPath())) {
+        if (Localizer.getInstance().getMediaLabel(MediaType.liveTv).equals(getPath())) {
             String bc = getString(R.string.tv) + " (" + mediaList.getRetrieveDateDisplay() + " " + mediaList.getRetrieveTimeDisplay() + ")";
             breadCrumbs.setText(bc);
         }

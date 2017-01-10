@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Donald Oakes
+ * Copyright 2016 Donald Oakes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,94 +15,39 @@
  */
 package com.oakesville.mythling.app;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import com.oakesville.mythling.R;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.MediaSettings.MediaTypeDeterminer;
-import com.oakesville.mythling.media.MediaSettings.SortType;
 import com.oakesville.mythling.util.Reporter;
 
 import android.content.Context;
 import android.util.Log;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.MediaSettings.MediaTypeDeterminer;
+import io.oakesville.media.MediaSettings.SortType;
 
 /**
  * Note: initialize() had better have been run before accessing any static methods.
  */
-public class Localizer {
+public class Localizer extends io.oakesville.util.Localizer {
 
     private static final String TAG = Localizer.class.getSimpleName();
 
-    public static final DateFormat SERVICE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    public static final DateFormat SERVICE_DATE_TIME_RAW_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    static {
-        SERVICE_DATE_TIME_RAW_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-    public static final DateFormat SERVICE_DATE_TIME_ZONE_FORMAT = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss Z");
-
-    public static final DateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    static {
-        ISO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-    public static DateFormat getIsoDateFormat() {
-        return ISO_DATE_FORMAT;
+    protected static Localizer create() {
+        return new Localizer();
     }
 
-    private static String[] leadingArticles = new String[] { "A", "An", "The" };
-
-    private static DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
-    public static DateFormat getDateFormat() { return dateFormat; }
-
-    private static DateFormat timeFormat = new SimpleDateFormat("h:mm a");
-    public static DateFormat getTimeFormat() { return timeFormat; }
-    public static String getTimeAbbrev(Date d) {
-        return abbrev(timeFormat.format(d));
+    private AppSettings getAppSettings() {
+        return (AppSettings)getResources();
+    }
+    private Context getAppContext() {
+        return getAppSettings().getAppContext();
     }
 
-    private static DateFormat dateTimeFormat = new SimpleDateFormat("MMM d  h:mm a");
-    public static DateFormat getDateTimeFormat() { return dateTimeFormat; }
-    public static String getDateTimeAbbrev(Date d) {
-        return abbrev(dateTimeFormat.format(d));
-    }
-
-    private static DateFormat dateTimeYearFormat = new SimpleDateFormat("MMM d yyyy  h:mm a");
-    public static DateFormat getDateTimeYearFormat() { return dateTimeYearFormat; }
-    public static String getDateTimeYearAbbrev(Date d) {
-        return abbrev(dateTimeYearFormat.format(d));
-    }
-
-    private static DateFormat weekdayDateFormat = new SimpleDateFormat("EEE, MMM d");
-    public static DateFormat getWeekdayDateFormat() { return weekdayDateFormat; }
-
-    private static DateFormat AM_PM_FORMAT = new SimpleDateFormat("a");
-    private static DateFormat AM_PM_FORMAT_US = new SimpleDateFormat("kk", Locale.US);
-    private static String am = "AM";
-    private static String pm = "PM";
-    private static String abbrevAm = "a";
-    private static String abbrevPm = "p";
-    private static String abbrev(String in) {
-        return in.replace(" " + am, abbrevAm).replace(" " + pm, abbrevPm);
-    }
-
-    private static DateFormat yearFormat = new SimpleDateFormat("yyyy");
-    public static DateFormat getYearFormat() { return yearFormat; }
-
-    private static AppSettings appSettings;
-
-    private static Context getAppContext() {
-        return appSettings.getAppContext();
-    }
-
-    private static boolean initialized;
-    public static boolean isInitialized() { return initialized; }
-
-    public static void initialize(AppSettings appSettings) {
-        Localizer.appSettings = appSettings;
+    @Override
+    public void initialize(Object appSettings) {
         try {
+            super.initialize(appSettings);
             leadingArticles = getAppContext().getResources().getStringArray(R.array.leading_articles);
             dateFormat = new SimpleDateFormat(getStringRes(R.string.date_format));
             timeFormat = new SimpleDateFormat(getStringRes(R.string.time_format));
@@ -114,39 +59,25 @@ public class Localizer {
             pm = AM_PM_FORMAT.format(AM_PM_FORMAT_US.parse("12"));
             abbrevAm = getStringRes(R.string.abbrev_am);
             abbrevPm = getStringRes(R.string.abbrev_pm);
-            initialized = true;
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage(), ex);
-            if (appSettings.isErrorReportingEnabled())
+            if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
         }
     }
 
-    public static String stripLeadingArticle(String in) {
-        for (String leadingArticle : leadingArticles) {
-            if (in.startsWith(leadingArticle + " "))
-                return in.substring(leadingArticle.length() + 1);
-        }
-        return in;
+    /**
+     * Note: inefficient.
+     */
+    public String getString(String english) {
+        String resName = english.toLowerCase();
+        if (resName.endsWith(": "))
+            resName = resName.substring(0, resName.length() - 2) + "_";
+        resName.replace(' ', '_');
+        return getAppContext().getResources().getString(getStringResId(resName));
     }
 
-    public static String getStringRes(int resId, String... substs) {
-        String str = getAppContext().getString(resId);
-        for (int i = 0; i < substs.length; i++) {
-            str = str.replaceAll("%" + i + "%", substs[i]);
-        }
-        return str;
-    }
-
-    public static String getStringRes(int resId) {
-        return getAppContext().getString(resId);
-    }
-
-    public static String[] getStringArrayRes(int resId) {
-        return getAppContext().getResources().getStringArray(resId);
-    }
-
-    public static String getItemTypeLabel(MediaType mediaType) {
+    public String getItemTypeLabel(MediaType mediaType) {
         if (mediaType == MediaType.music)
             return getStringRes(R.string.song);
         else if (mediaType == MediaType.videos)
@@ -165,7 +96,7 @@ public class Localizer {
             return "";
     }
 
-    public static String getSortLabel(SortType sortType) {
+    public String getSortLabel(SortType sortType) {
         if (sortType == SortType.byDate)
             return getStringRes(R.string.by_date);
         else if (sortType == SortType.byRating)
@@ -178,7 +109,7 @@ public class Localizer {
             return getStringRes(R.string.by_title);
     }
 
-    public static String getMediaLabel(MediaType mediaType) {
+    public String getMediaLabel(MediaType mediaType) {
         if (mediaType == MediaType.music)
             return getStringRes(R.string.menu_music);
         else if (mediaType == MediaType.videos)
@@ -195,15 +126,34 @@ public class Localizer {
             return "";
     }
 
-    public static String getTypeDeterminerLabel(MediaTypeDeterminer typeDeterminer) {
-        if (MediaTypeDeterminer.metadata == typeDeterminer)
-            return getStringRes(R.string.cat_metadata);
-        else if (MediaTypeDeterminer.directories == typeDeterminer)
-            return getStringRes(R.string.cat_directories);
-        else if (MediaTypeDeterminer.none == typeDeterminer)
-            return getStringRes(R.string.cat_none);
-        else
-            return null;
+    /**
+     * Note: inefficient.
+     */
+    public int getStringResId(String name) {
+        return getAppContext().getResources().getIdentifier(name, "string", AppSettings.PACKAGE);
+    }
+
+    /**
+     * Casts as the Android-specific instance where needed.
+     */
+    public static Localizer get() {
+        return (Localizer) getInstance();
+    }
+
+    public static String getStringRes(int resId) {
+        return get().getAppContext().getString(resId);
+    }
+
+    public static String[] getStringArrayRes(int resId) {
+        return get().getAppContext().getResources().getStringArray(resId);
+    }
+
+    public static String getStringRes(int resId, String... substs) {
+        String str = get().getAppContext().getString(resId);
+        for (int i = 0; i < substs.length; i++) {
+            str = str.replaceAll("%" + i + "%", substs[i]);
+        }
+        return str;
     }
 
     public static String getStringArrayEntry(int valuesResId, int entriesResId, String value) {
@@ -215,4 +165,16 @@ public class Localizer {
         }
         return null;
     }
- }
+
+    public static String getTypeDeterminerLabel(MediaTypeDeterminer typeDeterminer) {
+        if (MediaTypeDeterminer.metadata == typeDeterminer)
+            return getStringRes(R.string.cat_metadata);
+        else if (MediaTypeDeterminer.directories == typeDeterminer)
+            return getStringRes(R.string.cat_directories);
+        else if (MediaTypeDeterminer.none == typeDeterminer)
+            return getStringRes(R.string.cat_none);
+        else
+            return null;
+    }
+
+}

@@ -30,7 +30,6 @@ import java.util.Map;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.media.ChannelGroup;
 import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.Reporter;
@@ -50,6 +49,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+import io.oakesville.media.ChannelGroup;
 
 public class EpgActivity extends WebViewActivity {
     private static final String TAG = EpgActivity.class.getSimpleName();

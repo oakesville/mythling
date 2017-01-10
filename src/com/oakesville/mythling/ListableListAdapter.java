@@ -15,8 +15,10 @@
  */
 package com.oakesville.mythling;
 
-import com.oakesville.mythling.media.Item;
-import com.oakesville.mythling.media.Listable;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.oakesville.mythling.app.AppSettings;
 
 import android.content.Context;
 import android.view.View;
@@ -25,6 +27,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import io.oakesville.media.Item;
+import io.oakesville.media.Listable;
 
 public class ListableListAdapter extends ArrayAdapter<Listable> {
 
@@ -39,6 +43,8 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
         this.isTv = isTv;
     }
 
+    private Map<String,Integer> iconToResId = new HashMap<String,Integer>();
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = super.getView(position, convertView, parent);
@@ -47,8 +53,11 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
         Listable listable = getItem(position);
 
         // icon
-        int imageRes = listable.getIconResourceId();
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.item_icon);
+        Integer imageRes = iconToResId.get(listable.getIcon());
+        if (imageRes == null) {
+            imageRes = getContext().getResources().getIdentifier("ic_" + listable.getIcon(), "drawable", AppSettings.PACKAGE);
+        }
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.item_icon);
         if (imageRes == 0) {
             imageView.setVisibility(View.GONE);
         } else {

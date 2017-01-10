@@ -30,14 +30,14 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.app.Localizer;
 import com.oakesville.mythling.media.AllTunersInUseException;
-import com.oakesville.mythling.media.Item;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.MediaSettings.MediaType;
-import com.oakesville.mythling.media.Recording;
-import com.oakesville.mythling.media.StorageGroup;
-import com.oakesville.mythling.media.TvShow;
 
 import android.util.Log;
+import io.oakesville.media.Item;
+import io.oakesville.media.MediaSettings.MediaType;
+import io.oakesville.media.Recording;
+import io.oakesville.media.StorageGroup;
+import io.oakesville.media.TvShow;
 
 public class Recorder {
     private static final String TAG = Recorder.class.getSimpleName();
