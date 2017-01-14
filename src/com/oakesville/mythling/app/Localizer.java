@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Donald Oakes
+ * Copyright 2017 Donald Oakes
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,15 @@ public class Localizer extends io.oakesville.util.Localizer {
 
     private static final String TAG = Localizer.class.getSimpleName();
 
-    protected static Localizer create() {
-        return new Localizer();
+    private static Localizer instance;
+    /**
+     * Overridden to return localized ext.
+     */
+    public static Localizer getInstance() {
+        if (instance == null) {
+            instance = new Localizer();
+        }
+        return instance;
     }
 
     private AppSettings getAppSettings() {
@@ -96,6 +103,7 @@ public class Localizer extends io.oakesville.util.Localizer {
             return "";
     }
 
+    @Override
     public String getSortLabel(SortType sortType) {
         if (sortType == SortType.byDate)
             return getStringRes(R.string.by_date);
@@ -137,7 +145,7 @@ public class Localizer extends io.oakesville.util.Localizer {
      * Casts as the Android-specific instance where needed.
      */
     public static Localizer get() {
-        return (Localizer) getInstance();
+        return getInstance();
     }
 
     public static String getStringRes(int resId) {

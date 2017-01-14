@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class SwipeListener implements OnTouchListener {
+public abstract class SwipeListener implements OnTouchListener {
 
     private static final String TAG = SwipeListener.class.getSimpleName();
 
@@ -28,10 +28,10 @@ public class SwipeListener implements OnTouchListener {
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
+//        @Override
+//        public boolean onDown(MotionEvent e) {
+//            return true;
+//        }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -51,9 +51,9 @@ public class SwipeListener implements OnTouchListener {
                 }
                 else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffY > 0) {
-                            onSwipeBottom();
+                            onSwipeDown();
                         } else {
-                            onSwipeTop();
+                            onSwipeUp();
                         }
                     }
                     result = true;
@@ -65,15 +65,8 @@ public class SwipeListener implements OnTouchListener {
         }
     }
 
-    public void onSwipeRight() {
-    }
-
-    public void onSwipeLeft() {
-    }
-
-    public void onSwipeTop() {
-    }
-
-    public void onSwipeBottom() {
-    }
+    abstract void onSwipeLeft();
+    abstract void onSwipeRight();
+    abstract void onSwipeUp();
+    abstract void onSwipeDown();
 }

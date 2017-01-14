@@ -117,6 +117,9 @@ public interface MediaPlayer {
 
     public int getPlayRate();
 
+    public void volumeUp();
+    public void volumeDown();
+
     public String nextAudioTrack();
 
     /**

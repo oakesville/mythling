@@ -362,6 +362,14 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     };
 
+    public void volumeUp() {
+        // TODO
+    }
+
+    public void volumeDown() {
+        // TODO
+    }
+
     /**
      * null indicates no audio tracks or unknown current
      */

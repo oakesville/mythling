@@ -133,6 +133,22 @@ public class VideoPlayerActivity extends Activity {
                 showUi(false);
             }
         });
+        surface.setOnTouchListener(new SwipeListener(getApplicationContext()) {
+            public void onSwipeLeft() {
+                Toast.makeText(getApplicationContext(), "LEFT", Toast.LENGTH_LONG).show();
+            }
+            public void onSwipeRight() {
+                Toast.makeText(getApplicationContext(), "RIGHT", Toast.LENGTH_LONG).show();
+            }
+            public void onSwipeUp() {
+                volumeUp();
+                Toast.makeText(getApplicationContext(), "UP", Toast.LENGTH_LONG).show();
+            }
+            public void onSwipeDown() {
+                volumeDown();
+                Toast.makeText(getApplicationContext(), "DOWN", Toast.LENGTH_LONG).show();
+            }
+        });
 
         surfaceFrame = (FrameLayout) findViewById(R.id.player_surface_frame);
 
@@ -280,7 +296,7 @@ public class VideoPlayerActivity extends Activity {
             Log.e(TAG, ex.getMessage(), ex);
             if (appSettings.isErrorReportingEnabled())
                 new Reporter(ex).send();
-            Toast.makeText(getApplicationContext(), "Error: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -347,6 +363,14 @@ public class VideoPlayerActivity extends Activity {
         else {
             Toast.makeText(getApplicationContext(), getNotSeekableMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void volumeUp() {
+        mediaPlayer.volumeUp();
+    }
+
+    private void volumeDown() {
+        mediaPlayer.volumeDown();
     }
 
     /**

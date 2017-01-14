@@ -481,6 +481,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         }
     };
 
+    public void volumeUp() {
+        setVolume(getVolume() + 1);
+    }
+
+    public void volumeDown() {
+        if (getVolume() > 0)
+            setVolume(getVolume() - 1);
+    }
     /**
      * null indicates no audio tracks or unknown current
      */
