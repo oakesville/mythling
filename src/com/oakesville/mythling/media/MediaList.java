@@ -28,6 +28,7 @@ import com.oakesville.mythling.app.Localizer;
 import io.oakesville.media.Category;
 import io.oakesville.media.Download;
 import io.oakesville.media.Item;
+import io.oakesville.media.ItemComparator;
 import io.oakesville.media.Listable;
 import io.oakesville.media.MediaSettings.MediaType;
 import io.oakesville.media.MediaSettings.SortType;
@@ -213,7 +214,7 @@ public class MediaList {
 
     public void sort(SortType sortType, boolean includeItems) {
         if (includeItems && !items.isEmpty())
-            Collections.sort(items, items.get(0).getComparator(sortType));
+            Collections.sort(items, new ItemComparator(mediaType, sortType, sortType == SortType.byDate || sortType == SortType.byRating));
         Collections.sort(getCategories());
         // the categories themselves are always sorted by title
         for (Category cat : getCategories())

@@ -29,7 +29,7 @@ import io.oakesville.media.MediaSettings.SortType;
 /**
  * Note: initialize() had better have been run before accessing any static methods.
  */
-public class Localizer extends io.oakesville.util.Localizer {
+public class Localizer extends io.oakesville.model.Localizer {
 
     private static final String TAG = Localizer.class.getSimpleName();
 

@@ -47,3 +47,6 @@ amazon webapp tester for firetv:
 https://developer.amazon.com/public/solutions/platforms/webapps/docs/tester.html
 webview remote debugging thru webapp tester:
 http://<firetv_ip>:9222
+
+adt eclipse plugin update site:
+https://dl-ssl.google.com/android/eclipse/
