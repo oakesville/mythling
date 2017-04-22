@@ -82,7 +82,8 @@ public class ItemListFragment extends ListFragment {
         else
             getListView().setPadding(padding, padding, padding, padding);
 
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        if (!mediaActivity.getAppSettings().isFireTv())
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         if (preSelIdx >= 0) {
             // only has effect for Fire TV, which is fine
