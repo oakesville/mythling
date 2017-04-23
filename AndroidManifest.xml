@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2016 Donald Oakes
+  Copyright 2017 Donald Oakes
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="43"
-    android:versionName="2.1.08" >
+    android:versionCode="45"
+    android:versionName="2.1.10" >
 
     <uses-sdk
         android:minSdkVersion="14"
