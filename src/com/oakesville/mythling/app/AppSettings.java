@@ -638,6 +638,12 @@ public class AppSettings {
         return getBooleanPref(EXTERNAL_NETWORK, false);
     }
 
+    public boolean isInternalBackendHostSet() {
+        String host = getStringPref(MYTH_BACKEND_INTERNAL_HOST, "").trim();
+        return !host.isEmpty() && !host.equals(appContext.getResources()
+                .getString(R.string.title_backend_host_));
+    }
+
     public String getInternalBackendHost() {
         String host = getStringPref(MYTH_BACKEND_INTERNAL_HOST, "").trim();
         if (isFireTv()) {
