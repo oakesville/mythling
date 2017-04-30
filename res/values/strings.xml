@@ -48,6 +48,7 @@
     <string name="title_activity_webview">Mythling</string>
     <string name="title_activity_guide">Mythling</string>
     <string name="title_video_player">Video Player</string>
+    <string name="init_setup">Enter your MythTV host</string>
     <string name="title_prefs_playback">Playback</string>
     <string name="summary_prefs_playback">Media player selection and settings</string>
     <string name="title_prefs_network">Network</string>

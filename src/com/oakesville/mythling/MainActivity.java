@@ -52,15 +52,22 @@ public class MainActivity extends MediaActivity {
         super.onCreate(savedInstanceState);
 
         if (getAppSettings().isFirstRun()) {
-            new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle(getString(R.string.setup_required))
-            .setMessage(getString(R.string.access_network_settings))
-            .setPositiveButton(getString(R.string.go_to_settings), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    startActivity(new Intent(MainActivity.this, PrefsActivity.class));
-                }
-            }).show();
+            if (getAppSettings().isFireTv()) {
+                // simplified setup
+                Toast.makeText(getApplicationContext(), getString(R.string.init_setup), Toast.LENGTH_LONG).show();
+                startActivity(new Intent(this, PrefsActivity.class));
+            }
+            else {
+                new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.setup_required))
+                .setMessage(getString(R.string.access_network_settings))
+                .setPositiveButton(getString(R.string.go_to_settings), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(MainActivity.this, PrefsActivity.class));
+                    }
+                }).show();
+            }
         }
 
         setContentView(getAppSettings().isTv() ? R.layout.firetv_split : R.layout.split);
