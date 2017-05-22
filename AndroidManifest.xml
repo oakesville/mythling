@@ -16,8 +16,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="46"
-    android:versionName="2.1.11" >
+    android:versionCode="47"
+    android:versionName="2.1.12" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -44,6 +44,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".WelcomeActivity"
+            android:label="@string/title_activity_welcome" >
         </activity>
         <activity
             android:name=".MediaListActivity"

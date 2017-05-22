@@ -159,7 +159,6 @@ public class AppSettings {
     public static final String EPG_SKIP_INTERVAL = "epg_skip_interval";
     public static final String EPG_LAST_LOAD = "epg_last_load";
     public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
-    public static final String PREFS_INITIALLY_SET = "prefs_initially_set";
     public static final String ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS = "always_prompt_for_playback_options";
     public static final String SAVE_POSITION_ON_EXIT = "save_position_on_exit";
     public static final String PROXY_ANDROID_AUTHENTICATED_PLAYBACK = "proxy_android_authenticated_playback";
@@ -656,6 +655,10 @@ public class AppSettings {
                 host = host.substring(0, colon);
         }
         return host;
+    }
+
+    public void setInternalBackendHost(String host) {
+        setStringPref(MYTH_BACKEND_INTERNAL_HOST, host);
     }
 
     /**
@@ -1478,20 +1481,9 @@ public class AppSettings {
         return prefs.getString(key, deviceDefault);
     }
 
-    /**
-     * returns true only once (when newly installed)
-     */
-    public boolean isFirstRun() {
-        boolean set = prefs.getBoolean(PREFS_INITIALLY_SET, false);
-        if (!set)
-            prefs.edit().putBoolean(PREFS_INITIALLY_SET, true).commit();
-        return !set;
-    }
-
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = appContext.getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
     }
-
 }

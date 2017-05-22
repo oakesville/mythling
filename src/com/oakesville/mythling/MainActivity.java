@@ -23,13 +23,9 @@ import org.json.JSONException;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.BadSettingsException;
 import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.firetv.FireTvFirstRunActivity;
 import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,20 +48,9 @@ public class MainActivity extends MediaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getAppSettings().isFireTv() && !getAppSettings().isInternalBackendHostSet()) {
-            startActivity(new Intent(this, FireTvFirstRunActivity.class));
+        if (!getAppSettings().isInternalBackendHostSet()) {
+            startActivity(new Intent(this, WelcomeActivity.class));
             return;
-        }
-        else if (getAppSettings().isFirstRun()) {
-            new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle(getString(R.string.setup_required))
-            .setMessage(getString(R.string.access_network_settings))
-            .setPositiveButton(getString(R.string.go_to_settings), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    startActivity(new Intent(MainActivity.this, PrefsActivity.class));
-                }
-            }).show();
         }
 
         setContentView(getAppSettings().isTv() ? R.layout.firetv_split : R.layout.split);
@@ -107,6 +92,11 @@ public class MainActivity extends MediaActivity {
 
     @Override
     protected void onResume() {
+        if (!getAppSettings().isInternalBackendHostSet()) {
+            super.onResume();
+            return;
+        }
+
         try {
             if (getAppData() == null || getAppData().isExpired())
                 refresh();
