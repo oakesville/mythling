@@ -35,19 +35,25 @@
         android:largeHeap="true"
         android:theme="@style/MythlingTheme" >
         <activity
+            android:name="LaunchActivity"
+            android:noHistory="true" 
+            android:theme="@style/LaunchTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>        
+        <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_categories" >
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".WelcomeActivity"
-            android:label="@string/title_activity_welcome" >
+            android:label="@string/title_activity_welcome" 
+            android:noHistory="true">
         </activity>
         <activity
             android:name=".MediaListActivity"
