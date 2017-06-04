@@ -46,9 +46,10 @@ public class MainActivity extends MediaActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        if (!getAppSettings().isInternalBackendHostSet()) {
+        if (getAppSettings().isFireTv() && !getAppSettings().isInternalBackendHostSet()) {
             startActivity(new Intent(this, WelcomeActivity.class));
             return;
         }

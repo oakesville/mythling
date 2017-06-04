@@ -2,34 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">  
   <title>Welcome to Mythling</title>
   <link rel="stylesheet" href="css/main.css">
   <script src="js/welcome.js"></script>
 </head>
 <body class="welcome-body">
-  <div class="welcome-title">
-	  <img src="img/icon_120.png" class="welcome-icon">
-  </div>
-  <div class="welcome-main">
-    <div>
-      <img src="img/logo_96.png">
-    </div>
-    <div class="welcome-intro">
-      To get started, enter the hostname or IP address 
-      of your MythTV backend server.
-    </div>
-    <form class="welcome-form">
-      <label>
-        MythTV Backend Host:
-        <div>
-          <input id="backendHost" type="text" autofocus onfocus="showMessage('');" oninput="enableSubmit(this.value)">
-        </div>
-      </label>
-      <div>
-        <button id="submit" type="button" disabled onclick="submitBackendHost();">Let's Go</button>
-      </div>
-      <label id="message"></label>
-    </form>
+  <div class="welcome-content">
+	  <div class="welcome-image">
+		  <div class="welcome-title">
+			  <img src="img/icon_120.png" class="welcome-icon">
+		  </div>
+	  </div>
+	  <div class="welcome-main">
+	    <div>
+	      <img src="img/logo_96.png">
+	    </div>
+	    <div class="welcome-intro">
+	      To get started, enter the hostname or IP address 
+	      of your MythTV backend server.
+	    </div>
+	    <form class="welcome-form">
+	      <label>
+	        MythTV Backend Host:
+	        <div>
+	          <input id="backendHost" type="text" autofocus onfocus="showMessage('');" oninput="enableSubmit(this.value)">
+	        </div>
+	      </label>
+	      <div>
+	        <button id="submit" type="button" disabled onclick="submitBackendHost();">Let's Go</button>
+	      </div>
+	      <div>
+	        <hr>
+	        <label id="message"></label>
+	      </div>
+	    </form>
+	  </div>
   </div>
 </body>
 </html>

@@ -31,6 +31,14 @@ public class WelcomeActivity extends WebViewActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (getAppSettings().isInternalBackendHostSet()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+    }
+
+    @Override
     protected String getUrl() throws UnsupportedEncodingException {
         return WELCOME_PAGE;
     }
