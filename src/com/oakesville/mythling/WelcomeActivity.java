@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.MythTvParser;
 import com.oakesville.mythling.util.Reporter;
 
 import android.content.Intent;
@@ -33,7 +34,7 @@ public class WelcomeActivity extends WebViewActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (getAppSettings().isInternalBackendHostSet()) {
+        if (getAppSettings().isInternalBackendHostVerified()) {
             startActivity(new Intent(this, MainActivity.class));
         }
     }
@@ -65,6 +66,8 @@ public class WelcomeActivity extends WebViewActivity {
                 URL sgUrl = new URL(getAppSettings().getMythTvServicesBaseUrl() + "/Myth/GetStorageGroupDirs");
                 HttpHelper sgDownloader = getAppSettings().getMediaListDownloader(getAppSettings().getUrls(sgUrl));
                 sgDownloader.get();
+                new MythTvParser(getAppSettings(), new String(sgDownloader.get())).parseStorageGroups();
+                getAppSettings().setInternalBackendHostVerified(true);
                 return 0L;
             } catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);

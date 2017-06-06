@@ -13,10 +13,11 @@ public class LaunchActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         AppSettings appSettings = new AppSettings(getApplicationContext());
-        if (appSettings.isFireTv() && !appSettings.isInternalBackendHostSet())
+        if (appSettings.isFireTv() && !appSettings.isInternalBackendHostVerified())
             startActivity(new Intent(this, WelcomeActivity.class));
         else
             startActivity(new Intent(this, MainActivity.class));
         finish();
     }
+
 }

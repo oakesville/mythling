@@ -74,6 +74,7 @@ public class AppSettings {
     public static final String MYTHWEB_ACCESS = "mythweb_access";
     public static final String ERROR_REPORTING = "error_reporting";
     public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
+    public static final String MYTH_BACKEND_INTERNAL_HOST_VERIFIED = "mythbe_internal_host_verified";
     public static final String MYTH_BACKEND_EXTERNAL_HOST = "mythbe_external_host";
     public static final String RETRIEVE_TRANSCODE_STATUSES = "retrieve_transcode_statuses";
     public static final String BACKEND_WEB = "backend_web";
@@ -641,6 +642,14 @@ public class AppSettings {
         String host = getStringPref(MYTH_BACKEND_INTERNAL_HOST, "").trim();
         return !host.isEmpty() && !host.equals(appContext.getResources()
                 .getString(R.string.title_backend_host_));
+    }
+
+    public boolean isInternalBackendHostVerified() {
+        return getBooleanPref(MYTH_BACKEND_INTERNAL_HOST_VERIFIED, false);
+    }
+
+    public void setInternalBackendHostVerified(boolean verified) {
+        setBooleanPref(MYTH_BACKEND_INTERNAL_HOST_VERIFIED, verified);
     }
 
     public String getInternalBackendHost() {
