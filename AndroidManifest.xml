@@ -16,8 +16,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oakesville.mythling"
-    android:versionCode="47"
-    android:versionName="2.1.12" >
+    android:versionCode="48"
+    android:versionName="2.1.13" >
 
     <uses-sdk
         android:minSdkVersion="14"
