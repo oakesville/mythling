@@ -64,7 +64,6 @@ import com.oakesville.mythling.util.ServiceFrontendPlayer;
 import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
@@ -86,6 +85,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
@@ -119,7 +119,7 @@ import io.oakesville.media.TvShow;
 /**
  * Base class for the different ways to view collections of MythTV media.
  */
-public abstract class MediaActivity extends Activity {
+public abstract class MediaActivity extends ActionBarActivity {
     private static final String TAG = MediaActivity.class.getSimpleName();
 
     static final String DETAIL_FRAGMENT = "detailFragment";

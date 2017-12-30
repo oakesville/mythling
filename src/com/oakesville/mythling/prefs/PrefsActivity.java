@@ -81,6 +81,11 @@ public class PrefsActivity extends PreferenceActivity {
     }
 
     @Override
+    protected boolean isValidFragment(String fragmentName) {
+        return true;
+    }
+
+    @Override
     public void setListAdapter(ListAdapter adapter) {
         if (headers == null) {
             headers = new ArrayList<Header>();
