@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +43,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends ActionBarActivity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
     public static final String BACK_TO = "back_to";
     protected static final String CONSOLE_ERROR_TAG = "ERROR: "; // must match epg.js
@@ -57,9 +58,9 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         appSettings = new AppSettings(getApplicationContext());
         if (appSettings.isPhone())
-            getActionBar().hide(); // TODO immersive
+            getSupportActionBar().hide(); // TODO immersive
         else
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         backTo = getIntent().getStringExtra(BACK_TO);
 
@@ -194,7 +195,7 @@ public class WebViewActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (useDefaultWebView() && webView.canGoBack() == true) {
+        if (useDefaultWebView() && webView.canGoBack()) {
             webView.goBack();
         }
         else {
@@ -219,21 +220,23 @@ public class WebViewActivity extends Activity {
     }
 
     protected String getParams() throws UnsupportedEncodingException {
-        String params = "";
+        StringBuffer params = new StringBuffer();
         Map<String,String> parameters = getParameters();
         if (parameters != null) {
             boolean hasOne = false;
             for (String key : parameters.keySet()) {
                 if (!hasOne) {
-                    params += "?";
+                    params.append("?");
                     hasOne = true;
                 }
                 else {
-                    params += "&";
+                    params.append("&");
                 }
-                params += key + "=" + URLEncoder.encode(parameters.get(key), "UTF-8");
+                params.append(key);
+                params.append("=");
+                params.append(URLEncoder.encode(parameters.get(key), "UTF-8"));
             }
         }
-        return params;
+        return params.toString();
     }
 }

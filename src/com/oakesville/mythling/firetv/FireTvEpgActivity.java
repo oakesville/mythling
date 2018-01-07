@@ -80,7 +80,7 @@ public class FireTvEpgActivity extends EpgActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().hide();
+        getSupportActionBar().hide();
         setContentView(R.layout.firetv_webview);
 
         if (!factoryInited) {

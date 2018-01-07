@@ -80,7 +80,7 @@ public class MediaPagerActivity extends MediaActivity {
         modeSwitch = getIntent().getBooleanExtra(MODE_SWITCH, false);
         setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
 
-        getActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
     }
 
 

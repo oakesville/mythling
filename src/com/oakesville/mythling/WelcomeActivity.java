@@ -24,9 +24,9 @@ public class WelcomeActivity extends WebViewActivity {
         super.onCreate(savedInstanceState);
 
         if (getAppSettings().isFireTv())
-            getActionBar().hide();
+            getSupportActionBar().hide();
 
-        getActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         getWebView().addJavascriptInterface(new JsHandler(), "jsHandler");
     }
