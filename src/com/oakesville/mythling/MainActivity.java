@@ -64,7 +64,7 @@ public class MainActivity extends MediaActivity {
             }).show();
         }
 
-        setContentView(getAppSettings().isTv() ? R.layout.firetv_split : R.layout.split);
+        setContentView(getAppSettings().isFireTv() ? R.layout.firetv_split : R.layout.split);
 
         findViewById(R.id.breadcrumbs).setVisibility(View.GONE);
 

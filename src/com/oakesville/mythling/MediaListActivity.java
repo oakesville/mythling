@@ -77,7 +77,7 @@ public class MediaListActivity extends MediaActivity {
             goSplitView();
 
         if (!Localizer.getInstance().getMediaLabel(MediaType.liveTv).equals(getPath()))
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         breadCrumbs = (TextView) findViewById(R.id.breadcrumbs);
         breadCrumbs.setText(getPath());

@@ -65,7 +65,7 @@ public class SearchActivity extends MediaActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.search);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         createProgressBar();
 

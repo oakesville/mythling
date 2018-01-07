@@ -38,13 +38,13 @@ import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
+import android.support.v7.app.ActionBar;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
@@ -63,7 +63,7 @@ import io.oakesville.media.Cut;
 import io.oakesville.media.Download;
 import io.oakesville.media.MediaSettings.MediaType;
 
-public class VideoPlayerActivity extends Activity {
+public class VideoPlayerActivity extends ActionBarActivity {
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
@@ -118,9 +118,9 @@ public class VideoPlayerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            getActionBar().hide();
+            getSupportActionBar().hide();
 
         appSettings = new AppSettings(getApplicationContext());
 

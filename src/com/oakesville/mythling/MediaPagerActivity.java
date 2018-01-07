@@ -25,12 +25,12 @@ import com.oakesville.mythling.firetv.FireTvEpgActivity;
 import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.util.Reporter;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -80,7 +80,7 @@ public class MediaPagerActivity extends MediaActivity {
         modeSwitch = getIntent().getBooleanExtra(MODE_SWITCH, false);
         setSelItemIndex(getIntent().getIntExtra(SEL_ITEM_INDEX, 0));
 
-        getActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
     }
 
 
@@ -118,7 +118,7 @@ public class MediaPagerActivity extends MediaActivity {
         storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
-        pagerAdapter = new MediaPagerAdapter(getFragmentManager());
+        pagerAdapter = new MediaPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             public void onPageSelected(int position) {
@@ -261,7 +261,7 @@ public class MediaPagerActivity extends MediaActivity {
         }
 
         public Fragment getItem(int position) {
-            Fragment frag = new ItemDetailFragment();
+            Fragment frag = new ItemDetailFragmentAdapter();
             Bundle args = new Bundle();
             args.putInt(SEL_ITEM_INDEX, position);
             frag.setArguments(args);
