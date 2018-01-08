@@ -115,7 +115,7 @@ public class SearchActivity extends MediaActivity {
             getMenuInflater().inflate(R.menu.firetv_search, menu);
         else
             getMenuInflater().inflate(R.menu.search, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
