@@ -167,7 +167,7 @@ public class WebViewActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.webview, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

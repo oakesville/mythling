@@ -13,13 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:mythling="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_help"
         android:title="@string/menu_help"
         android:orderInCategory="100"
         android:icon="@drawable/ic_menu_help"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
 
 </menu>

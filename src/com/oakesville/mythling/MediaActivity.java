@@ -517,7 +517,7 @@ public abstract class MediaActivity extends ActionBarActivity {
             getMenuInflater().inflate(R.menu.firetv_main, menu);
         else
             getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

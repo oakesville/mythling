@@ -13,21 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:mythling="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_stop"
         android:title="@string/menu_stop"
         android:orderInCategory="50"
         android:icon="@drawable/ic_action_stop_red"
-        android:showAsAction="always"
+        mythling:showAsAction="always"
         android:visible="false" />
 
     <item
         android:id="@+id/menu_media"
         android:title="@string/menu_videos"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom|withText">
+        mythling:showAsAction="ifRoom|withText">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -56,7 +57,7 @@
         android:id="@+id/menu_sort"
         android:title="@string/menu_byTitle"
         android:orderInCategory="150"
-        android:showAsAction="ifRoom|withText">
+        mythling:showAsAction="ifRoom|withText">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -84,7 +85,7 @@
         android:title="@string/menu_view"
         android:orderInCategory="175"
         android:icon="@drawable/ic_menu_list"
-        android:showAsAction="ifRoom">
+        mythling:showAsAction="ifRoom">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -108,34 +109,34 @@
         android:title="@string/menu_guide"
         android:orderInCategory="200"
         android:icon="@drawable/ic_menu_guide"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
     
     <item
         android:id="@+id/menu_refresh"
         android:title="@string/menu_refresh"
         android:orderInCategory="300"
         android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_search"
         android:title="@string/menu_search"
         android:orderInCategory="400"
         android:icon="@drawable/ic_menu_search"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="500"
         android:icon="@drawable/ic_menu_settings"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_help"
         android:title="@string/menu_help"
         android:orderInCategory="600"
         android:icon="@drawable/ic_menu_help"
-        android:showAsAction="ifRoom" />
+        mythling:showAsAction="ifRoom" />
 
 </menu>
