@@ -260,6 +260,18 @@ public class MediaStreamProxy implements Runnable {
         return proxyInfo;
     }
 
+    public static ProxyInfo getProxyInfo(Uri mediaUri) throws MalformedURLException {
+        ProxyInfo proxyInfo = new ProxyInfo();
+        String userInfo = mediaUri.getUserInfo();
+        int colon = userInfo == null ? -1 : userInfo.indexOf(':');
+        if (colon > 0) {
+            proxyInfo.user = userInfo.substring(0, colon);
+            proxyInfo.password = userInfo.substring(colon + 1);
+        }
+        proxyInfo.netUrl = getNetUrl(mediaUri);
+        return proxyInfo;
+    }
+
     public static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
         String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
         netUrl += mediaUri.getPath();

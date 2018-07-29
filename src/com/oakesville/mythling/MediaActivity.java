@@ -51,6 +51,7 @@ import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.prefs.PrefDismissDialog;
 import com.oakesville.mythling.prefs.PrefDismissDialog.PrefDismissListener;
 import com.oakesville.mythling.prefs.PrefsActivity;
+import com.oakesville.mythling.util.Downloader;
 import com.oakesville.mythling.util.FrontendPlayer;
 import com.oakesville.mythling.util.HttpHelper;
 import com.oakesville.mythling.util.HttpHelper.AuthType;
@@ -237,6 +238,7 @@ public abstract class MediaActivity extends ActionBarActivity {
 
     @Override
     public void onPause() {
+        Log.e(TAG, "HELLO PAUSE");
         unregisterPlaybackReceiver();
         if (downloadReceivers != null) {
             List<Long> idsToRemove = new ArrayList<Long>();
@@ -882,7 +884,10 @@ public abstract class MediaActivity extends ActionBarActivity {
             fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
 
             Uri uri = Uri.parse(fileUrl.toString());
-            ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(uri);
+            ProxyInfo proxyInfo = MediaStreamProxy.getProxyInfo(uri);
+            if (proxyInfo == null)
+                proxyInfo = MediaStreamProxy.needsAuthProxy(uri); // required by auth
+
             if (proxyInfo != null) {
                 // needs proxying to support authentication since DownloadManager doesn't support
                 MediaStreamProxy proxy = new MediaStreamProxy(proxyInfo, AuthType.valueOf(appSettings.getMythTvServicesAuthType()));
@@ -897,19 +902,20 @@ public abstract class MediaActivity extends ActionBarActivity {
 
             stopProgress();
 
-            DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            Request request = new Request(Uri.parse(fileUrl));
-            request.setTitle(item.getOneLineTitle());
-            String downloadFilePath = null;
+            File downloadFile = null;
+
             try {
                 if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                     File downloadDir = null;
                     try {
-                        Context.class.getMethod("getExternalMediaDirs", (Class<?>[])null);
-                        File[] dirs = getApplicationContext().getExternalMediaDirs();
+                        Context.class.getMethod("getExternalMediaDirs", (Class<?>[]) null);
+                        File[] dirs = new File[0];
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            dirs = getApplicationContext().getExternalMediaDirs();
+                        }
                         String storageDirName = getString(R.string.storage_dir);
                         if (dirs.length >= 1) {
-                            Map<String,File> mediaDirs = new HashMap<String,File>();
+                            Map<String, File> mediaDirs = new HashMap<String, File>();
                             for (int i = 0; i < dirs.length; i++) {
                                 if (dirs[i] != null) { // entry can be null if storage not attached
                                     String label = dirs[i].toString();
@@ -933,17 +939,16 @@ public abstract class MediaActivity extends ActionBarActivity {
                                 final String[] labels = mediaDirs.keySet().toArray(new String[0]);
                                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                                 builder.setTitle(getString(R.string.save_to_media_folder))
-                                       .setItems(labels, new DialogInterface.OnClickListener() {
-                                           public void onClick(DialogInterface dialog, int which) {
-                                               getAppSettings().setExternalMediaDir(labels[which].toString());
-                                               downloadItem(item);
-                                       }
-                                }).show();
+                                        .setItems(labels, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                getAppSettings().setExternalMediaDir(labels[which].toString());
+                                                downloadItem(item);
+                                            }
+                                        }).show();
                                 return;
                             }
                         }
-                    }
-                    catch (NoSuchMethodException ex) {
+                    } catch (NoSuchMethodException ex) {
                         // not supported by android version
                         downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/mythling");
                     }
@@ -954,10 +959,8 @@ public abstract class MediaActivity extends ActionBarActivity {
                             downloadPath += getPath() + "/";
                         File destDir = new File(downloadDir + downloadPath);
                         if (destDir.isDirectory() || destDir.mkdirs()) {
-                            File downloadFile = new File(destDir + "/" + item.getDownloadFilename());
+                            downloadFile = new File(destDir + "/" + item.getDownloadFilename());
                             Log.i(TAG, "Downloading to file: " + downloadFile);
-                            request.setDestinationUri(Uri.fromFile(downloadFile));
-                            request.allowScanningByMediaScanner();
                         }
                     }
                 }
@@ -970,10 +973,27 @@ public abstract class MediaActivity extends ActionBarActivity {
                     new Reporter(ex).send();
                 Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
-            long downloadId = dm.enqueue(request);
-            registerDownloadReceiver(item, downloadId);
+
+            long downloadId = 0;
+
+            // TODO: prefs
+            boolean bypassDownloadManager = true;
+            if (bypassDownloadManager) {
+                downloadId = downloadFile.hashCode();
+                new DownloadTask(uri.toString(), downloadFile).execute();
+                item.setDownloadId(downloadId);
+            }
+            else {
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                Request request = new Request(Uri.parse(fileUrl));
+                request.setTitle(item.getOneLineTitle());
+                request.setDestinationUri(Uri.fromFile(downloadFile));
+                request.allowScanningByMediaScanner();
+                downloadId = dm.enqueue(request);
+                registerDownloadReceiver(item, downloadId);
+            }
             Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
-            getAppData().addDownload(new Download(item.getId(), downloadId, downloadFilePath, new Date()));
+            getAppData().addDownload(new Download(item.getId(), downloadId, downloadFile.getPath(), new Date()));
             if (item.isRecording() && (mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices()))
                 new GetCutListTask((Recording)item, downloadId).execute();
         } catch (Exception ex) {
@@ -1686,6 +1706,34 @@ public abstract class MediaActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_LONG).show();
                 }
             }
+        }
+    }
+
+    protected class DownloadTask extends AsyncTask<URL,Integer,Long> {
+        private String url;
+        private File file;
+        private Exception ex;
+
+        public DownloadTask(String url, File file) {
+            this.url = url;
+            this.file = file;
+        }
+
+        protected Long doInBackground(URL... urls) {
+            try {
+                new Downloader(url, file).doDownload();
+                return 0L;
+            } catch (Exception ex) {
+                this.ex = ex;
+                Log.e(TAG, ex.getMessage(), ex);
+                if (getAppSettings().isErrorReportingEnabled())
+                    new Reporter(ex).send();
+                return -1L;
+            }
+        }
+
+        protected void onPostExecute(Long result) {
+            Log.i(TAG, "Download complete: " + url);
         }
     }
 

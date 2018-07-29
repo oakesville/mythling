@@ -1,0 +1,69 @@
+{
+	"info": {
+		"_postman_id": "601f4102-94b4-c769-7b5e-ce951cc2ec23",
+		"name": "mythling",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://54.187.163.194/mythling/report",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"report\": {\r\n  \"source\": \"Mythling v2.1.0.5 (sdk 23)\",\r\n  \"stackTrace\": \"java.io.IOException: I can't connect\\r\\n\\tat io.oakesville.tester.Tester.buildJson(Tester.java:53)\\r\\n\\tat io.oakesville.tester.Tester.main(Tester.java:39)\\r\\n\",\r\n  \"message\": \"Help, I'm an error!\"\r\n}}\r\n"
+				},
+				"url": {
+					"raw": "http://54.187.163.194/mythling/report",
+					"protocol": "http",
+					"host": [
+						"54",
+						"187",
+						"163",
+						"194"
+					],
+					"path": [
+						"mythling",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/mythling/report",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"report\": {\r\n  \"source\": \"Mythling v2.1.0.5 (sdk 23)\",\r\n  \"stackTrace\": \"java.io.IOException: I can't connect\\r\\n\\tat io.oakesville.tester.Tester.buildJson(Tester.java:53)\\r\\n\\tat io.oakesville.tester.Tester.main(Tester.java:39)\\r\\n\",\r\n  \"message\": \"Help, I'm an error!\"\r\n}}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/mythling/report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mythling",
+						"report"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

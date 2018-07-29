@@ -95,6 +95,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaPrecompile" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/reload-dex" />
@@ -107,14 +108,17 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\awv_android_factory.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\awv_interface.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\okhttp-3.9.1.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-21.0.3" level="project" />
+    <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\okio-1.13.0.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\libvlc-3.0.0.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:21.0.3@jar" level="project" />
     <orderEntry type="library" name="__local_aars__:C.\mythling\mythling\libs\oakesville-model-1.0.01.jar:unspecified@jar" level="project" />

@@ -435,11 +435,11 @@ public class AppSettings {
         String host = getMythlingServiceHost();
         int servicePort = getMythlingServicePort();
         if (AuthType.None.toString().equals(getMythlingServicesAuthType())) {
-            return new URL("http://" + host + ":" + servicePort);
+            return new URL("http://" + host + ":" + servicePort + "/" + getMythlingWebRoot() + "/media.php");
         } else {
             String encodedUser = URLEncoder.encode(getBackendWebUser(), "UTF-8");
             String encodedPw = URLEncoder.encode(getBackendWebPassword(), "UTF-8");
-            return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort);
+            return new URL("http://" + encodedUser + ":" + encodedPw + "@" + host + ":" + servicePort + "/" + getMythlingWebRoot() + "/media.php");
         }
     }
 
