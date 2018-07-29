@@ -977,7 +977,7 @@ public abstract class MediaActivity extends ActionBarActivity {
             long downloadId = 0;
 
             // TODO: prefs
-            boolean bypassDownloadManager = true;
+            boolean bypassDownloadManager = false;
             if (bypassDownloadManager) {
                 downloadId = downloadFile.hashCode();
                 new DownloadTask(uri.toString(), downloadFile).execute();
