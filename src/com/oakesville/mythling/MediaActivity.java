@@ -238,7 +238,6 @@ public abstract class MediaActivity extends ActionBarActivity {
 
     @Override
     public void onPause() {
-        Log.e(TAG, "HELLO PAUSE");
         unregisterPlaybackReceiver();
         if (downloadReceivers != null) {
             List<Long> idsToRemove = new ArrayList<Long>();

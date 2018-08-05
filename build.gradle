@@ -2,22 +2,23 @@ apply plugin: 'com.android.application'
 
 buildscript {
     System.properties['com.android.build.gradle.overrideVersionCheck'] = 'true'
-    
+
     repositories {
         mavenCentral()
-		jcenter()
+        jcenter()
         maven {
             url "https://maven.google.com"
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.3'
     }
 }
 
 dependencies {
     implementation fileTree(include: '*.jar', dir: 'libs')
-    implementation ('com.android.support:appcompat-v7:21.0.3')
+    implementation('com.android.support:appcompat-v7:21.0.3')
 }
 
 android {
@@ -31,7 +32,7 @@ android {
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
+            assets.srcDirs = ['/assets/']
             jniLibs.srcDirs = ['libs']
         }
 
@@ -48,11 +49,11 @@ android {
     dexOptions {
         preDexLibraries false
     }
-    
+
     lintOptions {
         abortOnError false
     }
-    
+
     signingConfigs {
         release {
             storeFile file(System.getenv("OAKESVILLE_KEYSTORE_FILE"))
@@ -68,14 +69,13 @@ android {
     }
 }
 
-// Note: On win8 grunt fails with "ENOTSUP, operation not supported on socket"
-// when copying from mapped drives.  Run grunt on linux in that case.
 task buildMythlingEpg(type: Exec) {
     workingDir mythlingEpgLoc
     commandLine 'cmd', '/c', 'grunt', '--no-color'
 }
 
 task copyEpgDist(type: Copy) {
+    dependsOn buildMythlingEpg
     from("${mythlingEpgLoc}/dist") {
         exclude 'demo/'
         exclude 'js/mythling-epg.min.js'
@@ -85,7 +85,7 @@ task copyEpgDist(type: Copy) {
 }
 
 task getMythlingEpg() {
-    dependsOn(/*buildMythlingEpg,*/copyEpgDist)
+    dependsOn copyEpgDist
 }
 
 task devCopyJs(type: Copy) {

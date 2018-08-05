@@ -31,8 +31,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-// Uses OKHTTP
-// TODO only works for non-auth downloads
+/**
+ * Uses OKHTTP.  Avoids timeouts for large downloads.
+ * Does not provide any status. Only works for non-auth downloads.
+ * TODO: reflect this type of download in status icon
+ */
 public class Downloader {
 
     private static final String TAG = Downloader.class.getSimpleName();

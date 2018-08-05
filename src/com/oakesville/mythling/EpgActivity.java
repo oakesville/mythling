@@ -358,7 +358,7 @@ public class EpgActivity extends WebViewActivity {
             getMenuInflater().inflate(R.menu.guide_fs, menu); // otherwise menu items hidden
         else
             getMenuInflater().inflate(R.menu.guide, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
