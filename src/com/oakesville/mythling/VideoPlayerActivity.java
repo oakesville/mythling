@@ -491,6 +491,8 @@ public class VideoPlayerActivity extends ActionBarActivity {
         // TODO: subtitles
         SurfaceView subtitlesSurface = null;
 
+        Log.d(TAG, "Surface size: dw=" + dw + ", dh=" + dh + ", w=" + videoWidth + ", h=" + videoHeight);
+
         // set display size
         LayoutParams lp = surface.getLayoutParams();
         lp.width  = (int) dw;
@@ -516,7 +518,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
             if (playerOption.equals(PlaybackOptions.PLAYER_ANDROID))
                 mediaPlayer = new AndroidMediaPlayer(getApplicationContext(), surface);
             else if (playerOption.equals(PlaybackOptions.PLAYER_LIBVLC))
-                mediaPlayer = new VlcMediaPlayer(surface, null, appSettings.getVlcOptions()); // TODO subtitles
+                mediaPlayer = new VlcMediaPlayer(getApplicationContext(), surface, null, appSettings.getVlcOptions()); // TODO subtitles
             else
                 throw new IllegalArgumentException("Unsupported player option: " + playerOption);
             Log.i(TAG, "MediaPlayer: " + playerOption + " " + mediaPlayer.getVersion());

@@ -117,7 +117,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-v4-21.0.3" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\awv_android_factory.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\libvlc-3.0.0.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\libvlc-3.0.4.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-annotations:21.0.3@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\awv_interface.jar:unspecified@jar" level="project" />
   </component>

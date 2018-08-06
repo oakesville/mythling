@@ -32,6 +32,7 @@ import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaStreamProxy;
 import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -73,9 +74,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         return proxy != null;
     }
 
-    public VlcMediaPlayer(SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
-        super(createLibVlc(libVlcOptions));
-        LibVLC.setOnNativeCrashListener(nativeCrashListener);
+    public VlcMediaPlayer(Context appContext, SurfaceView videoView, SurfaceView subtitlesView, List<String> libVlcOptions) {
+        super(createLibVlc(appContext, libVlcOptions));
+
+        setScale(0);
+        // LibVLC.setOnNativeCrashListener(nativeCrashListener);
 
         setMaxPlayRate(64); // TODO pref
         setEventListener(vlcEventListener);
@@ -184,14 +187,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     }
 
     private static LibVLC libvlc;
-    private static LibVLC createLibVlc(List<String> mediaOptions) {
+    private static LibVLC createLibVlc(Context appContext, List<String> mediaOptions) {
         // libvlc
         ArrayList<String> options = new ArrayList<String>();
         if (mediaOptions != null)
             options.addAll(mediaOptions);
         if (BuildConfig.DEBUG && !options.contains("-vvv"))
             options.add("-vvv");
-        libvlc = new LibVLC(options);
+        libvlc = new LibVLC(appContext, options);
 
         return libvlc;
     }
@@ -537,6 +540,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     case MediaPlayer.Event.Opening:
                         length = 0;
                         metaLength = itemLength;
+
                         break;
                     case MediaPlayer.Event.Playing:
                         eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.playing));
@@ -558,6 +562,20 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
                     case MediaPlayer.Event.TimeChanged:
                         if (length <= 0 && samples <= maxSamples) {
                             length = getLength(); // reported length
+
+
+
+                            Media.VideoTrack videoTrack = getCurrentVideoTrack();
+                            Log.d(TAG, "Video track: " + videoTrack + " (" + videoTrack.width + " x " + videoTrack.height + ")");
+                            if (layoutChangeListener != null) {
+                                if (videoTrack != null) {
+                                    layoutChangeListener.onLayoutChange(videoTrack.width, videoTrack.height, videoTrack.width, videoTrack.height);
+                                }
+                            }
+
+
+
+
                             if (length > 0) {
                                 Log.i(TAG, "Video length determined (" + samples + "): " + length);
                                 if (isHls) {
@@ -624,17 +642,17 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.shiftListener = listener;
     }
 
-    private LibVLC.OnNativeCrashListener nativeCrashListener = new LibVLC.OnNativeCrashListener() {
-
-        @Override
-        public void onNativeCrash() {
-            if (eventListener != null){
-                MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
-                event.message = LibVLC.OnNativeCrashListener.class.getName();
-                eventListener.onEvent(event);
-            }
-        }
-    };
+//    private LibVLC.OnNativeCrashListener nativeCrashListener = new LibVLC.OnNativeCrashListener() {
+//
+//        @Override
+//        public void onNativeCrash() {
+//            if (eventListener != null){
+//                MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
+//                event.message = LibVLC.OnNativeCrashListener.class.getName();
+//                eventListener.onEvent(event);
+//            }
+//        }
+//    };
 
     private MediaPlayerLayoutChangeListener layoutChangeListener;
     public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener) {
@@ -654,11 +672,11 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         public void onSurfacesDestroyed(IVLCVout vout) {
         }
 
-        @Override
-        public void onHardwareAccelerationError(IVLCVout vlcVout) {
-            MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
-            event.message = "Hardware Acceleration Error: " + vlcVout.toString();
-            eventListener.onEvent(event);
-        }
+//        @Override
+//        public void onHardwareAccelerationError(IVLCVout vlcVout) {
+//            MediaPlayerEvent event = new MediaPlayerEvent(MediaPlayerEventType.error);
+//            event.message = "Hardware Acceleration Error: " + vlcVout.toString();
+//            eventListener.onEvent(event);
+//        }
     };
 }
