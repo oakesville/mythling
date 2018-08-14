@@ -169,7 +169,6 @@ public class AppSettings {
     public static final String AUTO_SKIP = "auto_skip";
     public static final String AUTO_SKIP_OFF = "auto_skip_off";
     public static final String AUTO_SKIP_ON = "auto_skip_on";
-    public static final String AUTO_SKIP_NOTIFY = "auto_skip_notify";
     public static final String LIBVLC_PARAMETERS = "libvlc_parameters";
     public static final String SEEK_CORRECTION_TOLERANCE = "seek_correction_tolerance";
     public static final String IGNORE_LIBVLC_CPU_COMPATIBILITY = "ignore_libvlc_cpu_compatibility";
@@ -177,6 +176,7 @@ public class AppSettings {
     public static final String INTERNAL_VIDEO_QUALITY = "internal_video_quality";
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
     public static final String EXTERNAL_MEDIA_DIR = "external_media_dir";
+    public static final String EXTERNAL_PLAYBACK_ACCESSED = "external_playback_accessed";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -533,6 +533,14 @@ public class AppSettings {
 
     public boolean setAutoSkip(String option) {
         return setStringPref(AUTO_SKIP, option);
+    }
+
+    public boolean isExternalPlaybackAccessed() {
+        return getBooleanPref(EXTERNAL_PLAYBACK_ACCESSED, false);
+    }
+
+    public void setExternalPlaybackAccessed(boolean accessed) {
+        setBooleanPref(EXTERNAL_PLAYBACK_ACCESSED, accessed);
     }
 
     public boolean isPromptForPlaybackOptions() {

@@ -15,56 +15,6 @@
  */
 package com.oakesville.mythling;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.oakesville.mythling.VideoPlaybackDialog.PlaybackDialogListener;
-import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.BadSettingsException;
-import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.AllTunersInUseException;
-import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.media.PlaybackOptions;
-import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
-import com.oakesville.mythling.media.SearchResults;
-import com.oakesville.mythling.prefs.PrefDismissDialog;
-import com.oakesville.mythling.prefs.PrefDismissDialog.PrefDismissListener;
-import com.oakesville.mythling.prefs.PrefsActivity;
-import com.oakesville.mythling.util.Downloader;
-import com.oakesville.mythling.util.FrontendPlayer;
-import com.oakesville.mythling.util.HttpHelper;
-import com.oakesville.mythling.util.HttpHelper.AuthType;
-import com.oakesville.mythling.util.MediaListParser;
-import com.oakesville.mythling.util.MediaStreamProxy;
-import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
-import com.oakesville.mythling.util.MythTvParser;
-import com.oakesville.mythling.util.Recorder;
-import com.oakesville.mythling.util.Reporter;
-import com.oakesville.mythling.util.ServiceFrontendPlayer;
-import com.oakesville.mythling.util.SocketFrontendPlayer;
-import com.oakesville.mythling.util.Transcoder;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
@@ -103,6 +53,57 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.oakesville.mythling.VideoPlaybackDialog.PlaybackDialogListener;
+import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.BadSettingsException;
+import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.media.AllTunersInUseException;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.media.PlaybackOptions;
+import com.oakesville.mythling.media.PlaybackOptions.PlaybackOption;
+import com.oakesville.mythling.media.SearchResults;
+import com.oakesville.mythling.prefs.PrefDismissDialog;
+import com.oakesville.mythling.prefs.PrefDismissDialog.PrefDismissListener;
+import com.oakesville.mythling.prefs.PrefsActivity;
+import com.oakesville.mythling.util.Downloader;
+import com.oakesville.mythling.util.FrontendPlayer;
+import com.oakesville.mythling.util.HttpHelper;
+import com.oakesville.mythling.util.HttpHelper.AuthType;
+import com.oakesville.mythling.util.MediaListParser;
+import com.oakesville.mythling.util.MediaStreamProxy;
+import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
+import com.oakesville.mythling.util.MythTvParser;
+import com.oakesville.mythling.util.Recorder;
+import com.oakesville.mythling.util.Reporter;
+import com.oakesville.mythling.util.ServiceFrontendPlayer;
+import com.oakesville.mythling.util.SocketFrontendPlayer;
+import com.oakesville.mythling.util.Transcoder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import io.oakesville.media.Category;
 import io.oakesville.media.Cut;
 import io.oakesville.media.Download;
@@ -810,7 +811,8 @@ public abstract class MediaActivity extends ActionBarActivity {
                     }
                     String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
                     PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork);
-                    if (appSettings.isPromptForPlaybackOptions() && !playbackOption.isAlways()) {
+                    if (!playbackOption.isAlways() && (appSettings.isPromptForPlaybackOptions() ||
+                            (appSettings.isExternalNetwork() && !appSettings.isExternalPlaybackAccessed()))) {
                         VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
                     } else {
@@ -2017,6 +2019,9 @@ public abstract class MediaActivity extends ActionBarActivity {
                     dlg.show(getFragmentManager());
                 }
                 else {
+                    if (appSettings.isExternalNetwork()) {
+                        appSettings.setExternalPlaybackAccessed(true);
+                    }
                     startVideoPlayback(item, option);
                 }
             }
