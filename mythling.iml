@@ -108,17 +108,25 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 24 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: com.android.support:animated-vector-drawable-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-compat-24.2.1" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\okhttp-3.9.1.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\oakesville-model-1.0.01.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\okio-1.13.0.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\juniversalchardet-1.0.3.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7-21.0.3" level="project" />
-    <orderEntry type="library" name="Gradle: com.android.support:support-v4-21.0.3" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\awv_android_factory.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\libvlc-3.0.0.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:21.0.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:24.2.1@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-vector-drawable-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-utils-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\oakesville-model-1.0.01.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\juniversalchardet-1.0.3.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-core-ui-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-v4-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-fragment-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:appcompat-v7-24.2.1" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:C.\mythling\mythling\libs\awv_interface.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-media-compat-24.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.http.legacy-android-24" level="project" />
   </component>
 </module>
