@@ -18,6 +18,7 @@ package com.oakesville.mythling.prefs.firetv;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
+import com.oakesville.mythling.prefs.PrefsActivity;
 
 import android.os.Bundle;
 import android.preference.Preference;
@@ -26,7 +27,7 @@ import android.preference.PreferenceFragment;
 public class FireTvVideoQualityPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_video_quality);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_video_quality);
         addPreferencesFromResource(R.xml.firetv_quality_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

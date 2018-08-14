@@ -26,7 +26,7 @@ import android.preference.SwitchPreference;
 public class NetworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_network_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_network_settings);
         addPreferencesFromResource(R.xml.network_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

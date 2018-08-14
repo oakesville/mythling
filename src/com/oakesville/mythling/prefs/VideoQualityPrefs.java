@@ -25,7 +25,7 @@ import com.oakesville.mythling.app.AppSettings;
 public class VideoQualityPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_quality_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_quality_settings);
         addPreferencesFromResource(R.xml.quality_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

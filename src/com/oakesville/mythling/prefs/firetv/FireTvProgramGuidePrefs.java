@@ -19,6 +19,7 @@ import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
+import com.oakesville.mythling.prefs.PrefsActivity;
 
 import android.os.Bundle;
 import android.preference.Preference;
@@ -30,7 +31,7 @@ public class FireTvProgramGuidePrefs extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_guide);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_guide);
         addPreferencesFromResource(R.xml.firetv_guide_prefs);
 
         appSettings = new AppSettings(getPreferenceScreen().getContext());

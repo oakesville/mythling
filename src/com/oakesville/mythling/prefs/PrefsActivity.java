@@ -15,26 +15,29 @@
  */
 package com.oakesville.mythling.prefs;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.WebViewActivity;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.util.Reporter;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ListAdapter;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PrefsActivity extends PreferenceActivity {
+public class PrefsActivity extends AppCompatPreferenceActivity {
     public static final String BACK_TO = "back_to";
     private static final String TAG = PrefsActivity.class.getSimpleName();
 
@@ -44,10 +47,31 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle(getString(R.string.menu_settings));
+
+        ViewGroup rootView = (ViewGroup)findViewById(R.id.action_bar_root); // id from appcompat
+
+        if (rootView != null) {
+            View view = getLayoutInflater().inflate(R.layout.settings_bar, rootView, false);
+            rootView.addView(view, 0);
+
+            Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            // Show the Up button in the action bar.
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         backTo = getIntent().getStringExtra(BACK_TO);
+    }
+
+    public void setActionBarTitle(int titleRes) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(titleRes);
+        }
     }
 
     @Override
@@ -69,7 +93,12 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            if (getTitle().equals(getString(R.string.title_activity_prefs))) {
+                NavUtils.navigateUpFromSameTask(this);
+            } else {
+                Intent intent = new Intent(this, PrefsActivity.class);
+                startActivity(intent);
+            }
             return true;
         } else if (item.getItemId() == R.id.menu_help) {
             String url = getResources().getString(R.string.url_help);

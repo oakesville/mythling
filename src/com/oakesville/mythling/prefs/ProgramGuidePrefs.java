@@ -29,7 +29,7 @@ public class ProgramGuidePrefs extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_guide_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_guide_settings);
         addPreferencesFromResource(R.xml.guide_prefs);
 
         appSettings = new AppSettings(getPreferenceScreen().getContext());

@@ -27,7 +27,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
     
-    <style name="PrefsTheme" parent="android:Theme.Holo.Light">
+    <style name="PrefsTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/MythlingActionBar</item>
         <item name="android:windowBackground">@color/background_light_blue</item>
     </style>

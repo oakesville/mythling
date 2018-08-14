@@ -16,6 +16,7 @@
 package com.oakesville.mythling.prefs;
 
 import android.content.Context;
+import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;
@@ -67,6 +68,14 @@ public class SwitchPreference extends android.preference.SwitchPreference {
                 switchView.setTextOn(getSwitchTextOn());
                 switchView.setTextOff(getSwitchTextOff());
                 switchView.setOnCheckedChangeListener(listener);
+                switchView.setShowText(true);
+            }
+            else if (checkableView instanceof SwitchCompat) {
+                final SwitchCompat switchView = (SwitchCompat) checkableView;
+                switchView.setTextOn(getSwitchTextOn());
+                switchView.setTextOff(getSwitchTextOff());
+                switchView.setOnCheckedChangeListener(listener);
+                switchView.setShowText(true);
             }
         }
 

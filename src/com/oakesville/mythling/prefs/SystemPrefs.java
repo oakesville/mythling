@@ -25,7 +25,7 @@ import android.preference.PreferenceFragment;
 public class SystemPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_system_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_system_settings);
         addPreferencesFromResource(R.xml.system_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

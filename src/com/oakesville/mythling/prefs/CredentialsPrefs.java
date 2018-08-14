@@ -25,7 +25,7 @@ import android.preference.PreferenceFragment;
 public class CredentialsPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_credentials_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_credentials_settings);
         addPreferencesFromResource(R.xml.credentials_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

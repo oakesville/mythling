@@ -18,7 +18,7 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:paddingLeft="4dip"
+    android:paddingLeft="4dp"
     android:paddingRight="?android:attr/scrollbarSize">
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:minWidth="48dp"
-            android:paddingRight="8dip"
+            android:paddingRight="8dp"
             android:contentDescription="@string/icon" />
     </LinearLayout>
 

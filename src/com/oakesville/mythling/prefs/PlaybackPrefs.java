@@ -35,7 +35,7 @@ public class PlaybackPrefs extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_playback_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_playback_settings);
         addPreferencesFromResource(R.xml.playback_prefs);
 
         // none of these prefs trigger cache refresh

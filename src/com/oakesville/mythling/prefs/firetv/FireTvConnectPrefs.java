@@ -20,6 +20,7 @@ import org.json.JSONException;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.app.AppSettings;
 import com.oakesville.mythling.prefs.PrefChangeListener;
+import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class FireTvConnectPrefs extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_connect);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_connect);
         addPreferencesFromResource(R.xml.firetv_connect_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

@@ -15,18 +15,19 @@
  */
 package com.oakesville.mythling.prefs;
 
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
-
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+
 import io.oakesville.media.MediaSettings.MediaType;
 
 public class ArtworkPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_artwork_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_artwork_settings);
         addPreferencesFromResource(R.xml.artwork_prefs);
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 

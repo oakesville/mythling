@@ -28,7 +28,7 @@ import io.oakesville.media.MediaSettings.MediaTypeDeterminer;
 public class CategoriesPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_categories_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_categories_settings);
         addPreferencesFromResource(R.xml.categories_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());

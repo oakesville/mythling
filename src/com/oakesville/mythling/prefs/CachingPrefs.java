@@ -28,7 +28,7 @@ import android.preference.PreferenceFragment;
 public class CachingPrefs extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().getActionBar().setTitle(R.string.title_cache_settings);
+        ((PrefsActivity)getActivity()).setActionBarTitle(R.string.title_cache_settings);
         addPreferencesFromResource(R.xml.cache_prefs);
 
         AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
