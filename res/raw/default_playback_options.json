@@ -23,7 +23,7 @@
         "hls": "app",
         "default":
         {
-          "hls": "app"
+          "file": "libvlc"
         }
       },
       "download":
@@ -48,7 +48,7 @@
         "hls": "app",
         "default":
         {
-          "hls": "app"
+          "file": "libvlc"
         }
       },
       "download":
@@ -73,7 +73,7 @@
         "hls": "app",
         "default":
         {
-          "hls": "app"
+          "file": "libvlc"
         }
       }
     },    
@@ -94,7 +94,7 @@
         "hls": "app",
         "default":
         {
-          "hls": "app"
+          "file": "libvlc"
         }
       },
       "download":

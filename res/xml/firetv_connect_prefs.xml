@@ -27,7 +27,7 @@
     <PreferenceCategory android:title="@string/title_video_player">
         <CheckBoxPreference
             android:key="always_prompt_for_playback_options"
-            android:title="@string/title_always_prompt_for_playback_options"
+            android:title="@string/title_prompt_for_playback_options"
             android:defaultValue="false"
             android:layout="@layout/pref" />
         <CheckBoxPreference

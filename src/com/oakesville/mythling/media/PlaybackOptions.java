@@ -124,7 +124,7 @@ public class PlaybackOptions {
             mt.put(fileType, ft);
         }
         if (option.always) {
-            appSettings.setAlwaysPromptForPlaybackOptions(false);
+            appSettings.setPromptForPlaybackOptions(false);
             // obliterate any existing stream type since this itself is a pref
             JSONObject net = new JSONObject();
             net.put(option.stream, option.player);

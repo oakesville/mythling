@@ -86,7 +86,7 @@
     <string name="title_video_quality">Video Quality</string>
     <string name="title_cache_settings">Data Cache Settings</string>
     <string name="title_system_settings">System Settings</string>
-    <string name="title_always_prompt_for_playback_options">Always Prompt for Playback Options</string>    
+    <string name="title_prompt_for_playback_options">Prompt for Playback Options</string>
     <string name="title_save_position_on_exit">Save Position on Exit</string>
     <string name="title_proxy_android_authenticated_playback">Proxy Android Authenticated Playback</string>
     <string name="title_skip_forward_interval">Skip Forward Interval</string>

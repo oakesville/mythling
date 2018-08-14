@@ -51,7 +51,7 @@ public class FireTvConnectPrefs extends PreferenceFragment {
         if (internalHost.isEmpty())
             pref.setTitle(R.string.title_backend_host_);
 
-        pref = getPreferenceScreen().findPreference(AppSettings.ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS);
+        pref = getPreferenceScreen().findPreference(AppSettings.PROMPT_FOR_PLAYBACK_OPTIONS);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean update = super.onPreferenceChange(preference, newValue);

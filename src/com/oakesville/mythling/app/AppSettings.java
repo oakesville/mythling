@@ -159,8 +159,7 @@ public class AppSettings {
     public static final String EPG_PARAMS = "epg_params";
     public static final String EPG_SKIP_INTERVAL = "epg_skip_interval";
     public static final String EPG_LAST_LOAD = "epg_last_load";
-    public static final String EPG_INITIALLY_ACCESSED = "epg_initially_accessed";
-    public static final String ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS = "always_prompt_for_playback_options";
+    public static final String PROMPT_FOR_PLAYBACK_OPTIONS = "always_prompt_for_playback_options";
     public static final String SAVE_POSITION_ON_EXIT = "save_position_on_exit";
     public static final String PROXY_ANDROID_AUTHENTICATED_PLAYBACK = "proxy_android_authenticated_playback";
     public static final String VIDEO_SAVED_POSITION = "video_saved_position";
@@ -536,12 +535,12 @@ public class AppSettings {
         return setStringPref(AUTO_SKIP, option);
     }
 
-    public boolean isAlwaysPromptForPlaybackOptions() {
-        return getBooleanPref(ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS, true);
+    public boolean isPromptForPlaybackOptions() {
+        return getBooleanPref(PROMPT_FOR_PLAYBACK_OPTIONS, false);
     }
 
-    public void setAlwaysPromptForPlaybackOptions(boolean alwaysPrompt) {
-        setBooleanPref(ALWAYS_PROMPT_FOR_PLAYBACK_OPTIONS, alwaysPrompt);
+    public void setPromptForPlaybackOptions(boolean alwaysPrompt) {
+        setBooleanPref(PROMPT_FOR_PLAYBACK_OPTIONS, alwaysPrompt);
     }
 
     public boolean isSavePositionOnExit() {

@@ -810,17 +810,15 @@ public abstract class MediaActivity extends ActionBarActivity {
                     }
                     String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
                     PlaybackOption playbackOption = appSettings.getPlaybackOptions().getOption(item.getType(), item.getFormat(), playbackNetwork);
-                    if (appSettings.getMediaSettings().getViewType() != ViewType.list && playbackOption.isAlways()) {
-                        // detail or split mode -- no dialog if stream mode pref is set
+                    if (appSettings.isPromptForPlaybackOptions() && !playbackOption.isAlways()) {
+                        VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
+                        dialog.show(getFragmentManager(), "StreamVideoDialog");
+                    } else {
                         startProgress();
                         if (playbackOption.isHls())
                             new StreamHlsTask(item).execute((URL) null);
                         else
                             playRawVideoStream(item);
-                    }
-                    else {
-                        VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
-                        dialog.show(getFragmentManager(), "StreamVideoDialog");
                     }
                 }
             } else {
