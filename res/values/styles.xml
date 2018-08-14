@@ -18,8 +18,9 @@
 
     <style name="MythlingTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/MythlingActionBar</item>
-        <item name="android:windowBackground">@color/background_blue</item>
+        <item name="android:windowBackground">@color/background_dark_blue</item>
         <item name="colorPrimary">@color/title_background_white</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
     </style>
 
     <style name="LaunchTheme" parent="@style/MythlingTheme">
@@ -29,7 +30,7 @@
     
     <style name="PrefsTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/MythlingActionBar</item>
-        <item name="android:windowBackground">@color/background_light_blue</item>
+        <item name="android:windowBackground">@color/background_blue</item>
     </style>
     
     <style name="ButtonBar">
