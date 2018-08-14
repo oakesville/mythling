@@ -93,12 +93,7 @@ public class PrefsActivity extends AppCompatPreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            if (getTitle().equals(getString(R.string.title_activity_prefs))) {
-                NavUtils.navigateUpFromSameTask(this);
-            } else {
-                Intent intent = new Intent(this, PrefsActivity.class);
-                startActivity(intent);
-            }
+            onBackPressed();
             return true;
         } else if (item.getItemId() == R.id.menu_help) {
             String url = getResources().getString(R.string.url_help);
@@ -142,6 +137,13 @@ public class PrefsActivity extends AppCompatPreferenceActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
         }
-        super.onBackPressed();
+        else {
+            if (getTitle().equals(getString(R.string.title_activity_prefs))) {
+                NavUtils.navigateUpFromSameTask(this);
+            } else {
+                Intent intent = new Intent(this, PrefsActivity.class);
+                startActivity(intent);
+            }
+        }
     }
 }
