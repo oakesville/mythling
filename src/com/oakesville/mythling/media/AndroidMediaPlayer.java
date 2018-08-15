@@ -362,6 +362,10 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     };
 
+    public int getVolume() {
+        return -1;
+    }
+
     public void volumeUp() {
         // TODO
     }
