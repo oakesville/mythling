@@ -731,7 +731,6 @@ public abstract class MediaActivity extends ActionBarActivity {
         arguments.putInt(SEL_ITEM_INDEX, position);
         arguments.putBoolean(GRAB_FOCUS, grabFocus);
         detailFragment.setArguments(arguments);
-        // FIXME: Issue #69
         getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT).commit();
     }
 

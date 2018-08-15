@@ -28,18 +28,23 @@ import android.view.ViewGroup;
 public class ItemDetailFragmentAdapter extends Fragment {
     private ItemDetailFragment idFrag = new ItemDetailFragment();
 
+    public void setIdx(int idx) { idFrag.setIdx(idx); }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        idFrag.onCreate(savedInstanceState);
     }
 
     @Override
     public void onAttach(Activity activity) {
+        super.onAttach(activity);
         idFrag.onAttach(activity);
     }
 
     @Override
     public void onDetach() {
+        super.onDetach();
         idFrag.onDetach();
     }
 
@@ -50,11 +55,13 @@ public class ItemDetailFragmentAdapter extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         idFrag.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onResume() {
+        super.onResume();
         idFrag.onResume();
     }
 }

@@ -15,16 +15,6 @@
  */
 package com.oakesville.mythling;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import org.json.JSONException;
-
-import com.oakesville.mythling.app.AppData;
-import com.oakesville.mythling.firetv.FireTvEpgActivity;
-import com.oakesville.mythling.media.MediaList;
-import com.oakesville.mythling.util.Reporter;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +33,17 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.oakesville.mythling.app.AppData;
+import com.oakesville.mythling.firetv.FireTvEpgActivity;
+import com.oakesville.mythling.media.MediaList;
+import com.oakesville.mythling.util.Reporter;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.text.ParseException;
+
 import io.oakesville.media.Item;
 import io.oakesville.media.Listable;
 import io.oakesville.media.MediaSettings.MediaType;
@@ -261,10 +262,8 @@ public class MediaPagerActivity extends MediaActivity {
         }
 
         public Fragment getItem(int position) {
-            Fragment frag = new ItemDetailFragmentAdapter();
-            Bundle args = new Bundle();
-            args.putInt(SEL_ITEM_INDEX, position);
-            frag.setArguments(args);
+            ItemDetailFragmentAdapter frag = new ItemDetailFragmentAdapter();
+            frag.setIdx(position);
             return frag;
         }
     }

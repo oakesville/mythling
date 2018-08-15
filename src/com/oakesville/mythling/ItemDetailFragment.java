@@ -68,13 +68,17 @@ public class ItemDetailFragment extends Fragment {
     private ImageView artworkView;
     private Listable listable;
     private int idx;
+    public void setIdx(int idx) { this.idx = idx; }
 
     private int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
+        // MediaPagerActivity sets idx directly
+        if (!isMediaPagerActivity()) {
+            idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
+        }
     }
 
     @Override
@@ -93,9 +97,13 @@ public class ItemDetailFragment extends Fragment {
         return mediaActivity.getAppSettings();
     }
 
+    private boolean isMediaPagerActivity() {
+        return !isAdded() || getActivity() instanceof MediaPagerActivity;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (getActivity() instanceof MediaPagerActivity) {
+        if (isMediaPagerActivity()) {
             detailView = inflater.inflate(R.layout.detail, container, false);
         } else {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -126,7 +134,6 @@ public class ItemDetailFragment extends Fragment {
     }
 
     private void populate() {
-
         listable = mediaActivity.getListables().get(idx);
 
         TextView titleView = (TextView) detailView.findViewById(R.id.title_text);
@@ -414,7 +421,6 @@ public class ItemDetailFragment extends Fragment {
 
         protected Long doInBackground(URL... urls) {
             try {
-
                 bitmap = MediaActivity.getAppData().readImageBitmap(filepath);
                 if (bitmap == null && mediaActivity != null) { // media activity could be null in this thread
                     if (BuildConfig.DEBUG)

@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
+import com.oakesville.mythling.MainActivity;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.WebViewActivity;
 import com.oakesville.mythling.app.AppSettings;
@@ -139,7 +140,8 @@ public class PrefsActivity extends AppCompatPreferenceActivity {
         }
         else {
             if (getTitle().equals(getString(R.string.title_activity_prefs))) {
-                NavUtils.navigateUpFromSameTask(this);
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             } else {
                 Intent intent = new Intent(this, PrefsActivity.class);
                 startActivity(intent);
