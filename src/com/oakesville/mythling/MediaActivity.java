@@ -82,6 +82,7 @@ import com.oakesville.mythling.util.ServiceFrontendPlayer;
 import com.oakesville.mythling.util.SocketFrontendPlayer;
 import com.oakesville.mythling.util.Transcoder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -760,20 +761,7 @@ public abstract class MediaActivity extends ActionBarActivity {
         try {
             if (appSettings.isDevicePlayback()) {
                 if (item.isMusic()) {
-                    Uri uri;
-                    if (item.isDownloaded()) {
-                        uri = getDownload(item);
-                    }
-                    else {
-                        String base = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/";
-                        if (appSettings.isMythlingMediaServices()) {
-                            uri = Uri.parse(base + "GetMusic?Id=" + item.getId());
-                        }
-                        else {
-                            uri = Uri.parse(base + "GetFile?StorageGroup=" + appSettings.getMusicStorageGroup()
-                                        + "&FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8"));
-                        }
-                    }
+                    Uri uri = getMusicUri(item);
                     if (appSettings.isExternalMusicPlayer()) {
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                         intent.setDataAndType(uri, "audio/*");
@@ -792,6 +780,25 @@ public abstract class MediaActivity extends ActionBarActivity {
                                 }
                             }
                         }));
+                        if (appSettings.isMusicPlaybackContinue()) {
+                            int itemIndex = -1;
+                            List<Item> listItems = appData.getMediaList().getAllItems();
+                            for (int i = 0; i < listItems.size(); i++) {
+                                if (listItems.get(i) == item) {
+                                    itemIndex = i;
+                                    break;
+                                }
+                            }
+                            if (itemIndex >= 0) {
+                                JSONArray musicQueue = new JSONArray();
+                                int idx = itemIndex;
+                                while (idx < itemIndex + AppSettings.MUSIC_MAX_LIST_SIZE && idx < listItems.size()) {
+                                    musicQueue.put(getMusicUri(listItems.get(idx)).toString());
+                                    idx++;
+                                }
+                                playMusic.putExtra(MusicPlaybackService.EXTRA_MUSIC_QUEUE, musicQueue.toString());
+                            }
+                        }
                         playMusic.setAction(MusicPlaybackService.ACTION_PLAY);
                         startService(playMusic);
                     }
@@ -1001,6 +1008,22 @@ public abstract class MediaActivity extends ActionBarActivity {
             if (getAppSettings().isErrorReportingEnabled())
                 new Reporter(ex).send();
             Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    protected Uri getMusicUri(Item item) throws IOException {
+        if (item.isDownloaded() && !appSettings.isMusicPlaybackContinue()) {
+            return getDownload(item);
+        }
+        else {
+            String base = appSettings.getMythTvServicesBaseUrlWithCredentials() + "/Content/";
+            if (appSettings.isMythlingMediaServices()) {
+                return Uri.parse(base + "GetMusic?Id=" + item.getId());
+            }
+            else {
+                return Uri.parse(base + "GetFile?StorageGroup=" + appSettings.getMusicStorageGroup()
+                        + "&FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8"));
+            }
         }
     }
 

@@ -102,6 +102,14 @@
             android:defaultValue="true"
             android:layout="@layout/sw_pref_inner"
             android:widgetLayout="@layout/prefs_switch" />
+        <com.oakesville.mythling.prefs.SwitchPreference
+            android:key="music_playback_continue"
+            android:switchTextOn="@string/switch_playback_continue"
+            android:switchTextOff="@string/switch_playback_stop"
+            android:defaultValue="true"
+            android:layout="@layout/sw_pref_inner"
+            android:widgetLayout="@layout/prefs_switch" />
+
     </com.oakesville.mythling.prefs.DisableableCategory>
     
     <com.oakesville.mythling.prefs.DisableableCategory

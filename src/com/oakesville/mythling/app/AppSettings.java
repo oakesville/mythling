@@ -70,7 +70,6 @@ public class AppSettings {
     public static final String EXTERNAL_BACKEND_CATEGORY = "external_backend_cat";
     public static final String MYTHLING_SERVICE_ACCESS_CATEGORY = "mythling_service_access_cat";
     public static final String MEDIA_SERVICES_CATEGORY = "media_services_cat";
-    public static final String MYTHWEB_ACCESS_CATEGORY = "mythweb_access_cat";
     public static final String MYTHWEB_ACCESS = "mythweb_access";
     public static final String ERROR_REPORTING = "error_reporting";
     public static final String MYTH_BACKEND_INTERNAL_HOST = "mythbe_internal_host";
@@ -91,6 +90,8 @@ public class AppSettings {
     public static final String SORT_TYPE = "sort_type";
     public static final String FRONTEND_PLAYBACK = "playback_mode";
     public static final String INTERNAL_MUSIC_PLAYER = "music_player";
+    public static final String MUSIC_PLAYBACK_CONTINUE = "music_playback_continue";
+    public static final int MUSIC_MAX_LIST_SIZE = 100;
     public static final String EXTERNAL_NETWORK = "network_location";
     public static final String CATEGORIZE_VIDEOS = "categorize_videos";
     public static final String MOVIE_DIRECTORIES = "movie_directories";
@@ -609,14 +610,16 @@ public class AppSettings {
         return !getBooleanPref(INTERNAL_MUSIC_PLAYER, true);
     }
 
-    public boolean isMythlingMediaServices() {
-        return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
+    public boolean isMusicPlaybackContinue() {
+        return getBooleanPref(MUSIC_PLAYBACK_CONTINUE, true);
     }
 
-    public boolean setMythlingMediaServices(boolean mythlingSvcs) {
-        Editor ed = prefs.edit();
-        ed.putBoolean(MYTHLING_MEDIA_SERVICES, mythlingSvcs);
-        return ed.commit();
+    public void setMusicPlaybackContinue(boolean musicPlaybackContinue) {
+        setBooleanPref(MUSIC_PLAYBACK_CONTINUE, musicPlaybackContinue);
+    }
+
+    public boolean isMythlingMediaServices() {
+        return getBooleanPref(MYTHLING_MEDIA_SERVICES, false);
     }
 
     public boolean isHasBackendWeb() {

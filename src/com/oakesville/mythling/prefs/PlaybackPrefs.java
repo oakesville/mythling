@@ -15,19 +15,19 @@
  */
 package com.oakesville.mythling.prefs;
 
-import org.json.JSONException;
-
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Localizer;
-import com.oakesville.mythling.util.Reporter;
-
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
+
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
+import com.oakesville.mythling.util.Reporter;
+
+import org.json.JSONException;
 
 public class PlaybackPrefs extends PreferenceFragment {
     private static final String TAG = PlaybackPrefs.class.getSimpleName();
@@ -40,7 +40,7 @@ public class PlaybackPrefs extends PreferenceFragment {
 
         // none of these prefs trigger cache refresh
 
-        AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
+        final AppSettings appSettings = new AppSettings(getPreferenceScreen().getContext());
 
         SwitchPreference swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.FRONTEND_PLAYBACK);
         swPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -109,7 +109,22 @@ public class PlaybackPrefs extends PreferenceFragment {
         pref.setSummary(appSettings.getLibVlcParameters());
 
         swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.INTERNAL_MUSIC_PLAYER);
+        swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false) {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean isInternalPlayer = Boolean.valueOf(newValue.toString());
+                if (!isInternalPlayer) {
+                    appSettings.setMusicPlaybackContinue(false);
+                }
+                Preference continuePref = getPreferenceScreen().findPreference(AppSettings.MUSIC_PLAYBACK_CONTINUE);
+                continuePref.setEnabled(isInternalPlayer);
+                super.onPreferenceChange(preference, newValue);
+                return true;
+            }
+        });
+
+        swPref = (SwitchPreference) getPreferenceScreen().findPreference(AppSettings.MUSIC_PLAYBACK_CONTINUE);
         swPref.setOnPreferenceChangeListener(new PrefChangeListener(false, false));
+        swPref.setEnabled(!appSettings.isExternalMusicPlayer());
 
         pref = getPreferenceScreen().findPreference(AppSettings.MYTH_FRONTEND_HOST);
         pref.setOnPreferenceChangeListener(new PrefChangeListener(true, false));

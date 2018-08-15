@@ -252,47 +252,6 @@ public class AppData {
         return queues.get(type);
     }
 
-    public void setQueue(MediaType type, List<Item> queue) {
-        queues.put(type, queue);
-    }
-
-    public String getQueueJson(MediaType type) throws JSONException {
-        List<Item> itemsList = getQueue(type);
-        if (itemsList == null)
-            return null;
-        JSONObject jsonObj = new JSONObject();
-        JSONArray items = new JSONArray();
-        for (Item item : itemsList) {
-            // TODO real item serialization
-            JSONObject w = new JSONObject();
-            w.put("path", item.getPath());
-            w.put("title", item.getTitle());
-            w.put("format", item.getFormat());
-            items.put(w);
-        }
-        jsonObj.put(type.toString(), items);
-
-        return jsonObj.toString(2);
-    }
-
-    public List<Item> readQueue(MediaType type) throws IOException, JSONException, ParseException {
-        File cacheDir = appContext.getCacheDir();
-        File queueFile = new File(cacheDir.getPath() + "/" + type + QUEUE_FILE_SUFFIX);
-        if (queueFile.exists()) {
-            String queueJson = new String(readFile(queueFile));
-            MythlingParser parser = new MythlingParser(new AppSettings(appContext), queueJson);
-            List<Item> queue = parser.parseQueue(type, storageGroups);
-            queues.put(type, queue);
-        }
-        return queues.get(type);
-    }
-
-    public void writeQueue(MediaType type, String json) throws IOException, JSONException {
-        File cacheDir = appContext.getCacheDir();
-        File jsonFile = new File(cacheDir.getPath() + "/" + type + QUEUE_FILE_SUFFIX);
-        writeFile(jsonFile, json.getBytes());
-    }
-
     private byte[] readFile(File file) throws IOException {
         FileInputStream fis = null;
         try {
