@@ -135,18 +135,14 @@ public class VideoPlayerActivity extends ActionBarActivity {
         });
         surface.setOnTouchListener(new SwipeListener(getApplicationContext()) {
             public void onSwipeLeft() {
-                Toast.makeText(getApplicationContext(), "LEFT", Toast.LENGTH_LONG).show();
             }
             public void onSwipeRight() {
-                Toast.makeText(getApplicationContext(), "RIGHT", Toast.LENGTH_LONG).show();
             }
             public void onSwipeUp() {
                 volumeUp();
-                Toast.makeText(getApplicationContext(), "UP", Toast.LENGTH_LONG).show();
             }
             public void onSwipeDown() {
                 volumeDown();
-                Toast.makeText(getApplicationContext(), "DOWN", Toast.LENGTH_LONG).show();
             }
         });
 

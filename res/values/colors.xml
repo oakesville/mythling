@@ -27,4 +27,5 @@
     <color name="firetv_focused_blue">#bfe7f5</color>
     <color name="text_light_gray">#f5f5f5</color>
     <color name="list_item_text">#424242</color>
+    <color name="progress_spinner">#263238</color>
 </resources>
