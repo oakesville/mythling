@@ -75,10 +75,6 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // MediaPagerActivity sets idx directly
-        if (!isMediaPagerActivity()) {
-            idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
-        }
     }
 
     @Override
@@ -129,6 +125,10 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // MediaPagerActivity sets idx directly
+        if (!isMediaPagerActivity()) {
+            idx = getArguments() == null ? 1 : getArguments().getInt(MediaActivity.SEL_ITEM_INDEX);
+        }
         if (mediaActivity.getListables().size() > idx) // otherwise may not be loaded
             populate();
     }
