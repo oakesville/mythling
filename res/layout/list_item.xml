@@ -47,7 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/list_item_text"/>
         
         <TextView
             android:id="@+id/item_sublabel"
@@ -55,7 +56,8 @@
             android:layout_height="0dp"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:visibility="gone"
-            android:includeFontPadding="false" />
+            android:includeFontPadding="false"
+            android:textColor="@color/list_item_text" />
         
     </LinearLayout>
     

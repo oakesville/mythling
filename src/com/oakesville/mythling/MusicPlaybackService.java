@@ -78,7 +78,8 @@ public class MusicPlaybackService extends Service {
 
             if (extras != null) {
                 playbackMessenger = (Messenger) extras.get(EXTRA_MESSENGER);
-                musicQueue = new JSONArray(extras.getString(EXTRA_MUSIC_QUEUE));
+                String queue = extras.getString(EXTRA_MUSIC_QUEUE);
+                musicQueue = queue == null ? null : new JSONArray();
             }
 
             if (intent.getAction().equals(ACTION_PLAY)) {

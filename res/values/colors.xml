@@ -15,9 +15,9 @@
 -->
 <resources>
     <color name="primary_dark">#263238</color>
-    <color name="title_background_light">#ffffff</color>
+    <color name="title_background_light">#f5f5f5</color>
     <color name="background_blue">#78909c</color>
-    <color name="background_light_blue">#eceff1</color>
+    <color name="background_light_blue">#cfd8dc</color>
     <color name="background_dark_blue">#607d8b</color>
     <color name="background_translucent_blue">#44ffffff</color>
     <color name="background_plain">#fff3f3f3</color>
@@ -26,4 +26,5 @@
     <color name="overlay_black">#66000000</color>    
     <color name="firetv_focused_blue">#bfe7f5</color>
     <color name="text_light_gray">#f5f5f5</color>
+    <color name="list_item_text">#424242</color>
 </resources>
