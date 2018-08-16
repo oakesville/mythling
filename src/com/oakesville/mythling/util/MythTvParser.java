@@ -68,7 +68,7 @@ public class MythTvParser implements MediaListParser {
 
     /**
      * @param mediaType
-     * @param storageGroup media storage group
+     * @param storageGroups media storage groups
      */
     public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
         return parseMediaList(mediaType, storageGroups, null);
@@ -76,7 +76,7 @@ public class MythTvParser implements MediaListParser {
 
     /**
      * @param mediaType
-     * @param storageGroup media storage group
+     * @param storageGroups media storage groups
      * @param basePath     base path to trim from filename (when no storage group)
      */
     public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups, String basePath) throws JSONException, ParseException {
@@ -175,6 +175,14 @@ public class MythTvParser implements MediaListParser {
                             Category cat = mediaList.getCategory(recItem.getTitle());
                             if (cat == null) {
                                 cat = new Category(recItem.getTitle(), MediaType.recordings);
+                                mediaList.addCategory(cat);
+                            }
+                            cat.addItem(recItem);
+                        } else if ((viewType == ViewType.list || viewType == ViewType.split) && sortType == SortType.byGroup) {
+                            // categorize by group
+                            Category cat = mediaList.getCategory(recItem.getRecordingGroup());
+                            if (cat == null) {
+                                cat = new Category(recItem.getRecordingGroup(), MediaType.recordings);
                                 mediaList.addCategory(cat);
                             }
                             cat.addItem(recItem);

@@ -109,6 +109,8 @@ public class Localizer extends io.oakesville.model.Localizer {
             return getStringRes(R.string.by_date);
         else if (sortType == SortType.byRating)
             return getStringRes(R.string.by_rating);
+        else if (sortType == SortType.byGroup)
+            return getStringRes(R.string.by_group);
         else if (sortType == SortType.byCallsign)
             return getStringRes(R.string.by_callsign);
         else if (sortType == SortType.byChannel)

@@ -440,11 +440,13 @@ public abstract class MediaActivity extends ActionBarActivity {
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
                 sortMenuItem.setTitle(Localizer.getInstance().getSortLabel(mediaSettings.getSortType()));
                 boolean isLiveTv = mediaSettings.getType() == MediaType.liveTv;
+                boolean isRecordings = mediaSettings.getType() == MediaType.recordings;
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byTitle).setVisible(!isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setVisible(!isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setVisible(!isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byChannel).setVisible(isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setVisible(isLiveTv);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byGroup).setVisible(isRecordings);
                 if (isLiveTv) {
                     if (mediaSettings.getSortType() == SortType.byCallsign)
                         sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setChecked(true);
@@ -452,7 +454,9 @@ public abstract class MediaActivity extends ActionBarActivity {
                         sortMenuItem.getSubMenu().findItem(R.id.sort_byChannel).setChecked(true);
                 }
                 else {
-                    if (mediaSettings.getSortType() == SortType.byDate)
+                    if (mediaSettings.getSortType() == SortType.byGroup)
+                        sortMenuItem.getSubMenu().findItem(R.id.sort_byGroup).setChecked(true);
+                    else if (mediaSettings.getSortType() == SortType.byDate)
                         sortMenuItem.getSubMenu().findItem(R.id.sort_byDate).setChecked(true);
                     else if (mediaSettings.getSortType() == SortType.byRating)
                         sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setChecked(true);
@@ -632,6 +636,12 @@ public abstract class MediaActivity extends ActionBarActivity {
                 appSettings.setSortType(SortType.byRating);
                 item.setChecked(true);
                 sortMenuItem.setTitle(R.string.menu_byRating);
+                sort();
+                return true;
+            } else if (item.getItemId() == R.id.sort_byGroup) {
+                appSettings.setSortType(SortType.byGroup);
+                item.setChecked(true);
+                sortMenuItem.setTitle(R.string.menu_byGroup);
                 sort();
                 return true;
             } else if (item.getItemId() == R.id.sort_byChannel) {
