@@ -124,6 +124,7 @@ import io.oakesville.media.TvShow;
  */
 public abstract class MediaActivity extends ActionBarActivity {
     private static final String TAG = MediaActivity.class.getSimpleName();
+    private static int active;
 
     static final String DETAIL_FRAGMENT = "detailFragment";
     static final String LIST_FRAGMENT = "listFragment";
@@ -206,7 +207,6 @@ public abstract class MediaActivity extends ActionBarActivity {
     private MenuItem moviesMenuItem;
     private MenuItem tvSeriesMenuItem;
     private MenuItem musicMenuItem;
-    private MenuItem mythwebMenuItem;
     private MenuItem stopMenuItem;
 
     private ProgressBar progressBar;
@@ -425,13 +425,6 @@ public abstract class MediaActivity extends ActionBarActivity {
         return getResources().getDrawable(getResources().getIdentifier(
                 "ic_menu_" + appSettings.getMediaSettings().getViewIcon(),
                 "drawable", AppSettings.PACKAGE));
-    }
-
-    protected void showMythwebMenu(boolean show) {
-        if (mythwebMenuItem != null) {
-            mythwebMenuItem.setEnabled(show);
-            mythwebMenuItem.setVisible(show);
-        }
     }
 
     protected void showSortMenu(boolean show) {
@@ -952,14 +945,15 @@ public abstract class MediaActivity extends ActionBarActivity {
 
                             if (downloadDir == null) {
                                 final String[] labels = mediaDirs.keySet().toArray(new String[0]);
-                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                                builder.setTitle(getString(R.string.save_to_media_folder))
-                                        .setItems(labels, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                getAppSettings().setExternalMediaDir(labels[which].toString());
-                                                downloadItem(item);
-                                            }
-                                        }).show();
+                                DownloadDialog downloadDialog = new DownloadDialog();
+                                downloadDialog.setMediaDirectories(labels);
+                                downloadDialog.setOnItemClickListener(new OnItemClickListener() {
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        getAppSettings().setExternalMediaDir(labels[position].toString());
+                                        downloadItem(item);
+                                    }
+                                });
+                                downloadDialog.show(getFragmentManager(), "downloadDialog");
                                 return;
                             }
                         }
@@ -991,12 +985,10 @@ public abstract class MediaActivity extends ActionBarActivity {
 
             long downloadId = 0;
 
-            // TODO: prefs
-            boolean bypassDownloadManager = false;
+            boolean bypassDownloadManager = appSettings.isBypassDownloadManager();
             if (bypassDownloadManager) {
-                downloadId = downloadFile.hashCode();
-                new DownloadTask(uri.toString(), downloadFile).execute();
-                item.setDownloadId(downloadId);
+                downloadId = downloadFile.getPath().hashCode();
+                new DownloadTask(item, uri.toString(), downloadFile, downloadId).execute();
             }
             else {
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -1020,7 +1012,7 @@ public abstract class MediaActivity extends ActionBarActivity {
         }
     }
 
-    protected Uri getMusicUri(Item item) throws IOException {
+    protected Uri getMusicUri(Item item) throws IOException, JSONException, ParseException {
         if (item.isDownloaded() && !appSettings.isMusicPlaybackContinue()) {
             return getDownload(item);
         }
@@ -1036,11 +1028,20 @@ public abstract class MediaActivity extends ActionBarActivity {
         }
     }
 
-    protected Uri getDownload(Item item) throws IOException {
+    protected Uri getDownload(Item item) throws IOException, JSONException, ParseException {
         if (item.getDownloadId() == null)
             return null;
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         Uri uri = dm.getUriForDownloadedFile(item.getDownloadId());
+        if (uri == null) {
+            // maybe it's one of ours
+            Download download = getAppData().getDownloads().get(item.getId());
+            if (download != null) {
+                File file = new File(download.getPath());
+                if (file.isFile())
+                    uri = Uri.fromFile(file);
+            }
+        }
         if (uri == null) {
             item.setDownloadId(null);
             throw new IOException("Cannot find download for: " + item);
@@ -1222,10 +1223,17 @@ public abstract class MediaActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        active = hashCode();
+    }
+
+    @Override
     protected void onStop() {
         if (countdownDialog != null && countdownDialog.isShowing())
             countdownDialog.dismiss();
         stopTimer();
+        active = 0;
         super.onStop();
     }
 
@@ -1741,13 +1749,17 @@ public abstract class MediaActivity extends ActionBarActivity {
     }
 
     protected class DownloadTask extends AsyncTask<URL,Integer,Long> {
+        private Item item;
         private String url;
         private File file;
+        private Long downloadId;
         private Exception ex;
 
-        public DownloadTask(String url, File file) {
+        public DownloadTask(Item item, String url, File file, Long downloadId) {
+            this.item = item;
             this.url = url;
             this.file = file;
+            this.downloadId = downloadId;
         }
 
         protected Long doInBackground(URL... urls) {
@@ -1765,6 +1777,9 @@ public abstract class MediaActivity extends ActionBarActivity {
 
         protected void onPostExecute(Long result) {
             Log.i(TAG, "Download complete: " + url);
+            item.setDownloadId(downloadId);
+            if (active == MediaActivity.this.hashCode())
+                onResume();
         }
     }
 
@@ -1813,7 +1828,7 @@ public abstract class MediaActivity extends ActionBarActivity {
     /**
      * Requires MythTV content.cpp patch to work without storage groups.
      */
-    private void playRawVideoStream(Item item) throws IOException, JSONException {
+    private void playRawVideoStream(Item item) throws IOException, JSONException, ParseException {
 
         Uri uri;
         if (item.isDownloaded()) {

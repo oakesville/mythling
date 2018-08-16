@@ -138,7 +138,6 @@ public class AppSettings {
     public static final String DEFAULT_HTTP_CONNECT_TIMEOUT = "10";
     public static final String HTTP_READ_TIMEOUT = "http_read_timeout";
     public static final String DEFAULT_HTTP_READ_TIMEOUT = "60";
-    public static final String PAGER_CURRENT_POSITION = "movie_current_position";
     public static final String DEFAULT_MEDIA_TYPE = "recordings";
     public static final String MOVIE_BASE_URL = "movie_base_url";
     public static final String TV_BASE_URL = "tv_base_url";
@@ -178,6 +177,7 @@ public class AppSettings {
     public static final String PLAYBACK_OPTIONS_JSON = "playback_options_json";
     public static final String EXTERNAL_MEDIA_DIR = "external_media_dir";
     public static final String EXTERNAL_PLAYBACK_ACCESSED = "external_playback_accessed";
+    public static final String BYPASS_DOWNLOAD_MANAGER = "bypass_download_manager";
 
     private Context appContext;
     public Context getAppContext() { return appContext; }
@@ -616,6 +616,14 @@ public class AppSettings {
 
     public void setMusicPlaybackContinue(boolean musicPlaybackContinue) {
         setBooleanPref(MUSIC_PLAYBACK_CONTINUE, musicPlaybackContinue);
+    }
+
+    public boolean isBypassDownloadManager() {
+        return getBooleanPref(BYPASS_DOWNLOAD_MANAGER, false);
+    }
+
+    public void setBypassDownloadManager(boolean bypass) {
+        setBooleanPref(BYPASS_DOWNLOAD_MANAGER, bypass);
     }
 
     public boolean isMythlingMediaServices() {

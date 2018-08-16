@@ -18,14 +18,9 @@ package com.oakesville.mythling.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
-
-import android.os.Debug;
-import android.util.Log;
-
-import com.oakesville.mythling.BuildConfig;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,24 +49,14 @@ public class Downloader {
         Response response = client.newCall(request).execute();
 
         InputStream is = response.body().byteStream();
-
-        BufferedInputStream input = new BufferedInputStream(is);
-        OutputStream output = new FileOutputStream(file);
-
-        byte[] data = new byte[1024 * 8];
-
-        long total = 0;
-        int count = 0;
-
-        while ((count = input.read(data)) != -1) {
-            total += count;
-            output.write(data, 0, count);
+        try (BufferedInputStream input = new BufferedInputStream(is);
+                OutputStream output = new FileOutputStream(file);) {
+            byte[] data = new byte[1024 * 8];
+            int count = 0;
+            while ((count = input.read(data)) != -1) {
+                output.write(data, 0, count);
+            }
+            output.flush();
         }
-
-        output.flush();
-        output.close();
-        input.close();
     }
-
-
 }

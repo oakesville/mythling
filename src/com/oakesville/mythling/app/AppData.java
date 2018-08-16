@@ -187,8 +187,18 @@ public class AppData {
         List<String> itemsToRemove = null;
         for (String itemId : downloads.keySet()) {
             Download download = downloads.get(itemId);
-            if (dm.getUriForDownloadedFile(download.getDownloadId()) != null) // make sure the file exists
+            boolean found = false;
+            if (download.getDownloadId() == download.getPath().hashCode()) {
+                // it's one of ours
+                found = new File(download.getPath()).isFile();
+            }
+            else if (dm.getUriForDownloadedFile(download.getDownloadId()) != null) {
+                // the downloaded file exists
+                found = true;
+            }
+            if (found) {
                 filtered.put(itemId, download);
+            }
             else if (lastWeek > download.getStarted().getTime()) { // remove missing items older than a week
                 if (itemsToRemove == null)
                     itemsToRemove = new ArrayList<String>();
@@ -200,6 +210,8 @@ public class AppData {
                 downloads.remove(itemToRemove);
             persistDownloads();
         }
+
+        // append downloads that bypassed DownloadManager
 
         return filtered;
     }

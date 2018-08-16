@@ -534,6 +534,7 @@
     <string name="save_to_media_folder">Save to media folder:</string>
     <string name="playing_audio_track_">Playing audio track:\u0020</string>
     <string name="storage_dir">/storage/</string>
+    <string name="bypass_download_manager">Bypass Download Manager</string>
     <!-- individual components of date/time formats are automaticaly localized -->
     <string name="date_format">MMM d yyyy</string> <!-- Apr 15 2015 -->
     <string name="time_format">h:mm a</string> <!-- 10:00 PM -->
