@@ -37,15 +37,15 @@ import android.widget.CheckBox;
 @SuppressLint("ValidFragment")
 public class PrefDismissDialog extends DialogFragment {
 
-    private String title;
-    private String message;
+    private final String title;
+    private final String message;
     private String checkboxText;
     public void setCheckboxText(String checkboxText) {
         this.checkboxText = checkboxText;
     }
 
-    private AppSettings settings;
-    private String key;
+    private final AppSettings settings;
+    private final String key;
 
     private boolean checked;
     private boolean defaultChecked = true;
@@ -54,9 +54,9 @@ public class PrefDismissDialog extends DialogFragment {
     }
 
     public interface PrefDismissListener {
-        public String getPositiveBtnLabel();
-        public void onClickPositive();
-        public void onClickNegative();
+        String getPositiveBtnLabel();
+        void onClickPositive();
+        void onClickNegative();
     }
     private PrefDismissListener listener;
     public void setListener(PrefDismissListener listener) {

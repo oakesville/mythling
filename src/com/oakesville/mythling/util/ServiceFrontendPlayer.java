@@ -35,8 +35,8 @@ import io.oakesville.media.Recording;
 public class ServiceFrontendPlayer implements FrontendPlayer {
     private static final String TAG = ServiceFrontendPlayer.class.getSimpleName();
 
-    private AppSettings appSettings;
-    private Item item;
+    private final AppSettings appSettings;
+    private final Item item;
 
     private String state;
 
@@ -45,7 +45,7 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         this.item = item;
     }
 
-    public boolean checkIsPlaying() throws IOException, JSONException {
+    public boolean checkIsPlaying() throws IOException {
         int timeout = 5000;  // TODO: pref
 
         state = null;

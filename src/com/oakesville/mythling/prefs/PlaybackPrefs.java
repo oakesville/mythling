@@ -92,7 +92,7 @@ public class PlaybackPrefs extends PreferenceFragment {
                     int scTol = settings.getSeekCorrectionTolerance();
                     if (scTol == 0) {
                         settings.setSeekCorrectionTolerance(3);
-                        getPreferenceScreen().findPreference(AppSettings.SEEK_CORRECTION_TOLERANCE).setSummary("3");;
+                        getPreferenceScreen().findPreference(AppSettings.SEEK_CORRECTION_TOLERANCE).setSummary("3");
                     }
                 }
                 return true;

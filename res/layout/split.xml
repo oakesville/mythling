@@ -46,9 +46,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:text="@string/blank"
-            android:ellipsize="start"
-            android:singleLine="true"
-            android:maxLines="1" />   
+            android:singleLine="true" />
         
         <ListView
             android:id="@+id/split_cats"

@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import com.oakesville.mythling.R;
 import com.oakesville.mythling.util.Reporter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import io.oakesville.media.MediaSettings.MediaType;
@@ -51,6 +52,7 @@ public class Localizer extends io.oakesville.model.Localizer {
         return getAppSettings().getAppContext();
     }
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     public void initialize(Object appSettings) {
         try {
@@ -80,7 +82,7 @@ public class Localizer extends io.oakesville.model.Localizer {
         String resName = english.toLowerCase();
         if (resName.endsWith(": "))
             resName = resName.substring(0, resName.length() - 2) + "_";
-        resName.replace(' ', '_');
+        resName = resName.replace(' ', '_');
         return getAppContext().getResources().getString(getStringResId(resName));
     }
 
@@ -139,14 +141,14 @@ public class Localizer extends io.oakesville.model.Localizer {
     /**
      * Note: inefficient.
      */
-    public int getStringResId(String name) {
+    private int getStringResId(String name) {
         return getAppContext().getResources().getIdentifier(name, "string", AppSettings.PACKAGE);
     }
 
     /**
      * Casts as the Android-specific instance where needed.
      */
-    public static Localizer get() {
+    private static Localizer get() {
         return getInstance();
     }
 
@@ -154,7 +156,7 @@ public class Localizer extends io.oakesville.model.Localizer {
         return get().getAppContext().getString(resId);
     }
 
-    public static String[] getStringArrayRes(int resId) {
+    private static String[] getStringArrayRes(int resId) {
         return get().getAppContext().getResources().getStringArray(resId);
     }
 

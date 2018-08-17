@@ -36,7 +36,6 @@ import com.oakesville.mythling.media.MediaList;
 import com.oakesville.mythling.media.SearchResults;
 import com.oakesville.mythling.util.MediaListParser;
 import com.oakesville.mythling.util.MythTvParser;
-import com.oakesville.mythling.util.MythlingParser;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -61,9 +60,8 @@ public class AppData {
     private static final String STORAGE_GROUPS_JSON_FILE = "storageGroups.json";
     private static final String CHANNEL_GROUPS_JSON_FILE = "channelGroups.json";
     private static final String DOWNLOADS_JSON_FILE = "downloadedItems.json";
-    private static final String QUEUE_FILE_SUFFIX = "Queue.json";
 
-    private Context appContext;
+    private final Context appContext;
     public AppData(Context appContext) { this.appContext = appContext;  }
 
     public boolean isExpired() {
@@ -90,7 +88,7 @@ public class AppData {
     public Map<String,ChannelGroup> getChannelGroups() { return channelGroups; }
     public void setChannelGroups(Map<String,ChannelGroup> chgroups) { this.channelGroups = chgroups; }
 
-    private Map<String,Download> downloads = new HashMap<String,Download>();
+    private final Map<String,Download> downloads = new HashMap<>();
 
     private SearchResults searchResults;
     public SearchResults getSearchResults() { return searchResults; }
@@ -112,7 +110,7 @@ public class AppData {
         return mediaList;
     }
 
-    public Map<String,StorageGroup> readStorageGroups() throws IOException, JSONException, ParseException {
+    private Map<String,StorageGroup> readStorageGroups() throws IOException, JSONException {
         File cacheDir = appContext.getCacheDir();
         File storageGroupsJsonFile = new File(cacheDir.getPath() + "/" + STORAGE_GROUPS_JSON_FILE);
         if (storageGroupsJsonFile.exists()) {
@@ -124,7 +122,7 @@ public class AppData {
         return storageGroups;
     }
 
-    public Map<String,ChannelGroup> readChannelGroups() throws IOException, JSONException, ParseException {
+    public Map<String,ChannelGroup> readChannelGroups() throws IOException, JSONException {
         File cacheDir = appContext.getCacheDir();
         File channelGroupsJsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
         if (channelGroupsJsonFile.exists()) {
@@ -144,19 +142,19 @@ public class AppData {
             channelGroupsJsonFile.delete();
     }
 
-    public void writeMediaList(String json) throws IOException, JSONException {
+    public void writeMediaList(String json) throws IOException {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + MEDIA_LIST_JSON_FILE);
         writeFile(jsonFile, json.getBytes());
     }
 
-    public void writeStorageGroups(String json) throws IOException, JSONException {
+    public void writeStorageGroups(String json) throws IOException {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + STORAGE_GROUPS_JSON_FILE);
         writeFile(jsonFile, json.getBytes());
     }
 
-    public void writeChannelGroups(String json) throws IOException, JSONException {
+    public void writeChannelGroups(String json) throws IOException {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + CHANNEL_GROUPS_JSON_FILE);
         writeFile(jsonFile, json.getBytes());
@@ -180,7 +178,8 @@ public class AppData {
     public Map<String,Download> getDownloads() throws IOException, JSONException, ParseException {
         readDownloads();
         DownloadManager dm = (DownloadManager) appContext.getSystemService(Context.DOWNLOAD_SERVICE);
-        Map<String,Download> filtered = new HashMap<String,Download>();
+        assert dm != null;
+        Map<String,Download> filtered = new HashMap<>();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -7);
         long lastWeek = cal.getTimeInMillis();
@@ -192,16 +191,18 @@ public class AppData {
                 // it's one of ours
                 found = new File(download.getPath()).isFile();
             }
-            else if (dm.getUriForDownloadedFile(download.getDownloadId()) != null) {
-                // the downloaded file exists
-                found = true;
+            else {
+                if (dm.getUriForDownloadedFile(download.getDownloadId()) != null) {
+                    // the downloaded file exists
+                    found = true;
+                }
             }
             if (found) {
                 filtered.put(itemId, download);
             }
             else if (lastWeek > download.getStarted().getTime()) { // remove missing items older than a week
                 if (itemsToRemove == null)
-                    itemsToRemove = new ArrayList<String>();
+                    itemsToRemove = new ArrayList<>();
                 itemsToRemove.add(download.getItemId());
             }
         }
@@ -224,7 +225,7 @@ public class AppData {
         return null;
     }
 
-    public void writeDownloads(String json) throws IOException, JSONException {
+    private void writeDownloads(String json) throws IOException {
         File cacheDir = appContext.getCacheDir();
         File jsonFile = new File(cacheDir.getPath() + "/" + DOWNLOADS_JSON_FILE);
         writeFile(jsonFile, json.getBytes());
@@ -258,11 +259,7 @@ public class AppData {
         return download.getDownloadId();
     }
 
-    private Map<MediaType,List<Item>> queues = new HashMap<MediaType, List<Item>>();
-
-    public List<Item> getQueue(MediaType type) {
-        return queues.get(type);
-    }
+    private final Map<MediaType,List<Item>> queues = new HashMap<>();
 
     private byte[] readFile(File file) throws IOException {
         FileInputStream fis = null;
@@ -289,8 +286,8 @@ public class AppData {
         }
     }
 
-    private static int bitmapCacheMem = (int) ((Runtime.getRuntime().maxMemory() / 1024) / 4); // one quarter of total (kb)
-    private static LruCache<String, Bitmap> bitmapCache = new LruCache<String, Bitmap>(bitmapCacheMem) {
+    private static final int bitmapCacheMem = (int) ((Runtime.getRuntime().maxMemory() / 1024) / 4); // one quarter of total (kb)
+    private static final LruCache<String, Bitmap> bitmapCache = new LruCache<String, Bitmap>(bitmapCacheMem) {
         protected int sizeOf(String key, Bitmap value) {
             return value.getByteCount() / 1024;  // kb taken up by this entry
         }
@@ -339,9 +336,10 @@ public class AppData {
     }
 
     private static Point screenSize;
-    public Point getScreenSize() {
+    private Point getScreenSize() {
         if (screenSize == null) {
             WindowManager wm = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
+            assert wm != null;
             Display display = wm.getDefaultDisplay();
             screenSize = new Point();
             display.getSize(screenSize);
@@ -349,7 +347,7 @@ public class AppData {
         return screenSize;
     }
 
-    public int calculateImageSampleSize(int width, int height, int reqWidth, int reqHeight) {
+    private int calculateImageSampleSize(int width, int height, int reqWidth, int reqHeight) {
         int sampleSize = 1;
         if (height > reqHeight || width > reqWidth) {
             final int halfHeight = height / 2;

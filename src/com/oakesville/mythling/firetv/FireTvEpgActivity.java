@@ -161,7 +161,7 @@ public class FireTvEpgActivity extends EpgActivity {
             public void onPageFinished(AmazonWebView view, String url) {
                 super.onPageFinished(view, url);
                 setLastLoad(System.currentTimeMillis());
-                popups = new ArrayList<String>();
+                popups = new ArrayList<>();
                 menuItemFromBtm = 0;
             }
         });

@@ -17,7 +17,7 @@ package com.oakesville.mythling.util;
 
 import java.io.IOException;
 
-public class ServiceException extends IOException {
+class ServiceException extends IOException {
     public ServiceException(String msg) {
         super(msg);
     }

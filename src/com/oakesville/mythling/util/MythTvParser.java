@@ -54,8 +54,8 @@ import io.oakesville.media.Video;
 public class MythTvParser implements MediaListParser {
     private static final String TAG = MythTvParser.class.getSimpleName();
 
-    private AppSettings appSettings;
-    private String json;
+    private final AppSettings appSettings;
+    private final String json;
 
     public MythTvParser(AppSettings appSettings, String json) {
         this.appSettings = appSettings;
@@ -224,7 +224,7 @@ public class MythTvParser implements MediaListParser {
             StorageGroup musicStorageGroup = storageGroups.get(appSettings.getMusicStorageGroup());
             Map<String,String> dirToAlbumArt = null;
             if (appSettings.isMusicArtAlbum())
-                dirToAlbumArt = new HashMap<String,String>();
+                dirToAlbumArt = new HashMap<>();
             for (int i = 0; i < strList.length(); i++) {
                 String filepath = strList.getString(i);
                 int lastSlash = filepath.lastIndexOf('/');
@@ -515,7 +515,7 @@ public class MythTvParser implements MediaListParser {
     }
 
     public List<LiveStreamInfo> parseStreamInfoList() {
-        List<LiveStreamInfo> streamList = new ArrayList<LiveStreamInfo>();
+        List<LiveStreamInfo> streamList = new ArrayList<>();
 
         try {
             long startTime = System.currentTimeMillis();
@@ -585,7 +585,7 @@ public class MythTvParser implements MediaListParser {
     }
 
     public Map<String,StorageGroup> parseStorageGroups() throws JSONException {
-        Map<String,StorageGroup> storageGroups = new HashMap<String,StorageGroup>();
+        Map<String,StorageGroup> storageGroups = new HashMap<>();
 
         JSONObject dirList = new JSONObject(json).getJSONObject("StorageGroupDirList");
         if (dirList.has("StorageGroupDirs")) {
@@ -612,7 +612,7 @@ public class MythTvParser implements MediaListParser {
     }
 
     public Map<String,ChannelGroup> parseChannelGroups() throws JSONException {
-        Map<String,ChannelGroup> channelGroups = new HashMap<String,ChannelGroup>();
+        Map<String,ChannelGroup> channelGroups = new HashMap<>();
 
         JSONObject jsonObj = new JSONObject(json);
         if (jsonObj.has("ChannelGroupList")) {  // will not for 0.27
@@ -641,7 +641,7 @@ public class MythTvParser implements MediaListParser {
             return null;
     }
 
-    public Date parseMythDateTime(String dt) throws ParseException {
+    private Date parseMythDateTime(String dt) throws ParseException {
         String str = dt.replace('T', ' ');
         if (str.endsWith("Z"))
             str = str.substring(0, str.length() - 1);

@@ -18,7 +18,6 @@ package com.oakesville.mythling.prefs;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -113,7 +112,7 @@ public class PrefsActivity extends AppCompatPreferenceActivity {
     @Override
     public void setListAdapter(ListAdapter adapter) {
         if (headers == null) {
-            headers = new ArrayList<Header>();
+            headers = new ArrayList<>();
             // when the saved state provides the list of headers, onBuildHeaders() is not called
             // so we build it from the adapter provided, then use our own adapter
 
@@ -129,7 +128,6 @@ public class PrefsActivity extends AppCompatPreferenceActivity {
         if (backTo != null) {
             try {
                 startActivity(new Intent(this, Class.forName(backTo)));
-                return;
             }
             catch (Exception ex) {
                 Log.e(TAG, ex.getMessage(), ex);

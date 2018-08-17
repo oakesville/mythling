@@ -4,9 +4,9 @@ import com.oakesville.mythling.app.AppSettings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
-public class LaunchActivity extends ActionBarActivity {
+public class LaunchActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

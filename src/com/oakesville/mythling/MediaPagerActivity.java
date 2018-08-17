@@ -56,7 +56,6 @@ public class MediaPagerActivity extends MediaActivity {
     private static final String TAG = MediaPagerActivity.class.getSimpleName();
 
     private ViewPager pager;
-    private MediaPagerAdapter pagerAdapter;
 
     private SeekBar positionBar;
     private String backTo;
@@ -102,7 +101,7 @@ public class MediaPagerActivity extends MediaActivity {
         super.onResume();
     }
 
-    public void populate() throws IOException, JSONException, ParseException {
+    protected void populate() throws IOException, JSONException, ParseException {
         if (getAppData() == null) {
             startProgress();
             AppData appData = new AppData(getApplicationContext());
@@ -119,7 +118,7 @@ public class MediaPagerActivity extends MediaActivity {
         storageGroups = getAppData().getStorageGroups();
         setMediaType(mediaList.getMediaType());
 
-        pagerAdapter = new MediaPagerAdapter(getSupportFragmentManager());
+        MediaPagerAdapter pagerAdapter = new MediaPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new OnPageChangeListener() {
             public void onPageSelected(int position) {
@@ -211,7 +210,7 @@ public class MediaPagerActivity extends MediaActivity {
         goListView("split");
     }
 
-    protected void goListView(String mode) {
+    private void goListView(String mode) {
         if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
             getAppSettings().clearCache(); // refresh since we're switching from flattened hierarchy
 
@@ -253,7 +252,7 @@ public class MediaPagerActivity extends MediaActivity {
     }
 
     private class MediaPagerAdapter extends FragmentStatePagerAdapter {
-        public MediaPagerAdapter(FragmentManager fm) {
+        MediaPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -278,7 +277,7 @@ public class MediaPagerActivity extends MediaActivity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN && getCurrentFocus() != null) {
                 if ((getCurrentFocus().getParent() instanceof View &&
                         ((View)getCurrentFocus().getParent()).getId() == R.id.button_bar) ||
                       getCurrentFocus().getId() == R.id.title_text) {
@@ -286,7 +285,7 @@ public class MediaPagerActivity extends MediaActivity {
                     return true;
                 }
             }
-            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT && getCurrentFocus() != null) {
                 if (getCurrentFocus().getId() == R.id.pager_position) {
                     if (pager.getCurrentItem() < getListables().size() - 1) {
                         pager.setCurrentItem(pager.getCurrentItem() + 1);
@@ -295,7 +294,7 @@ public class MediaPagerActivity extends MediaActivity {
                     }
                 }
             }
-            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && getCurrentFocus() != null) {
                 if (getCurrentFocus().getId() == R.id.pager_position) {
                     if (pager.getCurrentItem() > 0) {
                         pager.setCurrentItem(pager.getCurrentItem() - 1);

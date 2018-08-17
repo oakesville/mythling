@@ -44,7 +44,7 @@ public class FireTvPrefsSpec implements DevicePrefsSpec {
     }
 
     public Map<String,Object> getDefaultValues() {
-        Map<String,Object> defaults = new HashMap<String,Object>();
+        Map<String,Object> defaults = new HashMap<>();
         defaults.put(AppSettings.INTERNAL_VIDEO_RES, "720");
         defaults.put(AppSettings.TRANSCODE_TIMEOUT, "60");
         defaults.put(AppSettings.EPG_PARAMS, "bufferSize=0"); // guideInterval added dynamically

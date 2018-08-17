@@ -17,12 +17,10 @@ package com.oakesville.mythling.util;
 
 import java.io.IOException;
 
-import org.json.JSONException;
-
 public interface FrontendPlayer {
-    public boolean checkIsPlaying() throws IOException, JSONException;
+    boolean checkIsPlaying() throws IOException;
 
-    public void play();
+    void play();
 
-    public void stop();
+    void stop();
 }

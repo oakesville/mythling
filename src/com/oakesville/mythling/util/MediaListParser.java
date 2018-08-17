@@ -26,6 +26,6 @@ import io.oakesville.media.MediaSettings.MediaType;
 import io.oakesville.media.StorageGroup;
 
 public interface MediaListParser {
-    public MediaList parseMediaList(MediaType mediaType, Map<String,StorageGroup> storageGroups)
+    MediaList parseMediaList(MediaType mediaType, Map<String, StorageGroup> storageGroups)
             throws JSONException, ParseException, ServiceException;
 }

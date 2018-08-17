@@ -26,12 +26,10 @@ import com.oakesville.mythling.prefs.PrefsActivity;
 import com.oakesville.mythling.util.Reporter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,7 +41,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class WebViewActivity extends ActionBarActivity {
+public class WebViewActivity extends AppCompatActivity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
     public static final String BACK_TO = "back_to";
     protected static final String CONSOLE_ERROR_TAG = "ERROR: "; // must match epg.js
@@ -83,9 +81,7 @@ public class WebViewActivity extends ActionBarActivity {
 
             if (BuildConfig.DEBUG) {
                 // allow debugging with chrome dev tools
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                    WebView.setWebContentsDebuggingEnabled(true);
-
+                WebView.setWebContentsDebuggingEnabled(true);
                 // do not cache in debug
                 webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             }

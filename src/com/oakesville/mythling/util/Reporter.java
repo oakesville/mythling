@@ -29,10 +29,10 @@ import android.util.Log;
 
 public class Reporter {
     private static final String TAG = Reporter.class.getSimpleName();
-    public static final String ERROR_REPORTING_URL = "http://54.187.163.194/mythling/report";
+    private static final String ERROR_REPORTING_URL = "http://54.187.163.194/mythling/report";
 
     private Throwable throwable;
-    private String message;
+    private final String message;
 
     public Reporter(Throwable t) {
         this.throwable = t;

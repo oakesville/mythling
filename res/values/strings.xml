@@ -96,7 +96,7 @@
     <string name="message_skip_back_interval">Seconds to skip backward when the Skip Back button is pressed</string>
     <string name="title_jump_interval">Jump Interval</string>
     <string name="message_jump_interval">Seconds to skip forward or backward when a Jump button is pressed</string>
-    <string name="title_auto_skip">Commercial Skip (MythTV 0.28)</string>
+    <string name="title_auto_skip">Commercial Skip (MythTV 0.28+)</string>
     <string name="dlg_title_auto_skip">Commercial Skip (requires MythTV 0.28+ or Mythling media services)</string>
     <string name="notify_auto_skip_">Auto-Skip:\u0020</string>
     <string-array name="auto_skip_values">
@@ -493,6 +493,7 @@
     <string name="restoring_saved_position_">Restoring saved position:\u0020</string>
     <string name="unable_to_retrieve_cutlist">Unable to retrieve cut list (MythTV 0.28?)</string>
     <string name="media_not_seekable">Media is not seekable</string>
+    <string name="volume">Volume:\u0020</string>
     <string name="proxying">proxying</string>
     <string name="launched_through_external_intent">Mythling player launched through external intent.</string>
     <string name="media_player_error_">Media player error:\u0020</string>

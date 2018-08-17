@@ -25,17 +25,17 @@ import android.net.Uri;
 
 public interface MediaPlayer {
 
-    public class MediaPlayerEvent {
+    class MediaPlayerEvent {
         public MediaPlayerEvent(MediaPlayerEventType type) {
             this.type = type;
         }
 
-        public MediaPlayerEventType type;
+        public final MediaPlayerEventType type;
         public int position;
         public String message;
     }
 
-    public enum MediaPlayerEventType {
+    enum MediaPlayerEventType {
         playing,
         time,
         seek,
@@ -46,91 +46,91 @@ public interface MediaPlayer {
         error
     }
 
-    public interface MediaPlayerEventListener {
-        public void onEvent(MediaPlayerEvent event);
+    interface MediaPlayerEventListener {
+        void onEvent(MediaPlayerEvent event);
     }
 
-    public interface MediaPlayerShiftListener {
-        public void onShift(int delta);
+    interface MediaPlayerShiftListener {
+        void onShift(int delta);
     }
 
-    public interface MediaPlayerLayoutChangeListener {
-        public void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator);
+    interface MediaPlayerLayoutChangeListener {
+        void onLayoutChange(int width, int height, int aspectNumerator, int aspectDenominator);
     }
 
-    public String getVersion();
+    String getVersion();
 
     /**
      * @param metaLength length from mythtv database
      */
-    public void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException;
+    void playMedia(Uri mediaUri, int metaLength, AuthType authType, List<String> options) throws IOException;
 
-    public void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException;
+    void playMedia(FileDescriptor fileDescriptor, int metaLength, List<String> options) throws IOException;
 
-    public boolean isPlaying();
-    public boolean isProxying();
-    public boolean isTargeting(); // wait for seek to settle
+    boolean isPlaying();
+    boolean isProxying();
+    boolean isTargeting(); // wait for seek to settle
 
-    public void play();
-    public void pause();
+    void play();
+    void pause();
 
     /**
      * @return length in seconds (or zero if unknown)
      */
-    public int getItemLength();
+    int getItemLength();
 
-    public boolean isItemSeekable();
+    boolean isItemSeekable();
 
-    public boolean supportsSeekCorrection();
-    public int getSeekCorrectionTolerance();
-    public void setSeekCorrectionTolerance(int seekCorrectionTolerance);
+    boolean supportsSeekCorrection();
+    int getSeekCorrectionTolerance();
+    void setSeekCorrectionTolerance(int seekCorrectionTolerance);
 
     /**
      * Significant mismatch leading to inaccurate seeks.
      */
-    public boolean isDurationMismatch();
+    boolean isDurationMismatch();
 
     /**
      * @return video position in seconds (or zero if unknown)
      */
-    public int getSeconds();
+    int getSeconds();
 
     /**
      * Set the video position (only works if seekable).
      */
-    public void setSeconds(int secs);
+    void setSeconds(int secs);
 
     /**
      * Skip forward or backward.
      */
-    public void skip(int delta);
+    void skip(int delta);
 
     /**
      * Step up the rewind rate by a factor of two
      */
-    public void stepUpRewind();
+    void stepUpRewind();
 
     /**
      * Step up the fast-forward rate by a factor of two
      */
-    public void stepUpFastForward();
+    void stepUpFastForward();
 
-    public int getPlayRate();
+    int getPlayRate();
 
-    public int getVolume();
-    public void volumeUp();
-    public void volumeDown();
+    int getVolume();
+    void volumeUp();
+    void volumeDown();
 
-    public String nextAudioTrack();
+    String nextAudioTrack();
 
     /**
      * Release player and associated native stuff.
      */
-    public void doRelease();
-    public boolean isReleased();
+    void doRelease();
+    boolean isReleased();
 
-    public void setMediaPlayerEventListener(MediaPlayerEventListener listener);
-    public void setMediaPlayerShiftListener(MediaPlayerShiftListener listener);
-    public void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener);
+    void setMediaPlayerEventListener(MediaPlayerEventListener listener);
+    void setMediaPlayerShiftListener(MediaPlayerShiftListener listener);
+    void setLayoutChangeListener(MediaPlayerLayoutChangeListener listener);
 
 }

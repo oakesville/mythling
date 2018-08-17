@@ -51,8 +51,8 @@ public class VideoPlaybackDialog extends DialogFragment {
     private static final String TAG = VideoPlaybackDialog.class.getSimpleName();
 
     public interface PlaybackDialogListener {
-        public void onClickPlay(Item item, PlaybackOption option);
-        public void onClickCancel();
+        void onClickPlay(Item item, PlaybackOption option);
+        void onClickCancel();
     }
 
     private PlaybackDialogListener listener;
@@ -60,8 +60,8 @@ public class VideoPlaybackDialog extends DialogFragment {
         this.listener = listener;
     }
 
-    private AppSettings settings;
-    private Item item;
+    private final AppSettings settings;
+    private final Item item;
     private PlaybackOption playbackOption;
     private AlertDialog dialog;
 

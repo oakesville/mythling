@@ -21,6 +21,7 @@ import java.util.Map;
 import com.oakesville.mythling.app.AppSettings;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -30,30 +31,31 @@ import android.widget.TextView;
 import io.oakesville.media.Item;
 import io.oakesville.media.Listable;
 
-public class ListableListAdapter extends ArrayAdapter<Listable> {
+class ListableListAdapter extends ArrayAdapter<Listable> {
 
     private int selection = -1;
     public int getSelection() { return selection; }
     public void setSelection(int sel) { this.selection = sel;  }
 
-    private boolean isTv;
+    private final boolean isTv;
 
     public ListableListAdapter(Context context, Listable[] listables, boolean isTv) {
         super(context, R.layout.list_item, R.id.item_label, listables);
         this.isTv = isTv;
     }
 
-    private Map<String,Integer> iconToResId = new HashMap<String,Integer>();
+    private final Map<String,Integer> iconToResId = new HashMap<>();
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View rowView = super.getView(position, convertView, parent);
         if (isTv)
             rowView.setBackgroundResource(R.drawable.selectable_list_item);
         Listable listable = getItem(position);
 
         // icon
-        Integer imageRes = iconToResId.get(listable.getIcon());
+        Integer imageRes = listable == null ? null : iconToResId.get(listable.getIcon());
         if (imageRes == null) {
             imageRes = getContext().getResources().getIdentifier("ic_" + listable.getIcon(), "drawable", AppSettings.PACKAGE);
         }
@@ -68,7 +70,7 @@ public class ListableListAdapter extends ArrayAdapter<Listable> {
 
         // sublabel
         TextView subLabelText = (TextView) rowView.findViewById(R.id.item_sublabel);
-        String subLabel = listable.getListSubText();
+        String subLabel = listable == null ? null : listable.getListSubText();
         subLabelText.setVisibility(subLabelText == null ? View.GONE : View.VISIBLE);
         subLabelText.setText(subLabel);
         if (subLabel == null)

@@ -22,7 +22,7 @@ import android.util.AttributeSet;
 /**
  * Duplicated from Android ImageView, except upscales images if smaller than desired dims.
  */
-public class ImageView extends android.widget.ImageView {
+public class ImageView extends android.support.v7.widget.AppCompatImageView {
     private boolean adjustViewBounds;
     private int maxWidth;
     private int maxHeight;

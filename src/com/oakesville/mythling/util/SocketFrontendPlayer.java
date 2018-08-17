@@ -43,10 +43,10 @@ import io.oakesville.media.TvShow;
 public class SocketFrontendPlayer implements FrontendPlayer {
     private static final String TAG = SocketFrontendPlayer.class.getSimpleName();
 
-    private AppSettings appSettings;
-    private String charSet;
-    private String basePath;
-    private Item item;
+    private final AppSettings appSettings;
+    private final String charSet;
+    private final String basePath;
+    private final Item item;
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
@@ -129,7 +129,6 @@ public class SocketFrontendPlayer implements FrontendPlayer {
             if (result != 0L) {
                 if (ex != null)
                     Toast.makeText(appSettings.getAppContext(), Localizer.getStringRes(R.string.frontend_playback_error_) + " '" + item.getFileName() + "': " + ex.toString(), Toast.LENGTH_LONG).show();
-            } else {
             }
         }
     }
@@ -168,7 +167,6 @@ public class SocketFrontendPlayer implements FrontendPlayer {
             if (result != 0L) {
                 if (ex != null)
                     Toast.makeText(appSettings.getAppContext(), Localizer.getStringRes(R.string.error_stopping_frontend_playback_) + ex.toString(), Toast.LENGTH_LONG).show();
-            } else {
             }
         }
     }

@@ -152,7 +152,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
      * (relies on file extension appearing last in the uri).
      */
     private List<String> getLibVlcMediaOptions(List<String> mediaOptions, Uri uri) {
-        List<String> libVlcMediaOptions = new ArrayList<String>();
+        List<String> libVlcMediaOptions = new ArrayList<>();
         for (String mediaOption : mediaOptions) {
             int colon = mediaOption.indexOf(':');
             if (colon == 0) {
@@ -186,7 +186,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     private static LibVLC libvlc;
     private static LibVLC createLibVlc(List<String> mediaOptions) {
         // libvlc
-        ArrayList<String> options = new ArrayList<String>();
+        ArrayList<String> options = new ArrayList<>();
         if (mediaOptions != null)
             options.addAll(mediaOptions);
         if (BuildConfig.DEBUG && !options.contains("-vvv"))
@@ -273,8 +273,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
             setAudioTrack(audioTrack);
     }
 
-    private Handler targetTimeoutHandler = new Handler();
-    private Runnable targetTimeoutAction = new Runnable() {
+    private final Handler targetTimeoutHandler = new Handler();
+    private final Runnable targetTimeoutAction = new Runnable() {
         public void run() {
             if (target > 0)
                 Log.d(TAG, "Seek target timed out after " + targetTimeout + " ms");
@@ -284,14 +284,14 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
 
     private long target; // ms
     public boolean isTargeting() { return target > 0; }
-    private int targetTimeout = 5000; // ms
+    private final int targetTimeout = 5000; // ms
     private int audioTrack;
 
     /**
      * Seek forward or backward delta seconds.
      * @return fractional position or -1 if not seekable
      */
-    public float doSkip(int delta) {
+    private float doSkip(int delta) {
         if (isItemSeekable()) {
             long len = getLength();
             if (len > 0) {
@@ -361,7 +361,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         else
             return 1;
     }
-    public void setMaxPlayRate(int maxRate) {
+    private void setMaxPlayRate(int maxRate) {
         if (maxRate <= 0)
             this.maxPlayRate = 1;
         else
@@ -417,8 +417,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         }
     }
 
-    private Handler fastForwardHandler = new Handler();
-    private Runnable fastForwardAction = new Runnable() {
+    private final Handler fastForwardHandler = new Handler();
+    private final Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate > 1) {
                 float f = doSkip(playRate);
@@ -465,8 +465,8 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         }
     }
 
-    private Handler rewindHandler = new Handler();
-    private Runnable rewindAction = new Runnable() {
+    private final Handler rewindHandler = new Handler();
+    private final Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased() && playRate < 0) {
                 float begin = doSkip(playRate);
@@ -484,14 +484,15 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
     public void volumeUp() {
         if (getVolume() < 95)
             setVolume(getVolume() + 5);
-        setVolume(100);
+        else if (getVolume() != 100)
+            setVolume(100);
 
     }
 
     public void volumeDown() {
         if (getVolume() >= 5)
             setVolume(getVolume() - 5);
-        else
+        else if (getVolume() != 0)
             setVolume(0);
     }
     /**
@@ -527,13 +528,13 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.eventListener = listener;
     }
 
-    private MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
+    private final MediaPlayer.EventListener vlcEventListener = new MediaPlayer.EventListener() {
         private int samples = 0;
-        private int minSamples = 10;
-        private int maxSamples = 200;
+        private final int minSamples = 10;
+        private final int maxSamples = 200;
         private long length;  // length reported by libvlc
         private int metaLength = 0;
-        private float offsetFraction = 0.0f;
+        private final float offsetFraction = 0.0f;
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
@@ -629,7 +630,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.shiftListener = listener;
     }
 
-    private LibVLC.OnNativeCrashListener nativeCrashListener = new LibVLC.OnNativeCrashListener() {
+    private final LibVLC.OnNativeCrashListener nativeCrashListener = new LibVLC.OnNativeCrashListener() {
 
         @Override
         public void onNativeCrash() {
@@ -646,7 +647,7 @@ public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythli
         this.layoutChangeListener = listener;
     }
 
-    private Callback nativeCallback = new Callback() {
+    private final Callback nativeCallback = new Callback() {
         public void onNewLayout(IVLCVout vout, int width, int height,
                 int visibleWidth, int visibleHeight, int aspectNumerator, int aspectDenominator) {
             if (layoutChangeListener != null)

@@ -62,27 +62,27 @@ public class SearchResults {
     public Map<String,StorageGroup> getStorageGroups() { return storageGroups; }
     public void setStorageGroups(Map<String,StorageGroup> sgs) { this.storageGroups = sgs;  }
 
-    private List<Item> videos = new ArrayList<Item>();
+    private List<Item> videos = new ArrayList<>();
     public List<Item> getVideos() { return videos; }
     public void setVideos(List<Item> videos) { this.videos = videos; }
 
-    private List<Item> recordings = new ArrayList<Item>();
+    private List<Item> recordings = new ArrayList<>();
     public List<Item> getRecordings() { return recordings; }
     public void setRecordings(List<Item> recordings) { this.recordings = recordings;  }
 
-    private List<Item> liveTvItems = new ArrayList<Item>();
+    private List<Item> liveTvItems = new ArrayList<>();
     public List<Item> getLiveTvItems() { return liveTvItems; }
     public void setLiveTvItems(List<Item> liveTvItems) { this.liveTvItems = liveTvItems; }
 
-    private List<Item> movies = new ArrayList<Item>();
+    private List<Item> movies = new ArrayList<>();
     public List<Item> getMovies() { return movies; }
     public void setMovies(List<Item> movies) { this.movies = movies; }
 
-    private List<Item> tvSeriesItems = new ArrayList<Item>();
+    private List<Item> tvSeriesItems = new ArrayList<>();
     public List<Item> getTvSeriesItems() { return tvSeriesItems; }
     public void setTvSeriesItems(List<Item> tvSeriesItems) { this.tvSeriesItems = tvSeriesItems; }
 
-    private List<Item> songs = new ArrayList<Item>();
+    private List<Item> songs = new ArrayList<>();
     public List<Item> getSongs() { return songs; }
     public void setSongs(List<Item> songs) { this.songs = songs; }
 
@@ -115,7 +115,7 @@ public class SearchResults {
     }
 
     public List<Item> getAll() {
-        List<Item> all = new ArrayList<Item>();
+        List<Item> all = new ArrayList<>();
         all.addAll(videos);
         all.addAll(recordings);
         all.addAll(liveTvItems);

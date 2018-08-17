@@ -23,8 +23,8 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
 public class PrefChangeListener implements OnPreferenceChangeListener {
-    private boolean triggerCacheRefresh;
-    private boolean triggerSummaryUpdate;
+    private final boolean triggerCacheRefresh;
+    private final boolean triggerSummaryUpdate;
     private String units;
     private int valuesResId;
     private int entriesResId;

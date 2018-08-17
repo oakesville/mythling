@@ -36,7 +36,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
@@ -127,9 +126,9 @@ public abstract class MediaActivity extends AppCompatActivity {
     private static final String TAG = MediaActivity.class.getSimpleName();
     private static int active;
 
-    static final String DETAIL_FRAGMENT = "detailFragment";
-    static final String LIST_FRAGMENT = "listFragment";
-    static final int MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID = 1;
+    private static final String DETAIL_FRAGMENT = "detailFragment";
+    private static final String LIST_FRAGMENT = "listFragment";
+    private static final int MEDIA_ACTIVITY_CONTEXT_MENU_GROUP_ID = 1;
     static final int LIST_FRAGMENT_CONTEXT_MENU_GROUP_ID = 2;
     /**
      * from R.array.item_long_click_menu
@@ -154,17 +153,17 @@ public abstract class MediaActivity extends AppCompatActivity {
     }
 
     private String path;
-    protected String getPath() { return path; }
-    protected void setPath(String path) { this.path = path; }
+    String getPath() { return path; }
+    void setPath(String path) { this.path = path; }
 
-    protected List<Listable> getListables() {
+    List<Listable> getListables() {
         if (mediaList == null)  // FIXME: issue #68
-            return new ArrayList<Listable>();
+            return new ArrayList<>();
         return mediaList.getListables(getPath());
     }
-    protected List<Listable> getListables(String path) {
+    List<Listable> getListables(String path) {
         if (mediaList == null)  // FIXME: issue #68
-            return new ArrayList<Listable>();
+            return new ArrayList<>();
         return mediaList.getListables(path);
     }
 
@@ -181,12 +180,12 @@ public abstract class MediaActivity extends AppCompatActivity {
     void setSelItemIndex(int selItemIndex) { this.selItemIndex = selItemIndex; }
 
     // these need to be retained after orientation change, so their kept with AppData
-    protected MediaList mediaList;
-    protected Map<String,StorageGroup> storageGroups;
+    MediaList mediaList;
+    Map<String,StorageGroup> storageGroups;
 
     private static AppData appData;
     public static AppData getAppData() { return appData; }
-    public static void setAppData(AppData data) { appData = data;}
+    static void setAppData(AppData data) { appData = data;}
 
     private AppSettings appSettings;
     public AppSettings getAppSettings() { return appSettings; }
@@ -194,10 +193,10 @@ public abstract class MediaActivity extends AppCompatActivity {
     // it seems there's a reason we keep a ref separate from appSettings.getMediaSettings()
     // (see MainActivity/MediaListActivity/MediaPagerActivity.populate())
     private MediaType mediaType;
-    protected MediaType getMediaType() { return mediaType; }
-    protected void setMediaType(MediaType mt) { this.mediaType = mt; }
+    MediaType getMediaType() { return mediaType; }
+    void setMediaType(MediaType mt) { this.mediaType = mt; }
 
-    public String getCharSet() {
+    String getCharSet() {
         return "UTF-8";
     }
 
@@ -216,9 +215,9 @@ public abstract class MediaActivity extends AppCompatActivity {
     private int count;
     private Timer timer;
 
-    protected boolean modeSwitch; // tracking for back button
+    boolean modeSwitch; // tracking for back button
 
-    public void refresh() {
+    void refresh() {
         currentTop = 0;
         topOffset = 0;
         selItemIndex = 0;
@@ -243,7 +242,7 @@ public abstract class MediaActivity extends AppCompatActivity {
     public void onPause() {
         unregisterPlaybackReceiver();
         if (downloadReceivers != null) {
-            List<Long> idsToRemove = new ArrayList<Long>();
+            List<Long> idsToRemove = new ArrayList<>();
             for (long downloadId : downloadReceivers.keySet()) {
                 unregisterDownloadReceiver(downloadId);
                 idsToRemove.add(downloadId);
@@ -273,8 +272,8 @@ public abstract class MediaActivity extends AppCompatActivity {
     }
 
     private class DownloadBroadcastReceiver extends BroadcastReceiver {
-        private Item item;
-        private long downloadId;
+        private final Item item;
+        private final long downloadId;
         public DownloadBroadcastReceiver(Item item, long downloadId) {
             this.item = item;
             this.downloadId = downloadId;
@@ -296,7 +295,7 @@ public abstract class MediaActivity extends AppCompatActivity {
     private Map<Long,DownloadBroadcastReceiver> downloadReceivers;
     private void registerDownloadReceiver(Item item, long downloadId) {
         if (downloadReceivers == null)
-            downloadReceivers = new HashMap<Long,DownloadBroadcastReceiver>();
+            downloadReceivers = new HashMap<>();
         DownloadBroadcastReceiver receiver = downloadReceivers.get(downloadId);
         if (receiver != null) {
             unregisterDownloadReceiver(downloadId);
@@ -314,7 +313,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected ProgressBar createProgressBar() {
+    ProgressBar createProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar.setVisibility(View.GONE);
         progressBar.setIndeterminate(true);
@@ -369,42 +368,42 @@ public abstract class MediaActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    protected void showSearchMenu(boolean show) {
+    private void showSearchMenu(boolean show) {
         if (searchMenuItem != null) {
             searchMenuItem.setEnabled(show);
             searchMenuItem.setVisible(show);
         }
     }
 
-    protected void showMoviesMenuItem(boolean show) {
+    private void showMoviesMenuItem(boolean show) {
         if (moviesMenuItem != null) {
             moviesMenuItem.setEnabled(show);
             moviesMenuItem.setVisible(show);
         }
     }
 
-    protected void showTvSeriesMenuItem(boolean show) {
+    private void showTvSeriesMenuItem(boolean show) {
         if (tvSeriesMenuItem != null) {
             tvSeriesMenuItem.setEnabled(show);
             tvSeriesMenuItem.setVisible(show);
         }
     }
 
-    protected void showMusicMenuItem(boolean show) {
+    private void showMusicMenuItem(boolean show) {
         if (musicMenuItem != null) {
             musicMenuItem.setEnabled(show);
             musicMenuItem.setVisible(show);
         }
     }
 
-    protected void showStopMenuItem(boolean show) {
+    private void showStopMenuItem(boolean show) {
         if (stopMenuItem != null) {
             stopMenuItem.setEnabled(show);
             stopMenuItem.setVisible(show);
         }
     }
 
-    protected void showViewMenu(boolean show) {
+    private void showViewMenu(boolean show) {
         if (viewMenuItem != null) {
             MediaSettings mediaSettings = appSettings.getMediaSettings();
             if (show) {
@@ -428,7 +427,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                 "drawable", AppSettings.PACKAGE));
     }
 
-    protected void showSortMenu(boolean show) {
+    private void showSortMenu(boolean show) {
         if (sortMenuItem != null) {
             if (show) {
                 MediaSettings mediaSettings = appSettings.getMediaSettings();
@@ -463,11 +462,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean supportsSearch() {
+    private boolean supportsSearch() {
         return getAppSettings().isMythlingMediaServices();
     }
 
-    protected boolean supportsSort() {
+    boolean supportsSort() {
         if (mediaList == null)
             return false;
         if (getAppSettings().isMythlingMediaServices() && mediaList.getMediaType() == MediaType.videos)
@@ -475,19 +474,19 @@ public abstract class MediaActivity extends AppCompatActivity {
         return mediaList != null && mediaList.supportsSort();
     }
 
-    protected boolean supportsViewMenu() {
+    boolean supportsViewMenu() {
         return mediaList != null && mediaList.canHaveArtwork();
     }
 
-    protected boolean supportsMovies() {
+    private boolean supportsMovies() {
         return getAppSettings().isVideosCategorization();
     }
 
-    protected boolean supportsTvSeries() {
+    private boolean supportsTvSeries() {
         return getAppSettings().isVideosCategorization();
     }
 
-    protected boolean supportsMusic() {
+    private boolean supportsMusic() {
         return true;
     }
 
@@ -503,11 +502,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         return appSettings.getMediaSettings().getViewType() == ViewType.detail;
     }
 
-    protected boolean isSplitView() {
+    boolean isSplitView() {
         return appSettings.getMediaSettings().getViewType() == ViewType.split;
     }
 
-    protected boolean isTv() {
+    boolean isTv() {
         // appSettings can be null during orientation change
         return appSettings == null ? false : appSettings.isTv();
     }
@@ -706,7 +705,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void applyViewChange(ViewType oldView, ViewType newView) {
+    private void applyViewChange(ViewType oldView, ViewType newView) {
         if (newView == ViewType.detail && oldView != ViewType.detail) {
             getAppSettings().clearCache();  // refresh after nav
             goDetailView();
@@ -725,11 +724,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void showItemInDetailPane(int position) {
+    private void showItemInDetailPane(int position) {
         showItemInDetailPane(position, false);
     }
 
-    protected void showItemInDetailPane(int position, boolean grabFocus) {
+    private void showItemInDetailPane(int position, boolean grabFocus) {
         ItemDetailFragment detailFragment = new ItemDetailFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(SEL_ITEM_INDEX, position);
@@ -738,19 +737,19 @@ public abstract class MediaActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().replace(R.id.detail_container, detailFragment, DETAIL_FRAGMENT).commit();
     }
 
-    protected void showSubListPane(String path) {
+    private void showSubListPane(String path) {
         showSubListPane(path, -1, false);
     }
 
-    protected void showSubListPane(String path, boolean grabFocus) {
+    private void showSubListPane(String path, boolean grabFocus) {
         showSubListPane(path, -1, grabFocus);
     }
 
-    protected void showSubListPane(String path, int selIdx) {
+    private void showSubListPane(String path, int selIdx) {
         showSubListPane(path, selIdx, false);
     }
 
-    protected void showSubListPane(String path, int selIdx, boolean grabFocus) {
+    private void showSubListPane(String path, int selIdx, boolean grabFocus) {
         ItemListFragment listFragment = new ItemListFragment();
         Bundle arguments = new Bundle();
         arguments.putString(PATH, path);
@@ -760,7 +759,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction().replace(R.id.detail_container, listFragment, LIST_FRAGMENT).commit();
     }
 
-    protected void playItem(final Item item) {
+    void playItem(final Item item) {
         try {
             if (appSettings.isDevicePlayback()) {
                 if (item.isMusic()) {
@@ -881,7 +880,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void downloadItem(final Item item) {
+    void downloadItem(final Item item) {
         try {
             final URL baseUrl = getAppSettings().getMythTvServicesBaseUrlWithCredentials();
 
@@ -892,7 +891,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                 fileUrl += "StorageGroup=" + item.getStorageGroup().getName() + "&";
             fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
 
-            Uri uri = Uri.parse(fileUrl.toString());
+            Uri uri = Uri.parse(fileUrl);
             ProxyInfo proxyInfo = MediaStreamProxy.getProxyInfo(uri);
             if (proxyInfo == null)
                 proxyInfo = MediaStreamProxy.needsAuthProxy(uri); // required by auth
@@ -924,7 +923,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                         }
                         String storageDirName = getString(R.string.storage_dir);
                         if (dirs.length >= 1) {
-                            Map<String, File> mediaDirs = new HashMap<String, File>();
+                            Map<String, File> mediaDirs = new HashMap<>();
                             for (int i = 0; i < dirs.length; i++) {
                                 if (dirs[i] != null) { // entry can be null if storage not attached
                                     String label = dirs[i].toString();
@@ -950,7 +949,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                                 downloadDialog.setMediaDirectories(labels);
                                 downloadDialog.setOnItemClickListener(new OnItemClickListener() {
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        getAppSettings().setExternalMediaDir(labels[position].toString());
+                                        getAppSettings().setExternalMediaDir(labels[position]);
                                         downloadItem(item);
                                     }
                                 });
@@ -984,26 +983,28 @@ public abstract class MediaActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.error_) + ex.toString(), Toast.LENGTH_LONG).show();
             }
 
-            long downloadId = 0;
+            if (downloadFile != null) {
+                long downloadId = 0;
 
-            boolean bypassDownloadManager = appSettings.isBypassDownloadManager();
-            if (bypassDownloadManager) {
-                downloadId = downloadFile.getPath().hashCode();
-                new DownloadTask(item, uri.toString(), downloadFile, downloadId).execute();
+                boolean bypassDownloadManager = appSettings.isBypassDownloadManager();
+                if (bypassDownloadManager) {
+                    downloadId = downloadFile.getPath().hashCode();
+                    new DownloadTask(item, uri.toString(), downloadFile, downloadId).execute();
+                } else {
+                    DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    Request request = new Request(Uri.parse(fileUrl));
+                    request.setTitle(item.getOneLineTitle());
+                    request.setDestinationUri(Uri.fromFile(downloadFile));
+                    request.allowScanningByMediaScanner();
+                    assert dm != null;
+                    downloadId = dm.enqueue(request);
+                    registerDownloadReceiver(item, downloadId);
+                }
+                Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
+                getAppData().addDownload(new Download(item.getId(), downloadId, downloadFile.getPath(), new Date()));
+                if (item.isRecording() && (mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices()))
+                    new GetCutListTask((Recording) item, downloadId).execute();
             }
-            else {
-                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                Request request = new Request(Uri.parse(fileUrl));
-                request.setTitle(item.getOneLineTitle());
-                request.setDestinationUri(Uri.fromFile(downloadFile));
-                request.allowScanningByMediaScanner();
-                downloadId = dm.enqueue(request);
-                registerDownloadReceiver(item, downloadId);
-            }
-            Toast.makeText(getApplicationContext(), getString(R.string.downloading_) + item.getOneLineTitle(), Toast.LENGTH_LONG).show();
-            getAppData().addDownload(new Download(item.getId(), downloadId, downloadFile.getPath(), new Date()));
-            if (item.isRecording() && (mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices()))
-                new GetCutListTask((Recording)item, downloadId).execute();
         } catch (Exception ex) {
             stopProgress();
             Log.e(TAG, ex.getMessage(), ex);
@@ -1013,7 +1014,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected Uri getMusicUri(Item item) throws IOException, JSONException, ParseException {
+    private Uri getMusicUri(Item item) throws IOException, JSONException, ParseException {
         if (item.isDownloaded() && !appSettings.isMusicPlaybackContinue()) {
             return getDownload(item);
         }
@@ -1029,10 +1030,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected Uri getDownload(Item item) throws IOException, JSONException, ParseException {
+    private Uri getDownload(Item item) throws IOException, JSONException, ParseException {
         if (item.getDownloadId() == null)
             return null;
         DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        assert dm != null;
         Uri uri = dm.getUriForDownloadedFile(item.getDownloadId());
         if (uri == null) {
             // maybe it's one of ours
@@ -1055,7 +1057,7 @@ public abstract class MediaActivity extends AppCompatActivity {
     /**
      * Starts a transcode without immediately watching.
      */
-    protected void transcodeItem(final Item item) {
+    void transcodeItem(final Item item) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle(getString(R.string.hls_transcode))
@@ -1097,7 +1099,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                 .show();
     }
 
-    protected void deleteRecording(final Recording recording) {
+    void deleteRecording(final Recording recording) {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.confirm_delete))
@@ -1135,14 +1137,14 @@ public abstract class MediaActivity extends AppCompatActivity {
                 .show();
     }
 
-    protected void goListView() {
+    void goListView() {
         findViewById(R.id.detail_container).setVisibility(View.GONE);
         if (!getAppSettings().isTv() && getListView() != null && getListView().getCheckedItemPosition() >= 0) {
             getListView().setItemChecked(getListView().getCheckedItemPosition(), false);
         }
     }
 
-    protected void goDetailView() {
+    private void goDetailView() {
         if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle) {
             getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
             selItemIndex = 0;
@@ -1161,11 +1163,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    protected void goSplitView() {
+    void goSplitView() {
         findViewById(R.id.detail_container).setVisibility(View.VISIBLE);
     }
 
-    public void sort() throws IOException, JSONException, ParseException {
+    void sort() throws IOException, JSONException, ParseException {
         startProgress();
         refreshMediaList();
     }
@@ -1262,7 +1264,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }, 1000);
     }
 
-    protected void refreshMediaList() {
+    void refreshMediaList() {
         try {
             selItemIndex = 0;
             currentTop = 0;
@@ -1281,7 +1283,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void handleEmptyMediaList() {
+    void handleEmptyMediaList() {
         if (isSplitView()) {
             try {
                 showSubListPane(null);
@@ -1299,14 +1301,14 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void setFocusOnActionBar() {
+    private void setFocusOnActionBar() {
         int actionBarResId = getResources().getIdentifier("action_bar_container", "id", "android");
         View actionBarView = getWindow().getDecorView().findViewById(actionBarResId);
         if (actionBarView != null)
             actionBarView.requestFocus();
     }
 
-    protected void updateActionMenu() {
+    void updateActionMenu() {
         showMoviesMenuItem(supportsMovies());
         showTvSeriesMenuItem(supportsTvSeries());
         showMusicMenuItem(supportsMusic());
@@ -1320,15 +1322,17 @@ public abstract class MediaActivity extends AppCompatActivity {
         showStopMenuItem(isPlayingMusic());
     }
 
-    protected void populate() throws IOException, JSONException, ParseException {
+    void populate() throws IOException, JSONException, ParseException {
         // default does nothing
     }
 
     private boolean isPlayingMusic() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicPlaybackService.class.getName().equals(service.service.getClassName()))
-                return true;
+        if (manager != null) {
+            for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (MusicPlaybackService.class.getName().equals(service.service.getClassName()))
+                    return true;
+            }
         }
         return false;
     }
@@ -1458,11 +1462,11 @@ public abstract class MediaActivity extends AppCompatActivity {
     }
 
     private class StreamHlsTask extends AsyncTask<URL,Integer,Long> {
-        private Item item;
+        private final Item item;
         private LiveStreamInfo streamInfo;
         private Exception ex;
 
-        public StreamHlsTask(Item item) {
+        StreamHlsTask(Item item) {
             this.item = item;
         }
 
@@ -1515,12 +1519,12 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected class TranscodeVideoTask extends AsyncTask<URL,Integer,Long> {
-        private Item item;
-        private boolean externalVideoQuality; // false means internal
+    class TranscodeVideoTask extends AsyncTask<URL,Integer,Long> {
+        private final Item item;
+        private final boolean externalVideoQuality; // false means internal
         private Exception ex;
 
-        public TranscodeVideoTask(Item item, boolean externalVideoQuality) {
+        TranscodeVideoTask(Item item, boolean externalVideoQuality) {
             this.item = item;
             this.externalVideoQuality = externalVideoQuality;
         }
@@ -1553,10 +1557,10 @@ public abstract class MediaActivity extends AppCompatActivity {
      * Uses internal video player.
      */
     protected class PlayWithCutListTask extends GetCutListTask {
-        private Uri playbackUri;
-        private PlaybackOption playbackOption;
+        private final Uri playbackUri;
+        private final PlaybackOption playbackOption;
 
-        public PlayWithCutListTask(Uri uri, Recording rec, PlaybackOption opt) {
+        PlayWithCutListTask(Uri uri, Recording rec, PlaybackOption opt) {
             super(rec);
             this.playbackUri = uri;
             this.playbackOption = opt;
@@ -1572,7 +1576,7 @@ public abstract class MediaActivity extends AppCompatActivity {
             if (getRecording().isLengthKnown())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, getRecording().getLength());
             String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
-            if (streamingAuthType != AuthType.None.toString())
+            if (!streamingAuthType.equals(AuthType.None.toString()))
                 videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
             if (getRecording().hasCutList())
                 videoIntent.putExtra(VideoPlayerActivity.ITEM_CUT_LIST, getRecording().getCutList());
@@ -1580,18 +1584,18 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected class GetCutListTask extends AsyncTask<URL,Integer,Long> {
-        private Recording recording;
-        protected Recording getRecording() { return recording; }
+    class GetCutListTask extends AsyncTask<URL,Integer,Long> {
+        private final Recording recording;
+        Recording getRecording() { return recording; }
 
         private long downloadId;
 
-        public GetCutListTask(Recording rec, long downloadId) {
+        GetCutListTask(Recording rec, long downloadId) {
             this.recording = rec;
             this.downloadId = downloadId;
         }
 
-        public GetCutListTask(Recording rec) {
+        GetCutListTask(Recording rec) {
             this.recording = rec;
         }
 
@@ -1642,11 +1646,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected class DeleteRecordingTask extends AsyncTask<URL,Integer,Long> {
-        private Recording recording;
+    class DeleteRecordingTask extends AsyncTask<URL,Integer,Long> {
+        private final Recording recording;
         private Exception ex;
 
-        public DeleteRecordingTask(Recording recording) {
+        DeleteRecordingTask(Recording recording) {
             this.recording = recording;
         }
 
@@ -1674,14 +1678,14 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected class StreamTvTask extends AsyncTask<URL,Integer,Long> {
-        private TvShow tvShow;
+    class StreamTvTask extends AsyncTask<URL,Integer,Long> {
+        private final TvShow tvShow;
         private Recording recording;
         private LiveStreamInfo streamInfo;
-        private boolean raw;
+        private final boolean raw;
         private Exception ex;
 
-        public StreamTvTask(TvShow tvShow, boolean raw) {
+        StreamTvTask(TvShow tvShow, boolean raw) {
             this.tvShow = tvShow;
             this.raw = raw;
         }
@@ -1749,14 +1753,13 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected class DownloadTask extends AsyncTask<URL,Integer,Long> {
-        private Item item;
-        private String url;
-        private File file;
-        private Long downloadId;
-        private Exception ex;
+    class DownloadTask extends AsyncTask<URL,Integer,Long> {
+        private final Item item;
+        private final String url;
+        private final File file;
+        private final Long downloadId;
 
-        public DownloadTask(Item item, String url, File file, Long downloadId) {
+        DownloadTask(Item item, String url, File file, Long downloadId) {
             this.item = item;
             this.url = url;
             this.file = file;
@@ -1768,7 +1771,6 @@ public abstract class MediaActivity extends AppCompatActivity {
                 new Downloader(url, file).doDownload();
                 return 0L;
             } catch (Exception ex) {
-                this.ex = ex;
                 Log.e(TAG, ex.getMessage(), ex);
                 if (getAppSettings().isErrorReportingEnabled())
                     new Reporter(ex).send();
@@ -1787,7 +1789,7 @@ public abstract class MediaActivity extends AppCompatActivity {
     /**
      * Must be called from background thread
      */
-    protected void updateTranscodeStatuses(List<Item> items) throws IOException {
+    void updateTranscodeStatuses(List<Item> items) throws IOException {
         URL tcUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Content/GetLiveStreamList");
         HttpHelper tcDownloader = new HttpHelper(appSettings.getUrls(tcUrl), appSettings.getMythTvServicesAuthType(), appSettings.getPrefs());
         tcDownloader.setCredentials(appSettings.getMythTvServicesUser(), appSettings.getMythTvServicesPassword());
@@ -1864,7 +1866,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                     if (item.isLengthKnown())
                         videoIntent.putExtra(VideoPlayerActivity.ITEM_LENGTH_SECS, item.getLength());
                     String streamingAuthType = getAppSettings().getMythTvServicesAuthType();
-                    if (streamingAuthType != AuthType.None.toString())
+                    if (!streamingAuthType.equals(AuthType.None.toString()))
                         videoIntent.putExtra(VideoPlayerActivity.AUTH_TYPE, streamingAuthType);
                 }
             }
@@ -1872,7 +1874,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void playLiveStream(LiveStreamInfo streamInfo, Item item) throws IOException, JSONException {
+    private void playLiveStream(LiveStreamInfo streamInfo, Item item) throws IOException, JSONException {
         String streamUrl = appSettings.getMythTvServicesBaseUrlWithCredentials() + streamInfo.getRelativeUrl();
 
         // avoid retrieving unnecessary audio-only streams
@@ -1899,7 +1901,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    boolean isUseCutList() {
+    private boolean isUseCutList() {
         boolean useCutList = false;
         if (isTv() && mediaList != null)
             useCutList = mediaList.isMythTv28() || getAppSettings().isMythlingMediaServices();
@@ -2017,7 +2019,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected void setPathFromIntent() {
+    void setPathFromIntent() {
         try {
             String newPath = getIntent().getDataString();
             setPath(newPath == null ? "" : URLDecoder.decode(newPath, "UTF-8"));
@@ -2031,7 +2033,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         }
     }
 
-    protected PlaybackOption getPlaybackOption(Item item, String streamType) throws IOException, JSONException {
+    private PlaybackOption getPlaybackOption(Item item, String streamType) throws IOException, JSONException {
         String playbackNetwork = item.isDownloaded() ? PlaybackOptions.NETWORK_DOWNLOAD : appSettings.getPlaybackNetwork();
         MediaType type = item.getType();
         String format = item.getFormat();
@@ -2042,7 +2044,7 @@ public abstract class MediaActivity extends AppCompatActivity {
         return appSettings.getPlaybackOptions().getOption(type, format, playbackNetwork, streamType);
     }
 
-    protected VideoPlaybackDialog getVideoPlaybackDialog(Item item) {
+    private VideoPlaybackDialog getVideoPlaybackDialog(Item item) {
         final VideoPlaybackDialog dialog = new VideoPlaybackDialog(getAppSettings(), item);
         dialog.setListener(new PlaybackDialogListener() {
             public void onClickPlay(final Item item, final PlaybackOption option) {
@@ -2059,7 +2061,6 @@ public abstract class MediaActivity extends AppCompatActivity {
                             }
                             public void onClickNegative() {
                                 getVideoPlaybackDialog(item).show(getFragmentManager(), "StreamVideoDialog");
-                                return;
                             }
                     });
                     dlg.setCheckboxText(getString(R.string.always_ignore_libvlc_cpu_compatibility));
@@ -2132,7 +2133,7 @@ public abstract class MediaActivity extends AppCompatActivity {
 
     SparseArray<String> getLongClickMenuItems(Item item) {
         String[] menuItems = getResources().getStringArray(R.array.item_long_click_menu);
-        SparseArray<String> relevantItems = new SparseArray<String>();
+        SparseArray<String> relevantItems = new SparseArray<>();
         for (int i = 0; i < menuItems.length; i++) {
             if (i == LONG_CLICK_MENU_PLAY)
                 relevantItems.put(i, menuItems[i]);
@@ -2201,11 +2202,11 @@ public abstract class MediaActivity extends AppCompatActivity {
         topOffset = savedInstanceState.getInt(TOP_OFFSET, 0);
     }
 
-    protected void startProgress() {
+    void startProgress() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    protected void stopProgress() {
+    void stopProgress() {
         progressBar.setVisibility(View.GONE);
     }
 }

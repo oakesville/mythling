@@ -108,7 +108,7 @@ public class MediaListActivity extends MediaActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void populate() throws IOException, JSONException, ParseException {
+    protected void populate() throws IOException, JSONException, ParseException {
         if (getAppData() == null) {
             startProgress();
             AppData appData = new AppData(getApplicationContext());
@@ -170,7 +170,7 @@ public class MediaListActivity extends MediaActivity {
     }
 
     @Override
-    public void sort() throws IOException, JSONException, ParseException {
+    public void sort() {
         super.refresh();
         getAppSettings().setLastLoad(0);
         SortType sortType = getAppSettings().getMediaSettings().getSortType();

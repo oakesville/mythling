@@ -78,8 +78,8 @@ public class EpgActivity extends WebViewActivity {
     public long getLastLoad() { return lastLoad; }
     protected void setLastLoad(long ll) { this.lastLoad = ll; }
 
-    protected List<String> popups = new ArrayList<String>();
-    public List<String> getPopups() { return popups; }
+    protected List<String> popups = new ArrayList<>();
+    protected List<String> getPopups() { return popups; }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,7 +166,7 @@ public class EpgActivity extends WebViewActivity {
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     lastLoad = System.currentTimeMillis();
-                    popups = new ArrayList<String>();
+                    popups = new ArrayList<>();
                 }
 
                 @Override
@@ -199,7 +199,7 @@ public class EpgActivity extends WebViewActivity {
             epgBaseUrl = getAppSettings().getEpgBaseUrl().toString();
             epgUrl = getAppSettings().getEpgUrl().toString();
             scale = getAppSettings().getEpgScale();
-            parameters = new HashMap<String,String>();
+            parameters = new HashMap<>();
             String epgParams = getAppSettings().getEpgParams();
             if (epgParams != null && epgParams.length() > 0) {
                 if (epgParams.startsWith("?"))
@@ -321,7 +321,7 @@ public class EpgActivity extends WebViewActivity {
     protected Map<String,String> getParameters() {
         if ("0".equals(parameters.get("channelGroupId"))) {
             // couldn't find channel group; exclude
-            Map<String,String> params = new HashMap<String,String>();
+            Map<String,String> params = new HashMap<>();
             for (String key : parameters.keySet()) {
                 if (!"channelGroupId".equals(key))
                     params.put(key, parameters.get(key));

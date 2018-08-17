@@ -26,7 +26,7 @@ import android.view.ViewGroup;
  * Adapter class for bridging an ItemDetailFragment to an android.support.v4.app.Fragment
  */
 public class ItemDetailFragmentAdapter extends Fragment {
-    private ItemDetailFragment idFrag = new ItemDetailFragment();
+    private final ItemDetailFragment idFrag = new ItemDetailFragment();
 
     public void setIdx(int idx) { idFrag.setIdx(idx); }
 

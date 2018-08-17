@@ -35,7 +35,7 @@ public class Transcoder {
     private static final String TAG = Transcoder.class.getSimpleName();
 
 
-    private AppSettings appSettings;
+    private final AppSettings appSettings;
 
     /**
      * transcoder needs to know about the storage group to match-up
@@ -130,7 +130,7 @@ public class Transcoder {
             try {
                 // occasionally the follow-up request comes too soon, especially with multiple transcodes running on slower systems
                 Thread.sleep(1000);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException ignored) {
             }
             URL getStreamUrl = new URL(baseUrl + "/Content/GetLiveStream?Id=" + streamInfo.getId());
             String getStreamJson = new String(getServiceDownloader(getStreamUrl).get(), "UTF-8");

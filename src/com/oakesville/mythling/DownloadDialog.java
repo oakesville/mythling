@@ -3,7 +3,6 @@ package com.oakesville.mythling;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,8 @@ public class DownloadDialog extends DialogFragment {
         final AppSettings appSettings = new AppSettings(getActivity().getApplicationContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = inflateView();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.download_dialog, null);
         builder.setView(view);
         builder.setIcon(R.drawable.ic_file_download);
         builder.setTitle(R.string.save_to_media_folder);
@@ -59,10 +59,5 @@ public class DownloadDialog extends DialogFragment {
         if (mediaDirectories == null)
             dismiss(); // close on screen rotation
         return builder.create();
-    }
-
-    private View inflateView() {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        return inflater.inflate(R.layout.download_dialog, null);
     }
 }

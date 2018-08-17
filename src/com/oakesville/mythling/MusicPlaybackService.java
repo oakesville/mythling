@@ -50,7 +50,7 @@ public class MusicPlaybackService extends Service {
     public static final String EXTRA_MUSIC_QUEUE = "com.oakesville.mythling.EXTRA_MUSIC_QUEUE";
 
     public static final int MESSAGE_PLAYER_PREPARED = 0;
-    public static final int MESSAGE_PLAYBACK_STOPPED = 1; // different from action (callback to initiator)
+    private static final int MESSAGE_PLAYBACK_STOPPED = 1; // different from action (callback to initiator)
 
     public static final String ACTION_PLAY = "com.oakesville.mythling.PLAY";
     public static final String ACTION_STOP = "com.oakesville.mythling.STOP";
@@ -82,12 +82,12 @@ public class MusicPlaybackService extends Service {
                 musicQueue = queue == null ? null : new JSONArray(queue);
             }
 
-            if (intent.getAction().equals(ACTION_PLAY)) {
+            if (ACTION_PLAY.equals(intent.getAction())) {
                 initializeMediaPlayer();
                 Uri uri = intent.getData();
                 playFromUri(uri);
             }
-            else if (intent.getAction().equals(ACTION_PLAY_PAUSE)) {
+            else if (ACTION_PLAY_PAUSE.equals(intent.getAction())) {
                 if (mediaPlayer != null) {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
@@ -99,7 +99,7 @@ public class MusicPlaybackService extends Service {
                     }
                 }
             }
-            else if (intent.getAction().equals(ACTION_STOP)) {
+            else if (ACTION_STOP.equals(intent.getAction())) {
                 stopPlayback();
             }
         }
@@ -125,7 +125,8 @@ public class MusicPlaybackService extends Service {
             if (proxy != null)
                 proxy.stop();
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            am.abandonAudioFocus(audioFocusListener);
+            if (am != null)
+                am.abandonAudioFocus(audioFocusListener);
             if (playbackMessenger != null) {
                 try {
                     Message msg = Message.obtain();
@@ -148,12 +149,14 @@ public class MusicPlaybackService extends Service {
                     if (focusChange != AudioManager.AUDIOFOCUS_GAIN) {
                         stopPlayback();
                         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                        assert am != null;
                         am.unregisterMediaButtonEventReceiver(new ComponentName(MusicPlaybackService.this, MusicPlaybackButtonReceiver.class));
                     }
                 }
             };
         }
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        assert am != null;
         int res = am.requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             am.registerMediaButtonEventReceiver(new ComponentName(this, MusicPlaybackButtonReceiver.class));

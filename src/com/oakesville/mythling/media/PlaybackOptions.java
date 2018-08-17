@@ -39,13 +39,13 @@ public class PlaybackOptions {
     public static final String NETWORK_DOWNLOAD = "download";
     public static final String PLAYER_LIBVLC = "libvlc";
     public static final String PLAYER_ANDROID = "android";
-    public static final String PLAYER_APP = "app";
+    private static final String PLAYER_APP = "app";
     public static final String STREAM_FILE = "file";
     public static final String STREAM_HLS = "hls";
-    public static final String PROPERTY_ALWAYS = "always";
+    private static final String PROPERTY_ALWAYS = "always";
     public static final String PROPERTY_DEFAULT = "default";
 
-    private AppSettings appSettings;
+    private final AppSettings appSettings;
     private JSONObject defaultOptionsJson;
 
     public PlaybackOptions(AppSettings appSettings) {
@@ -84,7 +84,7 @@ public class PlaybackOptions {
         return playbackOption;
     }
 
-    public PlaybackOption getDefaultOption(MediaType mediaType, String fileType, String network, String streamMode) throws IOException, JSONException {
+    private PlaybackOption getDefaultOption(MediaType mediaType, String fileType, String network, String streamMode) throws IOException, JSONException {
         if (defaultOptionsJson == null) {
             AppResources appResources = new AppResources(appSettings.getAppContext());
             String jsonString = appResources.readJsonString(R.raw.default_playback_options);
@@ -238,7 +238,7 @@ public class PlaybackOptions {
     }
 
     public List<String> getMediaOptions(String player) {
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
         if (player.equals(PLAYER_LIBVLC))
             options = appSettings.getVlcMediaOptions();
         else if (player.equals(PLAYER_ANDROID)) {
@@ -264,7 +264,7 @@ public class PlaybackOptions {
             this(stream, player, false);
         }
 
-        public PlaybackOption(String stream , String player, boolean always) {
+        PlaybackOption(String stream, String player, boolean always) {
             this.stream = stream;
             this.player = player;
             this.always = always;

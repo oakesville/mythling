@@ -16,8 +16,6 @@
 package com.oakesville.mythling.util;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -51,8 +49,8 @@ import io.oakesville.media.Video;
 public class MythlingParser implements MediaListParser {
     private static final String TAG = MythlingParser.class.getSimpleName();
 
-    private AppSettings appSettings;
-    private String json;
+    private final AppSettings appSettings;
+    private final String json;
 
     public MythlingParser(AppSettings appSettings, String json) {
         this.appSettings = appSettings;
@@ -293,7 +291,7 @@ public class MythlingParser implements MediaListParser {
         }
     }
 
-    private void addVideoInfo(Video item, JSONObject jsonObj) throws JSONException, ParseException {
+    private void addVideoInfo(Video item, JSONObject jsonObj) throws JSONException {
         if (jsonObj.has("year"))
             item.setYear(Integer.parseInt(jsonObj.getString("year")));
         if (jsonObj.has("rating"))
@@ -314,17 +312,4 @@ public class MythlingParser implements MediaListParser {
             item.setPageUrl(jsonObj.getString("pageUrl"));
     }
 
-    public List<Item> parseQueue(MediaType type, Map<String,StorageGroup> storageGroups) throws JSONException, ParseException {
-        List<Item> queue = new ArrayList<Item>();
-        long startTime = System.currentTimeMillis();
-        JSONObject list = new JSONObject(json);
-        JSONArray vids = list.getJSONArray(type.toString());
-        for (int i = 0; i < vids.length(); i++) {
-            JSONObject vid = (JSONObject) vids.get(i);
-            queue.add(buildItem(type, vid, storageGroups));
-        }
-        if (BuildConfig.DEBUG)
-            Log.d(TAG, " -> (" + type + ") queue parse time: " + (System.currentTimeMillis() - startTime) + " ms");
-        return queue;
-    }
 }

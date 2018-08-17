@@ -42,7 +42,7 @@ import io.oakesville.media.TvShow;
 public class Recorder {
     private static final String TAG = Recorder.class.getSimpleName();
 
-    private AppSettings appSettings;
+    private final AppSettings appSettings;
     private Map<String,StorageGroup> storageGroups;
 
     public Recorder(AppSettings appSettings, Map<String,StorageGroup> storageGroups) {
@@ -121,7 +121,7 @@ public class Recorder {
         Thread.sleep(lagSeconds * 1000);
     }
 
-    public void deleteRecording(Recording recording) throws IOException, JSONException, InterruptedException {
+    public void deleteRecording(Recording recording) throws IOException, JSONException {
         // delete the recording
         URL delRecUrl = new URL(appSettings.getMythTvServicesBaseUrl() + "/Dvr/RemoveRecorded?ChanId=" + recording.getChannelId() + "&StartTime=" + recording.getStartTimeParam());
         String delRecRes = new String(getServiceHelper(delRecUrl).post());

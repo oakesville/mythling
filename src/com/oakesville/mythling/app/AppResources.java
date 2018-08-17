@@ -25,7 +25,7 @@ import android.content.res.Resources;
 
 public class AppResources {
 
-    private Context appContext;
+    private final Context appContext;
 
     public AppResources(Context appContext) {
         this.appContext = appContext;
@@ -37,8 +37,7 @@ public class AppResources {
     public String readJsonString(int resourceId) throws IOException {
         Resources res = appContext.getResources();
         InputStream stream = res.openRawResource(resourceId);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        try {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             StringBuffer str = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -46,9 +45,6 @@ public class AppResources {
                     str.append(line).append("\n");
             }
             return str.toString();
-        }
-        finally {
-            reader.close();
         }
 
     }

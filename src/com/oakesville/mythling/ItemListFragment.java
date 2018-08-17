@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ContextMenu;
@@ -43,11 +42,6 @@ public class ItemListFragment extends ListFragment {
     private String path;
     private int preSelIdx = -1;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -77,10 +71,8 @@ public class ItemListFragment extends ListFragment {
             getListView().setDivider(getResources().getDrawable(android.R.color.transparent));
             getListView().setDividerHeight(padding);
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-            getListView().setPadding(padding * 2, padding, padding, padding); // why?
-        else
-            getListView().setPadding(padding, padding, padding, padding);
+
+        getListView().setPadding(padding, padding, padding, padding);
 
         if (!mediaActivity.getAppSettings().isFireTv())
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);

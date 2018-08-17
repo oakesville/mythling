@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public abstract class SwipeListener implements OnTouchListener {
+abstract class SwipeListener implements OnTouchListener {
 
     private static final String TAG = SwipeListener.class.getSimpleName();
 

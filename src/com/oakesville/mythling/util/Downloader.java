@@ -33,10 +33,8 @@ import okhttp3.Response;
  */
 public class Downloader {
 
-    private static final String TAG = Downloader.class.getSimpleName();
-
-    private String url;
-    private File file;
+    private final String url;
+    private final File file;
 
     public Downloader(String url, File file) {
         this.url = url;
@@ -48,15 +46,17 @@ public class Downloader {
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();
 
-        InputStream is = response.body().byteStream();
-        try (BufferedInputStream input = new BufferedInputStream(is);
-                OutputStream output = new FileOutputStream(file);) {
-            byte[] data = new byte[1024 * 8];
-            int count = 0;
-            while ((count = input.read(data)) != -1) {
-                output.write(data, 0, count);
+        if (response.body() != null) {
+            InputStream is = response.body().byteStream();
+            try (BufferedInputStream input = new BufferedInputStream(is);
+                 OutputStream output = new FileOutputStream(file)) {
+                byte[] data = new byte[1024 * 8];
+                int count = 0;
+                while ((count = input.read(data)) != -1) {
+                    output.write(data, 0, count);
+                }
+                output.flush();
             }
-            output.flush();
         }
     }
 }

@@ -64,8 +64,8 @@ public class MediaStreamProxy implements Runnable {
     private ServerSocket socket;
     private Thread thread;
 
-    private ProxyInfo proxyInfo;
-    private AuthType authType;
+    private final ProxyInfo proxyInfo;
+    private final AuthType authType;
 
     public MediaStreamProxy(ProxyInfo proxyInfo, AuthType authType) {
         this.proxyInfo = proxyInfo;
@@ -231,7 +231,8 @@ public class MediaStreamProxy implements Runnable {
     }
 
     public static class ProxyInfo {
-        public ProxyInfo() {};
+        ProxyInfo() {}
+
         public ProxyInfo(URL netUrl) { this.netUrl = netUrl; }
 
         private URL netUrl;
@@ -272,7 +273,7 @@ public class MediaStreamProxy implements Runnable {
         return proxyInfo;
     }
 
-    public static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
+    private static URL getNetUrl(Uri mediaUri) throws MalformedURLException {
         String netUrl = mediaUri.getScheme() + "://" + mediaUri.getHost() + ":" + mediaUri.getPort();
         netUrl += mediaUri.getPath();
         if (mediaUri.getQuery() != null)

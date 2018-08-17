@@ -30,6 +30,6 @@
         android:id="@+id/first_run_host_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="backend host" />
+        android:hint="@string/enter_backend_host" />
         
 </LinearLayout>

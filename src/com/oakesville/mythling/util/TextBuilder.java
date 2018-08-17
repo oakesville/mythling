@@ -21,11 +21,11 @@ package com.oakesville.mythling.util;
  */
 public class TextBuilder {
 
-    public static final char STAR = 0x2605;
-    public static final char HALF_STAR = 0x00BD;
-    public static final char DASH = 0x2013;
+    private static final char STAR = 0x2605;
+    private static final char HALF_STAR = 0x00BD;
+    private static final char DASH = 0x2013;
 
-    private StringBuilder stringBuilder;
+    private final StringBuilder stringBuilder;
 
     public TextBuilder() {
         stringBuilder = new StringBuilder();
@@ -39,7 +39,7 @@ public class TextBuilder {
         this.stringBuilder = sb;
     }
 
-    public TextBuilder append(String s) {
+    private TextBuilder append(String s) {
         if (s != null) {
             if (stringBuilder.length() > 0)
                 stringBuilder.append(" ");
@@ -62,7 +62,7 @@ public class TextBuilder {
         return appendLine(""); // just the \n
     }
 
-    public TextBuilder appendLine(String s) {
+    private TextBuilder appendLine(String s) {
         if (s != null) {
             if (stringBuilder.length() > 0)
                 stringBuilder.append("\n");
@@ -89,7 +89,7 @@ public class TextBuilder {
         return this;
     }
 
-    public TextBuilder appendParen(String s) {
+    private TextBuilder appendParen(String s) {
         if (s != null) {
             if (stringBuilder.length() > 0)
                 stringBuilder.append(" ");
@@ -159,7 +159,7 @@ public class TextBuilder {
         return this;
     }
 
-    public TextBuilder appendPadTwo(long l) {
+    private TextBuilder appendPadTwo(long l) {
         String s = String.valueOf(l);
         if (s.length() == 1)
             stringBuilder.append("0").append(s);

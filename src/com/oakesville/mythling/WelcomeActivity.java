@@ -1,6 +1,5 @@
 package com.oakesville.mythling;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import com.oakesville.mythling.util.HttpHelper;
@@ -17,7 +16,7 @@ public class WelcomeActivity extends WebViewActivity {
 
     private static final String TAG = WelcomeActivity.class.getSimpleName();
 
-    static final String WELCOME_PAGE = "file:///android_asset/mythling/welcome.html";
+    private static final String WELCOME_PAGE = "file:///android_asset/mythling/welcome.html";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class WelcomeActivity extends WebViewActivity {
     }
 
     @Override
-    protected String getUrl() throws UnsupportedEncodingException {
+    protected String getUrl() {
         return WELCOME_PAGE;
     }
 
@@ -48,7 +47,7 @@ public class WelcomeActivity extends WebViewActivity {
         return true;
     }
 
-    protected class JsHandler {
+    class JsHandler {
         @JavascriptInterface
         public void backendHostSubmitted(String host) {
             Log.d(TAG, "backend host: " + host);
@@ -57,7 +56,7 @@ public class WelcomeActivity extends WebViewActivity {
         }
     }
 
-    protected class CheckBackendHost extends AsyncTask<URL,Integer,Long> {
+    class CheckBackendHost extends AsyncTask<URL,Integer,Long> {
 
         private Exception ex;
 

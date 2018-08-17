@@ -22,21 +22,21 @@ public interface DevicePrefsSpec {
     /**
      * android.os.Build.MANUFACTURER, android.os.Build.MODEL
      */
-    public boolean appliesToDevice(String manufacturer, String model);
+    boolean appliesToDevice(String manufacturer, String model);
     
     /**
      * resource id of preference headers
      */
-    public int getPrefsHeadersResource();
+    int getPrefsHeadersResource();
     
     /**
      * map of specialized default prefs values
      */
-    public Map<String,Object> getDefaultValues();
+    Map<String,Object> getDefaultValues();
     
     /**
      * whether web links can be opened in an external browser
      */
-    public boolean supportsWebLinks();
+    boolean supportsWebLinks();
     
 }

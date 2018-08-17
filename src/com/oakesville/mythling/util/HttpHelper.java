@@ -77,8 +77,8 @@ public class HttpHelper {
     private String password;
     private AuthType authType;
     private Method method;
-    private SharedPreferences sharedPrefs;
-    private boolean binary;
+    private final SharedPreferences sharedPrefs;
+    private final boolean binary;
     private String charset = "UTF-8";
     private byte[] postContent;
 
@@ -98,7 +98,7 @@ public class HttpHelper {
         this(urls, AuthType.valueOf(authType), prefs, binary);
     }
 
-    public HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs, boolean binary) {
+    private HttpHelper(URL[] urls, AuthType authType, SharedPreferences prefs, boolean binary) {
         this.url = urls[0];
         if (urls.length > 1)
             this.ipRetrieval = urls[1];
@@ -145,13 +145,13 @@ public class HttpHelper {
     }
 
     private byte[] retrieveWithNoAuth() throws IOException {
-        Map<String,String> headers = new HashMap<String,String>();
+        Map<String,String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         return retrieve(headers);
     }
 
     private byte[] retrieveWithBasicAuth() throws IOException {
-        Map<String,String> headers = new HashMap<String,String>();
+        Map<String,String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         String credentials = Base64.encodeToString((user + ":" + password).getBytes(), Base64.DEFAULT);
         headers.put("Authorization", "Basic " + credentials);
@@ -353,14 +353,14 @@ public class HttpHelper {
         return backendIp;
     }
 
-    public int getConnectTimeout() {
+    private int getConnectTimeout() {
         if (sharedPrefs != null)
             return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_CONNECT_TIMEOUT, AppSettings.DEFAULT_HTTP_CONNECT_TIMEOUT).trim()) * 1000;
         else
             return Integer.parseInt(AppSettings.DEFAULT_HTTP_CONNECT_TIMEOUT) * 1000;
     }
 
-    public int getReadTimeout() {
+    private int getReadTimeout() {
         if (sharedPrefs != null)
             return Integer.parseInt(sharedPrefs.getString(AppSettings.HTTP_READ_TIMEOUT, AppSettings.DEFAULT_HTTP_READ_TIMEOUT).trim()) * 1000;
         else

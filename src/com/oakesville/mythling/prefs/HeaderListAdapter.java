@@ -19,6 +19,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.preference.PreferenceActivity.Header;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,22 +30,23 @@ import android.widget.TextView;
 
 import com.oakesville.mythling.R;
 
-public class HeaderListAdapter extends ArrayAdapter<Header> {
+class HeaderListAdapter extends ArrayAdapter<Header> {
     private static class HeaderViewHolder {
         ImageView icon;
         TextView title;
         TextView summary;
     }
 
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
 
     public HeaderListAdapter(Context context, List<Header> objects) {
         super(context, 0, objects);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         HeaderViewHolder holder;
         View view;
 
@@ -62,6 +64,7 @@ public class HeaderListAdapter extends ArrayAdapter<Header> {
 
         // all view fields must be updated every time, because the view may be recycled
         Header header = getItem(position);
+        assert header != null;
         if (holder.icon != null)
             holder.icon.setImageResource(header.iconRes);
         holder.title.setText(header.getTitle(getContext().getResources()));

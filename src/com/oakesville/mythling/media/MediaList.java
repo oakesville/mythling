@@ -84,7 +84,7 @@ public class MediaList {
     public String getBasePath() { return basePath; }
     public void setBasePath(String bp) { this.basePath = bp;  }
 
-    private List<Item> items = new ArrayList<Item>();
+    private List<Item> items = new ArrayList<>();
     public List<Item> getItems() { return items; }
     public void setItems(List<Item> items) { this.items = items; }
 
@@ -96,8 +96,8 @@ public class MediaList {
         return items.remove(item);
     }
 
-    private List<Category> categories = new ArrayList<Category>();
-    public List<Category> getCategories() { return categories; }
+    private final List<Category> categories = new ArrayList<>();
+    private List<Category> getCategories() { return categories; }
 
     public void addCategory(Category cat) {
         categories.add(cat);
@@ -136,7 +136,7 @@ public class MediaList {
     }
 
     public List<Listable> getTopCategoriesAndItems() {
-        List<Listable> all = new ArrayList<Listable>();
+        List<Listable> all = new ArrayList<>();
         if (categories != null)
             all.addAll(categories);
         if (items != null)
@@ -160,7 +160,7 @@ public class MediaList {
         return getListables(path, true);
     }
 
-    public List<Listable> getListables(String path, boolean lenient) {
+    private List<Listable> getListables(String path, boolean lenient) {
         if (path == null || "".equals(path))
             return getTopCategoriesAndItems();
         if (path.startsWith("/"))
@@ -220,7 +220,7 @@ public class MediaList {
             sortCategory(cat, sortType, includeItems);
     }
 
-    public void sortCategory(Category category, SortType sort, boolean includeItems) {
+    private void sortCategory(Category category, SortType sort, boolean includeItems) {
         if (includeItems)
             category.sortItems(sort);
         // the categories themselves are always sorted by title
@@ -248,7 +248,7 @@ public class MediaList {
     }
 
     public List<Item> getAllItems() {
-        List<Item> allItems = new ArrayList<Item>();
+        List<Item> allItems = new ArrayList<>();
         if (items != null)
             allItems.addAll(items);
         if (categories != null) {

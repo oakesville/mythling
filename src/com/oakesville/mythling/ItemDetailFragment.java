@@ -70,12 +70,7 @@ public class ItemDetailFragment extends Fragment {
     private int idx;
     public void setIdx(int idx) { this.idx = idx; }
 
-    private int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private final int[] ratingViewIds = new int[]{R.id.star_1, R.id.star_2, R.id.star_3, R.id.star_4, R.id.star_5};
 
     @Override
     public void onAttach(Activity activity) {
@@ -118,11 +113,6 @@ public class ItemDetailFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // MediaPagerActivity sets idx directly
@@ -147,7 +137,7 @@ public class ItemDetailFragment extends Fragment {
             Spannable spans = (Spannable) titleView.getText();
             ClickableSpan clickSpan = new ClickableSpan() {
                 public void onClick(View v) {
-                    ((TextView)v).setBackgroundColor(Color.GRAY);
+                    v.setBackgroundColor(Color.GRAY);
                     String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
                     Uri uri = new Uri.Builder().path(path).build();
                     startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
@@ -162,7 +152,7 @@ public class ItemDetailFragment extends Fragment {
                 artworkView.setClickable(true);
                 artworkView.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        ((ImageView)v).setBackgroundResource(R.drawable.folder_frame);
+                        v.setBackgroundResource(R.drawable.folder_frame);
                         String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
                         Uri uri = new Uri.Builder().path(path).build();
                         startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
@@ -235,7 +225,7 @@ public class ItemDetailFragment extends Fragment {
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
                             tv.setOnClickListener(new OnClickListener() {
                                 public void onClick(View v) {
-                                    ((TextView) v).setBackgroundColor(Color.GRAY);
+                                    v.setBackgroundColor(Color.GRAY);
                                 }
                             });
                         } catch (IOException ex) {
@@ -268,7 +258,7 @@ public class ItemDetailFragment extends Fragment {
                             tv.setMovementMethod(LinkMovementMethod.getInstance());
                             tv.setOnClickListener(new OnClickListener() {
                                 public void onClick(View v) {
-                                    ((TextView) v).setBackgroundColor(Color.GRAY);
+                                    v.setBackgroundColor(Color.GRAY);
                                 }
                             });
                         } catch (MalformedURLException ex) {
@@ -283,8 +273,8 @@ public class ItemDetailFragment extends Fragment {
                 }
             } else {
                 if (item instanceof TvShow) {
-                    ((TextView) detailView.findViewById(R.id.director_text)).setVisibility(View.GONE);
-                    ((TextView) detailView.findViewById(R.id.actors_text)).setVisibility(View.GONE);
+                    detailView.findViewById(R.id.director_text).setVisibility(View.GONE);
+                    detailView.findViewById(R.id.actors_text).setVisibility(View.GONE);
 
                     TvShow tvShow = (TvShow) item;
                     TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
@@ -408,11 +398,11 @@ public class ItemDetailFragment extends Fragment {
         }
     }
 
-    public class ImageRetrievalTask extends AsyncTask<URL, Integer, Long> {
+    class ImageRetrievalTask extends AsyncTask<URL, Integer, Long> {
         private Exception ex;
         private Bitmap bitmap;
-        private String filepath;
-        private boolean reportErrors;
+        private final String filepath;
+        private final boolean reportErrors;
 
         ImageRetrievalTask(String filepath, boolean reportErrors) {
             this.filepath = filepath;

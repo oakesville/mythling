@@ -44,7 +44,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
@@ -63,7 +63,7 @@ import io.oakesville.media.Cut;
 import io.oakesville.media.Download;
 import io.oakesville.media.MediaSettings.MediaType;
 
-public class VideoPlayerActivity extends ActionBarActivity {
+public class VideoPlayerActivity extends AppCompatActivity {
 
     private static final String TAG = VideoPlayerActivity.class.getSimpleName();
 
@@ -74,7 +74,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
 
     private static final String SKIP_TV_PLAYER_HINT_PREF = "skip_tv_player_hint";
 
-    private static int showUiShort = 3500;  // for use when showing for user interaction
+    private static final int showUiShort = 3500;  // for use when showing for user interaction
     private static int showUiLong = 5000;   // for skip since this can take some time
 
     private AppSettings appSettings;
@@ -110,9 +110,8 @@ public class VideoPlayerActivity extends ActionBarActivity {
     private boolean done;
     private int seekCorrectionTolerance; // secs
 
-    private boolean showTvControlsHint;
 
-
+    @SuppressLint("ClickableViewAccessibility")
     @SuppressWarnings("unchecked")
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -361,12 +360,22 @@ public class VideoPlayerActivity extends ActionBarActivity {
         }
     }
 
+    private Toast volumeToast;
+
     private void volumeUp() {
+        if (volumeToast != null)
+            volumeToast.cancel();
         mediaPlayer.volumeUp();
+        volumeToast = Toast.makeText(getApplicationContext(),getText(R.string.volume) + String.valueOf(mediaPlayer.getVolume()), Toast.LENGTH_SHORT);
+        volumeToast.show();
     }
 
     private void volumeDown() {
+        if (volumeToast != null)
+            volumeToast.cancel();
         mediaPlayer.volumeDown();
+        volumeToast = Toast.makeText(getApplicationContext(),getText(R.string.volume) + String.valueOf(mediaPlayer.getVolume()), Toast.LENGTH_SHORT);
+        volumeToast.show();
     }
 
     /**
@@ -379,7 +388,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.playing_audio_track_) + track , Toast.LENGTH_SHORT).show();
     }
 
-    protected String getNotSeekableMessage() {
+    private String getNotSeekableMessage() {
         String msg = getString(R.string.media_not_seekable);
         if (mediaPlayer.isProxying())
             msg += " (" + getString(R.string.proxying) + ")";
@@ -405,7 +414,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
         seekCorrectionTolerance = appSettings.getSeekCorrectionTolerance();
 
         if (appSettings.isTv()) {
-            showTvControlsHint = !appSettings.getBooleanPref(SKIP_TV_PLAYER_HINT_PREF, false);
+            boolean showTvControlsHint = !appSettings.getBooleanPref(SKIP_TV_PLAYER_HINT_PREF, false);
             if (showTvControlsHint) {
                 String title = getString(R.string.title_tv_player_hint);
                 String msg = getString(R.string.tv_player_hint);
@@ -467,7 +476,6 @@ public class VideoPlayerActivity extends ActionBarActivity {
         double ar, vw;
         if (aspectDenominator == aspectNumerator) {
             // no indication about density, assume 1:1
-            vw = width;
             ar =  (double)width / (double)height;
         } else {
             // use the specified aspect ratio
@@ -699,7 +707,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
         appSettings.setSeekCorrectionTolerance(tolerance);
     }
 
-    public void updatePositionUi(int pos) {
+    private void updatePositionUi(int pos) {
         if (pos < 0)
             pos = 0;
         int len = mediaPlayer.getItemLength();
@@ -775,7 +783,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
         hideHandler.removeCallbacks(hideAction);
         hideHandler.postDelayed(hideAction, delayMs);
     }
-    private Handler hideHandler = new Handler();
+    private final Handler hideHandler = new Handler();
     private final Runnable hideAction = new Runnable() {
         @SuppressLint("InlinedApi")
         public void run() {
@@ -806,18 +814,18 @@ public class VideoPlayerActivity extends ActionBarActivity {
             delayedHideUi(showUiShort);
     }
 
-    private Handler pauseHandler = new Handler();
+    private final Handler pauseHandler = new Handler();
     private final Runnable pauseAction = new Runnable() {
         public void run() {
             pause();
         }
     };
 
-    List<Integer> specialKeys;
+    private List<Integer> specialKeys;
     private boolean specialKey(int code) {
         specialKeyHandler.removeCallbacks(specialKeyAction);
         if (code == KeyEvent.KEYCODE_DPAD_CENTER) {
-            specialKeys = new ArrayList<Integer>();
+            specialKeys = new ArrayList<>();
             specialKeys.add(code);
             specialKeyHandler.postDelayed(specialKeyAction, 1000);
             return true;
@@ -844,7 +852,7 @@ public class VideoPlayerActivity extends ActionBarActivity {
         }
         return false;
     }
-    private Handler specialKeyHandler = new Handler();
+    private final Handler specialKeyHandler = new Handler();
     private final Runnable specialKeyAction = new Runnable() {
         public void run() {
             specialKeys = null;

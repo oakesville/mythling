@@ -27,7 +27,7 @@ import com.oakesville.mythling.R;
 
 public class SwitchPreference extends android.preference.SwitchPreference {
 
-    private Listener listener = new Listener();
+    private final Listener listener = new Listener();
 
     private class Listener implements CompoundButton.OnCheckedChangeListener {
         @Override
@@ -44,15 +44,15 @@ public class SwitchPreference extends android.preference.SwitchPreference {
     }
 
 
-    public SwitchPreference(Context context) {
+    protected SwitchPreference(Context context) {
         super(context);
     }
 
-    public SwitchPreference(Context context, AttributeSet attrs) {
+    protected SwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SwitchPreference(Context context, AttributeSet attrs, int defStyle) {
+    protected SwitchPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

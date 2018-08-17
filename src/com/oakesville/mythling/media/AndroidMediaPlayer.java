@@ -36,8 +36,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     private static final String TAG = AndroidMediaPlayer.class.getSimpleName();
 
-    private Context context;
-    private SurfaceView videoView;
+    private final Context context;
     private int lengthOffset; // meta item length - getDuration() in ms
     private boolean durationMismatch;
     public boolean isDurationMismatch() { return durationMismatch; }
@@ -69,7 +68,6 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
     public AndroidMediaPlayer(Context context, SurfaceView videoView) {
         this.context = context;
-        this.videoView = videoView;
         videoView.getHolder().addCallback(new SurfaceHolder.Callback() {
             public void surfaceCreated(SurfaceHolder holder) {
                 setDisplay(holder);
@@ -214,8 +212,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         target = -1;
     }
 
-    private Handler targetTimeoutHandler = new Handler();
-    private Runnable targetTimeoutAction = new Runnable() {
+    private final Handler targetTimeoutHandler = new Handler();
+    private final Runnable targetTimeoutAction = new Runnable() {
         public void run() {
             if (target >= 0)
                 eventListener.onEvent(new MediaPlayerEvent(MediaPlayerEventType.seek));
@@ -239,7 +237,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         else
             return 1;
     }
-    public void setMaxPlayRate(int maxRate) {
+    private void setMaxPlayRate(int maxRate) {
         if (maxRate <= 0)
             this.maxPlayRate = 1;
         else
@@ -276,8 +274,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     }
 
-    private Handler fastForwardHandler = new Handler();
-    private Runnable fastForwardAction = new Runnable() {
+    private final Handler fastForwardHandler = new Handler();
+    private final Runnable fastForwardAction = new Runnable() {
         public void run() {
             if (!isReleased()) {
                 if (playRate <= 1) {
@@ -333,8 +331,8 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     }
 
-    private Handler rewindHandler = new Handler();
-    private Runnable rewindAction = new Runnable() {
+    private final Handler rewindHandler = new Handler();
+    private final Runnable rewindAction = new Runnable() {
         public void run() {
             if (!isReleased()) {
                 if (playRate >= 0) {
@@ -431,7 +429,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         this.eventListener = listener;
     }
 
-    private AndroidMediaPlayerListener mpListener = new AndroidMediaPlayerListener();
+    private final AndroidMediaPlayerListener mpListener = new AndroidMediaPlayerListener();
 
     private class AndroidMediaPlayerListener implements android.media.MediaPlayer.OnErrorListener,
       android.media.MediaPlayer.OnPreparedListener, android.media.MediaPlayer.OnCompletionListener,
@@ -440,7 +438,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
 
         private int duration;
         private int samples = 0;
-        private int maxSamples = 10;
+        private final int maxSamples = 10;
 
         public void onCompletion(android.media.MediaPlayer mp) {
             if (!isReleased() && eventListener != null)
@@ -524,7 +522,7 @@ public class AndroidMediaPlayer extends android.media.MediaPlayer implements Med
         }
     }
 
-    private Handler timingHandler = new Handler();
+    private final Handler timingHandler = new Handler();
     private Runnable timingAction;
 
 }
