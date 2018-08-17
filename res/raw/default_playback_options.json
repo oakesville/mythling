@@ -11,7 +11,7 @@
       "internal":
       {
         "file": "libvlc",
-        "hls": "android",
+        "hls": "libvlc",
         "default":
         {
           "file": "libvlc"
@@ -36,7 +36,7 @@
       "internal":
       {
         "file": "libvlc",
-        "hls": "android",
+        "hls": "libvlc",
         "default":
         {
           "file": "libvlc"
@@ -61,7 +61,7 @@
       "internal":
       {
         "file": "libvlc",
-        "hls": "android",
+        "hls": "libvlc",
         "default":
         {
           "file": "libvlc"
@@ -82,7 +82,7 @@
       "internal":
       {
         "file": "libvlc",
-        "hls": "android",
+        "hls": "libvlc",
         "default":
         {
           "file": "libvlc"

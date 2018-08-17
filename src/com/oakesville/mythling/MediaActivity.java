@@ -37,6 +37,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
@@ -122,7 +123,7 @@ import io.oakesville.media.TvShow;
 /**
  * Base class for the different ways to view collections of MythTV media.
  */
-public abstract class MediaActivity extends ActionBarActivity {
+public abstract class MediaActivity extends AppCompatActivity {
     private static final String TAG = MediaActivity.class.getSimpleName();
     private static int active;
 

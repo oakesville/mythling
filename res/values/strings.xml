@@ -412,6 +412,8 @@
         <item>Delete</item>
     </string-array>
     <string name="setup_required">"Setup Required"</string>
+    <string name="welcome_to_mythling">"Welcome to Mythling"</string>
+    <string name="enter_backend_host">Enter MythTV backend host/IP</string>
     <string name="access_network_settings">Please access Network settings to initialize connection info.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="error_">Error:\u0020</string>
