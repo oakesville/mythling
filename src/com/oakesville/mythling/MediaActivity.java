@@ -814,11 +814,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                         VideoPlaybackDialog dialog = getVideoPlaybackDialog(item);
                         dialog.show(getFragmentManager(), "StreamVideoDialog");
                     } else {
-                        startProgress();
-                        if (playbackOption.isHls())
-                            new StreamHlsTask(item).execute((URL) null);
-                        else
-                            playRawVideoStream(item);
+                        startVideoPlayback(item, playbackOption);
                     }
                 }
             } else {
@@ -1837,7 +1833,6 @@ public abstract class MediaActivity extends AppCompatActivity {
 
             uri = Uri.parse(fileUrl);
         }
-
 
         PlaybackOption playbackOption = getPlaybackOption(item, PlaybackOptions.STREAM_FILE);
         boolean isExternalPlayer = playbackOption.isAppPlayer();
