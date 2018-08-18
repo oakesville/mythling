@@ -440,7 +440,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byRating).setVisible(!isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byChannel).setVisible(isLiveTv);
                 sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setVisible(isLiveTv);
-                sortMenuItem.getSubMenu().findItem(R.id.sort_byGroup).setVisible(isRecordings);
+                sortMenuItem.getSubMenu().findItem(R.id.sort_byGroup).setVisible(isRecordings && !appSettings.isMythlingMediaServices());
                 if (isLiveTv) {
                     if (mediaSettings.getSortType() == SortType.byCallsign)
                         sortMenuItem.getSubMenu().findItem(R.id.sort_byCallsign).setChecked(true);

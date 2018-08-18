@@ -179,6 +179,8 @@ public class AppSettings {
     private static final String EXTERNAL_PLAYBACK_ACCESSED = "external_playback_accessed";
     private static final String BYPASS_DOWNLOAD_MANAGER = "bypass_download_manager";
 
+    public static final int PERMISSION_READ_EXTERNAL_STORAGE = 1;
+
     private final Context appContext;
     public Context getAppContext() { return appContext; }
 

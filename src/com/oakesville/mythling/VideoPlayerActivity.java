@@ -15,9 +15,32 @@
  */
 package com.oakesville.mythling;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oakesville.mythling.app.AppData;
 import com.oakesville.mythling.app.AppSettings;
@@ -37,28 +60,10 @@ import com.oakesville.mythling.util.Reporter;
 import com.oakesville.mythling.util.TextBuilder;
 import com.oakesville.mythling.vlc.VlcMediaPlayer;
 
-import android.annotation.SuppressLint;
-import android.support.v7.app.ActionBar;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.oakesville.media.Cut;
 import io.oakesville.media.Download;
 import io.oakesville.media.MediaSettings.MediaType;
@@ -665,10 +670,19 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
             List<String> mediaOptions = new PlaybackOptions(appSettings).getMediaOptions(playerOption);
             if (videoUri.getScheme().equals("content")) {
-                ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
-                if (pfd == null)
-                    throw new IOException("Unable to open file descriptor for: " + videoUri);
-                mediaPlayer.playMedia(pfd.getFileDescriptor(), metaLength, mediaOptions);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(videoUri, "r");
+                    if (pfd == null)
+                        throw new IOException("Unable to open file descriptor for: " + videoUri);
+                    mediaPlayer.playMedia(pfd.getFileDescriptor(), metaLength, mediaOptions);
+                }
+                else {
+                    // NOTE: Grant will only be effective next time around.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            AppSettings.PERMISSION_READ_EXTERNAL_STORAGE);
+                }
             }
             else {
                 mediaPlayer.playMedia(videoUri, metaLength, authType, mediaOptions);
