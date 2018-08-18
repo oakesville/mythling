@@ -21,7 +21,7 @@ $VERSION = "2.0";
  
 // Assign values for these constants and drop this file somewhere
 // under your Apache DocumentRoot directory.
-$MYTHTV_VERSION = "0.28";
+$MYTHTV_VERSION = "29";
 $MYTHDB_HOST = "localhost";
 $MYTHDB_DATABASE = "mythconverg";
 $MYTHDB_USER = "mythtv";
@@ -151,8 +151,8 @@ $hostname = gethostname();
 date_default_timezone_set("UTC");
 $dt = date("m-d-Y H:i:s");
 
-mysql_connect($MYTHDB_HOST, $MYTHDB_USER, $MYTHDB_PASSWORD) or die(error("Could not connect: " . mysql_error()));
-mysql_select_db($MYTHDB_DATABASE) or die(error("Unable to select database"));
+$conn = mysqli_connect($MYTHDB_HOST, $MYTHDB_USER, $MYTHDB_PASSWORD) or die(error("Could not connect: " . mysqli_error($conn)));
+mysqli_select_db($conn, $MYTHDB_DATABASE) or die(error("Unable to select database"));
 
 $isVideoStorageGroup = false;
 $castMap = null;
@@ -193,9 +193,9 @@ if ($type->isGuide())
   if (isShowQuery())
     echo "query:\n" . $query . "\n\n";
 
-  mysql_set_charset("utf8");
-  $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($res);
+  mysqli_set_charset($conn, "utf8");
+  $res = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $num = mysqli_num_rows($conn, $res);
   
   header("Content-type:application/json");
   if ($listingsSearch != null)
@@ -208,19 +208,19 @@ if ($type->isGuide())
     $i = 0;
     while ($i < $num)
     {
-      $chanId = mysql_result($res, $i, "chanid");
-      $callSign = mysql_result($res, $i, "callsign");
-      $chanNum = mysql_result($res, $i, "channum");
-      $type = mysql_result($res, $i, "category_type");
-      $category = mysql_result($res, $i, "category");
-      $startTime = mysql_result($res, $i, "starttime");
+      $chanId = mysqli_result($res, $i, "chanid");
+      $callSign = mysqli_result($res, $i, "callsign");
+      $chanNum = mysqli_result($res, $i, "channum");
+      $type = mysqli_result($res, $i, "category_type");
+      $category = mysqli_result($res, $i, "category");
+      $startTime = mysqli_result($res, $i, "starttime");
       $startTime = str_replace(' ', 'T', $startTime) . 'Z';
-      $endTime = mysql_result($res, $i, "endtime");
+      $endTime = mysqli_result($res, $i, "endtime");
       $endTime = str_replace(' ', 'T', $endTime) . 'Z';
-      $title = cleanup(mysql_result($res, $i, "title"));
-      $subTitle = cleanup(mysql_result($res, $i, "subtitle"));
-      $repeat = mysql_result($res, $i, "previouslyshown");
-      $recStatus = mysql_result($res, $i, "recstatus");
+      $title = cleanup(mysqli_result($res, $i, "title"));
+      $subTitle = cleanup(mysqli_result($res, $i, "subtitle"));
+      $repeat = mysqli_result($res, $i, "previouslyshown");
+      $recStatus = mysqli_result($res, $i, "recstatus");
       if ($recStatus == null)
         $recStatus = 0;
       printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus, $chanId, $callSign, $chanNum);
@@ -242,7 +242,7 @@ if ($type->isGuide())
     $i = 0;
     while ($i < $num)
     {
-      $chanId = mysql_result($res, $i, "chanid");
+      $chanId = mysqli_result($res, $i, "chanid");
       if ($chanId == $curChan)
       {
         echo ',' . "\n"; // sep programs in array
@@ -251,22 +251,22 @@ if ($type->isGuide())
       {
         if ($curChan != null)
           printChannelEnd(false);
-        $callSign = mysql_result($res, $i, "callsign");
-        $chanNum = mysql_result($res, $i, "channum");
-        $icon = mysql_result($res, $i, "icon");
+        $callSign = mysqli_result($res, $i, "callsign");
+        $chanNum = mysqli_result($res, $i, "channum");
+        $icon = mysqli_result($res, $i, "icon");
         printChannelBegin($chanId, $chanNum, $callSign, $icon);
         $curChan = $chanId;
       }
-      $type = mysql_result($res, $i, "category_type");
-      $category = mysql_result($res, $i, "category");
-      $startTime = mysql_result($res, $i, "starttime");
+      $type = mysqli_result($res, $i, "category_type");
+      $category = mysqli_result($res, $i, "category");
+      $startTime = mysqli_result($res, $i, "starttime");
       $startTime = str_replace(' ', 'T', $startTime) . 'Z';
-      $endTime = mysql_result($res, $i, "endtime");
+      $endTime = mysqli_result($res, $i, "endtime");
       $endTime = str_replace(' ', 'T', $endTime) . 'Z';
-      $title = cleanup(mysql_result($res, $i, "title"));
-      $subTitle = cleanup(mysql_result($res, $i, "subtitle"));
-      $repeat = mysql_result($res, $i, "previouslyshown");
-      $recStatus = mysql_result($res, $i, "recstatus");
+      $title = cleanup(mysqli_result($res, $i, "title"));
+      $subTitle = cleanup(mysqli_result($res, $i, "subtitle"));
+      $repeat = mysqli_result($res, $i, "previouslyshown");
+      $recStatus = mysqli_result($res, $i, "recstatus");
       if ($recStatus == null)
         $recStatus = 0;
       printProgram($type, $category, $startTime, $endTime, $title, $subTitle, $repeat, $recStatus, null, null, null);
@@ -280,7 +280,7 @@ if ($type->isGuide())
     echo '}';
   }
 
-  mysql_close();
+  mysqli_close($conn);
   
 }
 else if ($type->isCutList())
@@ -297,9 +297,9 @@ else if ($type->isCutList())
   
   if (isShowQuery())
     echo "query:\n" . $query . "\n\n";
-  mysql_set_charset("utf8");
-  $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($res);
+  mysqli_set_charset($conn, "utf8");
+  $res = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $num = mysqli_num_rows($res);
   
   header("Content-type:application/json");
   echo '{' . "\n";
@@ -311,18 +311,18 @@ else if ($type->isCutList())
   $i = 0;
   while ($i < $num)
   {
-    $markType = mysql_result($res, $i, "type"); // 4 or 5
-    $frame = mysql_result($res, $i, "mark");
+    $markType = mysqli_result($res, $i, "type"); // 4 or 5
+    $frame = mysqli_result($res, $i, "mark");
     
     $innerWhere = $baseWhere . "and type = 33 and mark <= " . $frame;
     $innerOrderBy = "order by chanid desc, starttime desc, type desc, mark desc LIMIT 1";
     $innerQuery = "select offset from recordedseek" . "\n" . $innerWhere . "\n" . $innerOrderBy;
     if (isShowQuery())
       echo "inner query:\n" . $innerQuery . "\n\n";
-    $innerRes = mysql_query($innerQuery) or die(error("Query failed: " . mysql_error()));
-    if (mysql_numrows($innerRes) == 1)
+    $innerRes = mysqli_query($conn, $innerQuery) or die(error("Query failed: " . mysqli_error($conn)));
+    if (mysqli_num_rows($innerRes) == 1)
     {
-      $offset = mysql_result($innerRes, 0, "offset");
+      $offset = mysqli_result($innerRes, 0, "offset");
       printCutting($markType, $offset);
     if ($i < $num - 1)
       echo ', ' . "\n";
@@ -334,19 +334,19 @@ else if ($type->isCutList())
   echo '  }' . "\n";
   echo '}';
   
-  mysql_close();
+  mysqli_close($conn);
 }
 else if ($type->isSearch())
 {
   // search request
   $videoBase = null;
-  if (hasStorageGroup($VIDEO_STORAGE_GROUP))
+  if (hasStorageGroup($conn, $VIDEO_STORAGE_GROUP))
     $isVideoStorageGroup = true;
   else
-    $videoBase = getSettingDir($VIDEO_DIR_SETTING);
+    $videoBase = getSettingDir($conn, $VIDEO_DIR_SETTING);
   
-  $musicBase = getBaseDir($MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
-  $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
+  $musicBase = getBaseDir($conn, $MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
+  $artworkBase = getBaseDir($conn, $artworkStorageGroup, $ARTWORK_DIR_SETTING);
   
   header("Content-type:application/json");
   echo "{\n";
@@ -370,15 +370,15 @@ else if ($type->isSearch())
     $vQuery = "select intid as id, filename from videometadata " . $vWhere . " order by filename";
     if (isShowQuery())
       echo "vQuery: " . $vQuery . "\n\n";
-    mysql_set_charset("utf8");
-    $vRes = mysql_query($vQuery) or die(error("Query failed: " . mysql_error()));
-    $vNum = mysql_numrows($vRes);
+    mysqli_set_charset($conn, "utf8");
+    $vRes = mysqli_query($conn, $vQuery) or die(error("Query failed: " . mysqli_error($conn)));
+    $vNum = mysqli_num_rows($vRes);
     echo '  "videos": ' . "\n  [\n";
     $i = 0;
     while ($i < $vNum)
     {
-      $id = mysql_result($vRes, $i, "id");
-      $full = mysql_result($vRes, $i, "filename");
+      $id = mysqli_result($vRes, $i, "id");
+      $full = mysqli_result($vRes, $i, "filename");
       if ($isVideoStorageGroup)
         $part = $full;
       else
@@ -393,7 +393,7 @@ else if ($type->isSearch())
     if ($categorizeUsingDirs || $categorizeUsingMetadata)
     {
       // movies
-      $castMap = getCastMap();
+      $castMap = getCastMap($conn);
       echo "  ],\n";
       $mWhere = "where 1=1";
       if ($categorizeUsingDirs)
@@ -404,15 +404,15 @@ else if ($type->isSearch())
       $mQuery = "select intid as id, title, filename, inetref, homepage, year, userrating, director, plot as summary, coverfile, fanart, screenshot, banner, length from videometadata " . $mWhere . " order by filename";
       if (isShowQuery())
         echo "mQuery: " . $mQuery . "\n\n";
-      $mRes = mysql_query($mQuery) or die(error("Query failed: " . mysql_error()));
-      $mNum = mysql_numrows($mRes);
+      $mRes = mysqli_query($conn, $mQuery) or die(error("Query failed: " . mysqli_error($conn)));
+      $mNum = mysqli_num_rows($mRes);
       echo '  "movies": ' . "\n  [\n";
       $i = 0;
       while ($i < $mNum)
       {
-        $id = mysql_result($mRes, $i, "id");
-        $title = cleanup(mysql_result($mRes, $i, "title"));
-        $full = mysql_result($mRes, $i, "filename");
+        $id = mysqli_result($mRes, $i, "id");
+        $title = cleanup(mysqli_result($mRes, $i, "title"));
+        $full = mysqli_result($mRes, $i, "filename");
         if ($isVideoStorageGroup)
           $part = $full;
         else
@@ -420,21 +420,21 @@ else if ($type->isSearch())
         $lastSlash = strrpos($part, "/");
         $path = substr($part, 0, $lastSlash);
         $file = substr($part, $lastSlash + 1);
-        $inetref = mysql_result($mRes, $i, "inetref");
-        $homepage = mysql_result($mRes, $i, "homepage");
-        $year = mysql_result($mRes, $i, "year");
-        $rating = mysql_result($mRes, $i, "userrating");
-        $director = mysql_result($mRes, $i, "director");
-        $summary = cleanup(mysql_result($mRes, $i, "summary"));
-        $art = mysql_result($mRes, $i, "coverfile");
+        $inetref = mysqli_result($mRes, $i, "inetref");
+        $homepage = mysqli_result($mRes, $i, "homepage");
+        $year = mysqli_result($mRes, $i, "year");
+        $rating = mysqli_result($mRes, $i, "userrating");
+        $director = mysqli_result($mRes, $i, "director");
+        $summary = cleanup(mysqli_result($mRes, $i, "summary"));
+        $art = mysqli_result($mRes, $i, "coverfile");
         if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
-          $art = mysql_result($mRes, $i, "fanart");
+          $art = mysqli_result($mRes, $i, "fanart");
         if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
-          $art = mysql_result($mRes, $i, "screenshot");
+          $art = mysqli_result($mRes, $i, "screenshot");
         if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
-          $art = mysql_result($mRes, $i, "banner");
+          $art = mysqli_result($mRes, $i, "banner");
         $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
-        $length = mysql_result($mRes, $i, "length");
+        $length = mysqli_result($mRes, $i, "length");
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
         printSearchResultMovieOrTvSeries($id, $title, null, null, null, $path, $file, $inetref, $homepage, $year, null, $rating, $director, $actors, $summary, $artwork, $length, $i < $mNum - 1);
         $i++;
@@ -451,18 +451,18 @@ else if ($type->isSearch())
       $tsQuery = "select intid as id, title, subtitle, season, episode, filename, inetref, homepage, releasedate, userrating, director, plot as summary, coverfile, fanart, screenshot, banner, length from videometadata " . $tsWhere . " order by filename";
       if (isShowQuery())
         echo "tsQuery: " . $tsQuery . "\n\n";
-      $tsRes = mysql_query($tsQuery) or die(error("Query failed: " . mysql_error()));
-      $tsNum = mysql_numrows($tsRes);
+      $tsRes = mysqli_query($conn, $tsQuery) or die(error("Query failed: " . mysqli_error($conn)));
+      $tsNum = mysqli_num_rows($tsRes);
       echo '  "tvSeries": ' . "\n  [\n";
       $i = 0;
       while ($i < $tsNum)
       {
-        $id = mysql_result($tsRes, $i, "id");
-        $title = cleanup(mysql_result($tsRes, $i, "title"));
-        $subTitle = cleanup(mysql_result($tsRes, $i, "subtitle"));
-        $season = mysql_result($tsRes, $i, "season");
-        $episode = mysql_result($tsRes, $i, "episode");
-        $full = mysql_result($tsRes, $i, "filename");
+        $id = mysqli_result($tsRes, $i, "id");
+        $title = cleanup(mysqli_result($tsRes, $i, "title"));
+        $subTitle = cleanup(mysqli_result($tsRes, $i, "subtitle"));
+        $season = mysqli_result($tsRes, $i, "season");
+        $episode = mysqli_result($tsRes, $i, "episode");
+        $full = mysqli_result($tsRes, $i, "filename");
         if ($isVideoStorageGroup)
           $part = $full;
         else
@@ -470,21 +470,21 @@ else if ($type->isSearch())
         $lastSlash = strrpos($part, "/");
         $path = substr($part, 0, $lastSlash);
         $file = substr($part, $lastSlash + 1);
-        $inetref = mysql_result($tsRes, $i, "inetref");
-        $homepage = mysql_result($tsRes, $i, "homepage");
-        $aired = mysql_result($tsRes, $i, "releasedate");
-        $rating = mysql_result($tsRes, $i, "userrating");
-        $director = mysql_result($tsRes, $i, "director");
-        $summary = cleanup(mysql_result($tsRes, $i, "summary"));
-        $art = mysql_result($tsRes, $i, "coverfile");
+        $inetref = mysqli_result($tsRes, $i, "inetref");
+        $homepage = mysqli_result($tsRes, $i, "homepage");
+        $aired = mysqli_result($tsRes, $i, "releasedate");
+        $rating = mysqli_result($tsRes, $i, "userrating");
+        $director = mysqli_result($tsRes, $i, "director");
+        $summary = cleanup(mysqli_result($tsRes, $i, "summary"));
+        $art = mysqli_result($tsRes, $i, "coverfile");
         if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
-          $art = mysql_result($tsRes, $i, "fanart");
+          $art = mysqli_result($tsRes, $i, "fanart");
         if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
-          $art = mysql_result($tsRes, $i, "screenshot");
+          $art = mysqli_result($tsRes, $i, "screenshot");
         if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
-          $art = mysql_result($tsRes, $i, "banner");
+          $art = mysqli_result($tsRes, $i, "banner");
         $artwork = $art == null || $artworkBase == null ? null : (startsWith($art, $artworkBase) ? substr($art, strlen($artworkBase) + 1) : $art);
-        $length = mysql_result($tsRes, $i, "length");
+        $length = mysqli_result($tsRes, $i, "length");
         $actors = array_key_exists($id, $castMap) ? $castMap[$id] : null;
         printSearchResultMovieOrTvSeries($id, $title, $subTitle, $season, $episode, $path, $file, $inetref, $homepage, null, $aired, $rating, $director, $actors, $summary, $artwork, $length, $i < $tsNum - 1);
         $i++;
@@ -500,14 +500,14 @@ else if ($type->isSearch())
     $sQuery = "select s.song_id as id, concat(concat(d.path,'/'),s.filename) as filename from music_directories d, music_songs s where d.directory_id = s.directory_id and (d.path like '%" . $searchQuery . "%' or s.filename like '%" . $searchQuery . "%') order by filename";
     if (isShowQuery())
       echo "sQuery: " . $sQuery . "\n\n";
-    $sRes = mysql_query($sQuery) or die(error("Query failed: " . mysql_error()));
-    $sNum = mysql_numrows($sRes);
+    $sRes = mysqli_query($conn, $sQuery) or die(error("Query failed: " . mysqli_error($conn)));
+    $sNum = mysqli_num_rows($sRes);
     echo '  "songs": ' . "\n  [\n";
     $i = 0;
     while ($i < $sNum)
     {
-      $id = mysql_result($sRes, $i, "id");
-      $full = mysql_result($sRes, $i, "filename");
+      $id = mysqli_result($sRes, $i, "id");
+      $full = mysqli_result($sRes, $i, "filename");
       $lastSlash = strrpos($full, "/");
       $path = substr($full, 0, $lastSlash);
       $file = substr($full, $lastSlash + 1);
@@ -523,34 +523,34 @@ else if ($type->isSearch())
   $tQuery = "select concat(concat(p.chanid,'~'),p.starttime) as id, c.channum, c.callsign, p.endtime, p.title, p.subtitle, p.description, p.stars, convert(p.originalairdate using utf8) as oad, p.airdate from program p, channel c where p.chanid = c.chanid and starttime <= utc_timestamp() and endtime >= utc_timestamp() and (p.title like '%" . $searchQuery . "%' or p.subtitle like '%" . $searchQuery . "%' or p.description like '%" . $searchQuery . "%') group by p.programid order by p.chanid";
   if (isShowQuery())
     echo "tQuery: " . $tQuery . "\n\n";
-  $tRes = mysql_query($tQuery) or die(error("Query failed: " . mysql_error()));
-  $tNum = mysql_numrows($tRes);
+  $tRes = mysqli_query($conn, $tQuery) or die(error("Query failed: " . mysqli_error($conn)));
+  $tNum = mysqli_num_rows($tRes);
   echo '  "liveTv": ' . "\n  [\n";
   $i = 0;
   while ($i < $tNum)
   {
-    $id = mysql_result($tRes, $i, "id");
+    $id = mysqli_result($tRes, $i, "id");
     $progstart = null; // always identifed by id
-    $channum = mysql_result($tRes, $i, "channum");
-    $callsign = mysql_result($tRes, $i, "callsign");
-    $title = cleanup(mysql_result($tRes, $i, "title"));
-    $subtitle = cleanup(mysql_result($tRes, $i, "subtitle"));
-    $description = cleanup(mysql_result($tRes, $i, "description"));
-    $rating = mysql_result($tRes, $i, "stars");
-    $oads = mysql_result($tRes, $i, "oad");
+    $channum = mysqli_result($tRes, $i, "channum");
+    $callsign = mysqli_result($tRes, $i, "callsign");
+    $title = cleanup(mysqli_result($tRes, $i, "title"));
+    $subtitle = cleanup(mysqli_result($tRes, $i, "subtitle"));
+    $description = cleanup(mysqli_result($tRes, $i, "description"));
+    $rating = mysqli_result($tRes, $i, "stars");
+    $oads = mysqli_result($tRes, $i, "oad");
     if ($oads != null && strcmp("0000-00-00", $oads) != 0)
     {
       $airdate = $oads;
     }
     else
     {
-      $oads = mysql_result($tRes, $i, "airdate");
+      $oads = mysqli_result($tRes, $i, "airdate");
       if (strcmp("0000", $oads) != 0)
         $airdate = $oads;
       else
         $airdate = null;
     }
-    $endtime = mysql_result($tRes, $i, "endtime");
+    $endtime = mysqli_result($tRes, $i, "endtime");
     printSearchResultRecordingOrLiveTv($id, $progstart, $channum, $callsign, $title, null, $subtitle, $description, $rating, null, $airdate, null, null, $endtime, null, $i < $tNum - 1);
     $i++;
   }
@@ -562,45 +562,45 @@ else if ($type->isSearch())
   $rQuery .= " and (r.title like '%" . $searchQuery . "%' or r.subtitle like '%" . $searchQuery . "%' or r.description like '%" . $searchQuery . "%') order by trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from r.title))), r.starttime desc";
   if (isShowQuery())
     echo "rQuery: " . $rQuery . "\n\n";
-  $rRes = mysql_query($rQuery) or die(error("Query failed: " . mysql_error()));
-  $rNum = mysql_numrows($rRes);
+  $rRes = mysqli_query($conn, $rQuery) or die(error("Query failed: " . mysqli_error($conn)));
+  $rNum = mysqli_num_rows($rRes);
   echo '  "recordings": ' . "\n  [\n";
   $i = 0;
   while ($i < $rNum)
   {
-    $id = mysql_result($rRes, $i, "id");
-    $progstart = mysql_result($rRes, $i, "progstart");
-    $channum = mysql_result($rRes, $i, "channum");
-    $callsign = mysql_result($rRes, $i, "callsign");
-    $title = cleanup(mysql_result($rRes, $i, "title"));
-    $basename = mysql_result($rRes, $i, "basename");
-    $subtitle = cleanup(mysql_result($rRes, $i, "subtitle"));
-    $description = cleanup(mysql_result($rRes, $i, "description"));
-    $rating = mysql_result($rRes, $i, "stars");
-    $storagegroup = mysql_result($rRes, $i, "storagegroup");
-    $oads = mysql_result($rRes, $i, "oad");
+    $id = mysqli_result($rRes, $i, "id");
+    $progstart = mysqli_result($rRes, $i, "progstart");
+    $channum = mysqli_result($rRes, $i, "channum");
+    $callsign = mysqli_result($rRes, $i, "callsign");
+    $title = cleanup(mysqli_result($rRes, $i, "title"));
+    $basename = mysqli_result($rRes, $i, "basename");
+    $subtitle = cleanup(mysqli_result($rRes, $i, "subtitle"));
+    $description = cleanup(mysqli_result($rRes, $i, "description"));
+    $rating = mysqli_result($rRes, $i, "stars");
+    $storagegroup = mysqli_result($rRes, $i, "storagegroup");
+    $oads = mysqli_result($rRes, $i, "oad");
     if ($oads != null && strcmp("0000-00-00", $oads) != 0)
     {
       $airdate = $oads;
     }
     else
     {
-      $oads = mysql_result($rRes, $i, "airdate");
+      $oads = mysqli_result($rRes, $i, "airdate");
       if (strcmp("0000", $oads) != 0)
         $airdate = $oads;
       else
         $airdate = null;
     }
-    $season = mysql_result($rRes, $i, "season");
-    $episode = mysql_result($rRes, $i, "episode");
-    $endtime = mysql_result($rRes, $i, "endtime");
-    $recstatus = mysql_result($rRes, $i, "recstatus");
+    $season = mysqli_result($rRes, $i, "season");
+    $episode = mysqli_result($rRes, $i, "episode");
+    $endtime = mysqli_result($rRes, $i, "endtime");
+    $recstatus = mysqli_result($rRes, $i, "recstatus");
     printSearchResultRecordingOrLiveTv($id, $progstart, $channum, $callsign, $title, $basename, $subtitle, $description, $rating, $storagegroup, $airdate, $season, $episode, $endtime, $recstatus, $i < $rNum - 1);
     $i++;
   }
   echo "  ]\n}";
   
-  mysql_close();
+  mysqli_close($conn);
 }
 else
 {
@@ -612,10 +612,10 @@ else
     $sort = $_REQUEST['sort'];
   if ($type->isVideos() || $type->isMovies() || $type->isTvSeries())
   {
-    if (hasStorageGroup($VIDEO_STORAGE_GROUP))
+    if (hasStorageGroup($conn, $VIDEO_STORAGE_GROUP))
       $isVideoStorageGroup = true;
     else
-      $base = getSettingDir($VIDEO_DIR_SETTING);
+      $base = getSettingDir($conn, $VIDEO_DIR_SETTING);
   
     if (!$isVideoStorageGroup && $base == null)
       die(error("No Videos storage group and no " . $VIDEO_DIR_SETTING . " setting for videos"));
@@ -634,7 +634,7 @@ else
     }
     else
     {
-      $castMap = getCastMap();
+      $castMap = getCastMap($conn);
       if ($categorizeUsingDirs)
       {
         if ($type->isMovies())
@@ -677,10 +677,10 @@ else
   }
   else if ($type->isMusic())
   {
-    $base = getBaseDir($MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
+    $base = getBaseDir($conn, $MUSIC_STORAGE_GROUP, $MUSIC_DIR_SETTING);
     if ($base == null)
       die(error("Cannot find " . $MUSIC_STORAGE_GROUP . " storage group or " . $MUSIC_DIR_SETTING . " setting for music"));
-    $albumArtMap = getAlbumArtMap();
+    $albumArtMap = getAlbumArtMap($conn);
     $where = "where d.directory_id = s.directory_id";
     // one option
     $orderBy = "order by replace(replace(replace(trim(leading 'A ' from trim(leading 'An ' from trim(leading 'The ' from concat(concat(d.path,'/'),s.filename)))), '/A ', '/'), '/An ', '/'), '/The ', '/')";
@@ -722,9 +722,9 @@ else
   if (isShowQuery())
     echo "query: " . $query . "\n\n";
   
-  mysql_set_charset("utf8");
-  $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($result);
+  mysqli_set_charset($conn, "utf8");
+  $result = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $num = mysqli_num_rows($result);
   $catPaths = array();
   $fileIds = array();
   if ($type->isRecordings() || $type->isLiveTv())
@@ -775,88 +775,88 @@ else
   $i = 0;
   while ($i < $num)
   {
-    $id = mysql_result($result, $i, "id");
+    $id = mysqli_result($result, $i, "id");
     if ($type->isMovies() || $type->isTvSeries())
     {
-      $ttl = cleanup(mysql_result($result, $i, "title"));
-      $stl = cleanup(mysql_result($result, $i, "subtitle"));
-      $inr = mysql_result($result, $i, "inetref");
-      $hp = mysql_result($result, $i, "homepage");
-      $seas = mysql_result($result, $i, "season");
-      $ep = mysql_result($result, $i, "episode");
-      $yr = mysql_result($result, $i, "year");
-      $aired = mysql_result($result, $i, "releasedate");
-      $rt = mysql_result($result, $i, "userrating");
-      $dir = mysql_result($result, $i, "director");
+      $ttl = cleanup(mysqli_result($result, $i, "title"));
+      $stl = cleanup(mysqli_result($result, $i, "subtitle"));
+      $inr = mysqli_result($result, $i, "inetref");
+      $hp = mysqli_result($result, $i, "homepage");
+      $seas = mysqli_result($result, $i, "season");
+      $ep = mysqli_result($result, $i, "episode");
+      $yr = mysqli_result($result, $i, "year");
+      $aired = mysqli_result($result, $i, "releasedate");
+      $rt = mysqli_result($result, $i, "userrating");
+      $dir = mysqli_result($result, $i, "director");
       $act = array_key_exists($id, $castMap) ? $castMap[$id] : null;
-      $sum = mysql_result($result, $i, "summary");
+      $sum = mysqli_result($result, $i, "summary");
       if (strcmp('None', $sum) == 0)
         $sum = null;
       else
         $sum = cleanup($sum);
-      $art = mysql_result($result, $i, "coverfile");
+      $art = mysqli_result($result, $i, "coverfile");
       if ($art == null || (strcmp($artworkStorageGroup, 'Fanart') == 0))
-        $art = mysql_result($result, $i, "fanart");
+        $art = mysqli_result($result, $i, "fanart");
       if ($art == null || (strcmp($artworkStorageGroup, 'Screenshots') == 0))
-        $art = mysql_result($result, $i, "screenshot");
+        $art = mysqli_result($result, $i, "screenshot");
       if ($art == null || (strcmp($artworkStorageGroup, 'Banners') == 0))
-        $art = mysql_result($result, $i, "banner");
-      $len = mysql_result($result, $i, "length");
+        $art = mysqli_result($result, $i, "banner");
+      $len = mysqli_result($result, $i, "length");
     }
   
     if ($type->isRecordings() || $type->isLiveTv())
     {
       if ($type->isRecordings())
-        $progst = mysql_result($result, $i, "progstart");
+        $progst = mysqli_result($result, $i, "progstart");
       else
         $progst = null;
-      $cn = mysql_result($result, $i, "channum");
-      $cs = mysql_result($result, $i, "callsign");
-      $tit = cleanup(mysql_result($result, $i, "title"));
+      $cn = mysqli_result($result, $i, "channum");
+      $cs = mysqli_result($result, $i, "callsign");
+      $tit = cleanup(mysqli_result($result, $i, "title"));
       if ($type->isRecordings() && $groupRecordingsByTitle)
         $full = $tit . "/" . $tit;
       else
         $full = $tit;
       if ($type->isRecordings())
-        $bn = mysql_result($result, $i, "basename");
+        $bn = mysqli_result($result, $i, "basename");
       else
         $bn = null;
-      $subtit = cleanup(mysql_result($result, $i, "subtitle"));
-      $descrip = cleanup(mysql_result($result, $i, "description"));
-      $oads = mysql_result($result, $i, "oad");
+      $subtit = cleanup(mysqli_result($result, $i, "subtitle"));
+      $descrip = cleanup(mysqli_result($result, $i, "description"));
+      $oads = mysqli_result($result, $i, "oad");
       if ($oads != null && strcmp("0000-00-00", $oads) != 0)
       {
         $oad = $oads;
       }
       else
       {
-        $oads = mysql_result($result, $i, "airdate");
+        $oads = mysqli_result($result, $i, "airdate");
         if (strcmp("0000", $oads) != 0)
           $oad = $oads;
         else
           $oad = null;
       }
-      $et = mysql_result($result, $i, "endtime");
-      $rat = mysql_result($result, $i, "stars");
+      $et = mysqli_result($result, $i, "endtime");
+      $rat = mysqli_result($result, $i, "stars");
       if ($type->isRecordings())
       {
-        $rid = mysql_result($result, $i, "recordid");
-        $inr = mysql_result($result, $i, "inetref");
-        $sg = mysql_result($result, $i, "storagegroup");
-        $rg = mysql_result($result, $i, "recgroup");
-        $rstat = mysql_result($result, $i, "recstatus");
-        $seas = mysql_result($result, $i, "season");
-        $ep = mysql_result($result, $i, "episode");
+        $rid = mysqli_result($result, $i, "recordid");
+        $inr = mysqli_result($result, $i, "inetref");
+        $sg = mysqli_result($result, $i, "storagegroup");
+        $rg = mysqli_result($result, $i, "recgroup");
+        $rstat = mysqli_result($result, $i, "recstatus");
+        $seas = mysqli_result($result, $i, "season");
+        $ep = mysqli_result($result, $i, "episode");
       }
     }
     else
     {
-      $full = mysql_result($result, $i, "filename");
+      $full = mysqli_result($result, $i, "filename");
     }
   
     if ($type->isMusic())
     {
-      $dirId = mysql_result($result, $i, "directory_id");
+      $dirId = mysqli_result($result, $i, "directory_id");
       if ($albumArtAlbumLevel)
         $art = array_key_exists($dirId, $albumArtMap) ? $albumArtMap[$dirId] : null;
       else
@@ -926,7 +926,7 @@ else
     }
     else if ($type->isMovies() || $type->isTvSeries())
     {
-      $artworkBase = getBaseDir($artworkStorageGroup, $ARTWORK_DIR_SETTING);
+      $artworkBase = getBaseDir($conn, $artworkStorageGroup, $ARTWORK_DIR_SETTING);
       $titles[$id] = $ttl;
       $subtitles[$id] = $stl;
       $years[$id] = $yr;
@@ -950,7 +950,7 @@ else
     $i++;
   }
   
-  mysql_close();
+  mysqli_close($conn);
   
   echo "{\n";
   echo '  "summary": ' . "\n";
@@ -1438,39 +1438,39 @@ function like($base, $dirs)
   return $like;
 }
 
-function getBaseDir($storageGroup, $setting)
+function getBaseDir($conn, $storageGroup, $setting)
 {
-  $baseDir = getStorageGroupDir($storageGroup);
+  $baseDir = getStorageGroupDir($conn, $storageGroup);
   if ($baseDir == null)
-    return getSettingDir($setting);
+    return getSettingDir($conn, $setting);
   else
     return $baseDir;
 }
 
-function getStorageGroupDir($group)
+function getStorageGroupDir($conn, $group)
 {
   global $hostname;
   $query = "select dirname from storagegroup where hostname = '" . $hostname . "' and groupname = '" . $group . "'";
-  $result = mysql_query($query) or die ("Query failed: " . mysql_error());
-  $dir = mysql_numrows($result) > 0 ? mysql_result($result, 0, "dirname") : null;
+  $result = mysqli_query($conn, $query) or die ("Query failed: " . mysqli_error($conn));
+  $dir = mysqli_num_rows($result) > 0 ? mysqli_result($result, 0, "dirname") : null;
   if ($dir != null)
     return trimTrailingSlash($dir);
 }
 
-function hasStorageGroup($group)
+function hasStorageGroup($conn, $group)
 {
   global $hostname;
   $query = "select dirname from storagegroup where hostname = '" . $hostname . "' and groupname = '" . $group . "'";
-  $result = mysql_query($query) or die (error("Query failed: " . mysql_error()));
-  return mysql_numrows($result) > 0;
+  $result = mysqli_query($conn, $query) or die (error("Query failed: " . mysqli_error($conn)));
+  return mysqli_num_rows($result) > 0;
 }
 
-function getSettingDir($setting)
+function getSettingDir($conn, $setting)
 {
   global $hostname;
   $query = "select data from settings where hostname = '" . $hostname . "' and value = '" . $setting . "'";
-  $result = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $dir = mysql_numrows($result) > 0 ? mysql_result($result, 0, "data") : null;
+  $result = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $dir = mysqli_num_rows($result) > 0 ? mysqli_result($result, 0, "data") : null;
   if ($dir != null)
     return trimTrailingSlash($dir);
 }
@@ -1484,25 +1484,25 @@ function trimTrailingSlash($str)
     return $str;
 }
 
-function getCastMap()
+function getCastMap($conn)
 {
   $castMap = array();
   $query = "select vmdc.idvideo, group_concat(t.cast SEPARATOR ', ') as actors from videometadatacast vmdc, (select * from videocast) t where t.intid = vmdc.idcast group by vmdc.idvideo";
-  mysql_set_charset("utf8");
-  $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($res);
+  mysqli_set_charset($conn, "utf8");
+  $res = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $num = mysqli_num_rows($res);
   $i = 0;
   while ($i < $num)
   {
-    $id = mysql_result($res, $i, "idvideo");
-    $cast = mysql_result($res, $i, "actors");
+    $id = mysqli_result($res, $i, "idvideo");
+    $cast = mysqli_result($res, $i, "actors");
     $castMap[$id] = $cast;
     $i++;
   }
   return $castMap;
 }
 
-function getAlbumArtMap()
+function getAlbumArtMap($conn)
 {
   global $albumArtAlbumLevel;
   $albumArtMap = array();
@@ -1515,14 +1515,14 @@ function getAlbumArtMap()
   {
     $query = "select albumart_id, song_id from music_albumart where song_id != 0";
   }
-  mysql_set_charset("utf8");  
-  $res = mysql_query($query) or die(error("Query failed: " . mysql_error()));
-  $num = mysql_numrows($res);
+  mysqli_set_charset($conn, "utf8");  
+  $res = mysqli_query($conn, $query) or die(error("Query failed: " . mysqli_error($conn)));
+  $num = mysqli_num_rows($res);
   $i = 0;
   while ($i < $num)
   {
-    $albumArtId = mysql_result($res, $i, "albumart_id");
-    $key = $albumArtAlbumLevel ? mysql_result($res, $i, "directory_id") : mysql_result($res, $i, "song_id");
+    $albumArtId = mysqli_result($res, $i, "albumart_id");
+    $key = $albumArtAlbumLevel ? mysqli_result($res, $i, "directory_id") : mysqli_result($res, $i, "song_id");
     $albumArtMap[$key] = $albumArtId;
     $i++;
   }
@@ -1540,6 +1540,18 @@ function cleanup($in)
   if ($in == null)
     return $in;
   return str_replace('"', "'", str_replace("/", "--", $in));
+}
+
+function mysqli_result($res, $row = 0, $col = 0) {
+  $numrows = mysqli_num_rows($res); 
+  if ($numrows && $row <= ($numrows-1) && $row >=0){
+    mysqli_data_seek($res,$row);
+    $resrow = (is_numeric($col)) ? mysqli_fetch_row($res) : mysqli_fetch_assoc($res);
+    if (isset($resrow[$col])){
+      return $resrow[$col];
+    }
+  }
+  return false;
 }
 
 class Type
