@@ -124,277 +124,281 @@ public class ItemDetailFragment extends Fragment {
     }
 
     private void populate() {
-        listable = mediaActivity.getListables().get(idx);
+        try {
+            listable = mediaActivity.getListables().get(idx);
 
-        TextView titleView = (TextView) detailView.findViewById(R.id.title_text);
-        boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
+            TextView titleView = (TextView) detailView.findViewById(R.id.title_text);
+            boolean grabFocus = getArguments() == null ? false : getArguments().getBoolean(MediaActivity.GRAB_FOCUS);
 
-        if (listable instanceof Category) {
-            Category category = (Category) listable;
+            if (listable instanceof Category) {
+                Category category = (Category) listable;
 
-            titleView.setText(category.getName());
-            titleView.setMovementMethod(LinkMovementMethod.getInstance());
-            Spannable spans = (Spannable) titleView.getText();
-            ClickableSpan clickSpan = new ClickableSpan() {
-                public void onClick(View v) {
-                    v.setBackgroundColor(Color.GRAY);
-                    String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
-                    Uri uri = new Uri.Builder().path(path).build();
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
-                }
-            };
-            spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-            Drawable folder = getResources().getDrawable(R.drawable.folder);
-            artworkView.setImageDrawable(folder);
-            if (!getAppSettings().isTv()) {
-                artworkView.setClickable(true);
-                artworkView.setOnClickListener(new View.OnClickListener() {
+                titleView.setText(category.getName());
+                titleView.setMovementMethod(LinkMovementMethod.getInstance());
+                Spannable spans = (Spannable) titleView.getText();
+                ClickableSpan clickSpan = new ClickableSpan() {
                     public void onClick(View v) {
-                        v.setBackgroundResource(R.drawable.folder_frame);
+                        v.setBackgroundColor(Color.GRAY);
                         String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
                         Uri uri = new Uri.Builder().path(path).build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
+                        mediaActivity.startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
                     }
-                });
-            }
-        } else if (listable instanceof Item) {
-            Item item = (Item) listable;
+                };
+                spans.setSpan(clickSpan, 0, spans.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            titleView.setText(item.getTitle());
-
-            String subLabel = item.getSubLabel();
-            TextView subTitleView = (TextView) detailView.findViewById(R.id.subtitle_text);
-            if (subLabel == null) {
-                subTitleView.setVisibility(View.GONE);
-            }
-            else {
-                subTitleView.setText(subLabel);
-                subTitleView.setVisibility(View.VISIBLE);
-            }
-
-            // rating
-            if (item.getRating() > 0) {
-                for (int i = 0; i < 5; i++) {
-                    ImageView star = (ImageView) detailView.findViewById(ratingViewIds[i]);
-                    if (i <= item.getRating() - 1)
-                        star.setImageResource(R.drawable.rating_full);
-                    else if (i < item.getRating())
-                        star.setImageResource(R.drawable.rating_half);
-                    else
-                        star.setImageResource(R.drawable.rating_empty);
-                    star.setVisibility(View.VISIBLE);
-                }
-            }
-
-            if (item instanceof Video) {
-                Video video = (Video) item;
-                // director
-                TextView tvDir = (TextView) detailView.findViewById(R.id.director_text);
-                if (video.getDirector() != null)
-                    tvDir.setText(getString(R.string.directed_by_) + video.getDirector());
-                else
-                    tvDir.setVisibility(View.GONE);
-
-                TextView tvAct = (TextView) detailView.findViewById(R.id.actors_text);
-                // actors
-                if (video.getActors() != null)
-                    tvAct.setText(getString(R.string.starring_) + video.getActors());
-                else
-                    tvAct.setVisibility(View.GONE);
-
-                // summary
-                if (video.getSummary() != null) {
-                    TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
-                    String summary = video.getSummary();
-                    tv.setText(summary);
-                }
-
-                if (getAppSettings().deviceSupportsWebLinks()) {
-                    // custom link (only for movies and tv series)
-                    if ((item.isMovie() || item.isTvSeries())
-                            && getAppSettings().getCustomBaseUrl() != null && !getAppSettings().getCustomBaseUrl().isEmpty()) {
-                        try {
-                            String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
-                            URL url = new URL(getAppSettings().getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
-                            TextView tv = (TextView) detailView.findViewById(R.id.custom_link);
-                            tv.setVisibility(View.VISIBLE);
-                            String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                            tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
-                            tv.setMovementMethod(LinkMovementMethod.getInstance());
-                            tv.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    v.setBackgroundColor(Color.GRAY);
-                                }
-                            });
-                        } catch (IOException ex) {
-                            Log.e(TAG, ex.getMessage(), ex);
-                            if (getAppSettings().isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                        }
-                    }
-                    else {
-                        detailView.findViewById(R.id.custom_link).setVisibility(View.GONE); // no gap before std link
-                    }
-
-                    // page link
-                    if (video.getPageUrl() != null || video.getInternetRef() != null) {
-                        try {
-                            String pageUrl = video.getPageUrl();
-                            if (pageUrl == null || pageUrl.isEmpty()) {
-                                String baseUrl = MediaActivity.getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? getAppSettings().getTvBaseUrl() : getAppSettings().getMovieBaseUrl();
-                                String ref = video.getInternetRef();
-                                int lastUnderscore = ref.lastIndexOf('_');
-                                if (lastUnderscore >= 0 && lastUnderscore < ref.length() - 1)
-                                    ref = ref.substring(lastUnderscore + 1);
-                                pageUrl = baseUrl + ref;
-                            }
-                            URL url = new URL(pageUrl);
-                            TextView tv = (TextView) detailView.findViewById(R.id.page_link);
-                            tv.setVisibility(View.VISIBLE);
-                            String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
-                            tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
-                            tv.setMovementMethod(LinkMovementMethod.getInstance());
-                            tv.setOnClickListener(new OnClickListener() {
-                                public void onClick(View v) {
-                                    v.setBackgroundColor(Color.GRAY);
-                                }
-                            });
-                        } catch (MalformedURLException ex) {
-                            Log.e(TAG, ex.getMessage(), ex);
-                            if (getAppSettings().isErrorReportingEnabled())
-                                new Reporter(ex).send();
-                        }
-                    }
-                    else {
-                        detailView.findViewById(R.id.page_link).setVisibility(View.GONE);
-                    }
-                }
-            } else {
-                if (item instanceof TvShow) {
-                    detailView.findViewById(R.id.director_text).setVisibility(View.GONE);
-                    detailView.findViewById(R.id.actors_text).setVisibility(View.GONE);
-
-                    TvShow tvShow = (TvShow) item;
-                    TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
-                    tv.setText(tvShow.getSummary());
-                }
-            }
-
-            // status icons
-            ImageView transcodedIcon = (ImageView) detailView.findViewById(R.id.item_transcoded);
-            transcodedIcon.setVisibility(item.isTranscoded() ? View.VISIBLE : View.GONE);
-            ImageView downloadedIcon = (ImageView) detailView.findViewById(R.id.item_downloaded);
-            downloadedIcon.setVisibility(item.isDownloaded() ? View.VISIBLE : View.GONE);
-
-            ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.btn_play);
-            ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.btn_transcode);
-            ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.btn_download);
-            ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.btn_delete);
-
-            if (getAppSettings().isFireTv()) {
-                playBtn.setBackgroundResource(R.drawable.firetv_button);
-                transcodeBtn.setBackgroundResource(R.drawable.firetv_button);
-                downloadBtn.setBackgroundResource(R.drawable.firetv_button);
-                deleteBtn.setBackgroundResource(R.drawable.firetv_button);
-            }
-            if (getAppSettings().isTv()) {
-                if (mediaActivity.getListView() != null) {
-                    // split view
-                    playBtn.setOnKeyListener(new OnKeyListener() {
-                        public boolean onKey(View v, int keyCode, KeyEvent event) {
-                            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                                if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                                    mediaActivity.getListView().requestFocus();
-                                    return true;
-                                }
-                            }
-                            return false;
+                artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+                Drawable folder = mediaActivity.getResources().getDrawable(R.drawable.folder);
+                artworkView.setImageDrawable(folder);
+                if (!getAppSettings().isTv()) {
+                    artworkView.setClickable(true);
+                    artworkView.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            v.setBackgroundResource(R.drawable.folder_frame);
+                            String path = mediaActivity.getPath().length() == 0 ? listable.toString() : mediaActivity.getPath() + "/" + listable.toString();
+                            Uri uri = new Uri.Builder().path(path).build();
+                            mediaActivity.startActivity(new Intent(Intent.ACTION_VIEW, uri, mediaActivity.getApplicationContext(), MediaPagerActivity.class));
                         }
                     });
                 }
-            }
-            else {
-                playBtn.setBackgroundColor(Color.TRANSPARENT);
-                downloadBtn.setBackgroundColor(Color.TRANSPARENT);
-                deleteBtn.setBackgroundColor(Color.TRANSPARENT);
-                transcodeBtn.setBackgroundColor(Color.TRANSPARENT);
-            }
-            playBtn.setVisibility(android.view.View.VISIBLE);
-            downloadBtn.setVisibility(android.view.View.VISIBLE);
-            deleteBtn.setVisibility(item.isRecording() ? android.view.View.VISIBLE : android.view.View.GONE);
-            transcodeBtn.setVisibility(android.view.View.VISIBLE);
-            playBtn.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Item item = (Item) listable;
-                    if (getArguments() != null)
-                        getArguments().putBoolean(MediaActivity.GRAB_FOCUS, false);
-                    mediaActivity.playItem(item);
-                }
-            });
-            deleteBtn.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Recording recording = (Recording) listable;
-                    int size = mediaActivity.getListables().size();
-                    if (size == 1 || size == mediaActivity.getSelItemIndex() + 1)
-                        mediaActivity.setSelItemIndex(mediaActivity.getSelItemIndex() - 1);
-                    mediaActivity.deleteRecording(recording);
-                }
-            });
-            transcodeBtn.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Item item = (Item) listable;
-                    mediaActivity.transcodeItem(item);
-                }
-            });
-            downloadBtn.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Item item = (Item) listable;
-                    mediaActivity.downloadItem(item);
-                }
-            });
+            } else if (listable instanceof Item) {
+                Item item = (Item) listable;
 
-            if (grabFocus)
-                playBtn.requestFocus();
+                titleView.setText(item.getTitle());
 
-            if (getAppSettings().isTv())
-                detailView.findViewById(R.id.detailScroll).setFocusable(false);
+                String subLabel = item.getSubLabel();
+                TextView subTitleView = (TextView) detailView.findViewById(R.id.subtitle_text);
+                if (subLabel == null) {
+                    subTitleView.setVisibility(View.GONE);
+                } else {
+                    subTitleView.setText(subLabel);
+                    subTitleView.setVisibility(View.VISIBLE);
+                }
 
-            String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
-            if (!AppSettings.ARTWORK_NONE.equals(artSg)) {
-                ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
-                if (art != null) {
-                    artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
-                    try {
-                        String filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
-                        Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
-                        if (bitmap == null) {
-                            URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
-                            String filepath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
-                            new ImageRetrievalTask(filepath, getAppSettings().isErrorReportingEnabled()).execute(url);
+                // rating
+                if (item.getRating() > 0) {
+                    for (int i = 0; i < 5; i++) {
+                        ImageView star = (ImageView) detailView.findViewById(ratingViewIds[i]);
+                        if (i <= item.getRating() - 1)
+                            star.setImageResource(R.drawable.rating_full);
+                        else if (i < item.getRating())
+                            star.setImageResource(R.drawable.rating_half);
+                        else
+                            star.setImageResource(R.drawable.rating_empty);
+                        star.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                if (item instanceof Video) {
+                    Video video = (Video) item;
+                    // director
+                    TextView tvDir = (TextView) detailView.findViewById(R.id.director_text);
+                    if (video.getDirector() != null)
+                        tvDir.setText(mediaActivity.getString(R.string.directed_by_) + video.getDirector());
+                    else
+                        tvDir.setVisibility(View.GONE);
+
+                    TextView tvAct = (TextView) detailView.findViewById(R.id.actors_text);
+                    // actors
+                    if (video.getActors() != null)
+                        tvAct.setText(mediaActivity.getString(R.string.starring_) + video.getActors());
+                    else
+                        tvAct.setVisibility(View.GONE);
+
+                    // summary
+                    if (video.getSummary() != null) {
+                        TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
+                        String summary = video.getSummary();
+                        tv.setText(summary);
+                    }
+
+                    if (getAppSettings().deviceSupportsWebLinks()) {
+                        // custom link (only for movies and tv series)
+                        if ((item.isMovie() || item.isTvSeries())
+                                && getAppSettings().getCustomBaseUrl() != null && !getAppSettings().getCustomBaseUrl().isEmpty()) {
+                            try {
+                                String encodedTitle = URLEncoder.encode(item.getTitle(), "UTF-8");
+                                URL url = new URL(getAppSettings().getCustomBaseUrl() + mediaActivity.getPath() + "/" + encodedTitle);
+                                TextView tv = (TextView) detailView.findViewById(R.id.custom_link);
+                                tv.setVisibility(View.VISIBLE);
+                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+                                tv.setText(Html.fromHtml("<a href='" + url + "'>" + host + "</a>"));
+                                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                                tv.setOnClickListener(new OnClickListener() {
+                                    public void onClick(View v) {
+                                        v.setBackgroundColor(Color.GRAY);
+                                    }
+                                });
+                            } catch (IOException ex) {
+                                Log.e(TAG, ex.getMessage(), ex);
+                                if (getAppSettings().isErrorReportingEnabled())
+                                    new Reporter(ex).send();
+                            }
                         } else {
-                            artworkView.setImageBitmap(bitmap);
+                            detailView.findViewById(R.id.custom_link).setVisibility(View.GONE); // no gap before std link
                         }
-                        if (!getAppSettings().isTv()) {
-                            artworkView.setClickable(true);
-                            artworkView.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    Item item = (Item) listable;
-                                    mediaActivity.playItem(item);
+
+                        // page link
+                        if (video.getPageUrl() != null || video.getInternetRef() != null) {
+                            try {
+                                String pageUrl = video.getPageUrl();
+                                if (pageUrl == null || pageUrl.isEmpty()) {
+                                    String baseUrl = MediaActivity.getAppData().getMediaList().getMediaType() == MediaType.tvSeries ? getAppSettings().getTvBaseUrl() : getAppSettings().getMovieBaseUrl();
+                                    String ref = video.getInternetRef();
+                                    int lastUnderscore = ref.lastIndexOf('_');
+                                    if (lastUnderscore >= 0 && lastUnderscore < ref.length() - 1)
+                                        ref = ref.substring(lastUnderscore + 1);
+                                    pageUrl = baseUrl + ref;
                                 }
-                            });
+                                URL url = new URL(pageUrl);
+                                TextView tv = (TextView) detailView.findViewById(R.id.page_link);
+                                tv.setVisibility(View.VISIBLE);
+                                String host = url.getHost().startsWith("www") ? url.getHost().substring(4) : url.getHost();
+                                tv.setText(Html.fromHtml("<a href='" + pageUrl + "'>" + host + "</a>"));
+                                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                                tv.setOnClickListener(new OnClickListener() {
+                                    public void onClick(View v) {
+                                        v.setBackgroundColor(Color.GRAY);
+                                    }
+                                });
+                            } catch (MalformedURLException ex) {
+                                Log.e(TAG, ex.getMessage(), ex);
+                                if (getAppSettings().isErrorReportingEnabled())
+                                    new Reporter(ex).send();
+                            }
                         } else {
-                            artworkView.setFocusable(false);
+                            detailView.findViewById(R.id.page_link).setVisibility(View.GONE);
                         }
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.getMessage(), ex);
-                        if (getAppSettings().isErrorReportingEnabled())
-                            new Reporter(ex).send();
-                        Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    if (item instanceof TvShow) {
+                        detailView.findViewById(R.id.director_text).setVisibility(View.GONE);
+                        detailView.findViewById(R.id.actors_text).setVisibility(View.GONE);
+
+                        TvShow tvShow = (TvShow) item;
+                        TextView tv = (TextView) detailView.findViewById(R.id.summary_text);
+                        tv.setText(tvShow.getSummary());
+                    }
+                }
+
+                // status icons
+                ImageView transcodedIcon = (ImageView) detailView.findViewById(R.id.item_transcoded);
+                transcodedIcon.setVisibility(item.isTranscoded() ? View.VISIBLE : View.GONE);
+                ImageView downloadedIcon = (ImageView) detailView.findViewById(R.id.item_downloaded);
+                downloadedIcon.setVisibility(item.isDownloaded() ? View.VISIBLE : View.GONE);
+
+                ImageButton playBtn = (ImageButton) detailView.findViewById(R.id.btn_play);
+                ImageButton transcodeBtn = (ImageButton) detailView.findViewById(R.id.btn_transcode);
+                ImageButton downloadBtn = (ImageButton) detailView.findViewById(R.id.btn_download);
+                ImageButton deleteBtn = (ImageButton) detailView.findViewById(R.id.btn_delete);
+
+                if (getAppSettings().isFireTv()) {
+                    playBtn.setBackgroundResource(R.drawable.firetv_button);
+                    transcodeBtn.setBackgroundResource(R.drawable.firetv_button);
+                    downloadBtn.setBackgroundResource(R.drawable.firetv_button);
+                    deleteBtn.setBackgroundResource(R.drawable.firetv_button);
+                }
+                if (getAppSettings().isTv()) {
+                    if (mediaActivity.getListView() != null) {
+                        // split view
+                        playBtn.setOnKeyListener(new OnKeyListener() {
+                            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                                    if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                        mediaActivity.getListView().requestFocus();
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                } else {
+                    playBtn.setBackgroundColor(Color.TRANSPARENT);
+                    downloadBtn.setBackgroundColor(Color.TRANSPARENT);
+                    deleteBtn.setBackgroundColor(Color.TRANSPARENT);
+                    transcodeBtn.setBackgroundColor(Color.TRANSPARENT);
+                }
+                playBtn.setVisibility(android.view.View.VISIBLE);
+                downloadBtn.setVisibility(android.view.View.VISIBLE);
+                deleteBtn.setVisibility(item.isRecording() ? android.view.View.VISIBLE : android.view.View.GONE);
+                transcodeBtn.setVisibility(android.view.View.VISIBLE);
+                playBtn.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Item item = (Item) listable;
+                        if (getArguments() != null)
+                            getArguments().putBoolean(MediaActivity.GRAB_FOCUS, false);
+                        mediaActivity.playItem(item);
+                    }
+                });
+                deleteBtn.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Recording recording = (Recording) listable;
+                        int size = mediaActivity.getListables().size();
+                        if (size == 1 || size == mediaActivity.getSelItemIndex() + 1)
+                            mediaActivity.setSelItemIndex(mediaActivity.getSelItemIndex() - 1);
+                        mediaActivity.deleteRecording(recording);
+                    }
+                });
+                transcodeBtn.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Item item = (Item) listable;
+                        mediaActivity.transcodeItem(item);
+                    }
+                });
+                downloadBtn.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Item item = (Item) listable;
+                        mediaActivity.downloadItem(item);
+                    }
+                });
+
+                if (grabFocus)
+                    playBtn.requestFocus();
+
+                if (getAppSettings().isTv())
+                    detailView.findViewById(R.id.detailScroll).setFocusable(false);
+
+                String artSg = getAppSettings().getArtworkStorageGroup(item.getType());
+                if (!AppSettings.ARTWORK_NONE.equals(artSg)) {
+                    ArtworkDescriptor art = item.getArtworkDescriptor(artSg);
+                    if (art != null) {
+                        artworkView = (ImageView) detailView.findViewById(R.id.posterImage);
+                        try {
+                            String filePath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
+                            Bitmap bitmap = MediaActivity.getAppData().getImageBitMap(filePath);
+                            if (bitmap == null) {
+                                URL url = new URL(getAppSettings().getMythTvContentServiceBaseUrl() + "/" + art.getArtworkContentServicePath());
+                                String filepath = item.getType() + "/" + mediaActivity.getPath() + "/" + art.getArtworkPath();
+                                new ImageRetrievalTask(filepath, getAppSettings().isErrorReportingEnabled()).execute(url);
+                            } else {
+                                artworkView.setImageBitmap(bitmap);
+                            }
+                            if (!getAppSettings().isTv()) {
+                                artworkView.setClickable(true);
+                                artworkView.setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View v) {
+                                        Item item = (Item) listable;
+                                        mediaActivity.playItem(item);
+                                    }
+                                });
+                            } else {
+                                artworkView.setFocusable(false);
+                            }
+                        } catch (Exception ex) {
+                            Log.e(TAG, ex.getMessage(), ex);
+                            if (getAppSettings().isErrorReportingEnabled())
+                                new Reporter(ex).send();
+                            Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             }
+        }
+        catch (Exception ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+            if (getAppSettings().isErrorReportingEnabled())
+                new Reporter(ex).send();
+            Toast.makeText(mediaActivity, ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

@@ -83,7 +83,6 @@ public class MediaPagerActivity extends MediaActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(!getPath().isEmpty());
     }
 
-
     @Override
     protected void onResume() {
         try {
@@ -200,6 +199,8 @@ public class MediaPagerActivity extends MediaActivity {
         getAppSettings().validate();
 
         refreshMediaList();
+        if (pager != null && pager.getAdapter() != null)
+            pager.getAdapter().notifyDataSetChanged();
     }
 
     protected void goListView() {
@@ -211,7 +212,8 @@ public class MediaPagerActivity extends MediaActivity {
     }
 
     private void goListView(String mode) {
-        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle)
+        SortType sort = getAppSettings().getMediaSettings().getSortType();
+        if (mediaList.getMediaType() == MediaType.recordings && (sort == SortType.byTitle || sort == SortType.byGroup))
             getAppSettings().clearCache(); // refresh since we're switching from flattened hierarchy
 
         if (getPath() == null || getPath().isEmpty()) {

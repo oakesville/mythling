@@ -1136,7 +1136,8 @@ public abstract class MediaActivity extends AppCompatActivity {
     }
 
     private void goDetailView() {
-        if (mediaList.getMediaType() == MediaType.recordings && getAppSettings().getMediaSettings().getSortType() == SortType.byTitle) {
+        SortType sort = getAppSettings().getMediaSettings().getSortType();
+        if (mediaList.getMediaType() == MediaType.recordings && (sort == SortType.byTitle || sort == SortType.byGroup)) {
             getAppSettings().clearCache(); // refresh since we're switching to flattened hierarchy
             selItemIndex = 0;
         }
