@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -124,7 +125,7 @@ import io.oakesville.media.TvShow;
  */
 public abstract class MediaActivity extends AppCompatActivity {
     private static final String TAG = MediaActivity.class.getSimpleName();
-    private static int active;
+    private static int downloadActive;
 
     private static final String DETAIL_FRAGMENT = "detailFragment";
     private static final String LIST_FRAGMENT = "listFragment";
@@ -488,18 +489,6 @@ public abstract class MediaActivity extends AppCompatActivity {
 
     private boolean supportsMusic() {
         return true;
-    }
-
-    protected boolean supportsMythwebMenu() {
-        return getAppSettings().isMythWebAccessEnabled();
-    }
-
-    protected boolean isListView() {
-        return appSettings.getMediaSettings().getViewType() == ViewType.list;
-    }
-
-    protected boolean isDetailView() {
-        return appSettings.getMediaSettings().getViewType() == ViewType.detail;
     }
 
     boolean isSplitView() {
@@ -892,10 +881,8 @@ public abstract class MediaActivity extends AppCompatActivity {
             fileUrl += "FileName=" + URLEncoder.encode(item.getFilePath(), "UTF-8");
 
             Uri uri = Uri.parse(fileUrl);
-            ProxyInfo proxyInfo = MediaStreamProxy.getProxyInfo(uri);
-            if (proxyInfo == null)
-                proxyInfo = MediaStreamProxy.needsAuthProxy(uri); // required by auth
 
+            ProxyInfo proxyInfo = MediaStreamProxy.needsAuthProxy(uri);
             if (proxyInfo != null) {
                 // needs proxying to support authentication since DownloadManager doesn't support
                 MediaStreamProxy proxy = new MediaStreamProxy(proxyInfo, AuthType.valueOf(appSettings.getMythTvServicesAuthType()));
@@ -910,6 +897,7 @@ public abstract class MediaActivity extends AppCompatActivity {
 
             stopProgress();
 
+            File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File downloadFile = null;
 
             try {
@@ -932,7 +920,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                                     mediaDirs.put(label, dirs[i]);
                                 }
                             }
-                            File dl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/mythling");
+                            File dl = new File(root + "/mythling");
                             String dlLabel = dl.toString();
                             if (dlLabel.startsWith(storageDirName))
                                 dlLabel = dlLabel.substring(storageDirName.length());
@@ -959,15 +947,17 @@ public abstract class MediaActivity extends AppCompatActivity {
                         }
                     } catch (NoSuchMethodException ex) {
                         // not supported by android version
-                        downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/mythling");
+                        downloadDir = new File(root + "/mythling");
                     }
 
                     if (downloadDir != null) {
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(downloadDir)));
                         String downloadPath = "/";
                         if (getPath() != null && !getPath().isEmpty() && !getPath().equals("/"))
                             downloadPath += getPath() + "/";
                         File destDir = new File(downloadDir + downloadPath);
                         if (destDir.isDirectory() || destDir.mkdirs()) {
+                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(destDir)));
                             downloadFile = new File(destDir + "/" + item.getDownloadFilename());
                             Log.i(TAG, "Downloading to file: " + downloadFile);
                         }
@@ -988,8 +978,9 @@ public abstract class MediaActivity extends AppCompatActivity {
 
                 boolean bypassDownloadManager = appSettings.isBypassDownloadManager();
                 if (bypassDownloadManager) {
+                    downloadActive = hashCode();
                     downloadId = downloadFile.getPath().hashCode();
-                    new DownloadTask(item, uri.toString(), downloadFile, downloadId).execute();
+                    new DownloadTask(item, fileUrl, downloadFile, downloadId).execute();
                 } else {
                     DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     Request request = new Request(Uri.parse(fileUrl));
@@ -1157,12 +1148,6 @@ public abstract class MediaActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     void goSplitView() {
         findViewById(R.id.detail_container).setVisibility(View.VISIBLE);
     }
@@ -1226,17 +1211,11 @@ public abstract class MediaActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        active = hashCode();
-    }
-
-    @Override
     protected void onStop() {
         if (countdownDialog != null && countdownDialog.isShowing())
             countdownDialog.dismiss();
         stopTimer();
-        active = 0;
+        downloadActive = 0;
         super.onStop();
     }
 
@@ -1350,7 +1329,7 @@ public abstract class MediaActivity extends AppCompatActivity {
                 MediaSettings mediaSettings = getAppSettings().getMediaSettings();
 
                 HttpHelper downloader = getAppSettings().getMediaListDownloader(urls);
-                before = Long.valueOf(System.currentTimeMillis());
+                before = System.currentTimeMillis();
                 byte[] bytes = downloader.get();
                 mediaListJson = new String(bytes, downloader.getCharSet());
                 if (mediaListJson.startsWith("<")) {
@@ -1781,7 +1760,16 @@ public abstract class MediaActivity extends AppCompatActivity {
         protected void onPostExecute(Long result) {
             Log.i(TAG, "Download complete: " + url);
             item.setDownloadId(downloadId);
-            if (active == MediaActivity.this.hashCode())
+            file.setReadable(true);
+            file.setWritable(true);
+            MediaScannerConnection.scanFile(getApplicationContext(), new String[]{file.getAbsolutePath()},
+                    null, new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i(TAG, "Scan completed for: " + file.getAbsolutePath());
+                        }
+                });
+            if (downloadActive == MediaActivity.this.hashCode())
                 onResume();
         }
     }

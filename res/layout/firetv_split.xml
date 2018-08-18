@@ -45,7 +45,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:text="@string/blank"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:ellipsize="start"/>
         
         <!-- dividerHeight over 1px makes the list unscrollable
              beyond the bottom item of the first page -->

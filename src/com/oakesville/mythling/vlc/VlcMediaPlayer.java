@@ -15,16 +15,10 @@
  */
 package com.oakesville.mythling.vlc;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.videolan.libvlc.IVLCVout;
-import org.videolan.libvlc.IVLCVout.Callback;
-import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.Media;
-import org.videolan.libvlc.MediaPlayer;
+import android.net.Uri;
+import android.os.Handler;
+import android.util.Log;
+import android.view.SurfaceView;
 
 import com.oakesville.mythling.BuildConfig;
 import com.oakesville.mythling.media.PlaybackOptions;
@@ -32,10 +26,16 @@ import com.oakesville.mythling.util.HttpHelper.AuthType;
 import com.oakesville.mythling.util.MediaStreamProxy;
 import com.oakesville.mythling.util.MediaStreamProxy.ProxyInfo;
 
-import android.net.Uri;
-import android.os.Handler;
-import android.util.Log;
-import android.view.SurfaceView;
+import org.videolan.libvlc.IVLCVout;
+import org.videolan.libvlc.IVLCVout.Callback;
+import org.videolan.libvlc.LibVLC;
+import org.videolan.libvlc.Media;
+import org.videolan.libvlc.MediaPlayer;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VlcMediaPlayer extends MediaPlayer implements com.oakesville.mythling.media.MediaPlayer {
 

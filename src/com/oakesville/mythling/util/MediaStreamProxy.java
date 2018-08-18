@@ -15,18 +15,12 @@
  */
 package com.oakesville.mythling.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.StringTokenizer;
+import android.net.Uri;
+import android.net.http.AndroidHttpClient;
+import android.util.Base64;
+import android.util.Log;
+
+import com.oakesville.mythling.util.HttpHelper.AuthType;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -39,12 +33,18 @@ import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HttpContext;
 
-import com.oakesville.mythling.util.HttpHelper.AuthType;
-
-import android.net.Uri;
-import android.net.http.AndroidHttpClient;
-import android.util.Base64;
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.StringTokenizer;
 
 /**
  * Proxies media streaming requests, providing HTTP Basic and Digest
@@ -243,7 +243,6 @@ public class MediaStreamProxy implements Runnable {
         private String password;
     }
 
-
     /**
      * Returns ProxyInfo if proxy is needed, null otherwise.
      */
@@ -258,18 +257,6 @@ public class MediaStreamProxy implements Runnable {
             proxyInfo.netUrl = getNetUrl(mediaUri);
         }
 
-        return proxyInfo;
-    }
-
-    public static ProxyInfo getProxyInfo(Uri mediaUri) throws MalformedURLException {
-        ProxyInfo proxyInfo = new ProxyInfo();
-        String userInfo = mediaUri.getUserInfo();
-        int colon = userInfo == null ? -1 : userInfo.indexOf(':');
-        if (colon > 0) {
-            proxyInfo.user = userInfo.substring(0, colon);
-            proxyInfo.password = userInfo.substring(colon + 1);
-        }
-        proxyInfo.netUrl = getNetUrl(mediaUri);
         return proxyInfo;
     }
 
