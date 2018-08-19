@@ -89,6 +89,7 @@ public class AppSettings {
     private static final String VIEW_TYPE = "view_type";
     private static final String SORT_TYPE = "sort_type";
     public static final String FRONTEND_PLAYBACK = "playback_mode";
+    public static final int FRONTEND_STATUS_TIMEOUT = 5000; // TODO: pref
     public static final String INTERNAL_MUSIC_PLAYER = "music_player";
     public static final String MUSIC_PLAYBACK_CONTINUE = "music_playback_continue";
     public static final int MUSIC_MAX_LIST_SIZE = 100;

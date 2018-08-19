@@ -18,9 +18,17 @@ package com.oakesville.mythling.util;
 import java.io.IOException;
 
 public interface FrontendPlayer {
-    boolean checkIsPlaying() throws IOException;
 
+    /**
+     * When background is false, should not use a background task since
+     * caller is on UI thread.
+     */
+    boolean checkIsPlaying(boolean background) throws IOException;
+
+    /**
+     * Always async.
+     */
     void play();
 
-    void stop();
+    void stop(boolean synchronous) throws IOException;
 }

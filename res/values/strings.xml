@@ -433,6 +433,7 @@
     <string name="always_ignore_libvlc_cpu_compatibility">Always ignore LibVLC CPU compatibility</string>
     <string name="interrupt">Interrupt</string>
     <string name="stop_playback_">Stop current playback?</string>
+    <string name="stopping_playback">Stopping...</string>
     <string name="transcode">Transcode</string>
     <string name="begin_transcode">Begin Transcoding</string>
     <string name="todo_frontend_live_tv">TODO: Frontend Live TV playback not yet supported.</string>

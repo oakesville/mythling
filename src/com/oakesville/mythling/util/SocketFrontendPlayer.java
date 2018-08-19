@@ -15,6 +15,15 @@
  */
 package com.oakesville.mythling.util;
 
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.oakesville.mythling.BuildConfig;
+import com.oakesville.mythling.R;
+import com.oakesville.mythling.app.AppSettings;
+import com.oakesville.mythling.app.Localizer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,14 +34,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 
-import com.oakesville.mythling.BuildConfig;
-import com.oakesville.mythling.R;
-import com.oakesville.mythling.app.AppSettings;
-import com.oakesville.mythling.app.Localizer;
-
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 import io.oakesville.media.Item;
 import io.oakesville.media.TvShow;
 
@@ -59,33 +60,44 @@ public class SocketFrontendPlayer implements FrontendPlayer {
         this.charSet = charSet;
     }
 
-    public boolean checkIsPlaying() throws IOException {
-        int timeout = 5000;  // TODO: pref
-
-        status = null;
-        new StatusTask().execute();
-        while (status == null && timeout > 0) {
-            try {
-                Thread.sleep(100);
-                timeout -= 100;
-            } catch (InterruptedException ex) {
-                Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
-                    new Reporter(ex).send();
-            }
+    public boolean checkIsPlaying(boolean background) throws IOException {
+        if (background) {
+            status = null;
+            new StatusTask().doInBackground();
+            return status.startsWith("Playback");
         }
-        if (status == null)
-            throw new IOException(Localizer.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendHost() + ":" + appSettings.getFrontendSocketPort());
+        else {
+            int timeout = AppSettings.FRONTEND_STATUS_TIMEOUT;
+            status = null;
+            new StatusTask().execute();
+            while (status == null && timeout > 0) {
+                try {
+                    Thread.sleep(100);
+                    timeout -= 100;
+                } catch (InterruptedException ex) {
+                    Log.e(TAG, ex.getMessage(), ex);
+                    if (appSettings.isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                }
+            }
+            if (status == null)
+                throw new IOException(Localizer.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendHost() + ":" + appSettings.getFrontendSocketPort());
 
-        return status.startsWith("Playback");
+            return status.startsWith("Playback");
+        }
     }
 
     public void play() {
         new PlayItemTask().execute();
     }
 
-    public void stop() {
-        new StopTask().execute();
+    public void stop(boolean synchronous) throws IOException {
+        if (synchronous) {
+            doStop();
+        }
+        else {
+            new StopTask().execute();
+        }
     }
 
     private class PlayItemTask extends AsyncTask<URL, Integer, Long> {
@@ -133,18 +145,22 @@ public class SocketFrontendPlayer implements FrontendPlayer {
         }
     }
 
+    private void doStop() throws IOException {
+        open();
+        if (item.isMusic())
+            run("play music stop");
+        else if (item.isRecording())
+            run("play program stop");
+        else
+            run("play stop\n");
+    }
+
     private class StopTask extends AsyncTask<URL, Integer, Long> {
         private Exception ex;
 
         protected Long doInBackground(URL... urls) {
             try {
-                open();
-                if (item.isMusic())
-                    run("play music stop");
-                else if (item.isRecording())
-                    run("play program stop");
-                else
-                    run("play stop\n");
+                doStop();
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;

@@ -45,33 +45,49 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         this.item = item;
     }
 
-    public boolean checkIsPlaying() throws IOException {
-        int timeout = 5000;  // TODO: pref
-
-        state = null;
-        new StatusTask().execute();
-        while (state == null && timeout > 0) {
-            try {
-                Thread.sleep(100);
-                timeout -= 100;
-            } catch (InterruptedException ex) {
-                Log.e(TAG, ex.getMessage(), ex);
-                if (appSettings.isErrorReportingEnabled())
-                    new Reporter(ex).send();
-            }
+    public boolean checkIsPlaying(boolean background) throws IOException {
+        if (background) {
+            state = null;
+            new StatusTask().doInBackground();
+            return !state.equals("idle");
         }
-        if (state == null)
-            throw new IOException(Localizer.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendServiceBaseUrl());
+        else {
+            int timeout = AppSettings.FRONTEND_STATUS_TIMEOUT;
+            state = null;
+            new StatusTask().execute();
+            while (state == null && timeout > 0) {
+                try {
+                    Thread.sleep(100);
+                    timeout -= 100;
+                } catch (InterruptedException ex) {
+                    Log.e(TAG, ex.getMessage(), ex);
+                    if (appSettings.isErrorReportingEnabled())
+                        new Reporter(ex).send();
+                }
+            }
+            if (state == null)
+                throw new IOException(Localizer.getStringRes(R.string.error_frontend_status_) + appSettings.getFrontendServiceBaseUrl());
 
-        return !state.equals("idle");
+            return !state.equals("idle");
+        }
     }
 
     public void play() {
         new PlayItemTask().execute();
     }
 
-    public void stop() {
-        new StopTask().execute();
+    public void stop(boolean synchronous) throws IOException {
+        if (synchronous) {
+            try {
+                sendAction("STOPPLAYBACK");
+            }
+            catch (JSONException ex) {
+                throw new IOException(ex.getMessage(), ex);
+            }
+        }
+        else {
+            new StopTask().execute();
+        }
     }
 
     private class StatusTask extends AsyncTask<URL, Integer, Long> {
@@ -147,7 +163,6 @@ public class ServiceFrontendPlayer implements FrontendPlayer {
         protected Long doInBackground(URL... urls) {
             try {
                 sendAction("STOPPLAYBACK");
-                Thread.sleep(250);
                 return 0L;
             } catch (Exception ex) {
                 this.ex = ex;
