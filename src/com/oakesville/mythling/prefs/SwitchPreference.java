@@ -44,15 +44,15 @@ public class SwitchPreference extends android.preference.SwitchPreference {
     }
 
 
-    protected SwitchPreference(Context context) {
+    public SwitchPreference(Context context) {
         super(context);
     }
 
-    protected SwitchPreference(Context context, AttributeSet attrs) {
+    public SwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    protected SwitchPreference(Context context, AttributeSet attrs, int defStyle) {
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
